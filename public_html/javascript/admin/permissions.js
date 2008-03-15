@@ -4,19 +4,24 @@
   @uthor  James Hogan <james_hogan@theyorker.co.uk>
  **/
 
-/// hash Permission descriptions.
+/// hash Original permissions in each role (variable).
+var originalRolePermissions = {};
+/// hash Original roles played by each user (variable).
+var originalUserRoles = {};
+
+/// hash Permission descriptions (constant).
 var permissions = {};
-/// hash Roles containing each permission.
+/// hash Roles containing each permission (derived).
 var permissionRoles = {};
-/// hash Permissions in each role.
+/// hash Permissions in each role (variable).
 var rolePermissions = {};
-/// hash Implicit roles.
+/// hash Implicit roles (constant).
 var implicitRoles = {};
-/// hash Users playing each role.
+/// hash Users playing each role (derived).
 var roleUsers = {};
-/// hash Roles played by each user.
+/// hash Roles played by each user (variable).
 var userRoles = {};
-/// hash User's fullnames
+/// hash User's fullnames (constant).
 var users = {};
 
 /// string Selected permission.
@@ -81,6 +86,7 @@ function setPermissionData(newPermissions, newRolePermissions, newImplicitRoles,
 	for (var role in newRolePermissions) {
 		if (undefined == rolePermissions[role]) {
 			rolePermissions[role] = {};
+			originalRolePermissions[role] = {}
 		}
 		if (undefined == roleUsers[role]) {
 			roleUsers[role] = {};
@@ -92,6 +98,7 @@ function setPermissionData(newPermissions, newRolePermissions, newImplicitRoles,
 			}
 			permissionRoles[permission][role] = true;
 			rolePermissions[role][permission] = true;
+			originalRolePermissions[role][permission] = true;
 		}
 	}
 	
@@ -100,6 +107,7 @@ function setPermissionData(newPermissions, newRolePermissions, newImplicitRoles,
 	for (var user in newUserRoles) {
 		if (undefined == userRoles[user]) {
 			userRoles[user] = {};
+			originalUserRoles[user] = {};
 		}
 		for (var ind in newUserRoles[user]) {
 			role = newUserRoles[user][ind];
@@ -112,8 +120,155 @@ function setPermissionData(newPermissions, newRolePermissions, newImplicitRoles,
 			}
 			roleUsers[role][user] = true;
 			userRoles[user][role] = true;
+			originalUserRoles[user][role] = true;
 		}
 	}
+}
+
+/// Find the differences made to the permissions.
+/**
+ * @return [ 0(role), 1(users) :  [ [ add list ], [ remove list ] ] ]
+ */
+function diffPermissions()
+{
+	//	role,users => [
+	//		[ /* add list    */ ],
+	//		[ /* remove list */ ]
+	//	]
+	var roles = {};
+	var users = {};
+	
+	// find created / modified role permissions
+	for (var role in rolePermissions) {
+		var addList = [];
+		var removeList = [];
+		if (undefined == originalRolePermissions[role]) {
+			// this role is entirely new
+			for (var permission in rolePermissions[role]) {
+				addList.push(permission);
+			}
+		}
+		else {
+			for (var permission in rolePermissions[role]) {
+				if (undefined == originalRolePermissions[role][permission]) {
+					// this permission is new to this role
+					addList.push(permission);
+				}
+			}
+			for (var permission in originalRolePermissions[role]) {
+				if (undefined == rolePermissions[role][permission]) {
+					// this permission has been removed
+					removeList.push(permission);
+				}
+			}
+		}
+		if (addList.length || removeList.length) {
+			roles[role] = [ addList, removeList ];
+		}
+	}
+	
+	for (var user in userRoles) {
+		var addList = [];
+		var removeList = [];
+		for (var role in userRoles[user]) {
+			if (undefined == originalUserRoles[user][role]) {
+				// this role is new to this user
+				addList.push(role);
+			}
+		}
+		for (var role in originalUserRoles[user]) {
+			if (undefined == userRoles[user][role]) {
+				// this role has been removed
+				removeList.push(role);
+			}
+		}
+		if (addList.length || removeList.length) {
+			users[user] = [ addList, removeList ];
+		}
+	}
+	
+	return [ roles, users ];
+}
+
+/// Save changes that have occurred.
+function saveAllPermissions()
+{
+	var diff = diffPermissions();
+	var roles = diff[0];
+	var users = diff[1];
+	
+	// roles[role]['+'] = [ @permissions ]
+	// roles[role]['-'] = [ @permissions ]
+	// users[user]['+'] = [ @roles ]
+	// users[user]['-'] = [ @roles ]
+	
+	var changes = false;
+	var post = {};
+	for (var role in roles) {
+		for (var i in roles[role][0]) {
+			post['roles[0]['+role+']['+i+']'] = roles[role][0][i];
+			changes = true;
+		}
+		for (var i in roles[role][1]) {
+			post['roles[1]['+role+']['+i+']'] = roles[role][1][i];
+			changes = true;
+		}
+	}
+	for (var user in users) {
+		for (var i in users[user][0]) {
+			post['users[0]['+user+']['+i+']'] = users[user][0][i];
+			changes = true;
+		}
+		for (var i in users[user][1]) {
+			post['users[1]['+user+']['+i+']'] = users[user][1][i];
+			changes = true;
+		}
+	}
+	if (changes) {
+		var ajax = new AJAXInteraction('/admin/permissions/update', post,
+			function () {
+				alert('Permissions saved.');
+				location.reload(true);
+			}
+		);
+		ajax.doGet();
+	}
+	else {
+		alert('No changes have been made to the permissions.');
+	}
+}
+
+/// Display the changes that have been made.
+function viewPermissionChanges()
+{
+	var diff = diffPermissions();
+	var roles = diff[0];
+	var users = diff[1];
+	
+	var message = '';
+	message += "Role permissions:\n";
+	for (var role in roles) {
+		message += "\t"+role + ':';
+		for (var i in roles[role][0]) {
+			message += "\t+"+roles[role][0][i];
+		}
+		for (var i in roles[role][1]) {
+			message += "\t-"+roles[role][1][i];
+		}
+		message += "\n";
+	}
+	message += "User roles:\n"
+	for (var user in users) {
+		message += "\t"+user + ':';
+		for (var i in users[user][0]) {
+			message += "\t+"+users[user][0][i];
+		}
+		for (var i in users[user][1]) {
+			message += "\t-"+users[user][1][i];
+		}
+		message += "\n";
+	}
+	alert(message);
 }
 
 /// Deselect all selections.
@@ -330,7 +485,7 @@ function toggleRolePermission(role, permission)
 		if (rolePermissionsDiv) {
 			var children = rolePermissionsDiv.childNodes;
 			for (var i = 0; i < children.length; ++i) {
-				if (children[i].nodeType == '1' && children[i].getAttribute('name') == name) {
+				if (children[i].nodeType == Node.ELEMENT_NODE && children[i].getAttribute('name') == name) {
 					children[i].parentNode.removeChild(children[i]);
 				}
 			}
@@ -366,7 +521,7 @@ function toggleUserRole(user, role)
 		if (userRolesDiv) {
 			var children = userRolesDiv.childNodes;
 			for (var i = 0; i < children.length; ++i) {
-				if (children[i].nodeType == '1' && children[i].getAttribute('name') == name) {
+				if (children[i].nodeType == Node.ELEMENT_NODE && children[i].getAttribute('name') == name) {
 					children[i].parentNode.removeChild(children[i]);
 				}
 			}

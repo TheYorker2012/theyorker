@@ -152,6 +152,123 @@ class permissions_model extends Model
 		}
 		return array($userRoles, $userNames);
 	}
+	
+	/// Remove role permissions.
+	/**
+	 * @param $roles array[role => array[permission]].
+	 */
+	function removeRolePermissions($roles)
+	{
+		if (!empty($roles)) {
+			$sql =	'	DELETE FROM role_permissions'.
+					'	WHERE	';
+			$bind = array();
+			$separator = '';
+			foreach ($roles as $role => $permissions) {
+				if (!empty($permissions)) {
+					$sql .= $separator.' (role_permission_role_name=?'.
+							' AND role_permission_permission_name IN (';
+					$bind[] = $role;
+					$permissionComma = '';
+					foreach ($permissions as $permission) {
+						$sql .= $permissionComma.'?';
+						$bind[] = $permission;
+						$permissionComma = ',';
+					}
+					$sql .= '))';
+					$separator = ' OR ';
+				}
+			}
+			if (!empty($bind)) {
+				$this->db->query($sql, $bind);
+			}
+		}
+	}
+	
+	/// Add role permissions.
+	/**
+	 * @param $roles array[role => array[permission]].
+	 */
+	function addRolePermissions($roles)
+	{
+		if (!empty($roles)) {
+			$sql =	'	INSERT INTO role_permissions'.
+					'	(role_permission_role_name, role_permission_permission_name) VALUES';
+			$bind = array();
+			$separator = '';
+			foreach ($roles as $role => $permissions) {
+				if (!empty($permissions)) {
+					foreach ($permissions as $permission) {
+						$sql .= $separator.' (?, ?)';
+						$bind[] = $role;
+						$bind[] = $permission;
+						$separator = ',';
+					}
+				}
+			}
+			if (!empty($bind)) {
+				$this->db->query($sql, $bind);
+			}
+		}
+	}
+	
+	/// Remove user roles.
+	/**
+	 * @param $users array[user => array[roles]].
+	 */
+	function removeUserRoles($users)
+	{
+		if (!empty($users)) {
+			$sql =	'	DELETE FROM user_roles'.
+					'	USING user_roles, entities'.
+					'	WHERE	'.
+					'		entity_id = user_role_user_entity_id AND (';
+			$bind = array();
+			$separator = '';
+			foreach ($users as $user => $roles) {
+				if (!empty($roles)) {
+					$sql .= $separator.' (entity_username=?'.
+							' AND user_role_role_name IN (';
+					$bind[] = $user;
+					$roleComma = '';
+					foreach ($roles as $role) {
+						$sql .= $roleComma.'?';
+						$bind[] = $role;
+						$roleComma = ',';
+					}
+					$sql .= '))';
+					$separator = ' OR ';
+				}
+			}
+			$sql .= ')';
+			if (!empty($bind)) {
+				$this->db->query($sql, $bind);
+			}
+		}
+	}
+	
+	/// Add user roles.
+	/**
+	 * @param $users array[user => array[roles]].
+	 */
+	function addUserRoles($users)
+	{
+		foreach ($users as $user => $roles) {
+			foreach ($roles as $role) {
+				$this->db->query(
+					'	INSERT INTO user_roles ('.
+					'		user_role_user_entity_id,'.
+					'		user_role_role_name'.
+					'	)'.
+					'	SELECT	entity_id,'.
+					'			?'.
+					'	FROM	entities'.
+					'	WHERE	entity_username=?',
+					array( $role, $user )
+				);
+			}
+		}
+	}
 }
 
 ?>

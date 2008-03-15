@@ -25,10 +25,25 @@ foreach ($userRoles as $roles) {
 
 <div class="RightToolbar">
 	<h4>What's this?</h4>
-	<p>Options for saving</p>
-	<p>ajax as you edit</p>
-	<p>storing changes + running through</p>
-	<p>!send the lot and diff with database!</p>
+	<p>Users can have a number of roles, each with a group of associated permissions.</p>
+	<ul>
+		<li>Click on a permission to adjust which roles contain it.</li>
+		<li>Click on a role to adjust which permissions it contains and which users have the role.</li>
+		<li>Click on a user to adjust which roles they have.</li>
+	</ul>
+	<p>	Remember that the purpose of roles is to represent groups of users with common sets of permissions.
+		You can create new roles if appropriate using the "New Role" box.</p>
+	<p>Once a permission, role or user is selected you can toggle associated permissions, roles or users by clicking the boxes on the left.</p>
+	
+	<h4>Save</h4>
+	<form class="form">
+		<fieldset>
+			<input	class="button" type="button" value="Save"
+					onclick="saveAllPermissions();" />
+			<input	class="button" type="button" value="View Changes"
+					onclick="viewPermissionChanges();" />
+		</fieldset>
+	</form>
 </div>
 
 <script type="text/javascript">
@@ -53,6 +68,8 @@ foreach ($userRoles as $roles) {
 
 <div id="permissionsBox" class="grey_box">
 	<h2>Permissions</h2>
+	<p>	Permissions represent actions that can be performed.
+		A permission can belong to a role, so that anybody who has the role has the permission.</p>
 	<hr />
 	<?php foreach ($permissionDescriptions as $permission => $description) { ?>
 	<div	id="permission-<?php echo(xml_escape($permission)); ?>"
@@ -80,6 +97,7 @@ foreach ($userRoles as $roles) {
 
 <div id="rolesBox" class="grey_box">
 	<h2>Roles</h2>
+	<p>Each role represents a group of related permissions common to all users with that role.</p>
 	<div id="rolesList">
 		<hr />
 		<?php foreach ($rolePermissions as $role => $permissions) { ?>
@@ -125,6 +143,7 @@ foreach ($userRoles as $roles) {
 
 <div id="usersBox" class="grey_box">
 	<h2>Users</h2>
+	<p>	Users can have a number of roles which determine which permissions they have.</p>
 	<hr />
 	<?php foreach ($userRoles as $user => $roles) { ?>
 	<div	id="user-<?php echo(xml_escape($user)); ?>"
@@ -153,6 +172,3 @@ foreach ($userRoles as $roles) {
 	<hr />
 	<?php } ?>
 </div>
-
-
-
