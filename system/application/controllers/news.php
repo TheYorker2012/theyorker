@@ -29,6 +29,10 @@ class News extends Controller {
 		if (count($this->News_model->getArticleTypeInformation($method)) > 0) {
 			call_user_func_array(array(&$this, '_article'), $args);
 		}
+		# Redirect short URL to full URL
+		elseif (is_numeric($method)) {
+			call_user_func_array(array(&$this, '_redirect'), $args);
+		}
 		# If theres a function for the given method that isn't protected, use it.
 		elseif (method_exists($this, $method) && substr($method,0,1) != '_') {
 			call_user_func_array(array(&$this, $method), array_slice($args, 1));
@@ -37,6 +41,17 @@ class News extends Controller {
 		else {
 			show_404();
 		}
+	}
+
+	function _redirect ($article_id = NULL)
+	{
+		if ($article_id !== NULL) {
+			$type = $this->News_model->getArticleType($article_id);
+			if ($type !== false) {
+				redirect('/news/' . $type->content_type_codename . '/' . $article_id);
+			}
+		}
+		redirect('/news');
 	}
 
 	/// Display a news article in a given section.
