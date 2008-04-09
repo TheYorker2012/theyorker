@@ -30,7 +30,8 @@ class Advertising extends Controller
 		$this->pages_model->SetPageCode('advertising_list');
 		
 		$data = array(
-			'adverts'=>$this->advert_model->GetAdverts()
+			'adverts'=>$this->advert_model->GetAdverts(),
+			'page_information' => $this->pages_model->GetPropertyWikiText('page_information')
 		);
 
 		// Set up the directory view

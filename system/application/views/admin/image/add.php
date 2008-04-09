@@ -1,6 +1,6 @@
 <?php if (isset($image_type_id)) {?>
-<div class="blue_box">
-	<form action="<?=site_url($this->uri->uri_string())?>" method="post" enctype="multipart/form-data">
+<div class="BlueBox">
+	<form action="<?php echo site_url($this->uri->uri_string()); ?>" method="post" enctype="multipart/form-data">
 		<fieldset>
 			<label for="image_type_name">Type Name</label>
 			<input type="text" name="image_type_name" />
