@@ -57,7 +57,6 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 			}
 			?>
 			<a href="/about/">about us</a> |
-			<a href="/contact/">contact us</a> |
 			<a href="/faq/">FAQs</a>
 			</span>
 		</div>
