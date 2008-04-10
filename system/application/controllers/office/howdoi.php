@@ -209,7 +209,7 @@ class Howdoi extends Controller
 		$this->main_frame->SetPage('categories');
 
 		// Insert main text from pages information
-		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
+		$data['page_information'] = $this->pages_model->GetPropertyWikitext('page_information');
 
 		//get the howdoi parent type id
 		$howdoi_type_id = $this->howdoi_model->GetHowdoiTypeID();
@@ -492,8 +492,8 @@ class Howdoi extends Controller
 			$this->_SetupNavbar();
 			$this->main_frame->SetPage('categories');
 
-			// Insert main text from pages information
-			$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
+			// Insert page information
+			$data['page_information'] = $this->pages_model->GetPropertyWikitext('page_information');
 
 			/* get the data for the category provided in the post
 			   data */
