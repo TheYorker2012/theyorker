@@ -1,13 +1,12 @@
 <div id="RightColumn">
-	<h2 class="first">What's this?</h2>
+	<h2 class="first">Page Information</h2>
 	<div class="Entry">
-		This page allows you to nominate a link yourself, and upload an image for it. Please note that <b>the image must be 50x50 pixels</b> in size.
+		<?php echo($page_information); ?>
 	</div>
 </div>
 <div id="MainColumn">
 	<div class="BlueBox">
 		<h2>Nominate Custom Link</h2>
-
 		<form action="/office/links/customlink" method="post" enctype="multipart/form-data">
 		<fieldset>
 			<label for="lname"> Link Name: </label>
