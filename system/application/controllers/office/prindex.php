@@ -48,7 +48,8 @@ class Prindex extends controller
 		//setup navbar and set page code
 		$this->_SetupNavbar();
 		$this->main_frame->SetPage('summary');
-		$this->pages_model->SetPageCode('office_pr_summary_officer');
+		$this->pages_model->SetPageCode('office_pr_summary');
+		$this->main_frame->SetTitleParameters(array('view_type' => 'Officer'));
 		
 		//load the required models
 		$this->load->model('pr_model','pr_model');
@@ -80,7 +81,8 @@ class Prindex extends controller
 		//setup navbar and set page code
 		$this->_SetupNavbar();
 		$this->main_frame->SetPage('summary');
-		$this->pages_model->SetPageCode('office_pr_summary_all');
+		$this->pages_model->SetPageCode('office_pr_summary');
+		$this->main_frame->SetTitleParameters(array('view_type' => 'All'));
 		
 		//load the required models
 		$this->load->model('pr_model','pr_model');
@@ -113,7 +115,8 @@ class Prindex extends controller
 		//setup navbar and set page code
 		$this->_SetupNavbar();
 		$this->main_frame->SetPage('summary');
-		$this->pages_model->SetPageCode('office_pr_summary_rep');
+		$this->pages_model->SetPageCode('office_pr_summary');
+		$this->main_frame->SetTitleParameters(array('view_type' => 'Rep'));
 		
 		//load the required models and libraries
 		$this->load->model('pr_model','pr_model');
@@ -152,7 +155,8 @@ class Prindex extends controller
 		//setup navbar and set page code
 		$this->_SetupNavbar();
 		$this->main_frame->SetPage('summary');
-		$this->pages_model->SetPageCode('office_pr_summary_org');
+		$this->pages_model->SetPageCode('office_pr_summary');
+		$this->main_frame->SetTitleParameters(array('view_type' => 'Organisation'));
 		
 		//load the required models and libraries
 		$this->load->model('pr_model','pr_model');
@@ -236,6 +240,7 @@ class Prindex extends controller
 		$this->_SetupNavbar();
 		$this->main_frame->SetPage('unnassigned');
 		$this->pages_model->SetPageCode('office_pr_unnassigned');
+		$data['page_information']  = $this->pages_model->GetPropertyWikitext('page_information');
 		
 		//get the current users id and office access
 		$data['user']['id'] = $this->user_auth->entityId;
@@ -269,6 +274,7 @@ class Prindex extends controller
 		$this->_SetupNavbar();
 		$this->main_frame->SetPage('suggestions');
 		$this->pages_model->SetPageCode('office_pr_suggestions');
+		$data['page_information']  = $this->pages_model->GetPropertyWikitext('page_information');
 
 		//get the current users id and office access
 		$data['user']['id'] = $this->user_auth->entityId;
@@ -304,7 +310,7 @@ class Prindex extends controller
 		//setup navbar and set page code
 		$this->_SetupNavbar();
 		$this->main_frame->SetPage('suggestions');
-		$this->pages_model->SetPageCode('office_pr_suggestion');
+		$this->pages_model->SetPageCode('office_pr_suggestions');
 		
 		/** store the parameters passed to the method so it can be
 		    used for links in the view */
