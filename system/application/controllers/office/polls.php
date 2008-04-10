@@ -131,6 +131,23 @@ class Polls extends Controller
 			'poll_choice_data' => $this->polls_model->GetPollChoiceVotes($poll_id)
 			);
 		
+		// Poll data
+		$user_voted = $this->polls_model->HasUserVoted($poll_id, $this->user_auth->entityId);
+		$poll_show_results = true;
+		if ($poll_id)
+		{
+			$data['poll_vote_box'] = new PollsVoteBox(
+				$this->polls_model->GetPollDetails($poll_id),
+				$this->polls_model->GetPollChoiceVotes($poll_id),
+				$user_voted,
+				$poll_show_results
+			);
+		}
+		else
+		{
+			$data['poll_vote_box'] = null;
+		}
+		
 		// Set up the public frame
 		$this->main_frame->SetTitleParameters(array(
 			'name' => $data['poll_info']['question']
