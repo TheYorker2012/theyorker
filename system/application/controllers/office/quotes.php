@@ -18,10 +18,11 @@ class Quotes extends Controller
 	{
 		if (!CheckPermissions('office')) return;
 
-		$this->pages_model->SetPageCode('quotes_list');
+		$this->pages_model->SetPageCode('office_quotes');
 
 		$data = array();
-
+		$data['page_information']  = $this->pages_model->GetPropertyWikitext('page_information');
+		
 		$this->load->model('Quote_Model');
 		$data['quotes'] = $this->Quote_Model->GetQuotes();
 
@@ -35,7 +36,11 @@ class Quotes extends Controller
 	{
 		//has user got access to office
 		if (!CheckPermissions('office')) return;
-
+		
+		$this->pages_model->SetPageCode('office_quotes');
+		$data = array();
+		$data['page_information']  = $this->pages_model->GetPropertyWikitext('page_information');
+		
 		$this->load->model('user_auth');
 
 		if (!($this->user_auth->officeType == 'High' || $this->user_auth->officeType == 'Admin')) {
@@ -45,7 +50,7 @@ class Quotes extends Controller
 
 		$this->load->model('Quote_Model');
 		$data['quote'] = $this->Quote_Model->GetQuote($quote_id);
-
+		
 		$this->main_frame->SetContentSimple('office/quotes/quote_edit', $data);
 
 		$this->main_frame->Load();
