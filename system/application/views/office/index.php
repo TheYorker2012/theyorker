@@ -64,23 +64,21 @@ function PrintRequestList ($data) {
 
 <div id="RightColumn">
 	<h2 class="first">Quick Links</h2>
-	<ul>
-		<li><a href="/office/news/create/">Create New Article</a></li>
-		<li><a href="/office/guide/">View Style Guide</a></li>
-		<li><a href="/office/news/contentschedule/">Check Content Schedule</a></li>
-	</ul>
+	<div class="Entry">
+		<ul>
+			<li><a href="/office/news/create">Create New Article</a></li>
+			<li><a href="/office/guide/">View Style Guide</a></li>
+			<li><a href="/office/news/contentschedule/">Check Content Schedule</a></li>
+		</ul>
+	</div>
 </div>
-
 <div id="MainColumn">
-	<div class="BlueBox">
+	<div class='BlueBox'>
 		<h2>from the editor</h2>
-		<p>
-			<?php echo $main_text; ?>
-		</p>
+		<?php echo($main_text); ?>
 	</div>
-	
-	<div class="BlueBox">
-		<h2>my tasks...</h2>
-		<?php PrintRequestList($my_requests); ?>
-	</div>
+</div>
+<div class="BlueBox" style="width:auto">
+	<h2>my tasks...</h2>
+	<?php PrintRequestList($my_requests); ?>
 </div>

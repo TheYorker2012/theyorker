@@ -1,46 +1,50 @@
-<div class="RightToolbar">
-	<h4>Make Suggestion</h4>
+<div id="RightColumn">
+	<h2 class="first">Page Information</h2>
 	<div class="Entry">
-		<a href="/wizard/organisation/">Wizard</a>
+		<?php echo($page_information); ?>
+	</div>
+	<h2>Quick Links</h2>
+	<div class="Entry">
+		<ul>
+			<li><a href="/wizard/organisation/">Organisations wizard</a></li>
+		</ul>
 	</div>
 </div>
-
-<div class="BlueBox">
-	<h2>suggestions</h2>
-	<p>
-		This page contains a list of all organisations which have been suggested to the yorker and need verifying before being accepted and assigned to a rep. Click an organisation name for more information and options to act on this suggestion.
-	</p>
-	<div id="ArticleBox">
-		<table>
-			<thead>
-				<tr>
-					<th>Name</th>
-					<th>Suggested By</th>
-					<th>Date</th>
-				</tr>
-			</thead>
-			<tbody>
-<?php
-	$alternate = 1;
-	foreach($orgs as $org)
-	{
-		$date_text = date('jS F Y' , time($org['suggested_time']));
-		echo('				<tr class="tr'.$alternate.'">'."\n");
-		echo('					<td>'."\n");
-		echo('						<a href="/office/pr/info/'.$org['org_dir_entry_name'].'">'.xml_escape($org['org_name']).'</a>'."\n");
-		echo('					</td>'."\n");
-		echo('					<td>'."\n");
-		echo('						'.xml_escape($org['user_name'])."\n");
-		echo('					</td>'."\n");
-		echo('					<td>'."\n");
-		echo('						'.$date_text.''."\n");
-		echo('					</td>'."\n");
-		echo('				</tr>'."\n");
-		$alternate == 1 ? $alternate = 2 : $alternate = 1;
-	}
-?>
-			</tbody>
-		</table>
+<div id="MainColumn">
+	<div class="BlueBox">
+		<h2>suggestions</h2>
+		<div id="ArticleBox">
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Suggested By</th>
+						<th>Date</th>
+					</tr>
+				</thead>
+				<tbody>
+					<?php
+					$alternate = 1;
+					foreach($orgs as $org)
+					{
+						$date_text = date('jS F Y' , time($org['suggested_time']));
+						echo('				<tr class="tr'.$alternate.'">'."\n");
+						echo('					<td>'."\n");
+						echo('						<a href="/office/pr/info/'.$org['org_dir_entry_name'].'">'.xml_escape($org['org_name']).'</a>'."\n");
+						echo('					</td>'."\n");
+						echo('					<td>'."\n");
+						echo('						'.xml_escape($org['user_name'])."\n");
+						echo('					</td>'."\n");
+						echo('					<td>'."\n");
+						echo('						'.$date_text.''."\n");
+						echo('					</td>'."\n");
+						echo('				</tr>'."\n");
+						$alternate == 1 ? $alternate = 2 : $alternate = 1;
+					}
+					?>
+				</tbody>
+			</table>
+		</div>
 	</div>
 </div>
 

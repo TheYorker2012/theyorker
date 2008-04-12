@@ -18,7 +18,7 @@
 // ]]>
 </script>
 	
-<div class='blue_box' style='width: auto;'>
+<div class='BlueBox' style='width: auto;'>
 	<h2><?php echo(xml_escape($heading)); ?></h2>
 	<?php echo($intro); ?>
 </div>

@@ -1,4 +1,4 @@
-	<div class="BlueBox">
+	<div id="Byline<?php echo($business_card_id); ?>" class="BlueBox">
 		<div style="float:right;margin:0.2em 0.5em;text-align:right">
 			<img src="<?php echo(($business_card_image_href != '') ? $business_card_image_href : site_url('images/prototype/directory/members/no_image.png')); ?>" alt="<?php echo(xml_escape($business_card_name)); ?>" title="<?php echo(xml_escape($business_card_name)); ?>" />
 		</div>

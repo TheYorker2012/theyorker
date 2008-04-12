@@ -141,8 +141,8 @@ class Pages extends Controller
 	 */
 	private function _ValidatePageCodename($Codename, $Prefix = '')
 	{
-		// Validate codename, must be non empty, and consist only of word characters
-		if (!preg_match('/^\w+$/', $Codename)) {
+		// Validate codename, must be non empty, and consist only of certain characters
+		if (!preg_match('/^[\w:]+$/', $Codename)) {
 			$this->messages->AddMessage('error','Your specified codename "'.xml_escape($Codename).'" contained invalid characters. Please use alphanumeric characters only.');
 			return FALSE;
 		}

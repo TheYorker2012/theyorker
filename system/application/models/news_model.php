@@ -148,6 +148,21 @@ class News_model extends Model
 		return $query->result_array();
 	}
 
+	function getArticleType ($id)
+	{
+		$sql = 'SELECT	content_types.content_type_codename
+				FROM	content_types,
+						articles
+				WHERE	articles.article_id = ?
+				AND		articles.article_content_type_id = content_types.content_type_id';
+		$query = $this->db->query($sql, array($id));
+		if ($query->num_rows() == 1) {
+			return $query->row();
+		} else {
+			return false;
+		}
+	}
+
 	/**
 	*Determines wheter the provided ID is of specified type.
 	*@param $id The article_id to test.
@@ -196,7 +211,8 @@ class News_model extends Model
 	**/
 	function getArticleTypeInformation ($type)
 	{
-		$sql = 'SELECT content_type_codename AS codename,
+		$sql = 'SELECT content_type_id AS id,
+				 content_type_codename AS codename,
 				 content_type_has_children AS has_children,
 				 content_type_parent_content_type_id AS parent_id,
 				 content_type_name AS name,

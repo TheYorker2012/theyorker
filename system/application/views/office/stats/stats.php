@@ -5,6 +5,7 @@
 	</div>
 	<h2>Registrations</h2>
 	<div class="Entry">
+		<img src="<?php echo xml_escape($signups_img_url); ?>" alt="Recent Signups Cumulative Graph" />
 		<ul>
 			<li><?php echo xml_escape($registrations['day']); ?> in the last day</li>
 			<li><?php echo xml_escape($registrations['week']); ?> in the last week</li>
@@ -13,6 +14,9 @@
 			<li><?php echo xml_escape($registrations['academic_year']); ?> so far this accademic year</li>
 		</ul>
 	</div>
+	<?php
+	//Access levels is being left out for the moment as the admin count isn't implimented and the other figures are a little misleading. This needs work.
+	/*
 	<h2>Access Levels</h2>
 	<div class="Entry">
 		<ul>
@@ -21,13 +25,12 @@
 			<li><?php echo xml_escape($access['vip']); ?> people have vip access</li>
 		</ul>
 	</div>
+	*/
+	?>
 	<h2>User Links</h2>
 	<div class="Entry">
-		<ul>
-			<li>On average users have <?php echo xml_escape(round($member_links['average']));?> links</li>
-			<li><?php echo xml_escape(round(($member_links['average_official']/$member_links['average'])*100)); ?>% on average are official links</li>
-			<li><?php echo xml_escape(round(($member_links['average_unofficial']/$member_links['average'])*100)); ?>% on average are custom links</li>
-		</ul>
+		<img src="<?php echo xml_escape($links_bar_chart_img); ?>" alt="User Links Bar Chart" /><br />
+		<img src="<?php echo xml_escape($official_links_pie_img); ?>" alt="UnOfficial/Official Links Ratio Pie Chart" />
 	</div>
 </div>
 <div id="MainColumn">
@@ -88,7 +91,7 @@
 			echo('		</div>'."\n");
 		}
 		?>
-		<h3>Enrolement Years</h3>
+		<h3>Enrolment Years</h3>
 		<?php
 		$total=0;//Work out total from all colleges to get percentages
 		foreach ($member_enrollments as $year){
@@ -141,6 +144,9 @@
 	</div>
 	<div class="BlueBox">
 		<h2>Comments</h2>
+		<div style="text-align: center;">
+			<img src="<?php echo xml_escape($comments_img_url); ?>" alt="Total Comments Posted Graph" />
+		</div>
 		<h3>Top commenters</h3>
 		<div class="ArticleBox">
 			<table>
@@ -148,7 +154,6 @@
 					<tr>
 						<th>&nbsp;</th>
 						<th>Name</th>
-						<th><img alt="Anonymous" src="/images/prototype/homepage/grey_user_small.gif"></th>
 						<th><img alt="As Self" src="/images/prototype/homepage/blue_user_small.gif"></th>
 						<th><img alt="Deleted" src="/images/prototype/members/no9.png"></th>
 						<th>Total</th>
@@ -170,16 +175,13 @@
 				}
 				echo ('</td>');
 				echo ('<td>');
-				echo xml_escape($commenter['anonymous_post_count']);
-				echo ('</td>');
-				echo ('<td>');
-				echo xml_escape($commenter['total_post_count'] - $commenter['anonymous_post_count']);
+				echo xml_escape($commenter['total_post_count']);
 				echo ('</td>');
 				echo ('<td>');
 				echo xml_escape($commenter['deleted_post_count']);
 				echo ('</td>');
 				echo ('<td>');
-				echo xml_escape($commenter['total_post_count']);
+				echo xml_escape($commenter['total_post_count'] + $commenter['deleted_post_count']);
 				echo ('</td>');
 				echo ('</tr>'."\n");
 			}
@@ -194,14 +196,7 @@
 						<th>&nbsp;</th>
 						<th>Name</th>
 						<th>
-						<img alt="Anonymous" src="/images/prototype/homepage/grey_user_small.gif">
-						<img alt="Deleted" src="/images/prototype/members/no9.png">
-						</th>
-						<th>
 						<img alt="As Self" src="/images/prototype/homepage/blue_user_small.gif">
-						<img alt="Deleted" src="/images/prototype/members/no9.png">
-						</th>
-						<th>
 						<img alt="Deleted" src="/images/prototype/members/no9.png">
 						</th>
 						<th>Total</th>
@@ -223,12 +218,6 @@
 				}
 				echo ('</td>');
 				echo ('<td>');
-				echo xml_escape($commenter['anonymous_deleted_post_count']);
-				echo ('</td>');
-				echo ('<td>');
-				echo xml_escape($commenter['deleted_post_count'] - $commenter['anonymous_deleted_post_count']);
-				echo ('</td>');
-				echo ('<td>');
 				echo xml_escape($commenter['deleted_post_count']);
 				echo ('</td>');
 				echo ('<td>');
@@ -239,7 +228,7 @@
 			?>
 			</table>
 		</div>
-		<h3>Most popular articles</h3>
+		<h3>Most commented articles</h3>
 		<div class="ArticleBox">
 			<table>
 				<thead>

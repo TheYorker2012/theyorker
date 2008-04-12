@@ -375,8 +375,7 @@ class Account extends controller
 	{
 		static $handlers = array(
 			'change' => '_password_change',
-			'reset'  => '_password_reset',
-			'register' => '_password_register',
+			'reset'  => '_password_reset'
 		);
 
 		if (array_key_exists($option, $handlers)) {
@@ -393,16 +392,6 @@ class Account extends controller
 	/// Reset password
 	protected function _password_reset($parameter = 'main')
 	{
-		$this->_password_reset_register('account_password_reset');
-	}
-
-	/// Register
-	protected function _password_register($parameter = 'main')
-	{
-		$this->_password_reset_register('account_password_register');
-	}
-
-	protected function _password_reset_register($pagecode) {
 		if (!CheckPermissions('public')) return;
 
 		$username = $this->input->post('username');
@@ -438,14 +427,15 @@ class Account extends controller
 		}
 
 		if ($valid) {
-			if($this->user_auth->resetpassword($username, $email)) {
+			try {
+				$this->user_auth->resetpassword($username, $email);
 				$this->messages->AddMessage('success', 'An e-mail has been sent to '.$email.'. Please click on the link within it to activate your account.');
-			} else {
-				$this->messages->AddMessage('error', 'There was an error sending the e-mail.');
+			} catch (Exception $e) {
+				$this->messages->AddMessage('error', $e->getMessage());
 			}
 		}
 
-		$this->pages_model->SetPageCode($pagecode);
+		$this->pages_model->SetPageCode('account_password_reset');
 
 		$data = array();
 		$data['intro'] = $this->pages_model->GetPropertyWikitext('intro');

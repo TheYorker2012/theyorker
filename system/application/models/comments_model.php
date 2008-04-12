@@ -366,6 +366,8 @@ class Comments_model extends model
 	{
 		$sql = 'SELECT	comments.comment_id,
 						comments.comment_anonymous,
+						UNIX_TIMESTAMP(comments.comment_post_time) AS comment_post_time,
+						comments.comment_content_wikitext,
 						users.user_firstname,
 						users.user_surname,
 						articles.article_id,
@@ -472,7 +474,10 @@ class Comments_model extends model
 						organisations.organisation_name,
 						NULL))) AS author,
 			UNIX_TIMESTAMP(edits.comment_edit_timestamp) AS edit_time,
-			(edits.comment_edit_author_entity_id = comments.comment_author_entity_id) AS edit_by_author
+			(edits.comment_edit_author_entity_id = comments.comment_author_entity_id) AS edit_by_author,
+			IF (edit_users.user_entity_id IS NOT NULL,
+				CONCAT(edit_users.user_firstname," ",edit_users.user_surname),
+				NULL) AS edit_name
 		FROM comments
 		INNER JOIN comment_threads AS thread
 			ON	comments.comment_comment_thread_id = thread.comment_thread_id
@@ -489,6 +494,9 @@ class Comments_model extends model
 			AND	organisations.organisation_entity_id = comments.comment_author_entity_id
 		LEFT JOIN users AS deleted_users
 			ON	deleted_users.user_entity_id = comments.comment_deleted_entity_id
+		LEFT JOIN users AS edit_users
+			ON	edit_users.user_entity_id = edits.comment_edit_author_entity_id
+			AND	edits.comment_edit_author_entity_id != comments.comment_author_entity_id
 		WHERE '.implode(' AND ',$conditions).'
 		ORDER BY '.$sort_field.', edits.comment_edit_timestamp ASC';
 		
@@ -547,6 +555,7 @@ class Comments_model extends model
 			'author_id' => $Comment['anonymous'] ? NULL : $Comment['author_id'],
 			'author' => $Comment['anonymous'] ? NULL : $identities[$Comment['author_id']],
 			'edits' => array(),
+			'deleted_time' => null,
 		);
 	}
 	
@@ -709,6 +718,7 @@ class Comments_model extends model
 	 */
 	function PostprocessComments($Comments)
 	{
+		$config = $this->config->item('comments');
 		$identities = $this->GetAvailableIdentities();
 		$comment_index = array();
 		$result_comments = array();
@@ -723,17 +733,17 @@ class Comments_model extends model
 				
 				if (NULL === $new_comment['xhtml']) {
 					// uncached
-					$xhtml = $this->ParseCommentWikitext($new_comment['wikitext']);
-					$new_comment[$key]['xhtml'] = $xhtml;
+					$new_comment['xhtml'] = $xhtml = $this->ParseCommentWikitext($new_comment['wikitext']);
 					
 					// try updating the cache
-					$cache_sql = '
-					UPDATE comments
-					SET comments.comment_content_xhtml = '.$this->db->escape($xhtml).'
-					WHERE comments.comment_id = '.$new_comment['comment_id'];
-					$this->db->query($cache_sql);
+					$this->db->query(
+						'UPDATE comments'.
+						' SET comments.comment_content_xhtml = ?'.
+						' WHERE comments.comment_id = ?',
+						array($xhtml, $new_comment['comment_id'])
+					);
 				}
-				$new_comment['owned'] = isset($identities[$comment['author_id']]) && $this->config->item('comments_edit');
+				$new_comment['owned'] = isset($identities[$comment['author_id']]) && $config['edit']['author'];
 				$new_comment['deleted_by_owner'] = (NULL !== $comment['deleted_entity_id']) && ($comment['deleted_entity_id'] == $comment['author_id']);
 				
 				$new_comment['edits'] = array();
@@ -743,6 +753,7 @@ class Comments_model extends model
 				$new_comment['edits'][] = array(
 					'edit_time' => $comment['edit_time'],
 					'by_author' => $comment['edit_by_author'],
+					'name'      => $comment['edit_name'],
 				);
 			}
 			

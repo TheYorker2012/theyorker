@@ -122,6 +122,7 @@ class Article_model extends Model
 				 article_contents.article_content_subheading AS subheadline,
 				 article_contents.article_content_subtext AS subtext,
 				 article_contents.article_content_wikitext AS text,
+				 article_contents.article_content_wikitext_cache AS cache,
 				 article_contents.article_content_blurb AS blurb
 				FROM article_contents
 				WHERE article_contents.article_content_id = ?';

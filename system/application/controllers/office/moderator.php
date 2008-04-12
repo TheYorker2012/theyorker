@@ -74,6 +74,7 @@ class Moderator extends controller
 		// set which page of comments to show
 		$comment_view_list->SetIncludedComment($CommentInclude);
 		$comment_view_list->SetData('Mode', 'mod');
+		$comment_view_list->SetUnthreaded();
 		
 		// Get the filter from the page properties
 		$filter_name = $this->pages_model->GetPropertyText(

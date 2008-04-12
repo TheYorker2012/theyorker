@@ -55,6 +55,7 @@ class Wikiparser {
 	protected $enable_youtube;
 	protected $enable_mediaplayer;
 	protected $enable_quickquotes;
+	protected $enable_ordered_lists;
 	protected $entities;
 
 	protected $list_level_chars;
@@ -105,6 +106,7 @@ class Wikiparser {
 		$this->enable_youtube = true;
 		$this->enable_mediaplayer = true;
 		$this->enable_quickquotes = true;
+		$this->enable_ordered_lists = true;
 		$this->entities = array(
 			'\'' => xml_escape('\''),
 			'"'  => xml_escape('"'),
@@ -442,28 +444,33 @@ class Wikiparser {
 
 	function handle_externallink($matches) {
 		$href = $matches[2];
-		//var_dump($matches);
 		if (substr($href, 0, 4) !== 'http' &&
-			substr($href, 0, 1) !== '/')
+			substr($href, 0, 1) !== '/' &&
+			substr($href, 0, 7) !== 'mailto:' /*&&
+			!isset($matches[4]) &&
+			!isset($matches[6])*/)
 		{
 			return $matches[0];
-			//return xml_escape($matches[0]);
 		}
-		//$href = xml_escape($href);
-		if (array_key_exists(4,$matches)) {
-			// implicit mailto
-			$href = 'Mailto:'.$matches[4];
-			$title= $matches[4];
-		/*} else if (array_key_exists(4,$matches)) {
-			// implicit url
+		/*
+		// Implicit email
+		if (isset($matches[6])) {
+			$href = 'Mailto:'.$matches[6];
+			$title= $matches[6];
+		}
+		// Implicit url
+		elseif (isset($matches[4])) {
 			$href = $matches[4];
-			$title= $matches[4];*/
-		} else if (!isset($matches[3])) {
-			// explicit unamed
+			$title= $matches[4];
+		}
+		*/
+		// explicit unamed
+		elseif (!isset($matches[3])) {
 			$this->linknumber++;
 			$title = '['.$this->linknumber.']';
-		} else {
-			// explicit named
+		}
+		// explicit named
+		else {
 			$title = $matches[3];
 		}
 		$newwindow = false;
@@ -594,12 +601,17 @@ class Wikiparser {
 	}
 
 	function parse_line($line) {
-		$first_characters = '\s\*\#;\:-';
+		$first_characters = '\s\*;\:-';
+		$list_chars = '\*';
 		if ($this->enable_headings) {
 			$first_characters .= '=';
 		}
 		if (empty($this->newline_mode)) {
 // 			$first_characters .= '\{';
+		}
+		if ($this->enable_ordered_lists) {
+			$first_characters .= '\#';
+			$list_chars .= '\#';
 		}
 		
 		$line_regexes = array();
@@ -610,7 +622,7 @@ class Wikiparser {
 		//$line_regexes['preformat'] = '^\s(.*?)$';
 		$line_regexes['definitionlist'] = '^([\;\:])\s*(.*?)$';
 		$line_regexes['newline'] = '^$';
-		$line_regexes['list'] = '^([\*\#]+)\s*(.*?)$';
+		$line_regexes['list'] = '^(['.$list_chars.']+)\s*(.*?)$';
 		if ($this->enable_headings) {
 			$line_regexes['sections'] = '^(={1,6})(.*?)(={1,6})$';
 		}
@@ -629,12 +641,14 @@ class Wikiparser {
 			'externallink'=>'('.
 				'\['. // explicit with [ and ]
 					'([^\]]*?)'. // href
-					'\s+([^\]]*?)?'. // with optional title
+					'(?:\s+([^\]]*?))?'. // with optional title
 				'\]'.
-				//'|'. // or
-				//'((https?):\/\/[^\s\,\<\>\{\}]*[^\s\.\,\<\>\{\}])'. // implicit url
+				/*
 				'|'. // or
-				'([^\s,@\<\>\{\}]+@([^\s,@\.\<\>\{\}]+\.)*[^\s,@\.\<\>\{\}]+)'. // implicit email address
+				'((https?):\/\/[^\s\,\<\>\{\}]*[^\s\.\,\<\>\{\}])'. // implicit url
+				'|'. // or
+				'([^\s,@\<\>\{\}:\[\]\#]+@([^\s,@\.\<\>\{\}:\[\]\#]+\.)*[^\s,@\.\<\>\{\}:\[\]\#]+)'. // implicit email address
+				*/
 				')',
 			'emphasize'=>'(('.$this->entities['\''].'){2,5})',
 			'eliminate'=>'(__TOC__|__NOTOC__|__NOEDITSECTION__)',

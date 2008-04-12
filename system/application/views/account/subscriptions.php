@@ -60,7 +60,7 @@
 			</div>
 		</form>
 		<h3>Description...</h3>
-		<div id="subscription_desc" class="blue_box"></div>
+		<div id="subscription_desc" class="BlueBox"></div>
 	</div>
 
 	<br style="clear: both;" />

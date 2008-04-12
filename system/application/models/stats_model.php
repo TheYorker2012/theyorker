@@ -135,33 +135,54 @@ class Stats_Model extends Model
 		return $query->row_array();
 	}
 	
-	//@Returns an array of unrounded basic mean average means (`average`,`average_official`,`average_unofficial`)
-	function GetAverageNumberOfUserLinks()
+	//@Returns an two percentages of links (`official`,`unofficial`)
+	function GetLinksPercentages()
 	{
-		$members = self::NumberOfMembers();
-		
 		$sql='
-		SELECT COUNT(*) as unofficial,
-		(
-			SELECT COUNT(*) 
+			SELECT COUNT(*) as official, 
+			(
+				SELECT COUNT(*)
+				FROM user_links
+				INNER JOIN links ON
+						user_links.user_link_link_id = links.link_id
+				WHERE links.link_official = 0
+			) as unofficial
 			FROM user_links
 			INNER JOIN links ON
-				user_links.user_link_link_id = links.link_id
-			WHERE links.link_official = 1
-		) as official
-		FROM user_links
-		INNER JOIN links ON
-				user_links.user_link_link_id = links.link_id
-		WHERE links.link_official = 0';
+					user_links.user_link_link_id = links.link_id
+			WHERE links.link_official = 1';
 		$query = $this->db->query($sql);
 		$data = $query->row_array();
-		$results = array
-					(
-						'average' => ($data['official'] + $data['unofficial']) / $members['confirmed_members'],
-						'average_official' => $data['official'] / $members['confirmed_members'],
-						'average_unofficial' => $data['unofficial'] / $members['confirmed_members']
+		$official = round(($data['official'] / ($data['official']+$data['unofficial']))*100);
+		return array(
+						'official' => $official,
+						'unofficial' => 100 - $official
 					);
-		return $results;
+	}
+	function GetNumberOfUsersWithLinksByGroups($max=6)
+	{
+		$sql='SELECT 
+				user_links.user_link_user_entity_id,
+				COUNT(*) as user_links_count 
+			FROM user_links 
+			INNER JOIN users ON
+				user_links.user_link_user_entity_id = users.user_entity_id
+			INNER JOIN entities ON
+			entities.entity_id = users.user_entity_id 
+			WHERE entities.entity_deleted=0 
+			GROUP BY user_link_user_entity_id';
+		$query = $this->db->query($sql);
+		//Create an array of buckets for each count 0 - $max
+		$links_array = array_fill(0, $max+1, 0);
+		foreach($query->result() as $user)
+		{
+			if ($user->user_links_count > $max) {
+				$links_array[$max]++;
+			} else {
+				$links_array[$user->user_links_count]++;
+			}
+		}
+		return $links_array;
 	}
 	//$level can be either 'office' 'admin' 'vip'
 	//If left blank it will return the number of members with any special access
@@ -214,6 +235,42 @@ class Stats_Model extends Model
 		}else{
 			return 0;
 		}
+	}
+	
+	//Warning to avoid biased results in the last element make sure the $ay_spacing is a  factor of $days_ago
+	//Only change days ago if you want to limit the array size, eg you want to know over the last 365 days.
+	function GetCumulativeSignUpsArrayOverLastDays($days_ago=30,$day_spacing=1)
+	{
+		$timestamp = date('Y-m-d 00:00:00', time() - (86400 * $days_ago));
+		$sql='
+		SELECT 
+			UNIX_TIMESTAMP(users.user_timestamp) as time_joined
+		FROM users 
+		INNER JOIN entities ON
+			entities.entity_id = users.user_entity_id
+		WHERE entities.entity_deleted=0 
+		AND entities.entity_password IS NOT NULL
+		AND users.user_timestamp > ?';
+		$query = $this->db->query($sql,array($timestamp));
+		
+		$base_count = self::GetNumberOfSignUps('0000-00-00 00:00:00', $timestamp);
+		
+		//Fill a result array with enough spaces ($days_ago/$day_spacing)
+		//Pre fill them with the base level
+		$num_of_day_groups = ceil($days_ago/$day_spacing);
+		$days_array = array_fill(0, $num_of_day_groups, $base_count);
+		foreach($query->result() as $row)
+		{
+			//This is a value of how many days ago this signup happened
+			$day_group = floor((time() - $row->time_joined) / (86400 * $day_spacing));
+			//Add one for each day before and equal to this date
+			//Position 0 is $days_ago Days Ago
+			//Last Position is Today
+			for ($i=$day_group;$i<$num_of_day_groups;$i++) {
+				$days_array[$i]++;
+			}
+		}
+		return $days_array;
 	}
 	
 	/////////////////////////
@@ -297,19 +354,15 @@ class Stats_Model extends Model
 			(
 				SELECT COUNT(*)
 				FROM comments
-				WHERE comments.comment_anonymous=1
-				AND comments.comment_author_entity_id = users.user_entity_id
-			) as anonymous_post_count,
-			(
-				SELECT COUNT(*)
-				FROM comments
-				WHERE comments.comment_deleted=1
+				WHERE comments.comment_deleted = 1
+				AND comments.comment_anonymous = 0
 				AND comments.comment_author_entity_id = users.user_entity_id
 			) as deleted_post_count
 		FROM comments
 		INNER JOIN users ON
 		comments.comment_author_entity_id = users.user_entity_id
-		WHERE comments.comment_deleted=0
+		WHERE comments.comment_deleted = 0
+		AND comments.comment_anonymous = 0
 		GROUP BY comment_author_entity_id
 		ORDER BY total_post_count DESC LIMIT ?
 		';
@@ -330,20 +383,15 @@ class Stats_Model extends Model
 			(
 				SELECT COUNT(*)
 				FROM comments
-				WHERE comments.comment_anonymous=1
-				AND comments.comment_deleted=1
-				AND comments.comment_author_entity_id = users.user_entity_id
-			) as anonymous_deleted_post_count,
-			(
-				SELECT COUNT(*)
-				FROM comments
-				WHERE comments.comment_deleted=1
+				WHERE comments.comment_deleted = 1
+				AND comments.comment_anonymous = 0
 				AND comments.comment_author_entity_id = users.user_entity_id
 			) as deleted_post_count
 		FROM comments
 		INNER JOIN users ON
 		comments.comment_author_entity_id = users.user_entity_id
-		WHERE comments.comment_deleted=0
+		WHERE comments.comment_deleted = 0
+		AND comments.comment_anonymous = 0
 		GROUP BY comment_author_entity_id
 		ORDER BY deleted_post_count DESC LIMIT ?
 		';
@@ -387,6 +435,44 @@ class Stats_Model extends Model
 		ORDER BY total_post_count DESC LIMIT ?';
 		$query = $this->db->query($sql,array($limit));
 		return $query->result_array();
+	}
+	
+	//Warning to avoid biased results in the last element make sure the $ay_spacing is a  factor of $days_ago
+	//Only change days ago if you want to limit the array size, eg you want to know over the last 365 days.
+	function GetCumulativeCommentsArrayOverLastDays($days_ago=30,$day_spacing=1)
+	{
+		$timestamp = date('Y-m-d 00:00:00', time() - (86400 * $days_ago));
+		//Get the number of comments before timestamp
+		$sql='SELECT COUNT(*) as comment_count
+		FROM comments 
+		WHERE comments.comment_deleted=0
+		AND comments.comment_post_time <= ?';
+		$query = $this->db->query($sql,array($timestamp));
+		$base_count = $query->row()->comment_count;
+		
+		//Get the array of comment times since timestamp
+		$sql='SELECT UNIX_TIMESTAMP(comments.comment_post_time) as post_time
+		FROM comments 
+		WHERE comments.comment_deleted=0
+		AND comments.comment_post_time > ?';
+		$query = $this->db->query($sql,array($timestamp));
+		
+		//Fill a result array with enough spaces ($days_ago/$day_spacing)
+		//Pre fill them with the base level
+		$num_of_day_groups = ceil($days_ago/$day_spacing);
+		$days_array = array_fill(0, $num_of_day_groups, $base_count);
+		foreach($query->result() as $row)
+		{
+			//This is a value of how many days ago this signup happened
+			$day_group = floor((time() - $row->post_time) / (86400 * $day_spacing));
+			//Add one for each day before and equal to this date
+			//Position 0 is $days_ago Days Ago
+			//Last Position is Today
+			for ($i=$day_group;$i<$num_of_day_groups;$i++) {
+				$days_array[$i]++;
+			}
+		}
+		return $days_array;
 	}
 }
 ?>

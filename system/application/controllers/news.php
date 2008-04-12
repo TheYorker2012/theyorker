@@ -29,6 +29,10 @@ class News extends Controller {
 		if (count($this->News_model->getArticleTypeInformation($method)) > 0) {
 			call_user_func_array(array(&$this, '_article'), $args);
 		}
+		# Redirect short URL to full URL
+		elseif (is_numeric($method)) {
+			call_user_func_array(array(&$this, '_redirect'), $args);
+		}
 		# If theres a function for the given method that isn't protected, use it.
 		elseif (method_exists($this, $method) && substr($method,0,1) != '_') {
 			call_user_func_array(array(&$this, $method), array_slice($args, 1));
@@ -37,6 +41,17 @@ class News extends Controller {
 		else {
 			show_404();
 		}
+	}
+
+	function _redirect ($article_id = NULL)
+	{
+		if ($article_id !== NULL) {
+			$type = $this->News_model->getArticleType($article_id);
+			if ($type !== false) {
+				redirect('/news/' . $type->content_type_codename . '/' . $article_id);
+			}
+		}
+		redirect('/news');
 	}
 
 	/// Display a news article in a given section.
@@ -311,26 +326,10 @@ class News extends Controller {
 		$this->main_frame->Load();
 	}
 
-	/// RSS Feed Generation
 	function rss()
 	{
-		header('Content-type: application/rss+xml');
-		$data['rss_title'] = 'News';
-		$data['rss_link'] = 'http://www.theyorker.co.uk/news/';
-		$data['rss_desc'] = 'All the news you need to know about from University of York\'s Campus!';
-		$data['rss_category'] = 'News';
-		$data['rss_pubdate'] = date('r');
-		$data['rss_lastbuild'] = date('r');
-		$data['rss_image'] = 'http://www.theyorker.co.uk/images/prototype/news/rss-uninews.jpg';
-		$data['rss_width'] = '126';
-		$data['rss_height'] = '126';
-		$data['rss_email_ed'] = 'no-reply@theyorker.co.uk (The Yorker)';
-		$data['rss_email_web'] = 'webmaster@theyorker.co.uk (Webmaster)';
-
-		/// Create RSS Feed for all sections
-		$data['rss_items'] = $this->News_model->GetArchive('search', array(), 0, 20);
-
-		$this->load->view('news/rss', $data);
+		/// Redirect to new feeds controller
+		redirect('/feeds/news');
 	}
 }
 ?>

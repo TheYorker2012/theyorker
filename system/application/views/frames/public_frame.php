@@ -19,7 +19,7 @@ if (isset($medium_type)) { ?>
 <?php } ?>
 	<meta name="description" content="<?php echo(xml_escape($description)); ?>" />
 	<meta name="keywords" content="<?php echo(xml_escape($keywords)); ?>" />
-	<meta name="verify-v1" content="5poz9wzYQRZavDYfeR105NoeDMr2URjQ0DFD4uH+MsY=" />
+	<meta name="verify-v1" content="slrlMuizkqTRTqt5W2zF1EZ6nMrwx+/qRmNDJ7xt2m8=" />
 
 	<title><?php
 		// FIXME: backwards compatibility, remove when all pages are shown with titles
@@ -31,7 +31,7 @@ if (isset($medium_type)) { ?>
 	?> - The Yorker</title>
 
 	<link rel="shortcut icon" href="/images/yorker.ico" />
-	<link rel="alternate" type="application/rss+xml" title="The Yorker - Campus News" href="/news/rss" />
+	<link rel="alternate" type="application/rss+xml" title="The Yorker - Campus News" href="/feeds/news" />
 
 
 	<link href="/stylesheets/new.css" rel="stylesheet" type="text/css" />
@@ -68,7 +68,7 @@ if (isset($medium_type)) { ?>
 			<a href="<?php echo($this->config->item('static_web_address')); ?>/pdf/advertisewithus.pdf">advertise with us</a> |
 			<a href="/account/">my account</a> |
 			<a href="/about/">about us</a> |
-			<a href="/contact/">contact us</a> |
+			<a href="/pages/join_our_team/">join us</a> |
 			<a href="/faq/">FAQs</a>
 		</div>
 		<div id="TopBannerPictures">
@@ -127,6 +127,7 @@ if (isset($medium_type)) { ?>
 					<li><a href="/news/videocasts">Videocasts</a></li>
 					<li><a href="/campaign/">Campaigns</a></li>
 					<li><a href="/news/archive/">Archive</a></li>
+					<li><a href="/feeds/">Feeds</a></li>
 				</ul>
 				<ul>
 					<li class="first"><a href="/charity/">Our Charity</a></li>
@@ -160,6 +161,8 @@ if (isset($medium_type)) { ?>
 <?php
 	if (isset($advert) && !empty($advert['image_id']) && !empty($advert['url'])) {
 		echo('			<a href="'.xml_escape($advert['url']).'" target="_blank"><img src="/image/advert/'.$advert['image_id'].'" width="120" height="600" style="margin-top: 40px;" alt="'.xml_escape($advert['alt']).'" title="'.xml_escape($advert['alt']).'" /></a>'."\n");
+	} elseif ($this->config->item('enable_adsense')) {
+		$this->load->view('frames/adsense');
 	}
 ?>
 		</div>
