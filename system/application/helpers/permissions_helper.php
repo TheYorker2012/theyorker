@@ -244,12 +244,8 @@ function OutputMode($Set = NULL)
 	return $output_mode;
 }
 
-/// Check that role permissions are satisfied.
-/**
- * @param $Permissions array,string Permission(s)
- * @return bool Whether permission exists.
- */
-function CheckRolePermissions()
+/// Get a list of missing permissions
+function GetMissingPermissions($permissions)
 {
 	$CI = &get_instance();
 	$CI->load->model('permissions_model');
@@ -267,6 +263,29 @@ function CheckRolePermissions()
 			}
 		}
 	}
+	
+	return $missingPermissions;
+}
+
+/// Check that role permissions are satisfied.
+/**
+ * @param $Permissions array,string Permission(s)
+ * @return bool Whether permission exists.
+ */
+function CheckRolePermissions()
+{
+	/// @pre CheckPermissions must already have been called.
+	if (!isset(get_instance()->user_auth)) {
+		$backtrace = debug_backtrace();
+		trigger_error('CheckPermissions should be called before CheckRolePermissions in function '.xml_escape($backtrace[1]['function']).' at:<br />'.
+			'File: '.xml_escape($backtrace[0]['file']).'<br />'.
+			'Line: '.xml_escape($backtrace[0]['line']),
+			E_USER_ERROR);
+		exit(1);
+	}
+	
+	$arguments = func_get_args();
+	$missingPermissions = GetMissingPermissions($arguments);
 	if (empty($missingPermissions)) {
 		return true;
 	}
