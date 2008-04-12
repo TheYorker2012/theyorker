@@ -22,6 +22,9 @@ $config['pr_officer_name'] = 'Anna Greenleaves and James Koziaryn';
 $config['rss_feed_stats'] = false;
 $config['enable_adsense'] = false;
 
+$config['twitter_admin_userid'] = 'ykr';
+$config['twitter_admin_passwd'] = 'naG88fEn@laTh46ButT';
+
 $config['comments'] = array(
 	// Who has permission to edit a comment
 	'edit'  => array(
