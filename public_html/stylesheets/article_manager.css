@@ -1,0 +1,101 @@
+/* Common */
+.clear {
+	clear: both;
+}
+
+.clear_right {
+	clear: right;
+}
+
+/* Container */
+div#am_container {
+	float: left;
+	background-image: url('/images/prototype/news/am_fake_bg.jpg');
+	background-position: right;
+	background-repeat: repeat-y;
+}
+
+/* Page Content */
+div#am_container div#am_canvas {
+	margin-right: 140px;
+	border: 1px #20C1F0 solid;
+	border-right: 0;
+}
+
+div#am_container div#am_canvas div.am_page {
+	display: none;
+	margin: 5px;
+}
+
+/* Sidebar */
+div#am_container div#am_sidebar {
+	float: right;
+	width: 140px;
+}
+
+div#am_container div#am_sidebar ul {
+	margin: 10px 0;
+	display: block;
+	border-top: 1px #20c1f0 solid;
+}
+
+div#am_container div#am_sidebar ul li {
+	padding: 0.2em 0 0.2em 5px;
+	border: 1px #20c1f0 solid;
+	border-top: 0;
+}
+
+div#am_container div#am_sidebar ul li.current {
+	background-color: #20c1f0;
+}
+
+div#am_container div#am_sidebar ul li.current a {
+	color: #fff;
+	font-weight: bold;
+}
+
+div#am_container div#am_sidebar ul li#am_nav_request { list-style-image: url('/images/icons/page_white_stack.png'); }
+div#am_container div#am_sidebar ul li#am_nav_article { list-style-image: url('/images/icons/report.png'); }
+div#am_container div#am_sidebar ul li#am_nav_photos { list-style-image: url('/images/icons/picture.png'); }
+div#am_container div#am_sidebar ul li#am_nav_bylines { list-style-image: url('/images/icons/vcard.png'); }
+div#am_container div#am_sidebar ul li#am_nav_related { list-style-image: url('/images/icons/arrow_switch.png'); }
+div#am_container div#am_sidebar ul li#am_nav_comments { list-style-image: url('/images/icons/comments.png'); }
+div#am_container div#am_sidebar ul li#am_nav_publish { list-style-image: url('/images/icons/package.png'); }
+
+/* OnScreen Prompts */
+div#am_container div#am_canvas {
+	position: relative;
+}
+
+div#am_container div#am_canvas div#am_blackout {
+	display: none;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: url('/images/prototype/news/blackout.gif');
+}
+
+div#am_container div#am_canvas div#am_popup_container {
+	display: none;
+	position: absolute;
+	top: 50%;
+	left: 0;
+	width: 100%;
+}
+
+div#am_container div#am_canvas div#am_popup_container div {
+	position: relative;
+	top: -50%;
+	width: 60%;
+	margin: 0 auto;
+	padding: 0.4em;
+	background-color: #fff;
+	border: 1px #20c1f0 solid;
+}
+
+div#am_container div#am_canvas div#am_popup_container div img {
+	float: left;
+	margin-right: 5px;
+}
