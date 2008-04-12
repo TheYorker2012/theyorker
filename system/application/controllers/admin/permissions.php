@@ -31,7 +31,7 @@ class Permissions extends Controller
 		// Roles might not have permissions
 		foreach ($data['userRoles'] as $roles) {
 			foreach ($roles as $role) {
-				if (!isset($rolePermissions[$role])) {
+				if (!isset($data['rolePermissions'][$role])) {
 					$data['rolePermissions'][$role] = array();
 				}
 			}
