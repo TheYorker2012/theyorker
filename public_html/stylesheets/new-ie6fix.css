@@ -16,7 +16,7 @@ fieldset#SearchBox {
 
 ul#Navbar {
 	/*width: expression(document.getElementById("Header").width - 150);*/
-	width: 630px;
+	width: 854px;
 }
 
 ul#Navbar li {
@@ -25,7 +25,7 @@ ul#Navbar li {
 
 div.BlueBox {
 	/*width: expression((document.getElementById("RightColumn") == null) ? (document.body.clientWidth - 150) : (document.body.clientWidth - 390));*/
-	width: expression((document.getElementById("RightColumn") == null) ? "630px" : "392px");
+	width: expression((document.getElementById("RightColumn") == null) ? "854px" : "616px");
 	padding: 10px;
 }
 
@@ -35,6 +35,6 @@ div#HomeBanner {
 
 div.message_error, div.message_warning, div.message_information, div.message_success {
 	/*width: expression(document.body.clientWidth - 150);*/
-	width: 630px;
+	width: 854px;
 	padding: 0.3em;
 }
