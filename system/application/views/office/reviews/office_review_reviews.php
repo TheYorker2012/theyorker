@@ -1,10 +1,12 @@
-<div class="RightToolbar">
-	<h4 class="first">Page Information</h4>
-	<?php echo($page_information); ?>
+<div id="RightColumn">
+	<h2 class="first">Page Information</h2>
+	<div class="Entry">
+		<?php echo($page_information); ?>
+	</div>
 </div>
 <div id="MainColumn">
 	<?php if(!empty($reviews)){ ?>
-	<div class="blue_box">
+	<div class="BlueBox">
 		<h2>Reviews</h2>
 		<div class="ArticleBox">
 			<table>
@@ -66,7 +68,7 @@
 		<br />
 	</div>
 	<?php } ?>
-	<div class="blue_box">
+	<div class="BlueBox">
 		<h2>Add review</h2>
 		<form class="form" action="<?php echo($_SERVER['REQUEST_URI']); ?>" method="POST">
 			<fieldset>

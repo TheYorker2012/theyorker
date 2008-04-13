@@ -130,7 +130,7 @@ class Reviews extends Controller
 		}
 
 		// Set up the view
-		$the_view = $this->frames->view('reviews/office_review_overview', $data);
+		$the_view = $this->frames->view('office/reviews/office_review_overview', $data);
 
 		// Set up the public frame
 		$this->main_frame->SetTitleParameters(
@@ -442,7 +442,7 @@ class Reviews extends Controller
 				}
 			}
 			// Set up the public frame
-			$this->main_frame->SetContentSimple('reviews/office_review_information', $data);
+			$this->main_frame->SetContentSimple('office/reviews/office_review_information', $data);
 		}
 
 		$this->main_frame->SetTitleParameters(array(
@@ -506,7 +506,7 @@ class Reviews extends Controller
 		$data['new_tags'] = $this->review_model->GetTagWithoutOrganisation($ContextType,$organisation);
 
 		// Set up the view
-		$the_view = $this->frames->view('reviews/office_review_tags', $data);
+		$the_view = $this->frames->view('office/reviews/office_review_tags', $data);
 
 		// Set up the public frame
 		$this->main_frame->SetTitleParameters(
@@ -572,7 +572,7 @@ class Reviews extends Controller
 			}
 		}
 		// Set up the view
-		$the_view = $this->frames->view('reviews/office_review_leagues', $data);
+		$the_view = $this->frames->view('office/reviews/office_review_leagues', $data);
 
 		// Set up the public frame
 		$this->main_frame->SetTitleParameters(
@@ -769,7 +769,7 @@ class Reviews extends Controller
 		}
 
 		// Set up the view
-		$the_view = $this->frames->view('reviews/office_review_reviews', $data);
+		$the_view = $this->frames->view('office/reviews/office_review_reviews', $data);
 
 		$this->main_frame->IncludeJs('javascript/wikitoolbar.js');
 
@@ -942,7 +942,7 @@ class Reviews extends Controller
 		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
 
 		// Set up the view
-		$the_view = $this->frames->view('reviews/office_review_reviewedit', $data);
+		$the_view = $this->frames->view('office/reviews/office_review_reviewedit', $data);
 
 		$this->main_frame->IncludeJs('javascript/wikitoolbar.js');
 
@@ -977,7 +977,7 @@ class Reviews extends Controller
 		$thread = $this->review_model->GetReviewContextOfficeCommentThread($organisation_id, $content_id);
 		$data['comments'] = $this->comment_views->CreateStandard($thread, $IncludedComment);
 
-		$this->main_frame->SetContentSimple('reviews/office_review_comments', $data);
+		$this->main_frame->SetContentSimple('office/reviews/office_review_comments', $data);
 		$this->main_frame->SetTitleParameters(
 				array('organisation' => $data['organisation']['name'],
 						'content_type' => ucfirst($ContextType)));

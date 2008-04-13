@@ -1,9 +1,9 @@
-<div class="RightToolbar">
-	<h4 class="first">Page Information</h4>
+<div id="RightColumn">
+	<h2 class="first">Page Information</h2>
 	<div class="Entry">
 		<?php echo($page_information); ?>
 	</div>
-	<h4>Actions</h4>
+	<h2>Actions</h2>
 	<div class="Entry">
 		<ul>
 			<li><a href="/office/reviewtags">Create/Edit Tags.</a></li>
@@ -13,7 +13,7 @@
 	</div>
 </div>
 <div id="MainColumn">
-	<div class="blue_box">
+	<div class="BlueBox">
 		<h2>Venues</h2>
 		<div class="ArticleBox">
 			<table>

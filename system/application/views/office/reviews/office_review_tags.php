@@ -1,9 +1,11 @@
-<div class='RightToolbar'>
-	<h4>Page Information</h4>
-	<?php echo($page_information); ?>
+<div id="RightColumn">
+	<h2 class="first">Page Information</h2>
+	<div class="Entry">
+		<?php echo($page_information); ?>
+	</div>
 </div>
 <div id="MainColumn">
-	<div class="blue_box">
+	<div class="BlueBox">
 		<h2>tagged as...</h2>
 		<p>
 		<?php
@@ -24,7 +26,7 @@
 		</form>
 		</p>
 	</div>
-	<div class="blue_box">
+	<div class="BlueBox">
 		<h2>potential tags</h2>
 		<p>
 		<?php

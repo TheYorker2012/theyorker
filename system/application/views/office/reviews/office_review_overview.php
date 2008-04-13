@@ -1,11 +1,11 @@
-<div class='RightToolbar'>
-<h4 class="first" >Page Information</h4>
+<div id="RightColumn">
+	<h2 class="first" >Page Information</h2>
 	<div class="Entry">
 		<?php echo($page_information); ?>
 	</div>
 </div>
 <div id="MainColumn">
-	<div class='blue_box'>
+	<div class='BlueBox'>
 		<h2>entries for this organisation</h2>
 
 		<table cellspacing="0" cellpadding="0">

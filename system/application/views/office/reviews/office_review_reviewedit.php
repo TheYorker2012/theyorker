@@ -1,11 +1,12 @@
-<div class="RightToolbar">
-	<h4 class="first">Page Information</h4>
-	<?php 
-	echo($page_information);
-	
+<div id="RightColumn">
+	<h2 class="first">Page Information</h2>
+	<div class="Entry">
+		<?php echo($page_information); ?>
+	</div>
+	<?php
 	if (count($article['revisions']) > 0){
 	?>
-	<h4>Revisions</h4>
+	<h2>Revisions</h2>
 	<div class="Entry">
 		<ol>
 		<?php
@@ -32,7 +33,7 @@
 	}
 	if($user['is_editor']){
 	?>
-	<h4>Editor Options</h4>
+	<h2>Editor Options</h2>
 	<div class="Entry">
 		<?php
 		//Only show publish button if the revision is not currently the live revision.
@@ -50,12 +51,12 @@
 		?>
 		<form class="form" action="<?php echo($this_url); ?>" method="POST">
 			<fieldset>
-				<input type="submit" name="r_submit_pull" class="button" value="Pull Review" />
+				<input type="submit" style="width: auto;" name="r_submit_pull" class="button" value="Pull Review" />
 			</fieldset>
 		</form>
 		<form class="form" action="<?php echo($this_url); ?>" method="POST">
 			<fieldset>
-				<input type="submit" name="r_submit_delete" class="button" value="Delete Review" />
+				<input type="submit" style="width: auto;" name="r_submit_delete" class="button" value="Delete Review" />
 			</fieldset>
 		</form>
 	</div>
@@ -64,7 +65,7 @@
 	?>
 </div>
 <div id="MainColumn">
-	<div class="blue_box">
+	<div class="BlueBox">
 		<h2>edit review</h2>
 		<form class="form" action="<?php echo($this_url); ?>" method="POST">
 			<fieldset>

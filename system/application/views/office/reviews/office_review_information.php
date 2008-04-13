@@ -2,15 +2,15 @@
 // base reviews/organisation/context/information url
 $reviews_information_url = site_url('office/reviews/'.xml_escape($organisation['shortname']).'/'.xml_escape($context_type).'/information/');
 ?>
-<div class='RightToolbar'>
-	<h4>Page Information</h4>
+<div id="RightColumn">
+	<h2 class="first">Page Information</h2>
 	<div class="Entry">
 		<?php echo($page_information); ?>
 	</div>
 	<?php 
 	if (!empty($revisions)){
 	?>
-	<h4>Revisions</h4>
+	<h2>Revisions</h2>
 	<div class="Entry">
 		<ol>
 		<?php
@@ -68,7 +68,7 @@ $reviews_information_url = site_url('office/reviews/'.xml_escape($organisation['
 	<?php
 	}
 	?>
-	<h4>Assigned User</h4>
+	<h2>Assigned User</h2>
 	<div class="Entry">
 	<?php 
 	if($user_is_editor) {
