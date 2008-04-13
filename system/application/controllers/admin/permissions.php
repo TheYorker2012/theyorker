@@ -23,6 +23,12 @@ class Permissions extends Controller
 		
 		$data = array();
 		
+		$this->pages_model->SetPageCode('admin_permissions');
+		$data['xml_whats_this']       = $this->pages_model->GetPropertyWikitext('whats_this');
+		$data['xml_info_permissions'] = $this->pages_model->GetPropertyWikitext('info_permissions');
+		$data['xml_info_roles']       = $this->pages_model->GetPropertyWikitext('info_roles');
+		$data['xml_info_users']       = $this->pages_model->GetPropertyWikitext('info_users');
+		
 		$data['permissionDescriptions'] = $this->permissions_model->getAllPermissions();
 		$data['rolePermissions'] = $this->permissions_model->getAllRolePermissions();
 		$data['implicitRoles'] = $this->permissions_model->getImplicitRoles();
@@ -44,8 +50,8 @@ class Permissions extends Controller
 		$this->main_frame->Load();
 	}
 	
-	/// Role permissions exporter.
-	function export()
+	/// Role permissions exporter/importer.
+	function port()
 	{
 		if (!CheckPermissions('admin')) return;
 		$this->load->model('permissions_model');
@@ -110,6 +116,9 @@ class Permissions extends Controller
 		}
 		
 		$data = array( 'textRoles' => $textRoles );
+		
+		$this->pages_model->SetPageCode('admin_permissions_port');
+		$data['xml_info'] = $this->pages_model->GetPropertyWikitext('info');
 			
 		$this->main_frame->SetContentSimple('admin/permissions/export_roles', $data);
 		$this->main_frame->Load();
@@ -121,7 +130,14 @@ class Permissions extends Controller
 		if (!CheckPermissions('office', false)) return;
 		// Allow admins to do this, in case somebody screws with permissions.
 		if (GetUserLevel() != 'admin') {
-			if (!CheckRolePermissions('PERMISSIONS_MODIFY_ROLES')) return;
+			$requiredPermissions = array();
+			if (isset($_GET['roles'])) {
+				$requiredPermissions[] = 'PERMISSIONS_MODIFY_ROLES';
+			}
+			if (isset($_GET['users'])) {
+				$requiredPermissions[] = 'PERMISSIONS_MODIFY_USERS';
+			}
+			if (!CheckRolePermissions($requiredPermissions)) return;
 		}
 		else {
 			$this->load->model('permissions_model');

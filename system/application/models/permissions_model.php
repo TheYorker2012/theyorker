@@ -21,7 +21,7 @@ class permissions_model extends Model
 	 */
 	function hasUserPermission($permission)
 	{
-		$this->getPermissions();
+		$this->getUserPermissions();
 		return isset($this->permissionsCache[$permission]);
 	}
 	

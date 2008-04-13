@@ -22,11 +22,12 @@ class CustomPageView extends FramesView
 	
 	/// Primary constructor
 	/**
-	 * @param $PageCode string Page code.
+	 * @param $PageCode  string Page code.
 	 * @param $Namespace string Namespace of page code.
+	 * @param $Scope     array  Scope variables to pass onto page model.
 	 * @note Actual page code is @a Namespace : @a PageCode.
 	 */
-	function __construct($PageCode, $Namespace = NULL)
+	function __construct($PageCode, $Namespace = NULL, $Scope = array())
 	{
 		parent::__construct(NULL);
 		
@@ -37,7 +38,7 @@ class CustomPageView extends FramesView
 		$CI = &get_instance();
 		$CI->pages_model->SetPageCode($PageCode);
 		
-		$this->mProperties = $CI->pages_model->GetPropertyArrayNew('main');
+		$this->mProperties = $CI->pages_model->GetPropertyArrayNew('main', false, $Scope);
 	}
 
 	function Load()

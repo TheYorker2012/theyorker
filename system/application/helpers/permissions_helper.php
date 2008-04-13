@@ -285,13 +285,31 @@ function CheckRolePermissions()
 	}
 	
 	$arguments = func_get_args();
-	$missingPermissions = GetMissingPermissions($arguments);
+	$missingPermissions = call_user_func_array('GetMissingPermissions',$arguments);
 	if (empty($missingPermissions)) {
 		return true;
 	}
 	else {
-		/// @todo MAKE 403 LOOK NICE
-		$CI->messages->AddMessage('error', 'You do not have the following permission(s): "'.xml_escape(implode('", "', $missingPermissions)).'" that are required to access this page. Please contact a a senior editor if you require more permissions.');
+		$CI = & get_instance();
+		
+		// produce a nice error message (plural sensitive)
+		$permissionsString = '"'.implode('", "', $missingPermissions).'"';
+		if (count($missingPermissions) != 1) {
+			$errorMessage = 'You do not have the following permissions that are required to access this page: '.$permissionsString.'.';
+		}
+		else {
+			$errorMessage = 'You do not have the permission '.$permissionsString.' that is required to access this page.';
+		}
+		
+		// set http status code and display a pretty error
+		header('HTTP/1.1 403 Permission Denied: '.$errorMessage);
+		$CI->load->library('custom_pages');
+		$scope = array(
+			'ErrorMessage' => $errorMessage,
+		);
+		$CI->main_frame->SetContent(new CustomPageView('permissions_403','error', $scope));
+		
+		// forcefully load the main frame with the error
 		$CI->main_frame->Load();
 		return false;
 	}

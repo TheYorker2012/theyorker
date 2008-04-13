@@ -10,21 +10,18 @@
  * @param $implicitRoles
  * @param $userRoles
  * @param $userNames
+ * @param $xml_whats_this
+ * @param $xml_info_permissions
+ * @param $xml_info_roles
+ * @param $xml_info_users
  */
 
 ?>
 
 <div class="RightToolbar">
-	<h4>What's this?</h4>
-	<p>Users can have a number of roles, each with a group of associated permissions.</p>
-	<ul>
-		<li>Click on a permission to adjust which roles contain it.</li>
-		<li>Click on a role to adjust which permissions it contains and which users have the role.</li>
-		<li>Click on a user to adjust which roles they have.</li>
-	</ul>
-	<p>	Remember that the purpose of roles is to represent groups of users with common sets of permissions.
-		You can create new roles if appropriate using the "New Role" box.</p>
-	<p>	Once a permission, role or user is selected you can toggle associated permissions, roles or users by clicking the boxes on the left.</p>
+	<?php
+	echo($xml_whats_this);
+	?>
 	
 	<h4>Save</h4>
 	<form class="form">
@@ -58,9 +55,9 @@
 </noscript>
 
 <div id="permissionsBox" class="grey_box">
-	<h2>Permissions</h2>
-	<p>	Permissions represent actions that can be performed.
-		A permission can belong to a role, so that anybody who has the role has the permission.</p>
+	<?php
+	echo($xml_info_permissions);
+	?>
 	<?php
 	$last_prefix = '';
 	foreach ($permissionDescriptions as $permission => $description) {
@@ -94,8 +91,9 @@
 </div>
 
 <div id="rolesBox" class="grey_box">
-	<h2>Roles</h2>
-	<p>Each role represents a group of related permissions common to all users with that role.</p>
+	<?php
+	echo($xml_info_roles);
+	?>
 	<div id="rolesList">
 		<hr />
 		<?php foreach ($rolePermissions as $role => $permissions) { ?>
@@ -140,8 +138,9 @@
 </div>
 
 <div id="usersBox" class="grey_box">
-	<h2>Users</h2>
-	<p>	Users can have a number of roles which determine which permissions they have.</p>
+	<?php
+	echo($xml_info_users);
+	?>
 	<hr />
 	<?php foreach ($userRoles as $user => $roles) { ?>
 	<div	id="user-<?php echo(xml_escape($user)); ?>"

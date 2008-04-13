@@ -226,9 +226,12 @@ function saveAllPermissions()
 	}
 	if (changes) {
 		var ajax = new AJAXInteraction('/admin/permissions/update', post,
-			function () {
+			function (responseXml) {
 				alert('Permissions saved.');
 				location.reload(true);
+			},
+			function(status, statusText) {
+				alert(statusText);
 			}
 		);
 		ajax.doGet();
