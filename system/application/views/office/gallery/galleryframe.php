@@ -1,5 +1,5 @@
-<div class="RightToolbar">
-	<h4>Actions</h4>
+<div id="RightColumn">
+	<h2 class="first">Actions</h2>
 	<form class="form" method="post" action="<?=site_url('office/gallery')?>">
 		<div class="Entry">
 			<ul>
@@ -13,24 +13,28 @@
 			<li><a href="javascript:document.clearform.submit()">Start a new Search</a></li>
 		</div>
 	</form>
-	<h4>Search by...</h4>
+	<h2>Search by...</h2>
 	<form class="form" method="post" action="<?=site_url('office/gallery')?>">
 		<div class="Entry">
 			<fieldset>
-			<input type="radio" name="searchcriteria" value="title" checked />Title<br />
-			<input type="radio" name="searchcriteria" value="date" />Date<br />
-			<input type="radio" name="searchcriteria" value="photographer" />Photographer<br /><br />
+			<p>
+				<input type="radio" style="width: auto;" name="searchcriteria" value="title" checked />Title<br />
+				<input type="radio" style="width: auto;" name="searchcriteria" value="date" />Date<br />
+				<input type="radio" style="width: auto;" name="searchcriteria" value="photographer" />Photographer
+			</p>
 			Search Criteria:<input type="text" name="search" />
 			<input type="submit" class="button" name="submit" value="Search" />
 			</fieldset>
 		</div>
-		<h4>Advanced</h4>
+		<h2>Advanced</h2>
 		<div class="Entry">
 			<fieldset>
-			Order by:<br />
-			<input type="radio" name="order" value="title"/>Title<br />
-			<input type="radio" name="order" value="date"/>Date<br />
-			<input type="radio" name="order" value="photographer"/>Photographer<br /><br />
+			<p>
+				Order by:<br />
+				<input style="width: auto;" type="radio" name="order" value="title"/>Title<br />
+				<input style="width: auto;" type="radio" name="order" value="date"/>Date<br />
+				<input style="width: auto;" type="radio" name="order" value="photographer"/>Photographer
+			</p>
 			Show only tag:<br />
 			<select name="tag">
 				<option value="null" selected></option>
@@ -49,6 +53,7 @@
 		</div>
 	</form>
 </div>
+<div id="MainColumn">
 	<?php
 		// Load a subview.
 		$content[0]->Load();

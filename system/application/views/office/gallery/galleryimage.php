@@ -1,4 +1,4 @@
-<div class="blue_box">
+<div class="BlueBox">
 	<h2>information</h2>
 	<form class="form" method="post" action="<?=site_url('office/gallery/show/'.$photoDetails->photo_id.'/save')?>">
 		<fieldset>
@@ -21,14 +21,14 @@
 					<input type="text" id="newtag" autocomplete="off" size="15" onKeyup="tag_suggest()" onKeypress="return checkKeypress(event)" />
 					<input type="button" value="Add" onClick="addTag();updateList();" /><br />
 					<div style="overflow-y: auto;overflow-x: hidden;">
-						<ul id="ntags" style="height:250px; width:190px;list-style: none outside none;">
+						<ul id="ntags" style="height:250px; width:180px;list-style: none outside none;">
 						</ul>
 					</div>
 				</div>
 				<div style="float:left">
 					<h4>Tagged as:</h4>
 					<div style="overflow-y: auto;overflow-x: hidden;">
-						<ul id="ctags" style="height:250px;width:190px;list-style: none outside none;">
+						<ul id="ctags" style="height:250px;width:180px;list-style: none outside none;">
 							<?php
 							if ($photoTag->num_rows() > 0) {
 								foreach ($photoTag->result() as $tag) {
@@ -49,15 +49,17 @@
 		</fieldset>
 	</form>
 </div>
-<div class="grey_box">
+<div class="BlueBox">
 	<h2>previews</h2>
 	<?php foreach($type as $image) {?>
-	<?php 	echo(xml_escape($image->image_type_name)); ?> (<?php echo($image->image_type_width); ?>x<?php echo($image->image_type_height); ?>)<br />
-	<?php 	echo($this->image->getThumb($photoDetails->photo_id, $image->image_type_codename)); ?><br /><br />
+	<?php 	echo('<p>'.xml_escape($image->image_type_name)); ?> (<?php echo($image->image_type_width); ?>x<?php echo($image->image_type_height); ?>)</p>
+	<?php 	echo($this->image->getThumb($photoDetails->photo_id, $image->image_type_codename)); ?>
 	<?php } ?>
+	<p>
 	Full Size<br />
 	<a href="<?php echo(site_url('photos/full/'.$photoDetails->photo_id)); ?>">Click here to view</a><br /><br />
 	Not happy with these thumbnails? <a href="<?php echo(site_url('office/gallery/edit/'.$photoDetails->photo_id)); ?>">Click here</a> to re-thumbnail.
+	</p>
 </div>
 <script type="text/javascript">
 // <![CDATA[
