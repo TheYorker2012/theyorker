@@ -1,4 +1,4 @@
-<div class='blue_box' style="width:auto">
+<div class='BlueBox'>
 	<h2>scheduled and live</h2>
 	<table width="100%">
 	<tr>

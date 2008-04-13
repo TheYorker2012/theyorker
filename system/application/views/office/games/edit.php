@@ -35,9 +35,11 @@
 // ]]>
 </script>
 
-<div class="RightToolbar">
-	<h4><?php echo(xml_escape($section_games_edit_page_info_title)); ?></h4>
-	<?php echo($section_games_edit_page_info_text); ?>
+<div id="RightColumn">
+	<h2 class="first"><?php echo(xml_escape($section_games_edit_page_info_title)); ?></h2>
+	<div class="Entry">
+		<?php echo($section_games_edit_page_info_text); ?>
+	</div>
 </div>
 <div id="MainColumn">
 	<form id="edit_game_form" action="<?php echo($_SERVER["REQUEST_URI"]); ?>" method="post" class="form" >

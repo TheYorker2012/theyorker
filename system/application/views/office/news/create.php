@@ -1,17 +1,17 @@
-	<script type='text/javascript' src='/javascript/calendar_select.js'></script>
-	<script type='text/javascript' src='/javascript/calendar_select-en.js'></script>
-	<script type='text/javascript' src='/javascript/calendar_select-setup.js'></script>
+<script type='text/javascript' src='/javascript/calendar_select.js'></script>
+<script type='text/javascript' src='/javascript/calendar_select-en.js'></script>
+<script type='text/javascript' src='/javascript/calendar_select-setup.js'></script>
 
-	<div class='RightToolbar'>
-		<h4>Creating an Article</h4>
-		By completing this form you will be creating an article which you can immediately start
-		writing without having to wait for approval by an editor. The article will, however, still
-		need to be approved by an editor before it can be published onto the website and can be
-		cancelled by an editor at any point.
+<div id="RightColumn">
+	<h2 class="first">Page Information</h2>
+	<div class="Entry">
+		<?php echo($page_information); ?>
 	</div>
-
+</div>
+<div id="MainColumn">
 	<form id='new_request' action='/office/news/create' method='post' class='form'>
-		<div class='blue_box'>
+		<div class='BlueBox'>
+			<h2>New article</h2>
 			<fieldset>
 				<label for='r_title'>Title:</label>
 				<input type='text' name='r_title' id='r_title' value='<?php echo(xml_escape($this->validation->r_title)); ?>' size='30' />
@@ -34,7 +34,7 @@
 		  		<br />
 			</fieldset>
 		</div>
-	<div style='width: 422px;'>
+	<div>
 	 	<input type='submit' name='submit' id='submit' value='Create Article' class='button' />
 	</div>
 	</form>
@@ -58,3 +58,4 @@
 	);
 	// ]]>
 	</script>
+</div>
