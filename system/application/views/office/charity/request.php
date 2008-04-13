@@ -1,31 +1,27 @@
-<?php
-	//sidebar
-	echo('<div class="RightToolbar">'."\n");
-	echo('	<h4>Quick Links</h4>'."\n");
-	echo('	<div class="Entry">'."\n");
-	echo('		<a href="/office/charity/">Back To Charity Index</a>'."\n");
-	echo('		<br />'."\n");
-	echo('		<a href="/office/charity/editarticle/'.$parameters['charity_id'].'">Back To Article</a>'."\n");
-	echo('	</div>'."\n");
-	echo('</div>'."\n");
-	
-	//main - request info
-	echo('<div class="blue_box">'."\n");
-	echo('	<h2>edit request</h2>'."\n");
-	echo('	<form class="form" action="/office/charity/domodify" method="post" >'."\n");
-	echo('		<fieldset>'."\n");
-	echo('			<input type="hidden" name="r_redirecturl" id="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />'."\n");
-	echo('			<input type="hidden" name="r_charityid" value="'.$parameters['charity_id'].'" />'."\n");
-	echo('		</fieldset>'."\n");
-	echo('		<fieldset>'."\n");
-	echo('			<label for="a_title">Title:</label>'."\n");
-	echo('			<input type="text" name="a_title" size="30" value="'.xml_escape($article['header']['requesttitle']).'" />'."\n");
-	echo('			<label for="a_description">Description:</label>'."\n");
-	echo('			<textarea name="a_description" rows="10" cols="56" />'.xml_escape($article['header']['requestdescription']).'</textarea><br />'."\n");
-	echo('		</fieldset>'."\n");
-	echo('		<fieldset>'."\n");
-	echo('			<input type="submit" value="Save" class="button" name="r_submit_save_request" />'."\n");
-	echo('		</fieldset>'."\n");
-	echo('	</form>'."\n");
-	echo('</div>'."\n");
-?>
+<div id="RightColumn">
+	<h2 class="first">Page Information</h2>
+	<div class="Entry">
+		<?php echo($page_information); ?>
+	</div>
+</div>
+<div id="MainColumn">
+	<div class="BlueBox">
+		<h2>edit request</h2>
+		<form class="form" action="/office/charity/domodify" method="post" >
+			<fieldset>
+				<input type="hidden" name="r_redirecturl" id="r_redirecturl" value="<?php echo($_SERVER['REQUEST_URI']); ?>" />
+				<input type="hidden" name="r_charityid" value="<?php echo($parameters['charity_id']); ?>" />
+			</fieldset>
+			<fieldset>
+				<label for="a_title">Title:</label>
+				<input type="text" name="a_title" size="30" value="<?php echo(xml_escape($article['header']['requesttitle'])); ?>" />
+				<label for="a_description">Description:</label>
+				<textarea name="a_description" rows="10" cols="50" /><?php echo(xml_escape($article['header']['requestdescription'])); ?></textarea><br />
+			</fieldset>
+			<fieldset>
+				<input type="submit" value="Save" class="button" name="r_submit_save_request" />
+			</fieldset>
+		</form>
+	</div>
+	<a href="/office/charity/editarticle/<?php echo($parameters['charity_id']); ?>">Back To Article</a>
+</div>
