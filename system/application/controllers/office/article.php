@@ -55,6 +55,7 @@ class Article extends Controller
 		// Editors
 		// Assigned editor
 		// Assigned & Accepted writers
+		$data['readonly'] = FALSE;
 
 		$this->main_frame->SetTitleParameters(
 			array('title' => (empty($data['article_headline']) ? ((empty($data['request_title'])) ? 'New Article' : $data['request_title'] ) : $data['article_headline']))

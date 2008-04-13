@@ -1,5 +1,6 @@
 <script type="text/javascript">
 onLoadFunctions.push(loadPage);
+onLoadFunctions.push(disablePages);
 </script>
 
 <div id="am_container">
@@ -21,9 +22,12 @@ onLoadFunctions.push(loadPage);
 		<div id="am_popup_container">
 			<div id="am_popup_test">
 				<img src="/images/prototype/homepage/error.png" alt="Error" />
-				Message will go here! :)<br /><br /><br /><br />
-				<input type="button" value="Dismiss" onclick="hidePopup('test');" />
-				<br class="clear" />
+				Message will go here! :)<br /><br />
+				<div class="am_popup_buttons">
+					<input type="button" value="Make Article" onclick="enablePages();hidePopup('test');" />
+					<input type="button" value="Dismiss" onclick="hidePopup('test');" />
+				</div>
+				<div class="clear"></div>
 			</div>
 		</div>
 

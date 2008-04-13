@@ -6,11 +6,13 @@ function loadPage () {
 }
 
 function switchPage (page_id) {
-	if (!popup_shown) {
+	if ((!popup_shown) && (document.getElementById('am_nav_' + page_id).className != 'disabled')) {
 		/* Change selected menu option */
 		var nav = document.getElementById('am_nav');
 		for (var i = 0; i < nav.childNodes.length; i++) {
-			nav.childNodes[i].className = '';
+			if (nav.childNodes[i].className != 'disabled') {
+				nav.childNodes[i].className = '';
+			}
 		}
 		document.getElementById('am_nav_' + page_id).className = 'current';
 		/* Change content displayed */
@@ -23,6 +25,25 @@ function switchPage (page_id) {
 		document.getElementById('am_page_' + page_id).style.display = 'block';
 	}
 	return false;
+}
+
+/* Used when suggestion becomes an article */
+function enablePages () {
+	var nav = document.getElementById('am_nav');
+	for (var i = 0; i < nav.childNodes.length; i++) {
+		if (nav.childNodes[i].className == 'disabled') {
+			nav.childNodes[i].className = '';
+		}
+	}
+}
+
+/* Used when an article is only a suggestion */
+function disablePages () {
+	var nav = document.getElementById('am_nav');
+	for (var i = 0; i < nav.childNodes.length; i++) {
+		nav.childNodes[i].className = 'disabled';
+	}
+	document.getElementById('am_nav_request').className = 'current';
 }
 
 function showPopup (popup_id) {
