@@ -13,6 +13,12 @@ class Shop extends Controller {
 		/// Used in all all page requests
 		$this->load->model('shop_model','shop_model');
 		$this->load->library('image');
+		$this->load->library('googlelog');
+		$this->load->library('googlerequest');
+		$this->load->library('gc_xmlbuilder');
+		$this->load->library('gc_xmlparser');
+		$this->load->library('googleitem');
+		$this->load->library('googlecart');
 		$this->load->helper('uri_tail');
 	}
 	
@@ -143,13 +149,31 @@ class Shop extends Controller {
 	function checkout()
 	{
 		if (!CheckPermissions('student')) return;
-
+		
 		$data = array();
 		
-		$data['basket'] = $this->_getbasket();
+		$basket = $this->_getbasket();
 		
+		$google_merchant_id = '572321583992745';
+		
+		$google_merchant_key = 'hYRtf4GEVRVRGuhqNtYLkw';
+		
+		$cart = new GoogleCart($google_merchant_id, $google_merchant_key, 'sandbox', 'GBP');
+		
+		foreach ($basket['items'] as $item) {
+			$item = new GoogleItem(
+				sprintf('%s (%s)', $item['item_name'], $item['cust_string']),
+				$item['item_description'],
+				$item['quantity'],
+				$item['item_price']
+			);
+			$cart->AddItem($item);
+		}
+		
+		$data['basket'] = $basket;
+		$data['cart'] = $cart;
 		$data['uri_trail'] = GetUriTail(0);
-
+		
 		// Set up the public frame
 		$this->main_frame->SetContentSimple('shop/checkout', $data);
 		// Load the public frame view (which will load the content view)
