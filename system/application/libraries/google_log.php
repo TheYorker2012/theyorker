@@ -93,4 +93,7 @@ class GoogleLog {
     return false;
   }
 }
+
+class Google_Log { }
+
 ?>

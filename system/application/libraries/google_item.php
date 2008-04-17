@@ -158,4 +158,7 @@
       $this->digital_content = true;
     }
   }
+  
+  class Google_Item { }
+  
 ?>

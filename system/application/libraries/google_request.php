@@ -755,4 +755,7 @@ class GoogleShipItem {
     }
   }
 }
+
+class Google_Request { }
+
 ?>

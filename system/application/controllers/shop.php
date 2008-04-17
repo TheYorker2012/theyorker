@@ -13,12 +13,12 @@ class Shop extends Controller {
 		/// Used in all all page requests
 		$this->load->model('shop_model','shop_model');
 		$this->load->library('image');
-		$this->load->library('googlelog');
-		$this->load->library('googlerequest');
-		$this->load->library('gc_xmlbuilder');
-		$this->load->library('gc_xmlparser');
-		$this->load->library('googleitem');
-		$this->load->library('googlecart');
+		$this->load->library('google_log');
+		$this->load->library('google_request');
+		$this->load->library('google_xmlbuilder');
+		$this->load->library('google_xmlparser');
+		$this->load->library('google_item');
+		$this->load->library('google_cart');
 		$this->load->helper('uri_tail');
 	}
 	

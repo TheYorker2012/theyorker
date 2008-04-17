@@ -1610,4 +1610,7 @@
       $this->type = 'merchant-private-item-data';
     }
   }
+
+  class Google_Cart { }
+
 ?>

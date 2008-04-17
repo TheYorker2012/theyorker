@@ -91,4 +91,7 @@
         return $this->xml;
     }
   }
+  
+  class google_xmlbuilder { }
+  
 ?>

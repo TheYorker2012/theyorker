@@ -199,4 +199,7 @@
       return $this->params; 
     }
   }
+  
+  class google_xmlparser { }
+
 ?>
