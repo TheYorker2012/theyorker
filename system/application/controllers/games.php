@@ -56,7 +56,7 @@ class Games extends Controller {
 		{
 			show_404();
 		}
-		$data['game']['filename'] = $this->config->item('static_web_address').'/games/'.$data['game']['filename'];
+		$data['game']['pathname'] = $this->config->item('static_web_address').'/games/'.$data['game']['filename'];
 		$this->main_frame->SetContentSimple('games/view',$data);
 		$this->main_frame->Load();
 	}
