@@ -117,7 +117,7 @@ foreach ($main_article['related_articles'] as $related)
 
         <?php echo($main_article['text']); ?>
 
-		<div style="text-align: right">
+		<div class="share_article">
 <?php if ($article_type == 'podcasts') { ?>
 			<span style="float:left">
 				<a href="itpc://<?php echo($this->config->item('podcast_rss_feed')); ?>">

@@ -616,6 +616,11 @@ div.Pagination span.selected {
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * CSS for Facebook Share Link                                 *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+div.share_article {
+	clear: right;
+	text-align: right;
+}
+
 a.fb_share_button {
 	display: inline-block;
 	padding: 1px 20px 0px 5px;
