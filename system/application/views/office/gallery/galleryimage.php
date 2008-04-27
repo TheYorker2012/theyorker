@@ -82,7 +82,7 @@
 	function updateList() {
 		var tags_el = document.getElementById('tags');
 		tags_el.value = '';
-		var tags = tags_el.childNodes;
+		var tags = document.getElementById('ctags').childNodes;
 		for (var i=0; i<tags.length; i++) {
 			if (tags[i].nodeType == '1') {
 				tags_el.value += tags[i].id + '+';
