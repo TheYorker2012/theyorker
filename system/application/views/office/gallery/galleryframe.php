@@ -1,6 +1,6 @@
 <div id="RightColumn">
 	<h2 class="first">Actions</h2>
-	<form class="form" method="post" action="<?=site_url('office/gallery')?>">
+	<form id="clearform" class="form" method="post" action="<?=site_url('office/gallery')?>">
 		<div class="Entry">
 			<ul>
 			<input type="hidden" name="clear" value="clear" />
@@ -10,7 +10,7 @@
 				echo('<li><a href="'.site_url('office/gallery').'">Return to the Gallery</a></li>');
 				echo('<li><a href="'.site_url('office/gallery/return').'">Select this Photo</a></li>');
 			}?>
-			<li><a href="javascript:document.clearform.submit()">Start a new Search</a></li>
+			<li><a href="javascript:document.getElementById('clearform').submit()">Start a new Search</a></li>
 		</div>
 	</form>
 	<h2>Search by...</h2>
