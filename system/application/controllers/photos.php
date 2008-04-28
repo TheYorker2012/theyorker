@@ -43,7 +43,7 @@ class Photos extends Controller
 				$sql = 'SELECT
 						image_type_error_mime AS mime,
 						image_type_error_data AS data,
-						NOW() AS timestamp
+						UNIX_TIMESTAMP() AS timestamp
 					FROM image_types WHERE image_type_codename = ? LIMIT 1';
 				$result = $this->db->query($sql, array($type));
 				if ($result->num_rows() == 1) {
