@@ -1,11 +1,11 @@
 <div id="RightColumn">
 	<h2 class="first">Actions</h2>
-	<form id="clearform" class="form" method="post" action="<?=site_url('office/gallery')?>">
+	<form id="clearform" class="form" method="post" action="<?php echo(site_url('office/gallery')); ?>">
 		<div class="Entry">
 			<ul>
 			<input type="hidden" name="clear" value="clear" />
-			<li><a href="<?=site_url('office/gallery/upload')?>">Upload New Photos</a></li>
-			<li><a href="<?=site_url('office')?>">Return to the Office</a></li>
+			<li><a href="<?php echo(site_url('office/gallery/upload')); ?>">Upload New Photos</a></li>
+			<li><a href="<?php echo(site_url('office')); ?>">Return to the Office</a></li>
 			<?php if($this->uri->segment(4)) {
 				echo('<li><a href="'.site_url('office/gallery').'">Return to the Gallery</a></li>');
 				echo('<li><a href="'.site_url('office/gallery/return').'">Select this Photo</a></li>');
@@ -14,7 +14,7 @@
 		</div>
 	</form>
 	<h2>Search by...</h2>
-	<form class="form" method="post" action="<?=site_url('office/gallery')?>">
+	<form class="form" method="post" action="<?php echo(site_url('office/gallery')); ?>">
 		<div class="Entry">
 			<fieldset>
 			<p>
