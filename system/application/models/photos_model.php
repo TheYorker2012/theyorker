@@ -389,5 +389,46 @@ class Photos_model extends Model
 		$query = $this->db->query($sql,array($photo_number,$article_id));
 	}
 
+	function GetPhotoDetails ($photo_id)
+	{
+		$sql = 'SELECT	photos.photo_id,
+						photos.photo_title
+				FROM	photos
+				WHERE	photos.photo_id = ?
+				AND		photos.photo_deleted = 0';
+		$query = $this->db->query($sql, array($photo_id));
+		if ($query->num_rows() == 1) {
+			return $query->row();
+		} else {
+			return NULL;
+		}
+	}
+	
+	function GetPhotosTags ($photo_id)
+	{
+		$sql = 'SELECT	photo_tags.photo_tag_tag_id AS tag_id,
+						tags.tag_name
+				FROM	photo_tags,
+						tags
+				WHERE	photo_tags.photo_tag_photo_id = ?
+				AND		photo_tags.photo_tag_tag_id = tags.tag_id
+				AND		tags.tag_type = \'photo\'
+				AND		tags.tag_deleted = 0';
+		$query = $this->db->query($sql, array($photo_id));
+		return $query->result_array();
+	}
+
+	function GetPhotosForTag ($tag_id)
+	{
+		$sql = 'SELECT	photos.photo_id
+				FROM	photo_tags,
+						photos
+				WHERE	photo_tags.photo_tag_tag_id = ?
+				AND		photo_tags.photo_tag_photo_id = photos.photo_id
+				AND		photos.photo_deleted = 0';
+		$query = $this->db->query($sql, array($tag_id));
+		return $query->result_array();
+	}
+
 }
 ?>
