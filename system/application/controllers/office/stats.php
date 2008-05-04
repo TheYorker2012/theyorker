@@ -20,18 +20,29 @@ class Stats extends controller
 		$result_string='';
 		foreach ($numbers as $number) {
 			//Number needs to be translated to a relative position to the maximum number storable ($min+4095)
-			$rel_number = round((($number-$min) / ($max-$min))*4095);
+			$range = $max-$min;
+			if($range==0){
+				$rel_number = 0;//Avoid division by zero
+			}else{
+				$rel_number = round((($number-$min) / ($range))*4095);
+			}
 			$first = floor($rel_number / 64);
 			$second = $rel_number % 64;
 			$result_string .= $encoding[$first].$encoding[$second];
 		}
 		return $result_string;
 	}
+	//this is for increasing data
 	private function simple_google_dayslinechart($title,$data_array,$x_size,$y_size,$days,$axis_range_rounding)
 	{
 		//Create Google Charts Line Chart showing change over $days Days
-		$chart_max = ceil($data_array[0]/$axis_range_rounding)*$axis_range_rounding;//go to the next $axis_range_rounding multiple
-		$chart_min = floor(end($data_array)/$axis_range_rounding)*$axis_range_rounding;//go to the previous $axis_range_rounding multiple
+		$chart_min = floor($data_array[0]/$axis_range_rounding)*$axis_range_rounding;//go to the previous $axis_range_rounding multiple
+		$chart_max = ceil(end($data_array)/$axis_range_rounding)*$axis_range_rounding;//go to the next $axis_range_rounding multiple
+		//If there is no variation in the dataset keep a range of axis range rounding
+		if($chart_min==$chart_max){
+			$chart_min = $chart_min - floor($axis_range_rounding/2);
+			$chart_max = $chart_max + ceil($axis_range_rounding/2);
+		}
 		//Encode the days, they are already in the right format of oldest first
 		$encoded_days = $this->googlechart_extended_encode($data_array,$chart_min,$chart_max);
 		$url  ='http://chart.apis.google.com/chart?';
@@ -111,6 +122,11 @@ class Stats extends controller
 		$data['comment_deleted_users'] = $this->stats_model->GetTopDeletedCommentingUsers(10);
 		$data['comment_top_articles'] = $this->stats_model->GetTopCommentedArticles(10);
 		
+		$data['members_who_have_posted'] = 
+			round(($this->stats_model->NumberOfConfimedUsersWhoHavePosted(1) / $data['members']['confirmed_members'])*100);
+		$data['members_who_have_posted_5m'] = 
+			round(($this->stats_model->NumberOfConfimedUsersWhoHavePosted(5) / $data['members']['confirmed_members'])*100);
+		
 		//access levels
 		//@note this is being left out untill its improved, the figures like people with admin access isnt used and is confusing.
 		//$data['access'] = $this->stats_model->GetNumberOfMembersWithAccess();
@@ -140,12 +156,13 @@ class Stats extends controller
 		///////Create Graph of Registrations over the last X days.
 		$days=30;
 		$registrations = $this->stats_model->GetCumulativeSignUpsArrayOverLastDays($days,2);
-		$data['signups_img_url'] = $this->simple_google_dayslinechart('Total+Registrations',$registrations,200,125,$days,20);
+		$data['signups_img_url'] = $this->simple_google_dayslinechart('Total+Registrations',$registrations,200,125,$days,10);
 		
 		//Create graph of Comments posted over the last X days.
 		$days=30;
-		$comments = $this->stats_model->GetCumulativeCommentsArrayOverLastDays($days,2);
-		$data['comments_img_url'] = $this->simple_google_dayslinechart('Total+Comments+Posted',$comments,300,200,$days,20);
+		$comments = $this->stats_model->GetCumulativeCommentsArrayOverLastDays($days,1);
+		
+		$data['comments_img_url'] = $this->simple_google_dayslinechart('Total+Comments+Posted',$comments,300,200,$days,10);
 		
 		
 		$links_data = $this->stats_model->GetNumberOfUsersWithLinksByGroups(6);
