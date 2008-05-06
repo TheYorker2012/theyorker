@@ -79,7 +79,7 @@ class Wikiparser {
 
 		$this->reference_wiki = 'local';
 		$this->external_wikis = PresetWikis();
-		$this->image_uri = '/images/';
+		$this->image_uri = '/photos/';
 		$this->image_overrides = array();
 		$this->ignore_images = FALSE;
 		$this->emphasis[1] = FALSE;
