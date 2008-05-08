@@ -67,10 +67,11 @@ class Prefs_model extends Model {
 		switch ($str) {
 			case 'm':
 			case 'f':
-				return true;
+				return $str;
 				break;
+			case 'n':				
 			default:
-				return false;
+				return NULL;
 				break;
 		}
 	}
