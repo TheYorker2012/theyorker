@@ -34,6 +34,8 @@
 				<input class="radio" type="radio" id="genderm" name="gender" value="m" <?php if ($this->validation->gender == 'm') { echo('checked="checked" '); } ?>/>
 				<label class="radio" for="genderf">Female</label>
 				<input class="radio" type="radio" id="genderf" name="gender" value="f" <?php if ($this->validation->gender == 'f') { echo 'checked="checked" '; } ?>/>
+				<label class="radio" for="gendern">Prefer not to say</label>
+				<input class="radio" type="radio" id="gendern" name="gender" value="n" <?php if ($this->validation->gender === NULL) { echo 'checked="checked" '; } ?>/>
 				<br />
 				<label for="college">College: </label>
 				<!-- TODO: create fancy picture based college selection -->
