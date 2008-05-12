@@ -177,6 +177,12 @@ class Slideshow extends Model {
 		                                                          'organisation_slideshow_photo_id' => $photo_id,
 		                                                          'organisation_slideshow_order' => $count));
 	}
+	//checks to see if an org has a photo
+	function hasPhoto($photo_id, $organisation_id) {
+		$count = $this->db->query('SELECT COUNT(*) AS row_count FROM organisation_slideshows WHERE organisation_slideshow_organisation_entity_id = '.$organisation_id.' AND organisation_slideshow_photo_id = '.$photo_id);
+		$count = $count->first_row()->row_count;
+		return ($count == 1);
+	}
 
 }
 ?>

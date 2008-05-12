@@ -612,6 +612,7 @@ class Reviews extends Controller
 			$data['thumbnail_text'] = $this->pages_model->GetPropertyWikitext('thumbnail_text');
 			$data['thumbnail_text_none'] = $this->pages_model->GetPropertyWikitext('thumbnail_text_none');
 			$data['thumbnail_text_no_images'] = $this->pages_model->GetPropertyWikitext('thumbnail_text_no_images');
+			$data['photo_from_gallery'] = $this->pages_model->GetPropertyWikitext('photo_from_gallery');
 			
 			if ($action == 'move') { // Switch hates me, this should be case switch but i won't do it
 				if ($operation == 'up') {
@@ -627,7 +628,12 @@ class Reviews extends Controller
 				return $this->image_upload->recieveUpload('/office/reviews/'.$data['organisation']['shortname'].'/'.$ContextType.'/photos', array('slideshow','small'));
 			} elseif (isset($_SESSION['img'])) {
 				foreach ($_SESSION['img'] as $newID) {
-					$this->slideshow->addPhoto($newID['list'], $data['organisation']['id']);
+					if($this->slideshow->hasPhoto($newID['list'], $data['organisation']['id'])){
+						$this->messages->AddMessage('information','This photo is already in this slideshow.');
+					}else{
+						$this->messages->AddMessage('success','The photo has been added to the slideshow for '.$data['organisation']['name'].'.');
+						$this->slideshow->addPhoto($newID['list'], $data['organisation']['id']);
+					}
 				}
 				unset($_SESSION['img']);
 			}
