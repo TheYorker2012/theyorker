@@ -122,7 +122,9 @@ class Advert_model extends Model {
 					advert_views_max as max_views,
 					UNIX_TIMESTAMP(advert_last_display) as last_display,
 					UNIX_TIMESTAMP(advert_created) as created,
-					advert_live as is_live
+					advert_live as is_live,
+					UNIX_TIMESTAMP(advert_end_date) as end_date,
+					UNIX_TIMESTAMP(advert_start_date) as start_date
 				FROM
 					adverts_simple
 				WHERE
@@ -142,7 +144,9 @@ class Advert_model extends Model {
 				'max_views' => $row->max_views,
 				'last_display' => $row->last_display,
 				'created' => $row->created,
-				'is_live' => $row->is_live
+				'is_live' => $row->is_live,
+				'start_date' => $row->start_date,
+				'end_date' => $row->end_date
 				);
 			return $result;
 		}
@@ -169,7 +173,7 @@ class Advert_model extends Model {
 	/**
 	 * @brief Saves the new advert data 
 	 */
-	function SaveAdvert($id, $name, $url, $alt, $max)
+	function SaveAdvert($id, $name, $url, $alt, $max,$start_date,$end_date)
 	{
 		$sql = 'UPDATE
 					adverts_simple
@@ -177,11 +181,14 @@ class Advert_model extends Model {
 					advert_name = ?,
 					advert_image_url = ?,
 					advert_image_alt = ?,
-					advert_views_max = ?
+					advert_views_max = ?,
+					advert_start_date = FROM_UNIXTIME(?),
+					advert_end_date = FROM_UNIXTIME(?)
 				WHERE
 					advert_id = ?';
-		$this->db->query($sql, array($name, $url, $alt, $max, $id));
-		return TRUE;
+		return $this->db->query(
+			$sql,
+			array($name, $url, $alt, $max, $start_date,$end_date,$id));
 	}
 	
 	/**
