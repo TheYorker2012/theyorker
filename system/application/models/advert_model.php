@@ -30,8 +30,11 @@ class Advert_model extends Model {
 						adverts_simple
 					WHERE
 						advert_deleted = 0 AND
-						advert_views_current < advert_views_max AND
-						advert_live = 1
+						(advert_views_current < advert_views_max OR
+							advert_views_max=0) AND
+						advert_live = 1 AND
+						(advert_end_date = 0 OR
+							advert_end_date <= current_timestamp)
 					ORDER BY
 						advert_last_display ASC
 					LIMIT
@@ -74,12 +77,12 @@ class Advert_model extends Model {
 	 */
 	function GetAdverts()
 	{
-		//select the latest advert with page views left
 		$sql = 'SELECT
 					advert_id as id,
 					advert_name as name,
 					advert_views_current as current_views,
 					advert_views_max as max_views,
+					UNIX_TIMESTAMP(advert_end_date) as end_date,
 					advert_live as is_live
 				FROM
 					adverts_simple
@@ -98,16 +101,14 @@ class Advert_model extends Model {
 					'name'=>$row->name,
 					'current_views'=>$row->current_views,
 					'max_views'=>$row->max_views,
-					'is_live'=>$row->is_live
+					'is_live'=>$row->is_live,
+					'end_date'=>$row->end_date
 					);
 			}
 		}
 		return $result;
 	}
 	
-	/**
-	 * @brief Returns true if the advert exists 
-	 */
 	function AdvertExists($advert_id)
 	{
 		//select the latest advert with page views left
