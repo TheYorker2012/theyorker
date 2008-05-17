@@ -824,10 +824,13 @@ class News_model extends Model
 								IF (content_types.content_type_parent_content_type_id IS NOT NULL, CONCAT(parent_type.content_type_name, " - ", content_types.content_type_name), content_types.content_type_name) AS type_name,
 								article_contents.article_content_heading		AS heading,
 								article_contents.article_content_blurb			AS blurb,
+								organisations.organisation_directory_entry_name AS organisation_codename,
 								photo_requests.photo_request_chosen_photo_id	AS photo_id,
 								photo_requests.photo_request_title				AS photo_title'."\n";
 		}
 		$sql .= 'FROM		articles
+				LEFT JOIN	organisations 
+					ON	organisations.organisation_entity_id = articles.article_organisation_entity_id 
 				LEFT JOIN	photo_requests
 					ON	(	articles.article_thumbnail_photo_id = photo_requests.photo_request_relative_photo_number
 					AND		articles.article_id = photo_requests.photo_request_article_id

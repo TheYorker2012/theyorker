@@ -13,6 +13,25 @@ class Slideshow extends Model {
 		parent::Model();
 	}
 
+	//Assumes a directory slideshow (used for reviews as well since 17/5/2008)
+	function getFirstPhotoIDFromSlideShow($organisation_codename){
+		$sql = "
+		SELECT 
+			organisation_slideshows.organisation_slideshow_photo_id AS photo_id
+		FROM organisations 
+		INNER JOIN organisation_slideshows ON
+			organisation_slideshows.organisation_slideshow_organisation_entity_id = organisations.organisation_entity_id
+		WHERE organisations.organisation_directory_entry_name = ?
+		ORDER BY organisation_slideshows.organisation_slideshow_order ASC 
+		LIMIT 1";
+		$query = $this->db->query($sql,$organisation_codename);
+		if($query->num_rows() == 1)
+		{
+			return $query->row()->photo_id;
+		}else{
+			return null;
+		}
+	}
 	/**
 	 * This grabs photos from an organisation in order
 	 * @param organisation_type_id Is the type of organisations to return

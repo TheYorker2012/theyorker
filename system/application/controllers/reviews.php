@@ -183,10 +183,10 @@ class Reviews extends Controller
 					$entries[$reviewno]['review_table_link'] = base_url().'reviews/'.$content_type.'/'.$database_result[$reviewno]['organisation_directory_entry_name'];
 
 					//get the slideshow images for the review item
-					$slideshow_array = $this->slideshow->getPhotos($database_result[$reviewno]['organisation_entity_id']);
-					if($slideshow_array->num_rows() > 0)
+					$first_photo_id = $this->slideshow->getFirstPhotoIDFromSlideShow($database_result[$reviewno]['organisation_directory_entry_name']);
+					if(!empty($first_photo_id))
 					{
-						$entries[$reviewno]['review_image'] = $this->image->getThumb($slideshow_array->row()->photo_id, 'small');
+						$entries[$reviewno]['review_image'] = $this->image->getThumb($first_photo_id, 'small');
 					}
 
 					//Change scope of $tagbox
@@ -264,12 +264,8 @@ class Reviews extends Controller
 				$reviews[$row]['review_org_directory_entry_name'] = $leagues[$row]['organisation_directory_entry_name'];
 
 
-				//get the slideshow images for the league item
-				$slideshow_array = $this->slideshow->getPhotos($reviews[$row]['review_org_id']); //, $reviews[$row]['review_content_type_id'], false);
-				if($slideshow_array->num_rows() > 0)
-				{
-					$reviews[$row]['image'] = $slideshow_array->row()->photo_id;
-				}
+				//get the slideshow image for the league item
+				$reviews[$row]['image'] = $this->slideshow->getFirstPhotoIDFromSlideShow($leagues[$row]['organisation_directory_entry_name']);
 
 				//very hacky two lines here:
 				$content_codename = $this->review_model->ContentTypeIDToCodename($reviews[$row]['review_content_type_id']);

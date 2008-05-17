@@ -313,8 +313,15 @@ class News extends Controller {
 		$data['articles'] = $this->News_model->GetArchive('search', $archive_filters, $data['offset'], $config['per_page']);
 		/// Get article thumbnails
 		$this->load->library('image');
+		$this->load->model('slideshow');
 		foreach ($data['articles'] as &$article) {
-			$article['photo_xhtml'] = $this->image->getThumb($article['photo_id'], 'small', false, array('class' => 'Left'));
+			if(!empty($article['organisation_codename'])){
+				//The article is a review, so the archive will not have found a photo. Use the first image from its slideshow
+				$photo_id = $this->slideshow->getFirstPhotoIDFromSlideShow($article['organisation_codename']);
+			}else{
+				$photo_id = $article['photo_id'];
+			}
+			$article['photo_xhtml'] = $this->image->getThumb($photo_id, 'small', false, array('class' => 'Left'));
 		}
 		$data['total'] = $config['total_rows'];
 
