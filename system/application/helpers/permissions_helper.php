@@ -51,8 +51,7 @@ function PermissionsSubset($Subset, $Superset)
 		'vip'			=> array('student'	=> TRUE),
 		'office'		=> array('student'	=> TRUE),
 		'pr'			=> array('office'	=> TRUE),
-		'moderator'		=> array('pr'		=> TRUE),
-		'editor'		=> array('moderator'=> TRUE),
+		'editor'		=> array('pr'       => TRUE),
 		'admin'			=> array('editor'	=> TRUE),
 	);
 
@@ -353,14 +352,6 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 	// If the output mode is not supported, show a 404
 	if (!in_array(OutputMode(), OutputModes())) {
 		show_404();
-	}
-
-	// Translate some auxilliary permissions
-	$auxilliary_permissions = array(
-		'moderator' => 'editor',
-	);
-	if (array_key_exists($Permission, $auxilliary_permissions)) {
-		$Permission = $auxilliary_permissions[$Permission];
 	}
 
 	$user_level = GetUserLevel();

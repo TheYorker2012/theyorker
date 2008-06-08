@@ -334,8 +334,15 @@ class CommentViewList extends FramesView
 	{
 		parent::__construct('templates/list');
 		
-		$config = get_instance()->config->item('comments');
-		$this->SetData('Mode', ($config['edit']['moderator'] && PermissionsSubset('moderator', GetUserLevel())) ? 'mod' : null);
+		$ci = & get_instance();
+		$config = $ci->config->item('comments');
+		$ci->load->model('permissions_model');
+		if ( $ci->permissions_model->hasUserPermission('COMMENT_MODERATE') ) {
+			$this->SetData('Mode', 'mod');
+		}
+		else {
+			$this->SetData('Mode', null);
+		}
 		$this->SetData('Threaded', true);
 		
 		$this->mMaxPerPage = $config['max_per_page'];

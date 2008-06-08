@@ -51,11 +51,11 @@ $config['permissions'] = array(
 	'CHARITY_MODIFY'                   => '(unimplemented) Modify charities',
 	'CHARITY_LIVE'                     => '(unimplemented) Change which charity is live',
 	
-	/// @todo Implement comment permissions
-	'COMMENT_MODERATE'                 => '(unimplemented) Access moderator interface',
-	'COMMENT_DELETE'                   => '(unimplemented) Delete comments written by others',
-	'COMMENT_MODIFY'                   => '(unimplemented) Modify comments written by others',
-	'COMMENT_DELETED_VIEW'             => '(unimplemented) View deleted comments',
+	'COMMENT_MODERATE'                 => 'Access moderator interface',
+	'COMMENT_FLAG'                     => 'Flag and unflag a comment as good',
+	'COMMENT_DELETE'                   => 'Delete and undelete comments written by others',
+	'COMMENT_MODIFY'                   => 'Modify comments written by others',
+	'COMMENT_DELETED_VIEW'             => 'View deleted comments',
 	
 	/// @todo Implement feedback permissions
 	'FEEDBACK_VIEW'                    => '(unimplemented) View site feedback',

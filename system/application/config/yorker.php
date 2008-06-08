@@ -26,7 +26,6 @@ $config['comments'] = array(
 	// Who has permission to edit a comment
 	'edit'  => array(
 		'author'    => true,
-		'moderator' => true,
 	),
 	// Number of comments displayed on a page before a new page is started
 	'max_per_page' => 20,

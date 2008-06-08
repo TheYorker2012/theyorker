@@ -89,11 +89,11 @@ class Comments extends Controller
 		return false;
 	}
 	
-	/// Decide on whether the user should be able to edit a comment.
+	/// Decide on whether the user should be able to edit or delete a comment.
 	/**
-	 * This function allows an owner of a comment or a moderator to edit.
+	 * This function allows an owner of a comment or a moderator to edit or delete.
 	 */
-	function _DecideEditPrivilages($CommentId, $redirect_to, &$comment, $property_arguments)
+	function _DecideEditPrivilages($CommentId, $redirect_to, &$comment, $property_arguments, $isDelete=false)
 	{
 		if (!is_numeric($CommentId)) {
 			show_404();
@@ -114,7 +114,8 @@ class Comments extends Controller
 			redirect($redirect_to);
 		} elseif (!$comment['owned']) {
 			// The comment doesn't belong to this user, go to the office
-			if (!CheckPermissions('moderator')) return false;
+			if (!CheckPermissions('office')) return false;
+			if (!CheckRolePermissions($isDelete ? 'COMMENT_DELETE' : 'COMMENT_MODIFY')) return false;
 			$has_permission = true;
 		} else {
 			$has_permission = true;
@@ -165,7 +166,7 @@ class Comments extends Controller
 			'verb' => 'delete',
 			'verbed' => 'deleted',
 		);
-		if (!$this->_DecideEditPrivilages($CommentId, $redirect_to, $comment, $property_arguments)) return;
+		if (!$this->_DecideEditPrivilages($CommentId, $redirect_to, $comment, $property_arguments, true)) return;
 		// Confirm with the user
 		$this->pages_model->SetPageCode('comment_delete');
 		if (!$this->_ConfirmCommentAction($CommentId, $redirect_to, $property_arguments)) return;
@@ -195,7 +196,8 @@ class Comments extends Controller
 			return show_404();
 		}
 		
-		if (!CheckPermissions('moderator')) return;
+		if (!CheckPermissions('office')) return;
+		if (!CheckRolePermissions('COMMENT_DELETE')) return;
 		
 		$this->load->model('comments_model');
 		$result = $this->comments_model->DeleteComment((int)$CommentId, FALSE);
@@ -222,7 +224,8 @@ class Comments extends Controller
 			return show_404();
 		}
 		
-		if (!CheckPermissions('moderator')) return;
+		if (!CheckPermissions('office')) return;
+		if (!CheckRolePermissions('COMMENT_FLAG')) return;
 		
 		$this->load->model('comments_model');
 		$result = $this->comments_model->GoodenComment($CommentId);
@@ -249,7 +252,8 @@ class Comments extends Controller
 			return show_404();
 		}
 		
-		if (!CheckPermissions('moderator')) return;
+		if (!CheckPermissions('office')) return;
+		if (!CheckRolePermissions('COMMENT_FLAG')) return;
 		
 		$this->load->model('comments_model');
 		$result = $this->comments_model->GoodenComment($CommentId, FALSE);

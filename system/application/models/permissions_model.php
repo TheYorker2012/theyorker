@@ -35,6 +35,7 @@ class permissions_model extends Model
 			$this->permissionsCache = array();
 			
 			$implicitRoles = array();
+			$isOfficer = false;
 			switch (GetUserLevel()) {
 				case 'admin':
 					$implicitRoles[] = 'LEVEL_ADMIN';
@@ -44,26 +45,32 @@ class permissions_model extends Model
 					// Fall-thru
 				case 'office':
 					$implicitRoles[] = 'LEVEL_OFFICER';
+					$isOfficer = true;
 			}
 			
-			$query = $this->db->query(
-				'	SELECT		role_permission_permission_name AS permission,'.
-				'				role_permission_role_name       AS role'.
-				'	FROM		role_permissions'.
-				'	LEFT JOIN	user_roles'.
-				'		ON		user_role_role_name = role_permission_role_name'.
-				'			AND	user_role_user_entity_id = ?'.
-				'	WHERE		user_role_user_entity_id IS NOT NULL'.
-				(	empty($implicitRoles)
-					? ''
-					: '	OR	role_permission_role_name IN ("'.implode('","', $implicitRoles).'")'
-				),
-				array(
-					$this->user_auth->entityId
-				)
-			);
-			foreach ($query->result_array() as $row) {
-				$this->permissionsCache[$row['permission']][] = $row['role'];
+			// Don't waste a database query if the user isn't logged into the office.
+			// Most of the time this will probably be normal users with no permissions.
+			if ($isOfficer)
+			{
+				$query = $this->db->query(
+					'	SELECT		role_permission_permission_name AS permission,'.
+					'				role_permission_role_name       AS role'.
+					'	FROM		role_permissions'.
+					'	LEFT JOIN	user_roles'.
+					'		ON		user_role_role_name = role_permission_role_name'.
+					'			AND	user_role_user_entity_id = ?'.
+					'	WHERE		user_role_user_entity_id IS NOT NULL'.
+					(	empty($implicitRoles)
+						? ''
+						: '	OR	role_permission_role_name IN ("'.implode('","', $implicitRoles).'")'
+					),
+					array(
+						$this->user_auth->entityId
+					)
+				);
+				foreach ($query->result_array() as $row) {
+					$this->permissionsCache[$row['permission']][] = $row['role'];
+				}
 			}
 		}
 		return $this->permissionsCache;

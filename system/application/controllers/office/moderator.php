@@ -16,7 +16,8 @@ class Moderator extends controller
 	 */
 	function index()
 	{
-		if (!CheckPermissions('moderator')) return;
+		if (!CheckPermissions('office')) return;
+		if (!CheckRolePermissions('COMMENT_MODERATE')) return;
 		$this->pages_model->SetPageCode('office_moderator_index');
 		
 		$help_text = $this->pages_model->GetPropertyWikitext('help');
@@ -43,7 +44,8 @@ class Moderator extends controller
 		if (!in_array($Comment, $valids)) {
 			show_404();
 		}
-		if (!CheckPermissions('moderator')) return;
+		if (!CheckPermissions('office')) return;
+		if (!CheckRolePermissions('COMMENT_MODERATE')) return;
 		
 		$this->pages_model->SetPageCode('office_moderator_comments');
 		
@@ -58,6 +60,7 @@ class Moderator extends controller
 		if ('reported' === $Comment) {
 			$comments = $this->comments_model->GetCommentsByThreadId(NULL,'reported');
 		} elseif ('deleted' === $Comment) {
+			if (!CheckRolePermissions('COMMENT_DELETED_VIEW')) return;
 			$comments = $this->comments_model->GetCommentsByThreadId(NULL,'all',array(
 				'comments.comment_deleted = TRUE',
 				'(comments.comment_deleted_entity_id IS NULL OR comments.comment_deleted_entity_id != comments.comment_author_entity_id)',
@@ -102,7 +105,8 @@ class Moderator extends controller
 	 */
 	function thread($Thread = NULL)
 	{
-		if (!CheckPermissions('moderator')) return;
+		if (!CheckPermissions('office')) return;
+		if (!CheckRolePermissions('COMMENT_MODERATE')) return;
 		$this->main_frame->Load();
 	}
 }
