@@ -57,8 +57,9 @@ $config['permissions'] = array(
 	'COMMENT_MODIFY'                   => 'Modify comments written by others',
 	'COMMENT_DELETED_VIEW'             => 'View deleted comments',
 	
-	/// @todo Implement feedback permissions
-	'FEEDBACK_VIEW'                    => '(unimplemented) View site feedback',
+	'FEEDBACK_VIEW'                    => 'View site feedback messages',
+	'FEEDBACK_VIEW_DELETED'            => 'View deleted site feedback messages',
+	'FEEDBACK_DELETE'                  => 'Delete site feedback messages',
 	
 	/// @todo Review and implement gallery permissions
 	'GALLERY_VIEW'                     => '(unimplemented) View photo gallery',

@@ -12,6 +12,7 @@ class Feedback extends Controller {
 	function index()
 	{
 		if (!CheckPermissions('office')) return;
+		if (!CheckRolePermissions('FEEDBACK_VIEW')) return;
 
 		$this->load->library('xajax');
 		function deleteEntry ($entry_id)
@@ -19,7 +20,10 @@ class Feedback extends Controller {
 			$CI = &get_instance();
 			$CI->load->model('feedback_model');
 			$xajax_response = new xajaxResponse();
-			if ((is_numeric($entry_id)) && ($CI->feedback_model->DeleteFeedback($entry_id))) {
+			if ((is_numeric($entry_id)) &&
+				$CI->permissions_model->hasUserPermission('FEEDBACK_DELETE') &&
+				$CI->feedback_model->DeleteFeedback($entry_id))
+			{
 				$xajax_response->addAssign('new_entries','innerHTML', $CI->feedback_model->GetFeedbackCount());
 				$xajax_response->addAssign('deleted_entries','innerHTML', $CI->feedback_model->GetFeedbackCount(1));
 				$xajax_response->addAssign('feedback'.$entry_id,'innerHTML', 'DELETED!');
@@ -45,7 +49,8 @@ class Feedback extends Controller {
 
 	function deleted ()
 	{
-		if (!CheckPermissions('admin')) return;
+		if (!CheckPermissions('office')) return;
+		if (!CheckRolePermissions('FEEDBACK_VIEW_DELETED')) return;
 
 		$this->pages_model->SetPageCode('admin_feedback');
 		$data['entries'] = $this->feedback_model->GetAllFeedback(1);
