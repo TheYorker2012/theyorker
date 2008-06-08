@@ -87,7 +87,8 @@ class Stats extends controller
 	function index ()
 	{
 		/// Make sure users have necessary permissions to view this page
-		if (!CheckPermissions('editor')) return;
+		if (!CheckPermissions('office')) return;
+		if (!CheckRolePermissions('STATS_VIEW')) return;
 		
 		//Get Page Properties
 		$this->pages_model->SetPageCode('office_stats');

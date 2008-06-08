@@ -127,8 +127,7 @@ $config['permissions'] = array(
 	'PR_ORG_CALENDAR_VIEW'             => '(unimplemented) View organisation calendars',
 	'PR_ORG_CALENDAR_MODIFY'           => '(unimplemented) Modify organisation calendars',
 	
-	/// @todo Implement site stats permissions
-	'STATS_VIEW'                       => '(unimplemented) View site stats page',
+	'STATS_VIEW'                       => 'View site stats page',
 	
 	/// @todo Review and Implement quotes permissions
 	'QUOTES_VIEW'                      => '(unimplemented) View upcoming quotes',
