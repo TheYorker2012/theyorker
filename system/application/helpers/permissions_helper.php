@@ -268,10 +268,11 @@ function GetMissingPermissions($permissions)
 
 /// Check that role permissions are satisfied.
 /**
+ * @param $Passive (optional) If true, just add a message.
  * @param $Permissions array,string Permission(s)
  * @return bool Whether permission exists.
  */
-function CheckRolePermissions()
+function CheckRolePermissions($Passive)
 {
 	/// @pre CheckPermissions must already have been called.
 	if (!isset(get_instance()->user_auth)) {
@@ -284,6 +285,10 @@ function CheckRolePermissions()
 	}
 	
 	$arguments = func_get_args();
+	if ( is_bool($Passive) )
+	{
+		array_shift($arguments);
+	}
 	$missingPermissions = call_user_func_array('GetMissingPermissions',$arguments);
 	if (empty($missingPermissions)) {
 		return true;
@@ -294,22 +299,29 @@ function CheckRolePermissions()
 		// produce a nice error message (plural sensitive)
 		$permissionsString = '"'.implode('", "', $missingPermissions).'"';
 		if (count($missingPermissions) != 1) {
-			$errorMessage = 'You do not have the following permissions that are required to access this page: '.$permissionsString.'.';
+			$errorMessage = 'You do not have the following permissions that are required to perform this operation: '.$permissionsString.'.';
 		}
 		else {
-			$errorMessage = 'You do not have the permission '.$permissionsString.' that is required to access this page.';
+			$errorMessage = 'You do not have the permission '.$permissionsString.' that is required to perform this operation.';
 		}
+
+		if ( $Passive === true )
+		{
+			$CI->messages->AddMessage('error', xml_escape($errorMessage));
+		}
+		else
+		{
+			// set http status code and display a pretty error
+			header('HTTP/1.1 403 Permission Denied: '.$errorMessage);
+			$CI->load->library('custom_pages');
+			$scope = array(
+				'ErrorMessage' => $errorMessage,
+			);
+			$CI->main_frame->SetContent(new CustomPageView('permissions_403','error', $scope));
 		
-		// set http status code and display a pretty error
-		header('HTTP/1.1 403 Permission Denied: '.$errorMessage);
-		$CI->load->library('custom_pages');
-		$scope = array(
-			'ErrorMessage' => $errorMessage,
-		);
-		$CI->main_frame->SetContent(new CustomPageView('permissions_403','error', $scope));
-		
-		// forcefully load the main frame with the error
-		$CI->main_frame->Load();
+			// forcefully load the main frame with the error
+			$CI->main_frame->Load();
+		}
 		return false;
 	}
 }

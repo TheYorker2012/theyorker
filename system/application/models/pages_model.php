@@ -34,9 +34,14 @@ class Pages_model extends Model
 		$this->mPageCode = FALSE;
 		$this->mPageInfo = array();
 		$this->mProperties = array();
-		$inline_edit_allowed_in_office_types = array('High'=>true,'Admin'=>true);
-		$this->mInlineEditAllowed = $this->user_auth->isLoggedIn &&
-			isset($inline_edit_allowed_in_office_types[$this->user_auth->officeType]);
+		$inline_edit_allowed_in_office_types = array('Low'=>true,'High'=>true,'Admin'=>true);
+		$this->mInlineEditAllowed = false;
+		if ($this->user_auth->isLoggedIn &&
+			isset($inline_edit_allowed_in_office_types[$this->user_auth->officeType]))
+		{
+			$this->load->model('permissions_model');
+			$this->mInlineEditAllowed = get_instance()->permissions_model->hasUserPermission('PAGES_PAGE_PROPERTY_MODIFY');
+		}
 		if (isset($_SESSION['inline_edit'])) {
 			if ($this->mInlineEditAllowed) {
 				$this->mInlineEditMode = true;

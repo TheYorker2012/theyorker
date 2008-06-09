@@ -16,6 +16,9 @@
  */
 class Pages extends Controller
 {
+	/// array Map of permissions to role permissions.
+	protected $mPermissionMap;
+
 	/// array Permissions array of bools indexed by permission name.
 	protected $mPermissions;
 	
@@ -23,98 +26,156 @@ class Pages extends Controller
 	{
 		parent::Controller();
 	}
-	
-	function _SetPermissions()
+
+    /// Map in a new permission.
+    private function _NewPermission($permissions, $rolePermission = null)
+    {
+        if ( !isset($this->mPermissionMap) )
+        {
+            $this->mPermissionMap = array();
+            $this->mPermissions = array();
+            $this->load->model('permissions_model');
+        }
+        if ( !is_array($permissions) )
+        {
+            $permissions = array($permissions => $rolePermission);
+        }
+        foreach ($permissions as $name => $permission)
+        {
+            $this->mPermissionMap[$name] = $permission;
+            $this->mPermissions[$name] = $this->permissions_model->hasUserPermission($permission);
+        }
+    }
+
+	/// Cardcoded permission
+	private function _HardPermission($permissions, $enabled = null)
 	{
-		// Primitive permissions
-		$this->mPermissions = array(
-				'officer'       => FALSE,
-				'administrator' => FALSE,
-			);
-		
-		$this->mPermissions['administrator'] = ($this->user_auth->officeType==='Admin');
-		$this->mPermissions['officer'] = $this->mPermissions['administrator'] || ($this->user_auth->officeType==='High');
-		
-		// Derived permissions
-		$this->mPermissions['view']          = $this->mPermissions['officer'];
-		
-		$this->mPermissions['page_new']         = $this->mPermissions['administrator'];
-		$this->mPermissions['page_edit']        = $this->mPermissions['officer'];
-		$this->mPermissions['page_rename']      = $this->mPermissions['administrator'];
-		$this->mPermissions['page_delete']      = $this->mPermissions['administrator'];
-		$this->mPermissions['page_prop_add']    = $this->mPermissions['administrator'];
-		$this->mPermissions['page_prop_edit']   = $this->mPermissions['officer'];
-		$this->mPermissions['page_prop_delete'] = $this->mPermissions['administrator'];
-		
-		$this->mPermissions['custom_new']         = $this->mPermissions['officer'];
-		$this->mPermissions['custom_edit']        = $this->mPermissions['officer'];
-		$this->mPermissions['custom_rename']      = $this->mPermissions['officer'];
-		$this->mPermissions['custom_delete']      = $this->mPermissions['officer'];
-		$this->mPermissions['custom_prop_add']    = $this->mPermissions['administrator'];
-		$this->mPermissions['custom_prop_edit']   = $this->mPermissions['officer'];
-		$this->mPermissions['custom_prop_delete'] = $this->mPermissions['administrator'];
-		
-		$this->mPermissions['common_add']    = $this->mPermissions['administrator'];
-		$this->mPermissions['common_edit']   = $this->mPermissions['officer'];
-		$this->mPermissions['common_delete'] = $this->mPermissions['administrator'];
+		if ( !isset($this->mPermissionMap) )
+		{
+			$this->mPermissionMap = array();
+			$this->mPermissions = array();
+			$this->load->model('permissions_model');
+		}
+		if ( !is_array($permissions) )
+		{
+			$permissions = array($permissions => $enabled);
+		}
+		foreach ($permissions as $name => $value)
+		{
+			$this->mPermissionMap[$name] = '';
+			$this->mPermissions[$name] = $value;
+		}
 	}
 	
-	/// Check if the user has permission to view these pages.
-	/**
-	 * @param $Permission string Permission name (key to $this->mPermissions).
-	 * @param $Message string A message to display in the event of failure.
-	 * @return bool Whether the user has permission.
-	 */
-	function _CheckViewPermissions($Permission = 'view', $Message = 'You do not have permission to access this page')
-	{	
-		if (!$this->mPermissions[$Permission]) {
-			$this->messages->AddMessage('error',$Message);
-			return FALSE;
-		} else {
-			return TRUE;
+	/// Initialise permissions arrays
+	private function _InitPermissions()
+	{
+		// Construct a mapping of permissions to role permissions
+		$this->_NewPermission(array(
+			'view'          => 'PAGES_VIEW',
+			'common_add'    => 'PAGES_COMMON_ADD',
+			'common_edit'   => 'PAGES_COMMON_MODIFY',
+			'common_delete' => 'PAGES_COMMON_DELETE',
+		));
+		foreach (array(	'page'     => 'PAGE',
+						'custom'   => 'CUSTOM'	)
+					as	$pageType  => $pageTypePermission)
+		{
+			foreach(array(	'new'          => 'NEW',
+							'edit'         => 'MODIFY',
+							'rename'       => 'RENAME',
+							'delete'       => 'DELETE',
+							'prop_add'     => 'PROPERTY_ADD',
+							'prop_edit'    => 'PROPERTY_MODIFY',
+							'prop_delete'  => 'PROPERTY_DELETE'	)
+						as	$propName      => $propNamePermission)
+			{
+				$this->_NewPermission($pageType.'_'.$propName, 'PAGES_'.$pageTypePermission.'_'.$propNamePermission);
+			}
 		}
+	}
+
+	/// Remap a permission.
+	/**
+	 * Create the permission @p $name as an alias of the permission @p $mapTo.
+	 */
+	private function _RemapPermission($remap, $mapTo = null)
+	{
+		if ( !isset($this->mPermissionMap) )
+		{
+			$this->_InitPermissions();
+		}
+		if ( !is_array($remap) )
+		{
+			$remap = array($remap => $mapTo);
+		}
+		foreach ($remap as $alias => $name)
+		{
+			$this->mPermissionMap[$alias] = $this->mPermissionMap[$name];
+			$this->mPermissions[$alias] = $this->mPermissions[$name];
+		}
+	}
+	
+	// Exit if the user doesn't have the specified permission.
+	private function _ExitWithoutPermission($name)
+	{
+		if ( !isset($this->mPermissionMap) )
+		{
+			$this->_InitPermissions();
+		}
+		if (!CheckRolePermissions($this->mPermissionMap[$name]))
+		{
+			exit(0);
+		}
+	}
+	// Passively check the permission.
+	private function _CheckPermission($name)
+	{
+		if ( !isset($this->mPermissionMap) )
+		{
+			$this->_InitPermissions();
+		}
+		return CheckRolePermissions(true, $this->mPermissionMap[$name]);
 	}
 	
 	/// Default page
 	function index()
 	{
 		if (!CheckPermissions('editor')) return;
-		
+		$this->_ExitWithoutPermission('view');
+
 		$this->pages_model->SetPageCode('admin_pages');
-		
-		$this->_SetPermissions();
-		if ($this->_CheckViewPermissions('view')) {
-			$all_pages = $this->pages_model->GetAllPages();
+	
+		$all_pages = $this->pages_model->GetAllPages();
 			
-			$data = array();
+		$data = array();
 			
-			$data['pages'] = array(0 => FALSE);
-			$data['custom'] = array();
+		$data['pages'] = array(0 => FALSE);
+		$data['custom'] = array();
 			
-			foreach ($all_pages as $key => $page) {
-				if ('custom:' == substr($page['page_codename'],0,7)) {
-					$page['codename'] = substr($page['page_codename'],7);
-					$data['custom'][] = $page;
-				} elseif ($page['page_id'] != 0) {
-					$page['codename'] = $page['page_codename'];
-					$data['pages'][] = $page;
-				} else {
-					$page['codename'] = $page['page_codename'];
-					$data['pages'][0] = $page;
-				}
+		foreach ($all_pages as $key => $page) {
+			if ('custom:' == substr($page['page_codename'],0,7)) {
+				$page['codename'] = substr($page['page_codename'],7);
+				$data['custom'][] = $page;
+			} elseif ($page['page_id'] != 0) {
+				$page['codename'] = $page['page_codename'];
+				$data['pages'][] = $page;
+			} else {
+				$page['codename'] = $page['page_codename'];
+				$data['pages'][0] = $page;
 			}
-			if (FALSE === $data['pages'][0]) {
-				unset($data['pages'][0]);
-			}
-			
-			$main_text = $this->pages_model->GetPropertyWikitext('main_text');
-			$data['main_text'] = $main_text;
-			$inline_edit_text = $this->pages_model->GetPropertyWikitext('inline_edit_text');
-			$data['inline_edit_text'] = $inline_edit_text;
-			
-			$data['permissions'] = $this->mPermissions;
-			$this->main_frame->SetContentSimple('admin/pages_index', $data);
 		}
+		if (FALSE === $data['pages'][0]) {
+			unset($data['pages'][0]);
+		}
+			
+		$main_text = $this->pages_model->GetPropertyWikitext('main_text');
+		$data['main_text'] = $main_text;
+		$inline_edit_text = $this->pages_model->GetPropertyWikitext('inline_edit_text');
+		$data['inline_edit_text'] = $inline_edit_text;
+		
+		$data['permissions'] = $this->mPermissions;
+		$this->main_frame->SetContentSimple('admin/pages_index', $data);
 		$this->main_frame->Load();
 	}
 	
@@ -161,6 +222,7 @@ class Pages extends Controller
 	 * @param $Redirect string Page to direct to after successful save.
 	 * @param $Prefix string Prefix to add to codenames.
 	 * @return array Modified @a $Data array ready for view.
+	 * @pre The user has permission to do so.
 	 */
 	private function _NewPage($Data, $Target, $Redirect, $Prefix = '')
 	{
@@ -193,9 +255,9 @@ class Pages extends Controller
 			$input['keywords']    = $this->input->post('keywords');
 			$input['type_id']     = $this->input->post('type_id');
 			$save_failed = FALSE;
-			
-			// Validate and check permissions
-			if ($this->_CheckViewPermissions('custom_new','You do not have permission to create a new page')) {
+		
+			// Validate and check permission
+			if ($this->_CheckPermission('new')) {
 				$Data['codename'] = $input['codename'];
 				// Check the codename is valid
 				if (!$this->_ValidatePageCodename($input['codename'], $Prefix)) {
@@ -356,8 +418,11 @@ class Pages extends Controller
 					$save_failed = FALSE;
 					
 					// Validate and check permissions
-					if ($input['codename'] != $data['codename']) {
-						if ($this->_CheckViewPermissions('custom_rename','You do not have permission to rename custom pages')) {
+					if (!$this->_CheckPermission('edit')) {
+						$save_failed = TRUE;
+					}
+					elseif ($input['codename'] != $data['codename']) {
+						if ($this->_CheckPermission('rename')) {
 							$data['codename'] = $input['codename'];
 							// Check the codename is valid
 							if (!$this->_ValidatePageCodename($input['codename'], $Prefix)) {
@@ -405,69 +470,79 @@ class Pages extends Controller
 					}
 				}
 			}
-			if ($Data['permissions']['prop_edit']) {
-				if ($this->input->post('save_properties') !== FALSE) {
-					$changes = 0;
-					$input = array();
-					$input['properties'] = array();
-					$input['property_add'] = array();
-					$input['property_remove'] = array('wikitext_cache' => array());
-					$ignored_new_props = 0;
-					foreach ($_POST as $key => $value) {
-						if (preg_match('/^prop(\d+)$/',$key,$matches)) {
-							$property_id = (int)$matches[1];
-							if (array_key_exists($property_id, $data['properties'])) {
-								if (array_key_exists('delete-'.$key, $_POST)) {
-									// Property needs deleting
-									$input['property_remove'][$data['properties'][$property_id]['type']][] = $data['properties'][$property_id]['label'];
-									if ($data['properties'][$property_id]['type'] === 'wikitext') {
-										$input['property_remove']['wikitext_cache'][] = $data['properties'][$property_id]['label'];
-										++$changes;
-									}
+			if ($this->input->post('save_properties') !== FALSE) {
+				$changes = 0;
+				$input = array();
+				$input['properties'] = array();
+				$input['property_add'] = array();
+				$input['property_remove'] = array('wikitext_cache' => array());
+				$ignored_new_props = 0;
+				$newProperties     = 0;
+				$changedProperties = 0;
+				$deletedProperties = 0;
+				foreach ($_POST as $key => $value) {
+					if (preg_match('/^prop(\d+)$/',$key,$matches)) {
+						$property_id = (int)$matches[1];
+						if (array_key_exists($property_id, $data['properties'])) {
+							if (array_key_exists('delete-'.$key, $_POST)) {
+								// Property needs deleting
+								$input['property_remove'][$data['properties'][$property_id]['type']][] = $data['properties'][$property_id]['label'];
+								if ($data['properties'][$property_id]['type'] === 'wikitext') {
+									$input['property_remove']['wikitext_cache'][] = $data['properties'][$property_id]['label'];
 									++$changes;
-								} elseif ($data['properties'][$property_id]['text'] != $value) {
-									// property has been changed
-									$input['properties'][] = array(
-											'id' => $property_id,
-											'text' => $value,
-										);
-									++$changes;
-									$data['properties'][$property_id]['text'] = $value;
-									if ($data['properties'][$property_id]['type'] === 'wikitext') {
-										$input['property_remove']['wikitext_cache'][] = $data['properties'][$property_id]['label'];
-										++$changes;
-									}
 								}
-							}
-						}
-						if (preg_match('/^newprop(\-?\d+)$/',$key,$matches)) {
-							$label_key = 'label-'.$key;
-							$type_key = 'type-' .$key;
-							if (	array_key_exists($label_key, $_POST) &&
-									array_key_exists($type_key, $_POST)) {
-								$label = $_POST[$label_key];
-								$type  = $_POST[$type_key];
-								if (empty($label) && empty($value)) {
-									++$ignored_new_props;
-								} else {
-									// New property
-									$input['property_add'][] = array(
-											'label'	=> $label,
-											'type'	=> $type,
-											'text'	=> $value,
-										);
+								++$changes;
+								++$deletedProperties;
+							} elseif ($data['properties'][$property_id]['text'] != $value) {
+								// property has been changed
+								$input['properties'][] = array(
+										'id' => $property_id,
+										'text' => $value,
+									);
+								++$changes;
+								++$changedProperties;
+								$data['properties'][$property_id]['text'] = $value;
+								if ($data['properties'][$property_id]['type'] === 'wikitext') {
+									$input['property_remove']['wikitext_cache'][] = $data['properties'][$property_id]['label'];
 									++$changes;
 								}
 							}
 						}
 					}
-					
+					if (preg_match('/^newprop(\-?\d+)$/',$key,$matches)) {
+						$label_key = 'label-'.$key;
+						$type_key = 'type-' .$key;
+						if (	array_key_exists($label_key, $_POST) &&
+								array_key_exists($type_key, $_POST)) {
+							$label = $_POST[$label_key];
+							$type  = $_POST[$type_key];
+							if (empty($label) && empty($value)) {
+								++$ignored_new_props;
+							} else {
+								// New property
+								$input['property_add'][] = array(
+										'label'	=> $label,
+										'type'	=> $type,
+										'text'	=> $value,
+									);
+								++$changes;
+								++$newProperties;
+							}
+						}
+					}
+				}
+
+				// Check permissions
+				if ((0 == $newProperties     || $this->_CheckPermission('prop_add')) &&
+					(0 == $deletedProperties || $this->_CheckPermission('prop_delete')) &&
+					(0 == $changedProperties || $this->_CheckPermission('prop_edit')))
+				{
 					if ($ignored_new_props == 1) {
 						$this->messages->AddMessage('information',$ignored_new_props.' new property was ignored as it was blank');
 					} elseif ($ignored_new_props > 1) {
 						$this->messages->AddMessage('information',$ignored_new_props.' new properties were ignored as they were blank');
 					}
-					
+				
 					if ($changes > 0) {
 						// Try and save to db
 						if ($this->pages_model->SaveSpecificPage($page_code, $input)) {
@@ -478,10 +553,9 @@ class Pages extends Controller
 					} else {
 						$this->messages->AddMessage('information', 'No properties have changed');
 					}
-					
-					$_POST = array();
-					return $this->_EditPage($Data, $InputPageCode, $Target, $Redirect, $DefaultProperties, $Prefix);
 				}
+				$_POST = array();
+				return $this->_EditPage($Data, $InputPageCode, $Target, $Redirect, $DefaultProperties, $Prefix);
 			}
 		}
 		$main_text = $this->pages_model->GetPropertyWikitext('main_text');
@@ -492,6 +566,9 @@ class Pages extends Controller
 	}
 	
 	/// Delete a page.
+	/**
+	 * @pre The user has permission to do so.
+	 */
 	private function _DeletePage(
 			$Data,
 			$InputPageCode,
@@ -565,29 +642,30 @@ class Pages extends Controller
 	function common()
 	{
 		if (!CheckPermissions('editor')) return;
-		
-		$this->_SetPermissions();
+		$this->_ExitWithoutPermission('view');
+
 		// Tweak the permissions
-		$this->mPermissions['new']    = FALSE;
-		$this->mPermissions['edit']   = FALSE;
-		$this->mPermissions['rename'] = FALSE;
-		$this->mPermissions['delete'] = FALSE;
-		$this->mPermissions['prop_add'] = $this->mPermissions['common_add'];
-		$this->mPermissions['prop_edit'] = $this->mPermissions['common_edit'];
-		$this->mPermissions['prop_delete'] = $this->mPermissions['common_delete'];
+		$this->_HardPermission(array(
+			'new'    => false,
+			'edit'   => false,
+			'rename' => false,
+			'delete' => false,
+		));
+		$this->_RemapPermission(array(
+			'prop_add'    => 'common_add',
+			'prop_edit'   => 'common_edit',
+			'prop_delete' => 'common_delete',
+		));
 		
 		$this->main_frame->IncludeJs('javascript/admin/pages.js');
-		if ($this->_CheckViewPermissions()) {
-			$data = array();
-			$data['permissions'] = $this->mPermissions;
+		$data = array();
+		$data['permissions'] = $this->mPermissions;
 			
-			$this->pages_model->SetPageCode('admin_pages_common');
-			$this_uri = '/admin/pages/common';
-			$data = $this->_EditPage($data, FALSE, $this_uri, $this_uri);
-			$this->main_frame->SetContentSimple('admin/pages_page', $data);
-		}
+		$this->pages_model->SetPageCode('admin_pages_common');
+		$this_uri = '/admin/pages/common';
+		$data = $this->_EditPage($data, FALSE, $this_uri, $this_uri);
+		$this->main_frame->SetContentSimple('admin/pages_page', $data);
 		$this->main_frame->Load();
-		
 	}
 	
 	/// Function for administrating pages of the website.
@@ -599,17 +677,19 @@ class Pages extends Controller
 	 */
 	function page($Operation, $PageCode='')
 	{
-		if (!CheckPermissions('editor')) return;
+		if (!CheckPermissions('office')) return;
+		$this->_ExitWithoutPermission('view');
 		
-		$this->_SetPermissions();
 		// Tweak the permissions
-		$this->mPermissions['new']    = $this->mPermissions['page_new'];
-		$this->mPermissions['edit']   = $this->mPermissions['page_edit'];
-		$this->mPermissions['rename'] = $this->mPermissions['page_rename'];
-		$this->mPermissions['delete'] = $this->mPermissions['page_delete'];
-		$this->mPermissions['prop_add'] = $this->mPermissions['page_prop_add'];
-		$this->mPermissions['prop_edit'] = $this->mPermissions['page_prop_edit'];
-		$this->mPermissions['prop_delete'] = $this->mPermissions['page_prop_delete'];
+		$this->_RemapPermission(array(
+			'new'         => 'page_new',
+			'edit'        => 'page_edit',
+			'rename'      => 'page_rename',
+			'delete'      => 'page_delete',
+			'prop_add'    => 'page_prop_add',
+			'prop_edit'   => 'page_prop_edit',
+			'prop_delete' => 'page_prop_delete',
+		));
 		
 		// Get url segments after the first (controller).
 		$num_segments = $this->uri->total_segments();
@@ -621,45 +701,41 @@ class Pages extends Controller
 		// We now have the page code so we can continue.
 		
 		$this->main_frame->IncludeJs('javascript/admin/pages.js');
-		if ($this->_CheckViewPermissions()) {
-			$data = array();
-			$data['permissions'] = $this->mPermissions;
-			switch ($Operation) {
-				case 'new':
-					$this->pages_model->SetPageCode('admin_pages_page_new');
-					if ($this->_CheckViewPermissions('new','You don\'t have permission to create a new page')) {
-						$data = $this->_NewPage($data,
-										'/admin/pages/page/new',
-										'/admin/pages/page/edit/');
-						$this->main_frame->SetContentSimple('admin/pages_page', $data);
-					}
-					break;
+		$data = array();
+		$data['permissions'] = $this->mPermissions;
+		switch ($Operation) {
+			case 'new':
+				$this->_ExitWithoutPermission('new');
+				$this->pages_model->SetPageCode('admin_pages_page_new');
+				$data = $this->_NewPage($data,
+								'/admin/pages/page/new',
+								'/admin/pages/page/edit/');
+				$this->main_frame->SetContentSimple('admin/pages_page', $data);
+				break;
 					
-				case 'edit':
-					$this->pages_model->SetPageCode('admin_pages_page_edit');
-					$this_uri = '/admin/pages/page/edit/';
-					$data = $this->_EditPage($data, $PageCode, $this_uri, $this_uri);
-					$this->main_frame->SetContentSimple('admin/pages_page', $data);
-					break;
+			case 'edit':
+				$this->pages_model->SetPageCode('admin_pages_page_edit');
+				$this_uri = '/admin/pages/page/edit/';
+				$data = $this->_EditPage($data, $PageCode, $this_uri, $this_uri);
+				$this->main_frame->SetContentSimple('admin/pages_page', $data);
+				break;
 					
-				case 'delete':
-					$this->pages_model->SetPageCode('admin_pages_page_delete');
-					if ($this->_CheckViewPermissions('delete','You don\'t have permission to delete this page')) {
-						$this_uri = '/admin/pages/page/delete/';
-						$data = $this->_DeletePage($data, $PageCode, $this_uri);
-						$this->main_frame->SetContentSimple('admin/pages_delete', $data);
-					}
-					break;
+			case 'delete':
+				$this->_ExitWithoutPermission('delete');
+				$this->pages_model->SetPageCode('admin_pages_page_delete');
+				$this_uri = '/admin/pages/page/delete/';
+				$data = $this->_DeletePage($data, $PageCode, $this_uri);
+				$this->main_frame->SetContentSimple('admin/pages_delete', $data);
+				break;
 					
-				default:
-					$this->messages->AddMessage('error', 'Unknown operation "'.$Operation.'"');
-					redirect('admin/pages');
-					return;
-			}
-			$this->main_frame->SetTitleParameters( array(
-					'codename' => $PageCode,
-				) );
+			default:
+				$this->messages->AddMessage('error', 'Unknown operation "'.$Operation.'"');
+				redirect('admin/pages');
+				return;
 		}
+		$this->main_frame->SetTitleParameters( array(
+				'codename' => $PageCode,
+			) );
 		$this->main_frame->Load();
 	}
 	
@@ -673,17 +749,19 @@ class Pages extends Controller
 	 */
 	function custom($Operation, $CustomPageCode='')
 	{
-		if (!CheckPermissions('editor')) return;
-		
-		$this->_SetPermissions();
-		// Tweak the permissions
-		$this->mPermissions['new']    = $this->mPermissions['custom_new'];
-		$this->mPermissions['edit']   = $this->mPermissions['custom_edit'];
-		$this->mPermissions['rename'] = $this->mPermissions['custom_rename'];
-		$this->mPermissions['delete'] = $this->mPermissions['custom_delete'];
-		$this->mPermissions['prop_add'] = $this->mPermissions['custom_prop_add'];
-		$this->mPermissions['prop_edit'] = $this->mPermissions['custom_prop_edit'];
-		$this->mPermissions['prop_delete'] = $this->mPermissions['custom_prop_delete'];
+		if (!CheckPermissions('office')) return;
+        $this->_ExitWithoutPermission('view');
+
+        // Tweak the permissions
+        $this->_RemapPermission(array(
+            'new'         => 'custom_new',
+            'edit'        => 'custom_edit',
+            'rename'      => 'custom_rename',
+            'delete'      => 'custom_delete',
+            'prop_add'    => 'custom_prop_add',
+            'prop_edit'   => 'custom_prop_edit',
+            'prop_delete' => 'custom_prop_delete',
+        ));
 		
 		// Get url segments after the first (controller).
 		$num_segments = $this->uri->total_segments();
@@ -695,55 +773,51 @@ class Pages extends Controller
 		// We now have the page code so we can continue.
 		
 		$this->main_frame->IncludeJs('javascript/admin/pages.js');
-		if ($this->_CheckViewPermissions()) {
-			$data = array();
-			$data['permissions'] = $this->mPermissions;
-			switch ($Operation) {
-				case 'new':
-					$this->pages_model->SetPageCode('admin_pages_custom_new');
-					if ($this->_CheckViewPermissions('new','You don\'t have permission to create a new custom page')) {
-						$data = $this->_NewPage($data,
-										'/admin/pages/custom/new',
-										'/admin/pages/custom/edit/',
-										'custom:');
-						$this->main_frame->SetContentSimple('admin/pages_page', $data);
-					}
-					break;
-					
-				case 'edit':
-					$this->pages_model->SetPageCode('admin_pages_custom_edit');
-					$this_uri = '/admin/pages/custom/edit/';
-					$data = $this->_EditPage($data, $CustomPageCode, $this_uri, $this_uri,
+		$data = array();
+		$data['permissions'] = $this->mPermissions;
+		switch ($Operation) {
+			case 'new':
+				$this->_ExitWithoutPermission('new');
+				$this->pages_model->SetPageCode('admin_pages_custom_new');
+				$data = $this->_NewPage($data,
+								'/admin/pages/custom/new',
+								'/admin/pages/custom/edit/',
+								'custom:');
+				$this->main_frame->SetContentSimple('admin/pages_page', $data);
+				break;
+				
+			case 'edit':
+				$this->pages_model->SetPageCode('admin_pages_custom_edit');
+				$this_uri = '/admin/pages/custom/edit/';
+				$data = $this->_EditPage($data, $CustomPageCode, $this_uri, $this_uri,
+						array(
 							array(
-								array(
-									'label' => 'main[0]',
-									'type' => 'wikitext',
-									'text' => 'Your page content goes here.',
-								),
+								'label' => 'main[0]',
+								'type' => 'wikitext',
+								'text' => 'Your page content goes here.',
 							),
-							'custom:'
-						);
-					$this->main_frame->SetContentSimple('admin/pages_page', $data);
-					break;
+						),
+						'custom:'
+					);
+				$this->main_frame->SetContentSimple('admin/pages_page', $data);
+				break;
 					
-				case 'delete':
-					$this->pages_model->SetPageCode('admin_pages_custom_delete');
-					if ($this->_CheckViewPermissions('delete','You don\'t have permission to delete this custom page')) {
-						$this_uri = '/admin/pages/custom/delete/';
-						$data = $this->_DeletePage($data, $CustomPageCode, $this_uri, 'custom:');
-						$this->main_frame->SetContentSimple('admin/pages_delete', $data);
-					}
-					break;
+			case 'delete':
+				$this->_ExitWithoutPermission('delete');
+				$this->pages_model->SetPageCode('admin_pages_custom_delete');
+				$this_uri = '/admin/pages/custom/delete/';
+				$data = $this->_DeletePage($data, $CustomPageCode, $this_uri, 'custom:');
+				$this->main_frame->SetContentSimple('admin/pages_delete', $data);
+				break;
 					
-				default:
-					$this->messages->AddMessage('error', 'Unknown operation "'.$Operation.'"');
-					redirect('admin/pages');
-					return;
-			}
-			$this->main_frame->SetTitleParameters( array(
-					'codename' => $CustomPageCode,
-				) );
+			default:
+				$this->messages->AddMessage('error', 'Unknown operation "'.$Operation.'"');
+				redirect('admin/pages');
+				return;
 		}
+		$this->main_frame->SetTitleParameters( array(
+				'codename' => $CustomPageCode,
+			) );
 		$this->main_frame->Load();
 	}
 	

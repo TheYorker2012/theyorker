@@ -129,7 +129,7 @@ if (!empty($properties) || $permissions['prop_add']) {
 			<input type="hidden" name="destination" id="destination" value="1" />
 			<input type="button" class="button" onClick="AddClone('source', 'destination')" value="Add Property"/>
 			<?php }
-			if ($permissions['prop_edit']) {
+			if ($permissions['prop_edit'] || $permissions['prop_delete'] || $permissions['prop_add']) {
 				?>
 				<input type="hidden" name="save_properties" value="1">
 				<input type="submit" class="button" name="save_property_button" value="Save Properties">
