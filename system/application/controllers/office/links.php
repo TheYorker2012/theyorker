@@ -17,6 +17,7 @@ class Links extends Controller
 	function index()
 	{
 		if (!CheckPermissions('office')) return;
+		if (!CheckRolePermissions('LINKS_VIEW')) return;
 
 		$this->pages_model->SetPageCode('link_list');
 
@@ -36,13 +37,7 @@ class Links extends Controller
 	{
 		//has user got access to office
 		if (!CheckPermissions('office')) return;
-
-		$this->load->model('user_auth');
-
-		if (!($this->user_auth->officeType == 'High' || $this->user_auth->officeType == 'Admin')) {
-			$this->messages->AddMessage('error', 'Permission denied. You must be an editor to perform this operation.');
-			redirect('/office/links');
-		}
+		if (!CheckRolePermissions('LINKS_MODIFY')) return;
 
 		$data['link'] = $this->Links_Model->GetLink($link_id);
 
@@ -57,13 +52,7 @@ class Links extends Controller
 	{
 		//has user got access to office
 		if (!CheckPermissions('office')) return;
-
-		$this->load->model('user_auth');
-
-		if (!($this->user_auth->officeType == 'High' || $this->user_auth->officeType == 'Admin')) {
-			$this->messages->AddMessage('error', 'Permission denied. You must be an editor to perform this operation.');
-			redirect('/office/links');
-		}
+		if (!CheckRolePermissions('LINKS_PROMOTE')) return;
 
 		$this->load->model('Links_Model');
 		$this->Links_Model->PromoteLink($this->user_auth->entityId, $link_id);
@@ -77,13 +66,7 @@ class Links extends Controller
 	{
 		//has user got access to office
 		if (!CheckPermissions('office')) return;
-
-		$this->load->model('user_auth');
-
-		if (!($this->user_auth->officeType == 'High' || $this->user_auth->officeType == 'Admin')) {
-			$this->messages->AddMessage('error', 'Permission denied. You must be an editor to perform this operation.');
-			redirect('/office/links');
-		}
+		if (!CheckRolePermissions('LINKS_REJECT')) return;
 
 		$this->load->model('Links_Model');
 		$this->Links_Model->RejectLink($this->user_auth->entityId, $link_id);
@@ -99,6 +82,7 @@ class Links extends Controller
 	{
 		/// Make sure users have necessary permissions to view this page
 		if (!CheckPermissions('office')) return;
+		if (!CheckRolePermissions('LINKS_NOMINATE')) return;
 
 		$this->load->model('Links_Model');
 
@@ -155,13 +139,7 @@ class Links extends Controller
 	{
 		//has user got access to office
 		if (!CheckPermissions('office')) return;
-
-		$this->load->model('user_auth');
-
-		if (!($this->user_auth->officeType == 'High' || $this->user_auth->officeType == 'Admin')) {
-			$this->messages->AddMessage('error', 'Permission denied. You must be an editor to perform this operation.');
-			redirect('/office/links');
-		}
+		if (!CheckRolePermissions('LINKS_MODIFY')) return;
 
 		$link_name = $this->input->post('link_name');
 		$link_url = $this->input->post('link_url');
@@ -184,13 +162,7 @@ class Links extends Controller
 	{
 		//has user got access to office
 		if (!CheckPermissions('office')) return;
-
-		$this->load->model('user_auth');
-
-		if (!($this->user_auth->officeType == 'High' || $this->user_auth->officeType == 'Admin')) {
-			$this->messages->AddMessage('error', 'Permission denied. You must be an editor to perform this operation.');
-			redirect('/office/links');
-		}
+		if (!CheckRolePermissions('LINKS_MODIFY')) return;
 
 		$link = $this->Links_Model->GetLink($link_id);
 

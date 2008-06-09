@@ -79,9 +79,11 @@ $config['permissions'] = array(
 	
 	'IRC_CHAT'                         => 'Access to interactive office chat',
 	
-	/// @todo Review and Implement links permissions
-	'LINKS_VIEW'                       => '(unimplemented) View available and nominated links',
-	'LINKS_MODIFY'                     => '(unimplemented) Modify available and nominated links',
+	'LINKS_VIEW'                       => 'View available and nominated links',
+	'LINKS_NOMINATE'                   => 'Nominate a new link',
+	'LINKS_MODIFY'                     => 'Modify available and nominated links',
+	'LINKS_PROMOTE'                    => 'Promote nominated links to official status',
+	'LINKS_REJECT'                     => 'Reject a nominated link',
 	
 	/// @todo Implement management area permissions
 	'MANAGE'                           => '(unimplemented) Access office management area',
