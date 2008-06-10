@@ -25,6 +25,7 @@ sub printInformation
 	my ($self) = @_;
 	print "\tThis is the PHP Coding Standards Inspection script\n";
 	print "\t\tDetects PHP short tags\n";
+        print "\t\tDetects badly named private/protected controller functions\n";
 	print "\tConfig options (use -c or --config)\n";
 	print "\t\tphp_csi:autofix     Automatically fix CSI problems where possible\n";
 }
@@ -54,6 +55,8 @@ sub runTest
 			my @lines = <$fildes>;
 			close $fildes;
 			my $modified = 0;
+
+			my $isController = ($file =~ /system\/application\/controllers\//);
 			
 			# Do checks, potentially modify the memory copy
 			my $lineno = 1;
@@ -79,6 +82,16 @@ sub runTest
 					}
 				}
 				
+				# Private or protected badly named functions
+				if ($isController && $line =~ /(protected|private)\s+function\s+(\w+)\s*\(/) {
+					my $protection = $1;
+					my $functionName = $2;
+					if ($functionName !~ /^_/)
+					{
+						$self->printError($file, $lineno, "Controller function $functionName is $protection so it should start with an underscore so that CI routing doesn't try and use it");
+						$fail = 1;
+					}
+				}
 				
 				++$lineno;
 			}
