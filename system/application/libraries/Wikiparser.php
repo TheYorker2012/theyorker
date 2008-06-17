@@ -791,7 +791,7 @@ Done.
 
 		$output = '';
 
-		$text = preg_replace_callback('/<nowiki>((.|\n)*)<\/nowiki>/i',array(&$this,"handle_save_nowiki"),$text);
+		$text = preg_replace_callback('/<nowiki>(.*?)<\/nowiki>/is',array(&$this,"handle_save_nowiki"),$text);
 
 		// add a newline at the end if there isn't already one there
 		$lines = explode("\n",$text);
