@@ -375,8 +375,7 @@ class Review_model extends Model {
 
 		$query = $this->db->query($sql, array(
 			$user_entity_id, $blurb, $quote, $average_price, $recommended_item,
-			$rating, $serving_times, $organisation_shortname, $content_type_codename,
-			$organisation_shortname, $content_type_codename) );
+			$rating, $serving_times, $organisation_shortname, $content_type_codename) );
 		return $this->db->affected_rows();
 	}
 
@@ -467,7 +466,7 @@ class Review_model extends Model {
 		$sql .= '
 			  INNER JOIN organisations
 			  ON review_contexts.review_context_organisation_entity_id = organisations.organisation_entity_id
-			  INNER JOIN organisation_contents
+			  LEFT OUTER JOIN organisation_contents
 			  ON organisations.organisation_live_content_id = organisation_contents.organisation_content_id
 			  WHERE content_types.content_type_codename = '.$this->db->escape($content_type_codename).'
 			  AND organisations.organisation_directory_entry_name = '.$this->db->escape($organisation_directory_entry_name);
@@ -1038,7 +1037,7 @@ function GetTagOrganisation($type,$organisation)
 				ON rc.review_context_content_type_id = rcc.review_context_content_content_type_id
 				AND rc.review_context_organisation_entity_id = rcc.review_context_content_organisation_entity_id
 				AND rc.review_context_live_content_id = rcc.review_context_content_id
-			INNER JOIN organisation_contents AS oc
+			LEFT JOIN organisation_contents AS oc
 				ON o.organisation_live_content_id = oc.organisation_content_id
 			LEFT JOIN comment_threads AS thread
 				ON thread.comment_thread_id = rc.review_context_comment_thread_id
