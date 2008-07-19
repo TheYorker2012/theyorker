@@ -129,8 +129,11 @@ class Polls_model extends Model
 		$sql = 'SELECT	poll_question,
 						poll_running,
 						poll_displayed,
+						poll_competition,
 						poll_created,
-						poll_deleted
+						poll_deleted,
+						UNIX_TIMESTAMP(poll_start_time) AS poll_start_time,
+						UNIX_TIMESTAMP(poll_finish_time) AS poll_finish_time
 				FROM	polls
 				WHERE	poll_id = ?';
 		$query = $this->db->query($sql,array($poll_id));
@@ -141,8 +144,11 @@ class Polls_model extends Model
 				'question' => $row->poll_question,
 				'is_running' => $row->poll_running,
 				'is_deleted' => $row->poll_displayed,
+				'is_competition' => $row->poll_competition,
 				'created' => $row->poll_created,
-				'deleted' => $row->poll_deleted
+				'deleted' => $row->poll_deleted,
+				'start_time' => $row->poll_start_time,
+				'finish_time' => $row->poll_finish_time
 				);
 		}
 		else
@@ -385,6 +391,15 @@ class Polls_model extends Model
 		$this->db->query($sql,array($poll_id, $user_id, $choice_id));
 		return true;
 	}
-	
 
+	function GetCompetitionContactDetails($user_id)
+	{
+		$sql = 'SELECT		users.user_firstname,
+							users.user_surname,
+							users.user_email
+				FROM		users
+				WHERE		users.user_entity_id = ?';
+		$query = $this->db->query($sql, array($user_id));
+		return $query->row_array();
+	}
 }
