@@ -13,6 +13,87 @@ class Photos_model extends Model
 		parent::Model();
 	}
 
+	function GetTypeInfo ($type_codename)
+	{
+		$sql = 'SELECT	image_type_id AS id,
+						image_type_name AS name,
+						image_type_width AS width,
+						image_type_width AS x,
+						image_type_height AS height,
+						image_type_height AS y,
+						image_type_codename AS codename
+				FROM	image_types
+				WHERE	image_type_codename = ?';
+		$query = $this->db->query($sql, array($type_codename));
+		if ($query->num_rows() == 1) {
+			return $query->row();
+		} else {
+			return false;
+		}
+	}
+
+	function GetOriginalPhotoProperties ($id)
+	{
+		$sql = 'SELECT	photo_id AS id,
+						UNIX_TIMESTAMP(photo_timestamp) AS timestamp,
+						photo_width AS width,
+						photo_height AS height
+				FROM	photos
+				WHERE	photo_id = ?';
+		$query = $this->db->query($sql, array($id));
+		if ($query->num_rows() == 1) {
+			return $query->row();
+		} else {
+			return false;
+		}
+	}
+
+	function GetThumbnail ($id, $type)
+	{
+		$sql = 'SELECT	photo_thumbs.photo_thumbs_data AS data,
+						photos.photo_mime AS mime,
+						UNIX_TIMESTAMP(photo_thumbs.photo_thumbs_timestamp) AS timestamp
+				FROM	photo_thumbs,
+						photos
+				WHERE	photo_thumbs.photo_thumbs_photo_id = ?
+				AND		photo_thumbs.photo_thumbs_photo_id = photos.photo_id
+				AND		photo_thumbs.photo_thumbs_image_type_id = ?';
+		$query = $this->db->query($sql, array($id, $type));
+		if ($query->num_rows() == 1) {
+			return $query->row();
+		} else {
+			return false;
+		}
+	}
+
+	function GetFullPhoto ($id)
+	{
+		$sql = 'SELECT	photo_mime AS mime,
+						photo_data AS data,
+						UNIX_TIMESTAMP(photo_timestamp) AS timestamp
+				FROM	photos
+				WHERE	photo_id = ?';
+		$query = $this->db->query($sql, array($id));
+		if ($query->num_rows() == 1) {
+			$row = $query->row();
+		} else {
+			return false;
+		}
+	}
+
+	function GetErrorImage ($type)
+	{
+		$sql = 'SELECT	image_type_error_mime AS mime,
+						image_type_error_data AS data,
+						UNIX_TIMESTAMP() AS timestamp
+				FROM	image_types WHERE image_type_codename = ?';
+		$query = $this->db->query($sql, array($type));
+		if ($query->num_rows() == 1) {
+			return $query->row();
+		} else {
+			return false;
+		}
+	}
 
 	function GetPhotoCount ()
 	{
