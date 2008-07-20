@@ -75,7 +75,7 @@ class Photos_model extends Model
 				WHERE	photo_id = ?';
 		$query = $this->db->query($sql, array($id));
 		if ($query->num_rows() == 1) {
-			$row = $query->row();
+			return $query->row();
 		} else {
 			return false;
 		}
