@@ -1,18 +1,18 @@
 <?php
 
-/// Office Gallery
 /**
- * @author Mark Goodall (mg512@cs.york.ac.uk)
- *
+ *	@brief		Office Gallery
+ *	@author		Mark Goodall (mg512@cs.york.ac.uk)
+ *	@author		Chris Travis (cdt502 - ctravis@gmail.com)
  */
-define('PHOTOS_PERPAGE', 12);
+
+define('PHOTOS_PERPAGE', 40);
 define('VIEW_WIDTH', 600);
 
 class Gallery extends Controller {
-	/**
-	 * @brief Default constructor.
-	 */
-	function __construct() {
+
+	function __construct()
+	{
 		parent::Controller();
 		$this->load->helper(array('url', 'form', 'entity'));
 		$this->load->library('image');
@@ -22,108 +22,83 @@ class Gallery extends Controller {
 	function index() {
 		if (!CheckPermissions('office')) return;
 
-		$this->pages_model->SetPageCode('office_gallery');
-		$count = $this->photos_model->GetPhotoCount();
-		if ($count > PHOTOS_PERPAGE) {
-			$this->load->library('pagination');
-
-			$config['base_url'] = site_url('office/gallery/');
-			$config['total_rows'] = $count;
-			$config['per_page'] = PHOTOS_PERPAGE;
-			$config['uri_segment'] = 3;
-
-			$this->pagination->initialize($config);
-			$pageNumbers = $this->pagination->create_links();
-		} else {
-			$pageNumbers = '';
-		}
 		$page = $this->uri->segment(3, 0);
 		if (isset($_SERVER["HTTP_REFERER"])) {
 			$bits = explode('/', $_SERVER["HTTP_REFERER"]);
-			if ($page === 'return') {
+			if (($page === 'return') && (isset($_SESSION['img_return']))) {
 				//some people won't approve of this method, but the user cannot harm anything messing this up and its short
 				$_SESSION['img'][] = array('list' => $bits[6], 'type' => 'all');
-				header('Location: '.$_SESSION['img_return']);
+				redirect($_SESSION['img_return']);
 			} elseif (isset ($bits[4]) and $bits[4] != 'gallery') {
 				$_SESSION['img_return'] = $_SERVER["HTTP_REFERER"];
 			}
 		}
 
+		$this->pages_model->SetPageCode('office_gallery');
 
-		if ($this->input->post('clear') == 'clear') {
-			unset($_SESSION['img_search']);
-		} elseif ($this->input->post('submit')) {
-			$_SESSION['img_search'] = $this->input->post('search');
-			$_SESSION['img_search_by'] = $this->input->post('searchcriteria');
-			$_SESSION['img_search_order'] = $this->input->post('order');
-			$_SESSION['img_tag'] = $this->input->post('tag');
-			$_SESSION['img_photographer'] = $this->input->post('photographer');
+		if (!isset($_SESSION['gallery_search'])) {
+			$_SESSION['gallery_search'] = array(
+				'view' => 'icons'
+			);
 		}
 
-		if (isset($_SESSION['img_search'])) {
-			$photos = $this->db->select('photo_id, photo_timestamp, photo_author_user_entity_id, photo_title, photo_width, photo_height, photo_gallery, photo_complete, photo_deleted')->from('photos')->where('photo_deleted', 0);
-			if ($_SESSION['img_search']) {
-				switch($_SESSION['img_search_by']) {
-					case "date":
-						$photos = $photos->like('photo_timestamp', $_SESSION['img_search']);
-					break;
-					case "title":
-						$photos = $photos->like('photo_title', $_SESSION['img_search']);
-					break;
-					case "photographer":
-						$photos = $photos->join('users', 'users.user_entity_id = photos.photo_author_user_entity_id');
-						$photos = $photos->like('users.user_nickname', $_SESSION['img_search']);
-						$photos = $photos->orlike('users.user_firstname', $_SESSION['img_search']);
-						$photos = $photos->orlike('users.user_surname', $_SESSION['img_search']);
-					break;
-				}
-			}
-			if ($_SESSION['img_tag'] != 'null') {
-				$photos = $photos->join('photo_tags', 'photo_tags.photo_tag_photo_id = photos.photo_id')->where('photo_tags.photo_tag_tag_id', $_SESSION['img_tag']);
-			}
-			if ($_SESSION['img_photographer'] != 'null') {
-				$photos = $photos->where('photo_author_user_entity_id', $_SESSION['img_photographer']);
-			}
-			if ($_SESSION['img_search_order']) {
-				switch ($_SESSION['img_search_order']) {
-					case "title":
-						$photos = $photos->orderby('photo_title', 'asc');
-					break;
-					case "date":
-						$photos = $photos->orderby('photo_timestamp', 'desc');
-					break;
-					case "photographer":
-						$photos = $photos->orderby('photo_author_user_entity_id', 'asc');
-					break;
-				}
-			}
-			$photos = $photos->limit(PHOTOS_PERPAGE, $page)->get();
+		if ($this->input->post('search_button')) {
+			$_SESSION['gallery_search']['term'] = $this->input->post('search');
+		}
+
+		if ((isset($_SESSION['gallery_search']['term'])) && ($_SESSION['gallery_search']['term'] != '')) {
+			$terms = explode(' ', $_SESSION['gallery_search']['term']);
+			$results_title = 'search results...';
 		} else {
-			$photos = $this->db->select('photo_id, photo_timestamp, photo_author_user_entity_id, photo_title, photo_width, photo_height, photo_gallery, photo_complete, photo_deleted')
-					->where('photo_deleted', 0)
-					->orderby('photo_timestamp', 'desc')
-					->get('photos', PHOTOS_PERPAGE, $page);
+			$terms = array();
+			$results_title = 'recently uploaded...';
 		}
-
+		$photos = $this->photos_model->GallerySearch ($terms, $page, PHOTOS_PERPAGE, false);
+		$count = $this->photos_model->GallerySearch ($terms, $page, PHOTOS_PERPAGE, true);
+		$this->load->library('pagination');
+		$config['base_url'] = site_url('office/gallery');
+		$config['total_rows'] = $count;
+		$config['per_page'] = PHOTOS_PERPAGE;
+		$config['num_links'] = 2;
+		$config['full_tag_open'] = '<div class="Pagination">';
+		$config['full_tag_close'] = '</div>';
+		$config['next_tag_open'] = '<span class="direction">';
+		$config['next_tag_close'] = '</span>';
+		$config['prev_tag_open'] = '<span class="direction">';
+		$config['prev_tag_close'] = '</span>';
+		$config['cur_tag_open'] = '<span class="selected">';
+		$config['cur_tag_close'] = '</span>';
+		$config['num_tag_open'] = '<span>';
+		$config['num_tag_close'] = '</span>';
+		$config['uri_segment'] = 3;
+		$this->pagination->initialize($config);
+		$pageNumbers = $this->pagination->create_links();
 
 		$data = array(
 			'main_text' => $this->pages_model->GetPropertyWikitext('main_text'),
-			'photos' => $photos->result()
+			'photos' => $photos
 		);
 
 		// Set up the center div for the gallery.
-		$gallery_div = $this->frames->view('office/gallery/gallerythumbs');
+		$gallery_div = $this->frames->view('office/gallery/results_' . $_SESSION['gallery_search']['view']);
 		$gallery_div->AddData($data);
 
 		// Set up the subview for gallery.
-		$frameData = array('photographer' => $this->db->getwhere('users', array('user_office_interface_id' => '2')),
-		                   'tags' => $this->db->getwhere('tags', array('tag_type' => 'photo')),
-		                   'pageNumbers' => $pageNumbers);
+		$frameData = array(
+			'photographer' => $this->db->getwhere('users', array('user_office_interface_id' => '2')),
+			'tags' => $this->db->getwhere('tags', array('tag_type' => 'photo')),
+			'pageNumbers' => $pageNumbers,
+			'total' => $count,
+			'offset' => $page,
+			'perpage' => PHOTOS_PERPAGE,
+			'title' => $results_title
+		);
 		$gallery_frame = $this->frames->frame('office/gallery/galleryframe');
 		$gallery_frame->AddData($frameData);
 		$gallery_frame->SetContent($gallery_div);
 
 		// Set up the master frame.
+		$this->main_frame->IncludeCss('stylesheets/gallery.css');
 		$this->main_frame->SetTitle('Photo Gallery');
 		$this->main_frame->SetContent($gallery_frame);
 
@@ -131,105 +106,81 @@ class Gallery extends Controller {
 		$this->main_frame->Load();
 	}
 
-	function show()
+	function change_view ($view = 'icons')
 	{
 		if (!CheckPermissions('office')) return;
+		$_SESSION['gallery_search']['view'] = $view;
+		redirect('/office/gallery');
+	}
+
+	function change_tag ($tag = NULL)
+	{
+		if (!CheckPermissions('office')) return;
+		if ($tag !== NULL) {
+			if (!isset($_SESSION['gallery_search']))
+				$_SESSION['gallery_search'] = array();
+			$_SESSION['gallery_search']['term'] = $tag;
+		}
+		redirect('/office/gallery');
+	}
+
+	function show($id = NULL)
+	{
+		if (!CheckPermissions('office')) return;
+
+		if ($id === NULL)
+			show_404();
+		$data = array();
+		$data['photo'] = $this->photos_model->GetOriginalPhotoProperties($id);
+		if (!$data['photo'])
+			show_404();
+
 		$this->load->library('xajax');
 		$this->xajax->registerFunction(array("tag_suggest", &$this, "tag_suggest"));
 		$this->xajax->processRequests();
 
-		$id = $this->uri->segment(4);
-
-		if ($this->uri->segment(5) == 'save'
-		    and $this->input->post('title')
-		    and $this->input->post('date')) {
-
-			$new = array('photo_title' => $this->input->post('title'),
-			             'photo_timestamp' => $this->input->post('date'),
-			             'photo_author_user_entity_id' =>  $this->input->post('photographer'));
-
-			if ($this->input->post('hidden') == 'hide') {
-				$new['photo_deleted'] = "1";
-			} else {
-				$new['photo_deleted'] = "0";
-			}
-			$this->db->update('photos', $new, array('photo_id' => $id));
-
-			//tags
-			$this->db->delete('photo_tags', array('photo_tag_photo_id' => $id));
-			//add
-			if ($this->input->post('tags')) {
-				$tagsRaw = explode('+', $this->input->post('tags'));
-				array_pop($tagsRaw);
-				foreach ($tagsRaw as $tag) {
-					$tagSearch = $this->db->getwhere('tags', array('tag_name' => $tag, 'tag_type' => 'photo'));
-					if ($tagSearch->num_rows() > 0) {
-						//this is an existing tag
-						foreach ($tagSearch->result() as $tagS) {
-							$this->db->insert('photo_tags', array('photo_tag_photo_id' => $id, 'photo_tag_tag_id' => $tagS->tag_id));
-						}
-					} else {
-						//this is a new tag
-						$this->db->insert('tags', array('tag_name' => $tag, 'tag_type' => 'photo'));
-						$newTag = $this->db->getwhere('tags', array('tag_name' => $tag, 'tag_type' => 'photo'));
-						foreach ($newTag->result() as $Ntag) {
-							$this->db->insert('photo_tags', array('photo_tag_photo_id' => $id, 'photo_tag_tag_id' => $Ntag->tag_id));
-						}
-					}
-				}
-			}
+		if ($this->input->post('save_photo_details')) {
+			$_POST['hidden'] = (isset($_POST['hidden'])) ? 1 : 0;
+			$_POST['hidden-gallery'] = (isset($_POST['hidden-gallery'])) ? 1 : 0;
+			$this->photos_model->UpdatePhotoDetails($id, $_POST['title'], $_POST['watermark'], $_POST['hidden'], $_POST['hidden-gallery']);
+			$this->main_frame->AddMessage('success', 'The photo details were successfully updated. Please note that if the watermark text was changed this will not appear on any thumbnails until they are re-cropped!');
+			redirect('/office/gallery/show/' . $id);
 		}
+
 
 		$this->pages_model->SetPageCode('office_gallery');
+		$data['main_text'] = $this->pages_model->GetPropertyWikitext('photo_view');
+		$data['image_types'] = $this->photos_model->GetAllTypesInfo();
+		$data['photo_tags'] = $this->photos_model->GetPhotosTags($id);
 
-		if ($id) {
-			$data = array(
-				'main_text' => $this->pages_model->GetPropertyWikitext('photo_view'),
-				'photoDetails' => $this->db->getwhere('photos', array('photo_id' => $id), 1)->row(),
-				'type' => $this->db->getwhere('image_types', array('image_type_photo_thumbnail' => '1'))->result(),
-				'photoTag' => $this->db->from('tags')->join('photo_tags', 'photo_tags.photo_tag_tag_id = tags.tag_id')->where('photo_tags.photo_tag_photo_id', $id)->get(),
-				'photographer' => $this->db->getwhere('users', array('user_office_interface_id' => '2'))
-			);
-		}
-
-		// Set up the center div for the gallery.
-		$gallery_div = $this->frames->view('office/gallery/galleryimage');
-		$gallery_div->AddData($data);
-
-		// Set up the subview for gallery.
-		$frameData = array('photographer' => $data['photographer'],
-		                   'tags' => $this->db->getwhere('tags', array('tag_type'=>'photo')),
-		                   'pageNumbers' => '');
-		$gallery_frame = $this->frames->frame('office/gallery/galleryframe');
-		$gallery_frame->AddData($frameData);
-		$gallery_frame->SetContent($gallery_div);
-
-		// Set up the master frame.
+		$this->main_frame->SetTitle('Photo Gallery');
 		$this->main_frame->IncludeJs('javascript/prototype.js');
 		$this->main_frame->SetExtraHead($this->xajax->getJavascript(null, '/javascript/xajax.js'));
-		$this->main_frame->SetContent($gallery_frame);
-		$this->main_frame->SetTitle('Photo Details');
-
-		// Load the main frame
+		$this->main_frame->IncludeCss('stylesheets/gallery.css');
+		$this->main_frame->SetContentSimple('office/gallery/galleryimage', $data);
 		$this->main_frame->Load();
 	}
 
 	function tag_suggest($tag) {
 		$objResponse = new xajaxResponse();
-		if ($tag == "") {
-			$objResponse->addAssign("txt_result", "style.display", 'none');
-			return $objResponse;
-		}
-		$tagSearch = $this->db->where('tag_type', 'photo')->like('tag_name', $tag)->get('tags');
-		$reply = '';
-		if ($tagSearch->num_rows() > 0) {
-			foreach ($tagSearch->result() as $tag) {
-				$reply.='<li id="'.$tag->tag_name.'"><a onClick="setTag(\''.$tag->tag_name.'\'); addTag()"><img src="/images/icons/add.png" title="add" alt="add"> '.$tag->tag_name.'</a></li>';
+		if ($tag != '') {
+			$tag_details = $this->photos_model->GetTagDetails($tag);
+			if (!$tag_details) {
+				// Tag doesn't already exist so add it
+				$tag_id = $this->photos_model->AddPhotoTag($tag);
+			} else {
+				$tag_id = $tag_details->tag_id;
 			}
-			$objResponse->addAssign("ntags", "innerHTML", $reply);
-		} else {
-			$objResponse->addAssign("ntags", "innerHTML", '');
+			// Associate photo with tag
+			$this->photos_model->AssociatePhotoTag($this->uri->segment(4), $tag_id);
+			// Return all tags
+			$tags = $this->photos_model->GetPhotosTags($this->uri->segment(4));
+			$objResponse->addScriptCall('clearTags');
+			foreach ($tags as $tag) {
+				$objResponse->addScriptCall('createTag', xml_escape($tag['tag_name']));
+			}
 		}
+		$objResponse->addScriptCall('processTag');
 		return $objResponse;
 	}
 

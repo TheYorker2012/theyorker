@@ -84,9 +84,14 @@ label.radio {
 	margin-right: 0.2em;
 }
 
-input, select, textarea{
+input, select, textarea {
 	float: left;
 	margin: 0.2em;
+}
+
+div.input {
+	float: left;
+	margin: 0.4em;
 }
 
 input.radio {
@@ -605,6 +610,10 @@ div.Pagination span {
 	border: 1px #20C1F0 solid;
 	padding: 0.1em 0.3em;
 	margin-right: 0.2em;
+}
+
+div.Pagination span.direction {
+	border-style: dotted;
 }
 
 div.Pagination span.selected {

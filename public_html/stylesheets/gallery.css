@@ -1,0 +1,37 @@
+div.clear {
+	font-size: 1px;
+	margin: 0;
+	padding: 0;
+}
+div#photo_search fieldset, div#photo_search h2 {
+	float: left;
+}
+div#photo_search fieldset input {
+	font-size: large;
+}
+div.search_options {
+	float: right;
+	text-align: right;
+}
+div#preview {
+	position: absolute;
+	display: none;
+}
+div.gallery_thumb_view {
+	float: left;
+	margin-right: 0;
+	margin-top: 0;
+}
+div.gallery_detail_view {
+	float: left;
+	margin-right: 0;
+	margin-top: 0;
+	width: 45%;
+}
+div.gallery_detail_view img {
+	float: left;
+	margin-right: 10px;
+}
+div.gallery_detail_view div {
+	margin-left: 76px;
+}

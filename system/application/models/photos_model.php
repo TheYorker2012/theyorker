@@ -32,14 +32,82 @@ class Photos_model extends Model
 		}
 	}
 
+	function GetAllTypesInfo ()
+	{
+		$sql = 'SELECT		image_type_id AS id,
+							image_type_name AS name,
+							image_type_width AS width,
+							image_type_height AS height,
+							image_type_codename AS codename
+				FROM		image_types
+				ORDER BY	image_type_width ASC,
+							image_type_height ASC,
+							image_type_name ASC';
+		return $this->db->query($sql)->result();
+	}
+
+	function GetTagDetails ($tag_name)
+	{
+		$sql = 'SELECT		tags.tag_id,
+							tags.tag_name
+				FROM		tags
+				WHERE		LOWER(tags.tag_name) = LOWER(?)
+				AND			tags.tag_type = \'photo\'';
+		$query = $this->db->query($sql, array($tag_name));
+		if ($query->num_rows() == 1) {
+			return $query->row();
+		} else {
+			return false;
+		}
+	}
+
+	function AddPhotoTag ($tag_name)
+	{
+		$sql = 'INSERT INTO	tags
+				SET			tags.tag_name = LOWER(?),
+							tags.tag_type = \'photo\'';
+		$query = $this->db->query($sql, array($tag_name));
+		return $this->db->insert_id();
+	}
+
+	function AssociatePhotoTag ($photo_id, $tag_id)
+	{
+		$sql = 'INSERT INTO	photo_tags
+				SET			photo_tags.photo_tag_photo_id = ?,
+							photo_tags.photo_tag_tag_id = ?
+				ON DUPLICATE KEY UPDATE photo_tag_tag_id = photo_tag_tag_id';
+		$query = $this->db->query($sql, array($photo_id, $tag_id));
+	}
+
+	function UpdatePhotoDetails ($photo_id, $title, $watermark, $hidden, $hidden_gallery)
+	{
+		$sql = 'UPDATE		photos
+				SET			photos.photo_title = ?,
+							photos.photo_watermark = ?,
+							photos.photo_gallery = ?,
+							photos.photo_deleted = ?
+				WHERE		photos.photo_id = ?';
+		$query = $this->db->query($sql, array($title, $watermark, $hidden_gallery, $hidden, $photo_id));
+	}
+
 	function GetOriginalPhotoProperties ($id)
 	{
-		$sql = 'SELECT	photo_id AS id,
-						UNIX_TIMESTAMP(photo_timestamp) AS timestamp,
-						photo_width AS width,
-						photo_height AS height
-				FROM	photos
-				WHERE	photo_id = ?';
+		$sql = 'SELECT		photos.photo_id AS id,
+							UNIX_TIMESTAMP(photos.photo_timestamp) AS timestamp,
+							photos.photo_title AS title,
+							photos.photo_width AS width,
+							photos.photo_height AS height,
+							photos.photo_author_user_entity_id AS user_id,
+							users.user_firstname AS user_firstname,
+							users.user_surname AS user_surname,
+							photos.photo_gallery AS gallery,
+							photos.photo_complete AS complete,
+							photos.photo_deleted AS deleted,
+							photos.photo_watermark AS watermark
+				FROM		photos
+				LEFT JOIN	users
+					ON		photos.photo_author_user_entity_id = users.user_entity_id
+				WHERE		photos.photo_id = ?';
 		$query = $this->db->query($sql, array($id));
 		if ($query->num_rows() == 1) {
 			return $query->row();
@@ -95,17 +163,63 @@ class Photos_model extends Model
 		}
 	}
 
-	function GetPhotoCount ()
+	function GallerySearch ($terms, $current_page, $per_page, $count = false)
 	{
-		$sql = 'SELECT		COUNT(*) as photo_count
-				FROM		photos';
-		$query = $this->db->query($sql);
-		if ($query->num_rows() > 0) {
-			$result = $query->row();
-			return $result->photo_count;
+		$conditions = array();
+		$params = array();
+		foreach ($terms as $term) {
+			$conditions[] = 'LOWER(photos.photo_title) LIKE CONCAT("%", CONCAT(LOWER(?), "%"))';
+			$params[] = $term;
+			$conditions[] = 'LOWER(tags.tag_name) = LOWER(?)';
+			$params[] = $term;
 		}
-		return 0;
+		if (count($conditions) > 0) {
+			$conditions = 'AND (' . implode(' OR ', $conditions) . ')';
+		} else {
+			$conditions = '';
+		}
+		if ($count) {
+			$fields = array('COUNT(*) AS total_rows');
+		} else {
+			$fields = array(
+				'photos.photo_id',
+				'photos.photo_timestamp',
+				'photos.photo_author_user_entity_id',
+				'photos.photo_title',
+				'photos.photo_width',
+				'photos.photo_height',
+				'photos.photo_gallery',
+				'photos.photo_complete',
+				'photos.photo_deleted'
+			);
+		}
+		$sql = 'SELECT		' . implode(', ', $fields) . '
+				FROM		photos
+				LEFT JOIN	photo_tags
+					ON		photos.photo_id = photo_tags.photo_tag_photo_id
+				LEFT JOIN	tags
+					ON	(	photo_tags.photo_tag_tag_id = tags.tag_id
+						AND	tags.tag_type = "photo"
+						AND	tags.tag_deleted = 0
+						)
+				WHERE		photos.photo_deleted = 0
+				' . $conditions . '
+				GROUP BY	photos.photo_id
+				ORDER BY	photos.photo_timestamp DESC';
+		if (!$count) {
+			$sql .= ' LIMIT		?, ?';
+			$params[] = (int)$current_page;
+			$params[] = (int)$per_page;
+		}
+		$query = $this->db->query($sql, $params);
+		if ($count) {
+			return $query->num_rows();
+		} else {
+			return $query->result();
+		}
 	}
+
+	// Functions specifically for photo requests listed below
 
 	function GetMyRequests($user_id)
 	{
