@@ -13,6 +13,20 @@ class Photos_model extends Model
 		parent::Model();
 	}
 
+	function GetWatermarkColours ()
+	{
+		$sql = 'SELECT		photo_watermark_colour_id AS id,
+							photo_watermark_colour_name AS name
+				FROM		photo_watermark_colours
+				ORDER BY	photo_watermark_colour_name ASC';
+		$result = array();
+		$query = $this->db->query($sql);
+		foreach ($query->result() as $row) {
+			$result[$row->id] = $row;
+		}
+		return $result;
+	}
+
 	function GetTypeInfo ($type_codename)
 	{
 		$sql = 'SELECT	image_type_id AS id,
@@ -79,15 +93,17 @@ class Photos_model extends Model
 		$query = $this->db->query($sql, array($photo_id, $tag_id));
 	}
 
-	function UpdatePhotoDetails ($photo_id, $title, $watermark, $hidden, $hidden_gallery)
+	function UpdatePhotoDetails ($photo_id, $title, $source, $watermark, $watermark_colour, $hidden, $hidden_gallery)
 	{
 		$sql = 'UPDATE		photos
 				SET			photos.photo_title = ?,
+							photos.photo_source = ?,
 							photos.photo_watermark = ?,
+							photos.photo_watermark_colour_id = ?,
 							photos.photo_gallery = ?,
 							photos.photo_deleted = ?
 				WHERE		photos.photo_id = ?';
-		$query = $this->db->query($sql, array($title, $watermark, $hidden_gallery, $hidden, $photo_id));
+		$query = $this->db->query($sql, array($title, $source, $watermark, $watermark_colour, $hidden_gallery, $hidden, $photo_id));
 	}
 
 	function GetOriginalPhotoProperties ($id)
@@ -103,7 +119,9 @@ class Photos_model extends Model
 							photos.photo_gallery AS gallery,
 							photos.photo_complete AS complete,
 							photos.photo_deleted AS deleted,
-							photos.photo_watermark AS watermark
+							photos.photo_watermark AS watermark,
+							photos.photo_watermark_colour_id AS watermark_colour_id,
+							photos.photo_source AS source
 				FROM		photos
 				LEFT JOIN	users
 					ON		photos.photo_author_user_entity_id = users.user_entity_id
@@ -116,10 +134,44 @@ class Photos_model extends Model
 		}
 	}
 
+	function ResetThumbnails ($photo_id)
+	{
+		$sql = 'UPDATE	photo_thumbs
+				SET		photo_thumbs.photo_thumbs_data = NULL
+				WHERE	photo_thumbs.photo_thumbs_photo_id = ?';
+		$query = $this->db->query($sql, array($photo_id));
+	}
+
+	function GetWatermark ($photo_id, $type_id)
+	{
+		$sql = 'SELECT	photos.photo_watermark AS watermark,
+						photo_watermark_colours.photo_watermark_colour_red AS red,
+						photo_watermark_colours.photo_watermark_colour_blue AS blue,
+						photo_watermark_colours.photo_watermark_colour_green AS green
+				FROM	photos,
+						photo_watermark_colours,
+						image_types
+				WHERE	photos.photo_id = ?
+				AND		photos.photo_watermark != ""
+				AND		photos.photo_watermark_colour_id = photo_watermark_colours.photo_watermark_colour_id
+				AND		image_types.image_type_id = ?
+				AND		image_types.image_type_watermark = 1';
+		$query = $this->db->query($sql, array($photo_id, $type_id));
+		if ($query->num_rows() == 1) {
+			return $query->row();
+		} else {
+			return false;
+		}
+	}
+
 	function GetThumbnail ($id, $type)
 	{
 		$sql = 'SELECT	photo_thumbs.photo_thumbs_data AS data,
 						photos.photo_mime AS mime,
+						photo_thumbs.photo_thumbs_coord_x AS x,
+						photo_thumbs.photo_thumbs_coord_y AS y,
+						photo_thumbs.photo_thumbs_width AS width,
+						photo_thumbs.photo_thumbs_height AS height,
 						UNIX_TIMESTAMP(photo_thumbs.photo_thumbs_timestamp) AS timestamp
 				FROM	photo_thumbs,
 						photos

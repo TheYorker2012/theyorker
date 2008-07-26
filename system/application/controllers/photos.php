@@ -26,21 +26,29 @@ class Photos extends Controller
 				show_404();
 			// See if a thumbnail is available
 			$photo = $this->photos_model->GetThumbnail($id, $type_info->id);
-			if (!$photo) {
+			if ((!$photo) || ($photo->data === NULL)) {
 				// Check the photo does actually exist
 				$properties = $this->photos_model->GetOriginalPhotoProperties($id);
 				if (!$properties)
 					show_404();
-				// Thumbnail doesn't exist so auto create one
-				$thumb_ratio = $type_info->width / $type_info->height;
-				$new_height = $properties->height;
-				$new_width = $new_height * $thumb_ratio;
-				if ($new_width > $properties->width) {
-					$new_width = $properties->width;
-					$new_height = $new_width / $thumb_ratio;
+				if (isset($photo->x)) {
+					// Need to re-generate thumbnail
+					$new_x = $photo->x;
+					$new_y = $photo->y;
+					$new_width = $photo->width;
+					$new_height = $photo->height;
+				} else {
+					// Thumbnail doesn't exist so auto create one
+					$thumb_ratio = $type_info->width / $type_info->height;
+					$new_height = $properties->height;
+					$new_width = $new_height * $thumb_ratio;
+					if ($new_width > $properties->width) {
+						$new_width = $properties->width;
+						$new_height = $new_width / $thumb_ratio;
+					}
+					$new_x = floor(($properties->width - $new_width) / 2);
+					$new_y = floor(($properties->height - $new_height) / 2);
 				}
-				$new_x = floor(($properties->width - $new_width) / 2);
-				$new_y = floor(($properties->height - $new_height) / 2);
 				$this->load->library('image');
 				$this->image->thumbnail($id, $type_info, $new_x, $new_y, $new_width, $new_height);
 				$photo = $this->photos_model->GetThumbnail($id, $type_info->id);

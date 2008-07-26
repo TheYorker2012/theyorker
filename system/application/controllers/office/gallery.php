@@ -134,16 +134,26 @@ class Gallery extends Controller {
 		$data['photo'] = $this->photos_model->GetOriginalPhotoProperties($id);
 		if (!$data['photo'])
 			show_404();
+		$data['watermark_colours'] = $this->photos_model->GetWatermarkColours();
 
 		$this->load->library('xajax');
 		$this->xajax->registerFunction(array("tag_suggest", &$this, "tag_suggest"));
 		$this->xajax->processRequests();
 
 		if ($this->input->post('save_photo_details')) {
-			$_POST['hidden'] = (isset($_POST['hidden'])) ? 1 : 0;
-			$_POST['hidden-gallery'] = (isset($_POST['hidden-gallery'])) ? 1 : 0;
-			$this->photos_model->UpdatePhotoDetails($id, $_POST['title'], $_POST['watermark'], $_POST['hidden'], $_POST['hidden-gallery']);
-			$this->main_frame->AddMessage('success', 'The photo details were successfully updated. Please note that if the watermark text was changed this will not appear on any thumbnails until they are re-cropped!');
+			if ($_POST['title'] == '') {
+				$this->main_frame->AddMessage('error', 'Please enter a title for this photo.');
+			} elseif ($_POST['source'] == '') {
+				$this->main_frame->AddMessage('error', 'Please specify the source of this photo.');
+			} elseif (!isset($data['watermark_colours'][$_POST['watermark_colour']])) {
+				$this->main_frame->AddMessage('error', 'Please select a valid colour for the watermark text.');
+			} else {
+				$_POST['hidden'] = (isset($_POST['hidden'])) ? 1 : 0;
+				$_POST['hidden-gallery'] = (isset($_POST['hidden-gallery'])) ? 1 : 0;
+				$this->photos_model->UpdatePhotoDetails($id, $_POST['title'], $_POST['source'], $_POST['watermark'], $_POST['watermark_colour'], $_POST['hidden'], $_POST['hidden-gallery']);
+				$this->photos_model->ResetThumbnails($id);
+				$this->main_frame->AddMessage('success', 'The photo details were successfully updated.');
+			}
 			redirect('/office/gallery/show/' . $id);
 		}
 
@@ -204,7 +214,7 @@ class Gallery extends Controller {
 		$id = $this->uri->segment(4);
 
 		$photoDetails = $this->db->getwhere('photos', array('photo_id' => $id));
-		$thumbDetails = $this->db->getwhere('image_types', array('image_type_photo_thumbnail' => '1'));
+		$thumbDetails = $this->db->get('image_types');
 
 		$loop = 0;
 		foreach ($photoDetails->result() as $Photo) {

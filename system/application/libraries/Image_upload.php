@@ -27,19 +27,23 @@ class Image_upload {
 		if ($this->ci->input->post('destination')) {
 			return true;
 		}
+		$this->ci->load->model('photos_model');
+		$data = array(
+			'watermark_colours' => $this->ci->photos_model->GetWatermarkColours()
+		);
 		$this->ci->main_frame->IncludeJs('javascript/clone.js');
 		if ($multiple && $photos) {
 			$this->ci->main_frame->SetTitle('Multiple Photo Uploader');
-			$this->ci->main_frame->SetContentSimple('uploader/upload_multiple_photos');
+			$this->ci->main_frame->SetContentSimple('uploader/upload_multiple_photos', $data);
 		} elseif ($multiple) {
 			$this->ci->main_frame->SetTitle('Multiple Image Uploader');
-			$this->ci->main_frame->SetContentSimple('uploader/upload_multiple_images');
+			$this->ci->main_frame->SetContentSimple('uploader/upload_multiple_images', $data);
 		} elseif ($photos) {
 			$this->ci->main_frame->SetTitle('Photo Upload');
-			$this->ci->main_frame->SetContentSimple('uploader/upload_single_photo');
+			$this->ci->main_frame->SetContentSimple('uploader/upload_single_photo', $data);
 		} else {
 			$this->ci->main_frame->SetTitle('Image Upload');
-			$this->ci->main_frame->SetContentSimple('uploader/upload_single_image');
+			$this->ci->main_frame->SetContentSimple('uploader/upload_single_image', $data);
 		}
 		$this->ci->main_frame->Load();
 	}
@@ -55,76 +59,51 @@ class Image_upload {
 	//types is an array
 	public function recieveUpload($returnPath, $types = false, $photo = true) {
 		$this->ci->load->library(array('image_lib', 'upload'));
+		$data = array();
 
-		//get data about thumbnails
-
+		$config = array();
 		$config['upload_path'] = './tmp/uploads/';
 		$config['allowed_types'] = 'jpg|png|gif|jpeg';
 		$config['max_size'] = 16384;
-
-		if (is_array($types)) {
-			$query = $this->ci->db->select('image_type_id, image_type_codename, image_type_name, image_type_width, image_type_height');
-			$query = $query->where('image_type_photo_thumbnail', $photo);
-			$type = array_pop($types);
-			$query = $query->where('image_type_codename', $type);
-			foreach ($types as $type) {
-				$query = $query->orwhere('image_type_codename', $type);
-			}
-			$query = $query->get('image_types');
-		} else {
-			$query = $this->ci->db->select('image_type_id, image_type_codename, image_type_name, image_type_width, image_type_height')->getwhere('image_types', array('image_type_photo_thumbnail' => '1'));
-		}
-		$data = array();
 		$this->ci->upload->initialize($config);
 
 		$photos_loaded = 0;
+		$errors = array();
 
 		for ($x = 1; $x <= $this->ci->input->post('destination'); $x++) {
 			$title = $this->ci->input->post('title'.$x);
-			if (isset($title) && strlen($title) > 0) {
+			$source = $this->ci->input->post('photo_source' . $x);
+			if (!isset($title) || strlen($title) == 0) {
+				$errors[] = 'Photo ' . $x . ' did not have a title set.';
+			} elseif (!isset($source) || strlen($source) == 0) {
+				$errors[] = 'Photo ' . $x . ' did not have it\'s source set.';
+			} else {
 				if ( ! $this->ci->upload->do_upload('userfile'.$x)) {
-					$this->ci->main_frame->AddMessage('error', $this->ci->upload->display_errors());
-					redirect($returnPath);
+					$errors[] = 'Photo ' . $x . ': ' . $this->ci->upload->display_errors();
 				} else {
 					$data[] = $this->ci->upload->data();
-
 					if (!$data[$x - 1]['is_image']) {
-						$this->ci->main_frame->AddMessage('error', 'The uploaded file was not an image.');
-						redirect($returnPath);
-					} elseif ($this->checkImageProperties($data[$x - 1], $query, $photo)) {
+						$errors[] = 'Uploaded file ' . $x . ' is not an image.';
+					} else {
 						// fix for Microsoft's Stupidity
 						if ($data[$x - 1]['file_type'] == 'image/pjpeg') {
 							$data[$x - 1]['file_type'] = 'image/jpeg';
 						}
-						$data[$x - 1] = $this->processImage($data[$x - 1], $x, $query, $photo);
-
+						$this->processImage($data[$x - 1], $x, $photo);
 						$photos_loaded++;
-
-					} elseif($this->ci->input->post('destination') == 1) {
-						//redirect back home
-						$this->ci->main_frame->AddMessage('error', 'The image you uploaded is too small');
-						redirect($returnPath);
-					} else {
-						//just display error
-						$this->ci->main_frame->AddMessage('error', 'One of the images you uploaded was too small');
 					}
 				}
 			}
 		}
 
-		if($photos_loaded == 0) {
-			$this->ci->main_frame->AddMessage('error', 'No photos were uploaded. Either no photos were provided, or the photos provided were not given titles.');
+		if ($photos_loaded > 0) {
+			$this->ci->main_frame->AddMessage('success', $photos_loaded . ' photos were successfully uploaded.');
+		}
+		if (count($errors) > 0) {
+			$this->ci->main_frame->AddMessage('error', implode('<br />', $errors));
 		}
 
-		$this->ci->main_frame->SetTitle('Photo Uploader');
-		$head = $this->ci->xajax->getJavascript(null, '/javascript/xajax.js');
-		$this->ci->main_frame->AddExtraHead($head);
-		$this->ci->main_frame->IncludeCss('stylesheets/cropper.css');
-		$this->ci->main_frame->IncludeJs('javascript/prototype.js');
-		$this->ci->main_frame->IncludeJs('javascript/scriptaculous.js?load=builder,effects,dragdrop');
-		$this->ci->main_frame->IncludeJs('javascript/cropper.js');
-		$this->ci->main_frame->SetContentSimple('uploader/upload_cropper_new', array('returnPath' => $returnPath, 'data' => $data, 'ThumbDetails' => &$query, 'type' => $photo));
-		return $this->ci->main_frame->Load();
+		redirect($returnPath);
 	}
 
 	public function process_form_data($formData) {
@@ -258,7 +237,7 @@ class Image_upload {
 		return $objResponse;
 	}
 
-	private function processImage($data, $form_value, &$ThumbDetails, $photo) {
+	private function processImage($data, $form_value, $photo) {
 		$image = null;
 		switch ($data['file_type']) {
 			case 'image/gif':
@@ -274,84 +253,26 @@ class Image_upload {
 
 		$width = $data['image_width'];
 		$height = $data['image_height'];
-
-		if ($data['image_width'] > VIEW_WIDTH) {
-			$ratio_orig = $data['image_width']/$data['image_height'];
-			$width = VIEW_WIDTH;
-			$height = VIEW_HEIGHT;
-			if (VIEW_WIDTH/VIEW_HEIGHT > $ratio_orig) {
-			   $width = VIEW_HEIGHT*$ratio_orig;
-			} else {
-			   $height = VIEW_WIDTH/$ratio_orig;
-			}
-			$newImage = imagecreatetruecolor($width, $height);
-			imagecopyresampled($newImage, $image, 0, 0, 0, 0, $width, $height, $data['image_width'], $data['image_height']);
-		} else {
-			$newImage = $image;
-		}
-
-		//Water mark
-		$photowatermark = $this->ci->input->post('watermark');
-		$photowatermark = (isset($photowatermark) ? trim($this->ci->input->post('watermark')) : '');
-		if (strlen($photowatermark) > 0) {
-			$grey = imagecolorallocate($newImage, 0xFF, 0xFF, 0xFF);
-			$font = 'arial';
-			imagettftext($newImage, 8, 90, $width - 10, $height - 10, $grey, $font, htmlspecialchars_decode($photowatermark));
-		}
-
-		$x = imagesx($newImage);
-		$y = imagesy($newImage);
-
-		$output = array();
+		$x = imagesx($image);
+		$y = imagesy($image);
 
 		if ($photo) {
 			unlink($data['full_path']);
-			$info = array('author_id' => $this->ci->user_auth->entityId,
-			              'title'     => $this->ci->input->post('title'.$form_value),
-			              'x'         => $x,
-			              'y'         => $y,
-			              'mime'      => $data['file_type'],);
-			$id = $this->ci->image->add('photo', $newImage, $info);
+			$info = array(
+				'author_id'				=> $this->ci->user_auth->entityId,
+				'title'     			=> $this->ci->input->post('title'.$form_value),
+				'x'         			=> $x,
+				'y'         			=> $y,
+				'mime'      			=> $data['file_type'],
+				'watermark' 			=> $this->ci->input->post('watermark'.$form_value),
+				'watermark_colour_id'	=> $this->ci->input->post('watermark_colour'.$form_value),
+				'source'				=> $this->ci->input->post('photo_source'.$form_value)
+			);
+			$id = $this->ci->image->add('photo', $image, $info);
 			if ($id === false) {
 				return false;
-			} else {
-				foreach ($ThumbDetails->result() as $Thumb) {
-					$watermark = ($Thumb->image_type_codename == 'medium' && $photowatermark ? str_replace('|', '', $photowatermark) : '');
-
-					$_SESSION['img'][] = array('list' => $id, 'type' => $Thumb->image_type_id);
-					$output[] = array('title'  => $this->ci->input->post('title'.$form_value).' - '.$Thumb->image_type_name,
-					                  'string' => '/photos/full/'.$id.'|'.$x.'|'.$y.'|'.$Thumb->image_type_id.'|'.$id.'|'.$Thumb->image_type_width.'|'.$Thumb->image_type_height.'|'.str_replace('|', '', $this->ci->input->post('title'.$form_value)).'|'.$id.'-'.$Thumb->image_type_id.'|'.$watermark,
-					                  'thumb_id' => $id.'-'.$Thumb->image_type_id,
-					                  'cache_img' => '/photos/full/'.$id
-					                  );
-				}
-			}
-		} else {
-			switch ($data['file_type']) {
-				case 'image/gif':
-					imagegif($newImage, $data['full_path']);
-					break;
-				case 'image/jpeg':
-					imagejpeg($newImage, $data['full_path'], 90);
-					break;
-				case 'image/png':
-					imagepng($newImage, $data['full_path'], 9);
-					break;
-			}
-			foreach ($ThumbDetails->result() as $Thumb) {
-				$watermark = ($photowatermark ? str_replace('|', '', $photowatermark) : '');
-
-				$_SESSION['img'][] = array('list'		=> count($_SESSION['img']),
-				                           'type'		=> $Thumb->image_type_id,
-				                           'codename'	=> $Thumb->image_type_codename);
-				$output[] = array('title'  => $this->ci->input->post('title'.$form_value).' - '.$Thumb->image_type_name,
-				                  'string' => '/tmp/uploads/'.$data['file_name'].'|'.$x.'|'.$y.'|'.$Thumb->image_type_id.'|'.count($output).'|'.$Thumb->image_type_width.'|'.$Thumb->image_type_height.'|'.$this->ci->input->post('title'.$form_value).'|'.count($output).'-'.$Thumb->image_type_id.'|'.$watermark,
-				                  'thumb_id' => count($output).'-'.$Thumb->image_type_id,
-				                  'cache_img' => '/tmp/uploads/'.$data['file_name']
-				                  );
 			}
 		}
-		return $output;
 	}
 }
 ?>

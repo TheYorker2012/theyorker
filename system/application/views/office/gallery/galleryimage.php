@@ -21,8 +21,18 @@
 			<label for="uploader">Uploader: </label>
 			<div id="uploader" class="input"><?php echo(xml_escape($photo->user_firstname . ' ' . $photo->user_surname)); ?></div>
 			<br />
-			<label for="watermark">Source / Watermark: </label>
+			<label for="source">Source: </label>
+			<input type="text" name="source" id="source" value="<?php echo(xml_escape($photo->source)); ?>" size="30" />
+			<br />
+			<label for="watermark">Watermark: </label>
 			<input type="text" name="watermark" id="watermark" value="<?php echo(xml_escape($photo->watermark)); ?>" />
+			<br />
+			<label for="watermark_colour">Watermark Colour: </label>
+			<select name="watermark_colour" id="watermark_colour" size="1">
+<?php foreach ($watermark_colours as $colour) { ?>
+				<option value="<?php echo($colour->id); ?>"<?php if ($colour->id == $photo->watermark_colour_id) echo(' selected="selected"'); ?>><?php echo($colour->name); ?></option>
+<?php } ?>
+			</select>
 			<br />
 			<label for="tags_container">Tags: </label>
 			<div id="tags_container" class="input">
@@ -118,7 +128,7 @@ function addTag () {
 	document.getElementById('tags_adding').style.display = 'block';
 	document.getElementById('tags_addprompt').style.display = 'none';
 	var suggestion = document.getElementById('add_tag_name');
-	if (suggestion != '') {
+	if (suggestion.value != '') {
 		xajax_tag_suggest(suggestion.value);
 	} else {
 		processTag();
