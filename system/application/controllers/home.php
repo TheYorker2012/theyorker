@@ -148,11 +148,11 @@ class Home extends Controller {
 			array(
 				'uninews' => 3,
 				'sport' => 3,
-				'features' => 1,
-				'arts' => 1,
-				'videocasts' => 1,
-				'lifestyle' => 1,
-				'blogs' => 1,
+				'features' => 3,
+				'arts' => 3,
+				'videocasts' => 3,
+				'lifestyle' => 3,
+				'blogs' => 3,
 			)
 		);
 		//$this->messages->AddDumpMessage('ids',$article_all_ids);
