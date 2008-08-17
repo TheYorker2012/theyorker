@@ -24,10 +24,12 @@ echo('<?xml version="1.0" ?>
 	<webMaster>' . xml_escape($rss_email_web) . '</webMaster>');
 
 foreach ($rss_items as $item) {
-	if (($item['user_firstname'] == '') && ($item['user_surname'] == '')) {
+	if ($item['comment_anonymous']) {
+		$author = 'Anonymous';
+	} elseif (($item['user_firstname'] == '') && ($item['user_surname'] == '')) {
 		$author = 'no name';
 	} else {
-		$author = ($item['comment_anonymous']) ? 'Anonymous' : $item['user_firstname'] . ' ' . $item['user_surname'];
+		$author = $item['user_firstname'] . ' ' . $item['user_surname'];
 	}
 	$page = (floor(($item['article_comment_count'] - 1) / $comments_per_page) * $comments_per_page) + 1;
 	$url = 'http://' . $_SERVER['SERVER_NAME'] . '/news/' . $item['content_type_codename'] . '/' . $item['article_id']. '/' . $page . '/#CommentItem' . $item['comment_id'];

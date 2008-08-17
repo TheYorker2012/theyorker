@@ -640,7 +640,8 @@ class News_model extends Model
 						DATE_FORMAT(articles.article_publish_date, ?)	AS article_publish_date,
 						articles.article_location_id,
 						articles.article_main_photo_id,
-						articles.article_public_comment_thread_id
+						articles.article_public_comment_thread_id,
+						articles.article_poll_id
 				FROM	articles
 				WHERE	articles.article_id = ?
 				AND		articles.article_pulled = 0
@@ -653,6 +654,7 @@ class News_model extends Model
 		$result['location'] = $row->article_location_id;
 		$result['public_thread_id'] = $row->article_public_comment_thread_id;
 		$result['main_photo'] = $row->article_main_photo_id;
+		$result['poll_id'] = $row->article_poll_id;
 		$content_id = $row->article_live_content_id;
 		if ($preview) {
 			$result['date'] = date('l, jS F Y');
@@ -824,10 +826,13 @@ class News_model extends Model
 								IF (content_types.content_type_parent_content_type_id IS NOT NULL, CONCAT(parent_type.content_type_name, " - ", content_types.content_type_name), content_types.content_type_name) AS type_name,
 								article_contents.article_content_heading		AS heading,
 								article_contents.article_content_blurb			AS blurb,
+								organisations.organisation_directory_entry_name AS organisation_codename,
 								photo_requests.photo_request_chosen_photo_id	AS photo_id,
 								photo_requests.photo_request_title				AS photo_title'."\n";
 		}
 		$sql .= 'FROM		articles
+				LEFT JOIN	organisations 
+					ON	organisations.organisation_entity_id = articles.article_organisation_entity_id 
 				LEFT JOIN	photo_requests
 					ON	(	articles.article_thumbnail_photo_id = photo_requests.photo_request_relative_photo_number
 					AND		articles.article_id = photo_requests.photo_request_article_id

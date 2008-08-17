@@ -1,10 +1,12 @@
-<div class="RightToolbar">
-	<h4>Quick Links</h4>
-	A Link
+<div id="RightColumn">
+	<h2 class="first">Page Information</h2>
+	<div class="Entry">
+		<?php echo($page_information); ?>
+	</div>
 </div>
 
-<div class="MainToolbar">
-	<div class="blue_box">
+<div id="MainColumn">
+	<div class="BlueBox">
 		<h2>charities</h2>
 		<table width="90%" cellpadding="3" align="center">
 			<thead>

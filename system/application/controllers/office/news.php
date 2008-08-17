@@ -268,12 +268,11 @@ class News extends Controller
 		if (!CheckPermissions('office')) return;
 
 		/// Get changeable page content
-		$this->pages_model->SetPageCode('office_news_request');
+		$this->pages_model->SetPageCode('office_news_create');
 		/// Get page content
 		$data['boxes'] = $this->requests_model->getBoxes();
 		$data['user_level'] = 'editor';
-		$data['heading'] = $this->pages_model->GetPropertyText('heading_editor');
-		$data['intro'] = $this->pages_model->GetPropertyWikitext('intro_editor');
+		$data['page_information'] = $this->pages_model->GetPropertyWikitext('page_information');
 		$data['status'] = 'article';
 
 		/// Perform validation checks on submitted data
@@ -342,10 +341,6 @@ class News extends Controller
 
 		/// Set up the main frame
 		$this->main_frame->SetContentSimple('office/news/create', $data);
-		/// Set page title & load main frame with view
-		$this->main_frame->SetTitleParameters(
-			array('action' => 'New', 'type' => 'Article')
-		);
 
 		/// Load main frame
 		$this->main_frame->AddExtraHead('<link href="/stylesheets/calendar_select.css" rel="stylesheet" type="text/css" />');
@@ -384,7 +379,8 @@ class News extends Controller
 			$data['heading'] = $this->pages_model->GetPropertyText('heading');
 			$data['intro'] = $this->pages_model->GetPropertyWikitext('intro');
 		}
-
+		$data['unassigned_requests'] = $this->pages_model->GetPropertyWikitext('unassigned_requests');
+		
 		$data['edit_enable'] = false;
 		if ($data['status'] == 'suggestion') {
 			$data['article'] = $this->requests_model->GetSuggestedArticle($article_id);

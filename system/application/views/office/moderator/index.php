@@ -7,8 +7,11 @@
 
 ?>
 
-<div class="RightToolbar">
-	<?php echo($HelpText); ?>
+<div id="RightColumn">
+	<h2 class="first">Page Information</h2>
+	<div class="Entry">
+		<?php echo($HelpText); ?>
+	</div>
 </div>
 
 <div id="MainColumn">

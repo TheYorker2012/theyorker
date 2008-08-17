@@ -75,8 +75,8 @@ function PrintRequestList ($data, $parent_type, $suggestion = FALSE) {
 }
 ?>
 
-<div class="RightToolbar">
-	<h4><?php echo(xml_escape($tasks_heading)); ?></h4>
+<div id="RightColumn">
+	<h2 class="first"><?php echo(xml_escape($tasks_heading)); ?></h2>
 	<div class="Entry">
 		<ul>
 			<li><a href="/office/news/request"><?php echo(xml_escape($tasks['request'])); ?></a></li>
@@ -84,28 +84,29 @@ function PrintRequestList ($data, $parent_type, $suggestion = FALSE) {
 		</ul>
 	</div>
 </div>
-
-	<div class="blue_box">
+<div id="MainColumn">
+	<div class="BlueBox">
 		<h2>from the editor</h2>
 		<?php echo($main_text); ?>
 	</div>
+</div>
 
-	<div class="BlueBox" style="width:auto">
-		<h2>suggestions...</h2>
-		<?php PrintRequestList($box_contents['suggestion'],$parent_type,TRUE); ?>
-	</div>
+<div class="BlueBox">
+	<h2>suggestions...</h2>
+	<?php PrintRequestList($box_contents['suggestion'],$parent_type,TRUE); ?>
+</div>
 
-	<div class="BlueBox" style="width:auto">
-		<h2>unassigned requests...</h2>
-		<?php PrintRequestList($box_contents['unassigned'],$parent_type); ?>
-	</div>
+<div class="BlueBox">
+	<h2>unassigned requests...</h2>
+	<?php PrintRequestList($box_contents['unassigned'],$parent_type); ?>
+</div>
 
-	<div class="BlueBox" style="width:auto">
-		<h2>assigned requests...</h2>
-		<?php PrintRequestList($box_contents['assigned'],$parent_type); ?>
-	</div>
+<div class="BlueBox">
+	<h2>assigned requests...</h2>
+	<?php PrintRequestList($box_contents['assigned'],$parent_type); ?>
+</div>
 
-	<div class="BlueBox" style="width:auto">
-		<h2>ready articles...</h2>
-		<?php PrintRequestList($box_contents['ready'],$parent_type); ?>
-	</div>
+<div class="BlueBox">
+	<h2>ready articles...</h2>
+	<?php PrintRequestList($box_contents['ready'],$parent_type); ?>
+</div>

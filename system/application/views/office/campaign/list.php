@@ -2,7 +2,7 @@
 
 function print_table($name, $campaign_list)
 {
-	echo('	<div class="blue_box">'."\n");
+	echo('	<div class="BlueBox">'."\n");
 	echo('		<h2>'.xml_escape($name).'</h2>'."\n");
 	echo('		<table width="90%" cellpadding="3" align="center">'."\n");
 	echo('			<thead>'."\n");
@@ -29,14 +29,14 @@ function print_table($name, $campaign_list)
 
 ?>
 
-<div class="RightToolbar">
-	<h4>Quick Links</h4>
+<div id="RightColumn">
+	<h2 class="first">Page Information</h2>
 	<div class="Entry">
-		a link
+		<?php echo($page_information); ?>
 	</div>
 </div>
 
-<div class="MainToolbar">
+<div id="MainColumn">
 
 <?php print_table('live campaigns', $campaign_list_live); ?>
 

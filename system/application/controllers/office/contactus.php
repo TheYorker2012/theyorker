@@ -1,6 +1,6 @@
 <?php
 /*
- * Controller for contact us pages
+ * Controller for contact us pages (adding removing editing contact addresses)
  * \author Alex Fargus (agf501)
  */
 
@@ -18,9 +18,10 @@ class ContactUs extends Controller
 	{
 		if (!CheckPermissions('office')) return;
 		
-		$this->pages_model->SetPageCode('contact_us');
+		$this->pages_model->SetPageCode('office_contact_us');
 		
 		$data = array();
+		$data['page_information'] = $this->pages_model->GetPropertyWikitext('page_information');
 		$this->main_frame->SetContentSimple('office/general/contact_us', $data);
 		
 		$this->main_frame->Load();

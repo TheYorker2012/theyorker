@@ -367,25 +367,5 @@ class Campaign extends Controller {
 			redirect($_POST['r_redirecturl']);
 		}
 	}
-	
-	function Edit($SelectedCampaign = '')
-	{
-		if (!CheckPermissions('office')) return;
-		
-		if($SelectedCampaign == ''){
-			$this->main_frame->SetContentSimple('campaign/CampaignsEditSelect');
-		} else {
-			$data = array(
-				'CampaignTitle' => $SelectedCampaign
-			);
-			$this->main_frame->SetContentSimple('campaign/CampaignsEditDetails',$data);
-		}
-		
-		// Set up the public frame
-		$this->main_frame->SetTitle('Campaign Edit');
-		
-		// Load the public frame view (which will load the content view)
-		$this->main_frame->Load();
-	}
 }
 ?>

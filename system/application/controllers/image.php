@@ -11,12 +11,22 @@ class Image extends Controller
 	}
 	
 	function index($type, $id = 0) {
-		$sql = 'SELECT image_mime, image_data, UNIX_TIMESTAMP(image_timestamp) AS image_timestamp FROM images WHERE image_id = ? LIMIT 1';
+		$sql = 'SELECT	image_mime,
+						image_data,
+						UNIX_TIMESTAMP(image_timestamp) AS image_timestamp
+				FROM	images
+				WHERE	image_id = ?
+				LIMIT	1';
 		$result = $this->db->query($sql, array($id));
 		if ($result->num_rows() == 1){
 			$row = $result->first_row();
 		} else {
-			$sql = 'SELECT image_type_error_mime, image_type_error_data FROM image_types WHERE image_type_codename = ? LIMIT 1';
+			$sql = 'SELECT	image_type_error_mime AS image_mime,
+							image_type_error_data AS image_data,
+							UNIX_TIMESTAMP() AS image_timestamp
+					FROM	image_types
+					WHERE	image_type_codename = ?
+					LIMIT	1';
 			$result = $this->db->query($sql, array($type));
 			if ($result->num_rows() == 1) {
 				$row = $result->first_row();

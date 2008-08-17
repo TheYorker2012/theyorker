@@ -36,6 +36,70 @@
 	<?php
 		echo('			<input type="text" id="advert_max_views" name="advert_max_views" value="'.$advert['max_views'].'" style="width: 230px" />'."\n");
 	?>
+				<label for="advert_start_date_day">Start Date: </label>
+					<input
+						type="text"
+						id="advert_start_date_day"
+						name="advert_start_date_day"
+						value="<?php 
+								if($advert['start_date']!=0){
+									echo(date('d',$advert['start_date']));}
+							?>"
+						style="width: 20px"
+						maxlength="2" />
+					<input
+						type="text"
+						id="advert_start_date_month"
+						name="advert_start_date_month"
+						value="<?php
+								if($advert['start_date']!=0){
+									echo(date('m',$advert['start_date']));}
+							 ?>"
+						style="width: 20px"
+						maxlength="2" />
+					<input
+						type="text"
+						id="advert_start_date_year"
+						name="advert_start_date_year"
+						value="<?php
+								if($advert['start_date']!=0){
+									echo(date('y',$advert['start_date']));}
+							?>"
+						style="width: 20px"
+						maxlength="2" />
+				<div style="float:left; margin:10px 0 0 10px; font-style:italic;"">DD MM YY</div>
+				<label for="advert_end_date_day">End Date: </label>
+					<input
+						type="text"
+						id="advert_end_date_day"
+						name="advert_end_date_day"
+						value="<?php 
+								if($advert['end_date']!=0){
+									echo(date('d',$advert['end_date']));}
+							?>"
+						style="width: 20px"
+						maxlength="2" />
+					<input
+						type="text"
+						id="advert_end_date_month"
+						name="advert_end_date_month"
+						value="<?php
+								if($advert['end_date']!=0){
+									echo(date('m',$advert['end_date']));}
+							 ?>"
+						style="width: 20px"
+						maxlength="2" />
+					<input
+						type="text"
+						id="advert_end_date_year"
+						name="advert_end_date_year"
+						value="<?php
+								if($advert['end_date']!=0){
+									echo(date('y',$advert['end_date']));}
+							?>"
+						style="width: 20px"
+						maxlength="2" />
+				<div style="float:left; margin:10px 0 0 10px; font-style:italic;"">DD MM YY</div>
 			</fieldset>
 			<fieldset>
 				<input type="submit" name="submit_save_advert" value="Save" style="float: right;" />

@@ -39,6 +39,6 @@
 		</form>
 	</div>
 	<small>
-		Copyright 2007 The Yorker. Weather data provided by Yahoo. <a href='/policy/'>Privacy Policy</a>
+		Copyright 2007-<?php echo(date('Y')); ?> The Yorker. Weather data provided by Yahoo. <a href='/policy/'>Privacy Policy</a>
 	</small>
 </div>

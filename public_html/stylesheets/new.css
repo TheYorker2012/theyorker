@@ -25,6 +25,7 @@ html {
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 10pt;
 	background-color: #fff;
+	color: #000;
 }
 
 img {
@@ -83,9 +84,14 @@ label.radio {
 	margin-right: 0.2em;
 }
 
-input, select, textarea{
+input, select, textarea {
 	float: left;
 	margin: 0.2em;
+}
+
+div.input {
+	float: left;
+	margin: 0.4em;
 }
 
 input.radio {
@@ -604,6 +610,10 @@ div.Pagination span {
 	margin-right: 0.2em;
 }
 
+div.Pagination span.direction {
+	border-style: dotted;
+}
+
 div.Pagination span.selected {
 	color: #fff;
 	font-weight: bold;
@@ -613,6 +623,11 @@ div.Pagination span.selected {
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * CSS for Facebook Share Link                                 *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+div.share_article {
+	clear: right;
+	text-align: right;
+}
+
 a.fb_share_button {
 	display: inline-block;
 	padding: 1px 20px 0px 5px;

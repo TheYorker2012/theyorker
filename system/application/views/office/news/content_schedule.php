@@ -1,9 +1,9 @@
-<div class='blue_box' style="width:auto">
+<div class='BlueBox'>
 	<h2>content schedule</h2>
 
 	<p><a href="/office/news/request">Make new request</a></p>
 
-	<table width="100%">
+	<table width="98%">
 	<tr>
 	<thead>
 	<th>Deadline</th>

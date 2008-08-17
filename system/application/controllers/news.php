@@ -180,6 +180,43 @@ class News extends Controller {
 			}
 		}
 
+		if ($main_article['poll_id'] !== NULL) {
+			$this->load->model('polls_model');
+			$poll_info = $this->polls_model->GetPollDetails($main_article['poll_id']);
+			$poll_options = $this->polls_model->GetPollChoices($main_article['poll_id']);
+			$user_info = $this->polls_model->GetCompetitionContactDetails($this->user_auth->entityId);
+			if ((!$poll_info['deleted']) && (mktime() > $poll_info['start_time'])) {
+				$poll_message = '';
+				if (!$this->user_auth->isLoggedIn) {
+					$poll_message = 'Please <a href="/login/main/news/' . $article_type . '/' . $article_id . '">login</a> to enter this competition.';
+				} elseif (!$this->user_auth->isUser) {
+					$poll_message = 'Sorry, organisations may not enter competitions. Please login as an individual to enter.';
+				} elseif ($this->user_auth->officeLogin) {
+					$poll_message = 'Sorry, members of The Yorker may not enter competitions.';
+				} elseif ($this->polls_model->HasUserVoted($main_article['poll_id'], $this->user_auth->entityId)) {
+					$poll_message = 'Thank you for entering this competition.';
+				} elseif (mktime() > $poll_info['finish_time']) {
+					$poll_message = 'Sorry, this competition is now closed.';
+				} elseif (isset($_POST['comp_answer'])) {
+					if (($user_info['user_firstname'] == '') || ($user_info['user_surname'] == '')) {
+						$this->messages->AddMessage('error', 'Please make sure you enter your name before entering this competition.');
+					} elseif ($this->polls_model->IsChoicePartOfPoll($main_article['poll_id'], $_POST['comp_answer'])) {
+						$this->polls_model->SetUserPollVote($main_article['poll_id'], $this->user_auth->entityId, $_POST['comp_answer']);
+						$this->messages->AddMessage('success', 'You have successfully been entered into the competition.');
+					}
+					redirect('/news/' . $article_type . '/' . $article_id);
+				}
+				$main_article['article_poll'] = array(
+					'info'		=>	$poll_info,
+					'options'	=>	$poll_options,
+					'message'	=>	$poll_message,
+					'user'		=>	$user_info
+				);
+				$this->load->library('wikiparser');
+				$main_article['article_poll']['info']['question'] = $this->wikiparser->parse($main_article['article_poll']['info']['question']);
+			}
+		}
+
 		//Set page title to include headline
 		$this->main_frame->SetTitleParameters(array('headline' => $main_article['heading']));
 
@@ -313,8 +350,15 @@ class News extends Controller {
 		$data['articles'] = $this->News_model->GetArchive('search', $archive_filters, $data['offset'], $config['per_page']);
 		/// Get article thumbnails
 		$this->load->library('image');
+		$this->load->model('slideshow');
 		foreach ($data['articles'] as &$article) {
-			$article['photo_xhtml'] = $this->image->getThumb($article['photo_id'], 'small', false, array('class' => 'Left'));
+			if(!empty($article['organisation_codename'])){
+				//The article is a review, so the archive will not have found a photo. Use the first image from its slideshow
+				$photo_id = $this->slideshow->getFirstPhotoIDFromSlideShow($article['organisation_codename']);
+			}else{
+				$photo_id = $article['photo_id'];
+			}
+			$article['photo_xhtml'] = $this->image->getThumb($photo_id, 'small', false, array('class' => 'Left'));
 		}
 		$data['total'] = $config['total_rows'];
 

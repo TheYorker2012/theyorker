@@ -83,6 +83,23 @@
 								</tr>
 								<tr>
 									<td>
+										<b>Start Date:</b>
+									</td>
+									<td>
+										<?php $dateformatted = $advert['start_date']==0?'-': date('d/m/y @ H:i', $advert['start_date']); echo($dateformatted); ?>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<b>End Date:</b>
+									</td>
+									<td>
+										<?php $dateformatted = $advert['end_date']==0?'-': date('d/m/y @ H:i', $advert['end_date']); echo($dateformatted); ?>
+									</td>
+								</tr>
+
+								<tr>
+									<td>
 										<b>Options:</b>
 									</td>
 									<td>

@@ -51,6 +51,13 @@
 		?>
 		</p>
 	</div>
+	<div class="BlueBox">
+	<h2>add photo</h2>
+		<?php echo($photo_from_gallery); ?>
+		<ul>
+			<li><a href="/office/gallery">Select a photo from the gallery</a></li>
+		</ul>
+	</div>
 	<?php
 		$CI = &get_instance();
 		$CI->load->view('uploader/upload_single_photo', array('action_url' => '/office/reviews/'.$organisation['shortname'].'/'.$ContextType.'/photos/upload') );

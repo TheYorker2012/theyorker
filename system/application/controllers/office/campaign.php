@@ -61,6 +61,7 @@ class Campaign extends Controller
 			$this->main_frame->SetPage('list');
 		}
 		$this->pages_model->SetPageCode('office_campaign_list');
+		$data['page_information'] = $this->pages_model->GetPropertyWikitext('page_information');
 
 		//get the current users id and office access
 		$data['user']['id'] = $this->user_auth->entityId;
@@ -93,6 +94,7 @@ class Campaign extends Controller
 			$this->_SetupMainNavbar();
 			$this->main_frame->SetPage('add');
 			$this->pages_model->SetPageCode('office_campaign_add');
+			$data['page_information'] = $this->pages_model->GetPropertyWikitext('page_information');
 
 			//get the current users id and office access
 			$data['user']['id'] = $this->user_auth->entityId;
@@ -121,12 +123,13 @@ class Campaign extends Controller
 		if ($this->user_auth->officeType != 'Low')
 		{
 			//load the required models
-			$this->load->model('campaign_model','campaign_model');
+			$this->load->model('campaign_model');
 		
 			//Get navigation bar and tell it the current page
 			$this->_SetupMainNavbar();
 			$this->main_frame->SetPage('options');
 			$this->pages_model->SetPageCode('office_campaign_options');
+			$data['page_information'] = $this->pages_model->GetPropertyWikitext('page_information');
 
 			//get the current users id and office access
 			$data['user']['id'] = $this->user_auth->entityId;
@@ -216,6 +219,7 @@ class Campaign extends Controller
 		$this->_SetupNavbar($campaign_id);
 		$this->main_frame->SetPage('article');
 		$this->pages_model->SetPageCode('office_campaign_edit');
+		$data['preview_wikitext'] = $this->pages_model->GetPropertyWikitext('preview_wikitext');
 
 		//get the current users id and office access
 		$data['user']['id'] = $this->user_auth->entityId;
@@ -315,6 +319,7 @@ class Campaign extends Controller
 		$this->_SetupNavbar($campaign_id);
 		$this->main_frame->SetPage('article');
 		$this->pages_model->SetPageCode('office_campaign_request');
+		$data['page_information'] = $this->pages_model->GetPropertyWikitext('page_information');
 
 		//get the current users id and office access
 		$data['user']['id'] = $this->user_auth->entityId;
@@ -362,6 +367,8 @@ class Campaign extends Controller
 		$this->_SetupNavbar($campaign_id);
 		$this->main_frame->SetPage('reports');
 		$this->pages_model->SetPageCode('office_campaign_reports');
+		$data['page_information'] = $this->pages_model->GetPropertyWikitext('page_information');
+		$data['progress_report_wikitext'] = $this->pages_model->GetPropertyWikitext('progress_report_wikitext');
 		
 		//get campaign info
 		$campaign_name = $this->campaign_model->GetCampaignNameID($campaign_id);
@@ -521,6 +528,7 @@ class Campaign extends Controller
 		$this->_SetupNavbar($campaign_id);
 		$this->main_frame->SetPage('related');
 		$this->pages_model->SetPageCode('office_campaign_related');
+		$data['page_information'] = $this->pages_model->GetPropertyWikitext('page_information');
 
 		//get the current users id and office access
 		$data['user']['id'] = $this->user_auth->entityId;
@@ -568,6 +576,7 @@ class Campaign extends Controller
 			$this->_SetupNavbar($campaign_id);
 			$this->main_frame->SetPage('publish');
 			$this->pages_model->SetPageCode('office_campaign_publish');
+			$data['page_information'] = $this->pages_model->GetPropertyWikitext('page_information');
 
 			//get the current users id and office access
 			$data['user']['id'] = $this->user_auth->entityId;

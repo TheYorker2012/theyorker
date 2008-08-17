@@ -52,18 +52,17 @@ function PrintRequestList ($data, $AssignedColumn = FALSE) {
 	echo('		</div>'."\n");
 }
 ?>
+<div class="BlueBox">
+	<h2>unassigned</h2>
+	<?php PrintRequestList($requests['unassigned']); ?>
+</div>
 
-	<div class="blue_box" style="width:auto">
-		<h2>unassigned</h2>
-		<?php PrintRequestList($requests['unassigned']); ?>
-	</div>
+<div class="BlueBox">
+	<h2>assigned</h2>
+	<?php PrintRequestList($requests['assigned'], TRUE); ?>
+</div>
 
-	<div class="grey_box" style="width:auto">
-		<h2>assigned</h2>
-		<?php PrintRequestList($requests['assigned'], TRUE); ?>
-	</div>
-
-	<div class="blue_box" style="width:auto">
-		<h2>ready</h2>
-		<?php PrintRequestList($requests['ready'], TRUE); ?>
-	</div>
+<div class="BlueBox">
+	<h2>ready</h2>
+	<?php PrintRequestList($requests['ready'], TRUE); ?>
+</div>

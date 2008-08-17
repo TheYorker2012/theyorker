@@ -19,18 +19,20 @@
 
 ?>
 
-<div class='RightToolbar'>
-info about writing notices from db including link to wikitext help page
-<P><a href="<?php echo vip_url('account/email'); ?>">Email settings</a></P>
+<div id="RightColumn">
+	<h2 class="first">Page Information</h2>
+	<div class="Entry">
+		<p>Info about writing notices from db including link to wikitext help page.</p>
+		<p><a href="<?php echo vip_url('account/email'); ?>">Email settings</a></p>
+	</div>
 </div>
-
-<div>
-<pre>
-from email
-to {teams, [remove]}, add [dropdown teams]
-subject: %%organisation%%: [_________]
-(header)
-[wikitext input]
-(footer)
-</pre>
+<div id="MainColumn">
+	<div class="BlueBox">
+		from email
+		to {teams, [remove]}, add [dropdown teams]
+		subject: %%organisation%%: [_________]
+		(header)
+		[wikitext input]
+		(footer)
+	</div>
 </div>
