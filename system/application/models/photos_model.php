@@ -137,7 +137,7 @@ class Photos_model extends Model
 	function ResetThumbnails ($photo_id)
 	{
 		$sql = 'UPDATE	photo_thumbs
-				SET		photo_thumbs.photo_thumbs_data = NULL
+				SET		photo_thumbs.photo_thumbs_timestamp = NULL
 				WHERE	photo_thumbs.photo_thumbs_photo_id = ?';
 		$query = $this->db->query($sql, array($photo_id));
 	}

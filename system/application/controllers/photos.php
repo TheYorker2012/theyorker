@@ -26,7 +26,7 @@ class Photos extends Controller
 				show_404();
 			// See if a thumbnail is available
 			$photo = $this->photos_model->GetThumbnail($id, $type_info->id);
-			if ((!$photo) || ($photo->data === NULL)) {
+			if ((!$photo) || ($photo->timestamp === NULL)) {
 				// Check the photo does actually exist
 				$properties = $this->photos_model->GetOriginalPhotoProperties($id);
 				if (!$properties)
