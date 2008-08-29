@@ -230,6 +230,17 @@ class Gallery extends Controller {
 
 	function mass_upload_process () {
 		if (!CheckPermissions('office')) return;
+
+		// Workaround if function not available in version of PHP on server
+		if (!function_exists('exif_imagetype')) {
+			function exif_imagetype($filename) {
+				if ((list($width, $height, $type, $attr) = getimagesize($filename)) !== false) {
+					return $type;
+				}
+				return false;
+			}
+		}
+
 		if (isset($_POST['selected_photos'])) {
 			$photo_count = 0;
 			foreach ($_POST['selected_photos'] as $photo) {
