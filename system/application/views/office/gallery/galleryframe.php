@@ -3,6 +3,9 @@
 		<a href="<?php echo(site_url('office/gallery/upload')); ?>">
 			<img src="/images/icons/upload_photo.png" alt="Upload Photo" />
 		</a>
+		<a href="<?php echo(site_url('office/gallery/mass_upload')); ?>">
+			<img src="/images/icons/button_massupload.png" alt="Mass Upload Photos" />
+		</a>
 	</div>
 	<h2 style="float:left">search by...</h2>
 	<form method="post" action="<?php echo(site_url('office/gallery')); ?>">

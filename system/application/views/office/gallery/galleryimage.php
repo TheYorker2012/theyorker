@@ -55,6 +55,9 @@
 					<img src="/images/prototype/prefs/loading.gif" alt="Loading" title="Loading" /> Adding new tag...
 				</div>
 			</div>
+			<label for="public_gallery">Show in Public Gallery: </label>
+			<input type="checkbox" name="public_gallery" id="public_gallery" value="show"<?php if ($photo->public_gallery == 1) echo(' checked="checked"'); ?> />
+			<br />
 			<label for="hidden">Deleted: </label>
 			<input type="checkbox" name="hidden" id="hidden" value="hide"<?php if ($photo->deleted == 1) echo(' checked="checked"'); ?> />
 			<br />

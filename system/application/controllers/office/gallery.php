@@ -6,7 +6,7 @@
  *	@author		Chris Travis (cdt502 - ctravis@gmail.com)
  */
 
-define('PHOTOS_PERPAGE', 40);
+define('PHOTOS_PERPAGE', 44);
 define('VIEW_WIDTH', 600);
 
 class Gallery extends Controller {
@@ -150,7 +150,8 @@ class Gallery extends Controller {
 			} else {
 				$_POST['hidden'] = (isset($_POST['hidden'])) ? 1 : 0;
 				$_POST['hidden-gallery'] = (isset($_POST['hidden-gallery'])) ? 1 : 0;
-				$this->photos_model->UpdatePhotoDetails($id, $_POST['title'], $_POST['source'], $_POST['watermark'], $_POST['watermark_colour'], $_POST['hidden'], $_POST['hidden-gallery']);
+				$_POST['public_gallery'] = (isset($_POST['public_gallery'])) ? 1 : 0;
+				$this->photos_model->UpdatePhotoDetails($id, $_POST['title'], $_POST['source'], $_POST['watermark'], $_POST['watermark_colour'], $_POST['hidden'], $_POST['hidden-gallery'], $_POST['public_gallery']);
 				$this->photos_model->ResetThumbnails($id);
 				$this->main_frame->AddMessage('success', 'The photo details were successfully updated.');
 			}
@@ -200,6 +201,147 @@ class Gallery extends Controller {
 		$_SESSION['img'] = array();
 		$this->load->library('image_upload');
 		$this->image_upload->automatic('/office/gallery', false, true, true);
+	}
+
+	function mass_upload() {
+		if (!CheckPermissions('office')) return;
+
+		$data = array();
+		$this->pages_model->SetPageCode('office_gallery_massupload');
+		$data['intro_heading'] = $this->pages_model->GetPropertyText('intro_heading');
+		$data['intro_text'] = $this->pages_model->GetPropertyWikiText('intro_text');
+		$data['watermark_colours'] = $this->photos_model->GetWatermarkColours();
+		$preview_width = 100;
+		$preview_height = 75;
+
+		$this->load->model('static_model');
+		$exts = array('jpg', 'jpeg', 'png', 'gif');
+		$data['files'] = array();
+		foreach ($this->static_model->GetDirectoryListing($this->config->item('static_local_path') . '/photos', '', $exts) as $file) {
+			$data['files'][] = $file;
+		}
+
+		$this->main_frame->SetContentSimple('office/gallery/massupload', $data);
+		$this->main_frame->IncludeCss('stylesheets/gallery.css');
+		$this->main_frame->AddExtraHead('<style type="text/css">div#massupload_selection div { height: ' . $preview_height . 'px; width: ' . $preview_width . 'px; }</style>');
+
+		$this->main_frame->Load();
+	}
+
+	function mass_upload_process () {
+		if (!CheckPermissions('office')) return;
+		if (isset($_POST['selected_photos'])) {
+			$photo_count = 0;
+			foreach ($_POST['selected_photos'] as $photo) {
+				$image = null;
+				$image_path = $this->config->item('static_local_path') . '/photos/' . $photo;
+				$image_mime = image_type_to_mime_type(exif_imagetype($image_path));
+				switch ($image_mime) {
+					case 'image/gif':
+						$image = imagecreatefromgif($image_path);
+						break;
+					case 'image/jpeg':
+						$image = imagecreatefromjpeg($image_path);
+						break;
+					case 'image/png':
+						$image = imagecreatefrompng($image_path);
+						break;
+				}
+				if ($image === null) {
+					$this->main_frame->AddMessage('error', 'Unable to process ' . $photo);
+				} elseif ($this->input->post('p_title'.$photo_count) == '') {
+					$this->main_frame->AddMessage('error', 'Unable to add ' . $photo . ' to the gallery as you failed to specify a title for the photo.');
+				} elseif ($this->input->post('p_photo_source'.$photo_count) == '') {
+					$this->main_frame->AddMessage('error', 'Unable to add ' . $photo . ' to the gallery as you failed to specify the source for the photo.');
+				} else {
+					$x = imagesx($image);
+					$y = imagesy($image);
+					$info = array(
+						'author_id'				=> $this->user_auth->entityId,
+						'title'     			=> $this->input->post('p_title'.$photo_count),
+						'x'         			=> $x,
+						'y'         			=> $y,
+						'mime'      			=> $image_mime,
+						'watermark' 			=> $this->input->post('p_watermark'.$photo_count),
+						'watermark_colour_id'	=> $this->input->post('p_watermark_colour'.$photo_count),
+						'source'				=> $this->input->post('p_photo_source'.$photo_count),
+						'public_gallery'		=> (isset($_POST['p_public_gallery' . $photo_count])) ? 1 : 0
+					);
+					$id = $this->image->add('photo', $image, $info);
+					$tags = explode(' ', $_POST['p_tags' . $photo_count]);
+					foreach ($tags as $tag) {
+						if ($tag != '') {
+							$tag_details = $this->photos_model->GetTagDetails($tag);
+							if (!$tag_details) {
+								// Tag doesn't already exist so add it
+								$tag_id = $this->photos_model->AddPhotoTag($tag);
+							} else {
+								$tag_id = $tag_details->tag_id;
+							}
+							// Associate photo with tag
+							$this->photos_model->AssociatePhotoTag($id, $tag_id);
+						}
+					}
+					@unlink($image_path);
+				}
+				$photo_count++;
+			}
+		}
+		redirect('/office/gallery');
+	}
+
+	function mass_upload_preview ($file = '') {
+		$width = 100;
+		$height = 75;
+		$path = $this->config->item('static_local_path') . '/photos/' . $file;
+		if (is_file($path)) {
+			$ext = strrchr($file, '.');
+			if ($ext === FALSE) return;
+			$ext = substr($ext, 1);
+			switch ($ext) {
+				case 'jpeg':
+				case 'jpg':
+					$image = imagecreatefromjpeg($path);
+					break;
+				case 'gif':
+					$image = imagecreatefromgif($path);
+					break;
+				case 'png':
+					$image = imagecreatefrompng($path);
+					break;
+				default:
+					return;
+			}
+
+			$thumb_ratio = $width / $height;
+			$new_height = imagesy($image);
+			$new_width = $new_height * $thumb_ratio;
+			if ($new_width > imagesx($image)) {
+				$new_width = imagesx($image);
+				$new_height = $new_width / $thumb_ratio;
+			}
+			$new_x = floor((imagesx($image) - $new_width) / 2);
+			$new_y = floor((imagesy($image) - $new_height) / 2);
+
+			$new_image = imagecreatetruecolor($width, $height);
+			imagecopyresampled($new_image, $image, 0, 0, $new_x, $new_y, $width, $height, $new_width, $new_height);
+
+			switch ($ext) {
+				case 'jpeg':
+				case 'jpg':
+					header('Content-type: image/jpeg');
+					imagejpeg($new_image, null, 100);
+					break;
+				case 'gif':
+					header('Content-type: image/gif');
+					imagegif($new_image);
+					break;
+				case 'png':
+					header('Content-type: image/png');
+					imagepng($new_image, null, 0);
+					break;
+			}
+		}
 	}
 
 	function edit() {

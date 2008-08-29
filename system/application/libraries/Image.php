@@ -105,9 +105,11 @@ class Image {
 		$imageStr = $this->image2string($newImage, $info['mime']);
 		switch ($type) {
 			case 'photo':
-				$sql = 'INSERT INTO photos (photo_author_user_entity_id, photo_title, photo_width, photo_height, photo_mime, photo_watermark, photo_watermark_colour_id, photo_source, photo_data)
-				        VALUES (?, ?, ?, ?, ?, ?, ?, ?, "'.mysql_escape_string($imageStr).'")'; // We don't want the binary escaped
-				$this->ci->db->query($sql, array($info['author_id'], $info['title'], $info['x'], $info['y'], $info['mime'], $info['watermark'], $info['watermark_colour_id'], $info['source']));
+				if (!isset($info['public_gallery']))
+					$info['public_gallery'] = 0;
+				$sql = 'INSERT INTO photos (photo_author_user_entity_id, photo_title, photo_width, photo_height, photo_mime, photo_watermark, photo_watermark_colour_id, photo_source, photo_public_gallery, photo_data)
+				        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, "'.mysql_escape_string($imageStr).'")'; // We don't want the binary escaped
+				$this->ci->db->query($sql, array($info['author_id'], $info['title'], $info['x'], $info['y'], $info['mime'], $info['watermark'], $info['watermark_colour_id'], $info['source'], $info['public_gallery']));
 				break;
 			case 'image':
 				if (isset($info['type_id'])) {

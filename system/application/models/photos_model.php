@@ -93,7 +93,7 @@ class Photos_model extends Model
 		$query = $this->db->query($sql, array($photo_id, $tag_id));
 	}
 
-	function UpdatePhotoDetails ($photo_id, $title, $source, $watermark, $watermark_colour, $hidden, $hidden_gallery)
+	function UpdatePhotoDetails ($photo_id, $title, $source, $watermark, $watermark_colour, $hidden, $hidden_gallery, $public_gallery)
 	{
 		$sql = 'UPDATE		photos
 				SET			photos.photo_title = ?,
@@ -101,9 +101,10 @@ class Photos_model extends Model
 							photos.photo_watermark = ?,
 							photos.photo_watermark_colour_id = ?,
 							photos.photo_gallery = ?,
-							photos.photo_deleted = ?
+							photos.photo_deleted = ?,
+							photos.photo_public_gallery = ?
 				WHERE		photos.photo_id = ?';
-		$query = $this->db->query($sql, array($title, $source, $watermark, $watermark_colour, $hidden_gallery, $hidden, $photo_id));
+		$query = $this->db->query($sql, array($title, $source, $watermark, $watermark_colour, $hidden_gallery, $hidden, $public_gallery, $photo_id));
 	}
 
 	function GetOriginalPhotoProperties ($id)
@@ -116,6 +117,7 @@ class Photos_model extends Model
 							photos.photo_author_user_entity_id AS user_id,
 							users.user_firstname AS user_firstname,
 							users.user_surname AS user_surname,
+							photos.photo_public_gallery AS public_gallery,
 							photos.photo_gallery AS gallery,
 							photos.photo_complete AS complete,
 							photos.photo_deleted AS deleted,
