@@ -6,6 +6,9 @@ $config['username_email_postfix'] = '@york.ac.uk';
 $config['company_organisation_id'] = 'theyorker';
 $config['company_entity_id'] = 378;
 
+$config['temp_local_path'] = '/home/yorker/www.theyorker/www/tmp/uploads/';
+$config['temp_web_address'] = '/tmp/uploads/';
+
 $config['static_local_path'] = '/home/yorker/static.theyorker';
 $config['static_web_address'] = 'http://static.theyorker.co.uk';
 $config['static_ftp_address'] = 'theyorker.co.uk';

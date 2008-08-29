@@ -1,8 +1,5 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
-if (!defined('VIEW_WIDTH')) {
-	define('VIEW_WIDTH', 600);
-}
-define('VIEW_HEIGHT', 600);
+
 class Image_upload {
 
 	private $ci;
@@ -62,10 +59,23 @@ class Image_upload {
 		$data = array();
 
 		$config = array();
-		$config['upload_path'] = './tmp/uploads/';
+		$config['upload_path'] = $this->ci->config->item('temp_local_path');
 		$config['allowed_types'] = 'jpg|png|gif|jpeg';
 		$config['max_size'] = 16384;
 		$this->ci->upload->initialize($config);
+
+		$query = $this->ci->db->select('image_type_id, image_type_codename, image_type_name, image_type_width, image_type_height');
+		if (is_array($types)) {
+			$query = $query->where('image_type_photo_thumbnail', $photo);
+			$type = array_pop($types);
+			$query = $query->where('image_type_codename', $type);
+			foreach ($types as $type) {
+				$query = $query->orwhere('image_type_codename', $type);
+			}
+			$query = $query->get('image_types');
+		} else {
+			$query = $query->getwhere('image_types', array('image_type_photo_thumbnail' => 1));
+		}
 
 		$photos_loaded = 0;
 		$errors = array();
@@ -73,12 +83,12 @@ class Image_upload {
 		for ($x = 1; $x <= $this->ci->input->post('destination'); $x++) {
 			$title = $this->ci->input->post('title'.$x);
 			$source = $this->ci->input->post('photo_source' . $x);
-			if (!isset($title) || strlen($title) == 0) {
+			if (!$title ||  strlen($title) == 0) {
 				$errors[] = 'Photo ' . $x . ' did not have a title set.';
-			} elseif (!isset($source) || strlen($source) == 0) {
+			} elseif ($source && strlen($source) == 0) {
 				$errors[] = 'Photo ' . $x . ' did not have it\'s source set.';
 			} else {
-				if ( ! $this->ci->upload->do_upload('userfile'.$x)) {
+				if (!$this->ci->upload->do_upload('userfile'.$x)) {
 					$errors[] = 'Photo ' . $x . ': ' . $this->ci->upload->display_errors();
 				} else {
 					$data[] = $this->ci->upload->data();
@@ -89,7 +99,7 @@ class Image_upload {
 						if ($data[$x - 1]['file_type'] == 'image/pjpeg') {
 							$data[$x - 1]['file_type'] = 'image/jpeg';
 						}
-						$this->processImage($data[$x - 1], $x, $photo);
+						$data[$x - 1] = $this->processImage($data[$x - 1], $x, $photo, $query);
 						$photos_loaded++;
 					}
 				}
@@ -103,7 +113,18 @@ class Image_upload {
 			$this->ci->main_frame->AddMessage('error', implode('<br />', $errors));
 		}
 
-		redirect($returnPath);
+		if (!$photo && count($errors == 0) && ($photos_loaded > 0)) {
+			$this->ci->main_frame->SetTitle('Photo Uploader');
+			$this->ci->main_frame->AddExtraHead($this->ci->xajax->getJavascript(null, '/javascript/xajax.js'));
+			$this->ci->main_frame->IncludeCss('stylesheets/cropper.css');
+			$this->ci->main_frame->IncludeJs('javascript/prototype.js');
+			$this->ci->main_frame->IncludeJs('javascript/scriptaculous.js?load=builder,effects,dragdrop');
+			$this->ci->main_frame->IncludeJs('javascript/cropper.js');
+			$this->ci->main_frame->SetContentSimple('uploader/upload_cropper_new', array('returnPath' => $returnPath, 'data' => $data, 'ThumbDetails' => &$query, 'type' => $photo));
+			return $this->ci->main_frame->Load();
+		} else {
+			redirect($returnPath);
+		}
 	}
 
 	public function process_form_data($formData) {
@@ -237,7 +258,7 @@ class Image_upload {
 		return $objResponse;
 	}
 
-	private function processImage($data, $form_value, $photo) {
+	private function processImage($data, $form_value, $photo, $types = array()) {
 		$image = null;
 		switch ($data['file_type']) {
 			case 'image/gif':
@@ -272,6 +293,22 @@ class Image_upload {
 			if ($id === false) {
 				return false;
 			}
+		} else {
+			$output = array();
+			foreach ($types->result() as $thumb) {
+				$_SESSION['img'][] = array(
+					'list'		=>	count($_SESSION['img']),
+					'type'		=>	$thumb->image_type_id,
+					'codename'	=>	$thumb->image_type_codename
+				);
+				$output[] = array(
+					'title'		=>	$this->ci->input->post('title'.$form_value) . ' - ' . $thumb->image_type_name,
+					'string'	=>	$this->ci->config->item('temp_web_address') . $data['file_name'] . '|' . $x . '|' . $y . '|' . $thumb->image_type_id . '|' . count($output) . '|' . $thumb->image_type_width . '|' . $thumb->image_type_height . '|' . $this->ci->input->post('title' . $form_value) . '|' . count($output) . '-' . $thumb->image_type_id . '|',
+					'thumb_id'	=>	count($output) . '-' . $thumb->image_type_id,
+					'cache_img'	=>	$this->ci->config->item('temp_web_address') . $data['file_name']
+				);
+			}
+			return $output;
 		}
 	}
 }
