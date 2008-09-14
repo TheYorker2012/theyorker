@@ -308,7 +308,7 @@ class Gallery extends Controller {
 		if (is_file($path)) {
 			$ext = strrchr($file, '.');
 			if ($ext === FALSE) return;
-			$ext = substr($ext, 1);
+			$ext = strtolower(substr($ext, 1));
 			switch ($ext) {
 				case 'jpeg':
 				case 'jpg':
