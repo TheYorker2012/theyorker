@@ -45,7 +45,12 @@ class CI_DB_mysql_driver extends CI_DB {
 	 */	
 	function db_connect()
 	{
-		return @mysql_connect($this->hostname, $this->username, $this->password, TRUE);
+		$link = @mysql_connect($this->hostname, $this->username, $this->password, TRUE);
+		if (!mysql_query('SET NAMES \'utf8\''))
+			die(mysql_error());
+		if (!mysql_query('SET CHARACTER SET utf8'))
+			die(mysql_error());
+		return $link;
 	}
 	
 	// --------------------------------------------------------------------
@@ -58,7 +63,12 @@ class CI_DB_mysql_driver extends CI_DB {
 	 */	
 	function db_pconnect()
 	{
-		return @mysql_pconnect($this->hostname, $this->username, $this->password);
+		$link = @mysql_pconnect($this->hostname, $this->username, $this->password);
+		if (!mysql_query('SET NAMES \'utf8\''))
+			die(mysql_error());
+		if (!mysql_query('SET CHARACTER SET utf8'))
+			die(mysql_error());
+		return $link;
 	}
 	
 	// --------------------------------------------------------------------
