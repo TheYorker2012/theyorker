@@ -1,3 +1,15 @@
+<?php
+/**
+ * @file views/office/howdoi/office_howdoi_requests.php
+ * @author Richard Ingle <ri504@york.ac.uk>
+ * @todo cut down on the number of large echos
+ * @param $status_count
+ * @param $categories
+ * @param $permissions[$key => bool]
+ *  - make_suggestion
+ *  - make_request
+ */
+?>
 <div class="RightToolbar">
 	<?php
 	if (count($user['writer']['requested']) > 0)
@@ -111,29 +123,35 @@
 ?>
 
 <?php
-if ($user['officetype'] != 'Low')
+if ($permissions['make_request'])
 {
-	echo('<div class="blue_box">
-		<h2>make a request</h2>
-		<form class="form" action="/office/howdoi/suggestionmodify" method="post" >
-			<fieldset>
-				<input type="hidden" name="r_redirecturl" id="r_redirecturl" value="'.$_SERVER['REQUEST_URI'].'" />
-				<label for="a_question">Question: </label>
-				<input type="text" name="a_question" />
-				<label for="a_description">Description: </label>
-				<textarea name="a_description" cols="30" rows="5"></textarea>
-				<label for="a_category">Category: </label>
-				<select name="a_category">');
-	foreach ($categories as $category_id => $category)
-	{
-		echo('<option value="'.xml_escape($category['codename']).'">'.xml_escape($category['name']).'</option>');
-	}
-	echo('</select>
-				<label for="a_deadline">Deadline (yy-mm-dd h:m):</label>
-				<input type="text" name="a_deadline" value="'.date('y-m-d H:i').'" />
-				<input type="submit" class="button" value="Ask" name="r_submit_request" />
-			</fieldset>
-		</form>
-	</div>');
+?>
+<div class="blue_box">
+	<h2>make a request</h2>
+	<form class="form" action="/office/howdoi/suggestionmodify" method="post" >
+		<fieldset>
+			<input type="hidden" name="r_redirecturl" id="r_redirecturl" value="<?php echo(xml_escape($_SERVER['REQUEST_URI'])); ?>" />
+			<label for="a_question">Question: </label>
+			<input type="text" name="a_question" />
+			<label for="a_description">Description: </label>
+			<textarea name="a_description" cols="30" rows="5"></textarea>
+			<label for="a_category">Category: </label>
+			<select name="a_category">
+			<?php
+			foreach ($categories as $category_id => $category)
+			{
+				?>
+				<option value="<?php echo(xml_escape($category['codename'])); ?>"><?php echo(xml_escape($category['name'])); ?></option>
+				<?php
+			}
+			?>
+			</select>
+			<label for="a_deadline">Deadline (yy-mm-dd h:m):</label>
+			<input type="text" name="a_deadline" value="<?php echo(date('y-m-d H:i')); ?>" />
+			<input type="submit" class="button" value="Ask" name="r_submit_request" />
+		</fieldset>
+	</form>
+</div>
+<?php
 }
 ?>

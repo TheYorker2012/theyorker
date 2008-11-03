@@ -11,6 +11,7 @@
  * Vocab guidelines:
  * - all upper case
  * - use MODIFY instead of EDIT
+ * - use ADD instead of CREATE
  */
 $config['permissions'] = array(
 	/// @todo Review and implement advertising permissions
@@ -72,10 +73,26 @@ $config['permissions'] = array(
 	'GAMEZONE_UPLOAD'                  => '(unimplemented) Upload new games to gamezone',
 	'GAMEZONE_MODIFY'                  => '(unimplemented) Modify games in gamezone',
 	'GAMEZONE_DELETE'                  => '(unimplemented) Delete games in gamezone',
-	
-	/// @todo Review and implement howdoi permissions
-	'HOWDOI_VIEW'                      => '(unimplemented) View How-do-I management page',
-	'HOWDOI_MODIFY'                    => '(unimplemented) Modify How-do-I items',
+
+	/// @todo Implement HOWDOI permissions
+	'HOWDOI_VIEW'                      => 'View How-do-I management pages',
+	'HOWDOI_MAKE_SUGGESTION'           => 'Make a new suggestion',
+	'HOWDOI_MAKE_REQUEST'              => 'Make a new request (bypassing suggestion phase)',
+	'HOWDOI_SUGGESTION_MODIFY'         => '(unimplemented) Modify suggestions',
+	'HOWDOI_SUGGESTION_DELETE'         => '(unimplemented) Delete suggestions',
+	'HOWDOI_SUGGESTION_ACCEPT'         => '(unimplemented) Accept suggestions (turn into requests)',
+	'HOWDOI_REQUEST_MODIFY'            => '(unimplemented) Modify requests',
+	'HOWDOI_REQUEST_WRITER_ADD'        => '(unimplemented) Request a writer to work on a question',
+	'HOWDOI_REQUEST_WRITER_DELETE'     => '(unimplemented) Remove a writer from a question',
+	'HOWDOI_QUESTION_MODIFY'           => '(unimplemented) Modify a question',
+	'HOWDOI_REQUEST_DELETE'            => '(unimplemented) Delete How-do-I unpublished articles',
+	'HOWDOI_PUBLISH'                   => '(unimplemented) Publish How-do-I articles',
+	'HOWDOI_PULL'                      => '(unimplemented) Pull How-do-I live articles',
+	'HOWDOI_CATEGORY_VIEW'             => 'View How-do-I categories list',
+	'HOWDOI_CATEGORY_MODIFY'           => '(unimplemented) Modify How-do-I categories',
+	'HOWDOI_CATEGORY_DELETE'           => '(unimplemented) Delete How-do-I categories',
+	'HOWDOI_CATEGORY_ADD'              => '(unimplemented) Add new How-do-I categories',
+	'HOWDOI_CATEGORY_REORDER'          => '(unimplemented) Reorder How-do-I categories',
 	
 	'IRC_CHAT'                         => 'Access to interactive office chat',
 	

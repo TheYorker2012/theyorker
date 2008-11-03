@@ -12,6 +12,9 @@
 */
 class Howdoi extends Controller
 {
+	/// Permissions.
+	private $permissions;
+
 	/// Default constructor.
 	function __construct()
 	{
@@ -24,15 +27,36 @@ class Howdoi extends Controller
 	/// Set up the navigation bar
 	private function _SetupNavbar()
 	{
-		$navbar = $this->main_frame->GetNavbar();
-		$navbar->AddItem('suggestions', 'Suggestions',
-				'/office/howdoi/suggestions');
-		$navbar->AddItem('requests', 'Articles',
-				'/office/howdoi/requests');
-		$navbar->AddItem('published', 'Live',
-				'/office/howdoi/published');
-		$navbar->AddItem('categories', 'Categories',
-				'/office/howdoi/categories');
+		$view           = $this->permissions_model->hasUserPermission('HOWDOI_VIEW');
+		$viewCategories = $this->permissions_model->hasUserPermission('HOWDOI_CATEGORY_VIEW');
+		if ( $view || $viewCategories )
+		{
+			$navbar = $this->main_frame->GetNavbar();
+			$navbar->AddItem('suggestions', 'Suggestions',
+					'/office/howdoi/suggestions');
+			$navbar->AddItem('requests', 'Articles',
+					'/office/howdoi/requests');
+			$navbar->AddItem('published', 'Live',
+					'/office/howdoi/published');
+			$navbar->AddItem('categories', 'Categories',
+					'/office/howdoi/categories');
+		}
+	}
+
+	private function _InitPermissions()
+	{
+		if (!isset($this->permissions))
+		{
+			$permissionMap = array(
+				'make_suggestion' => 'HOWDOI_MAKE_SUGGESTION',
+				'make_request'    => 'HOWDOI_MAKE_REQUEST',
+			);
+			$this->permissions = array();
+			foreach ($permissionMap as $key => $rolePermission)
+			{
+				$this->permissions[$key] = $this->permissions_model->hasUserPermission($rolePermission);
+			}
+		}
 	}
 
 	/**
@@ -85,6 +109,9 @@ class Howdoi extends Controller
 	function getdata($page)
 	{
 		if (!CheckPermissions('office')) return;
+		$this->_SetupNavbar();
+		if (!CheckRolePermissions('HOWDOI_VIEW')) return;
+		$this->_InitPermissions();
 
 		//set the page code and load the required models
 		$this->pages_model->SetPageCode('office_howdoi_questions');
@@ -92,7 +119,6 @@ class Howdoi extends Controller
 		$this->load->model('requests_model','requests_model');
 
 		//Get navigation bar and tell it the current page
-		$this->_SetupNavbar();
 		if ($page == 'suggestions')
 		{
 			$this->main_frame->SetPage('suggestions');
@@ -108,6 +134,11 @@ class Howdoi extends Controller
 			$this->main_frame->SetPage('published');
 			$this->pages_model->SetPageCode('office_howdoi_published');
 		}
+
+		$data = array();
+
+		// Permissions so the UI knows what to show
+		$data['permissions'] = &$this->permissions;
 
 		// Insert main text from pages information
 		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
@@ -199,13 +230,14 @@ class Howdoi extends Controller
 	{
 		//has the user got access to the office
 		if (!CheckPermissions('office')) return;
+		$this->_SetupNavbar();
+		if (!CheckRolePermissions('HOWDOI_CATEGORY_VIEW')) return;
 
 		//set the page code and load the required models
 		$this->pages_model->SetPageCode('office_howdoi_categories');
 		$this->load->model('howdoi_model','howdoi_model');
 
 		//Get navigation bar and tell it the current page
-		$this->_SetupNavbar();
 		$this->main_frame->SetPage('categories');
 
 		// Insert main text from pages information
@@ -239,6 +271,8 @@ class Howdoi extends Controller
 	{
 		//has the user got access to the office
 		if (!CheckPermissions('office')) return;
+		$this->_SetupNavbar();
+//		if (!CheckRolePermissions('HOWDOI_MODIFY')) return;
 
 		//set the page code and load the required models
 		$this->pages_model->SetPageCode('office_howdoi_edit_question');
@@ -253,7 +287,6 @@ class Howdoi extends Controller
 		$howdoi_type_id = $this->howdoi_model->GetHowdoiTypeID();
 
 		//Get navigation bar and tell it the current page
-		$this->_SetupNavbar();
 		$this->main_frame->SetPage('questions');
 
 		/** store the parameters passed to the method so it can be
@@ -279,8 +312,10 @@ class Howdoi extends Controller
 		$correct_content_type = FALSE;
 		foreach ($data['categories'] as $category_id => $category)
 		{
-                	if ($data['article']['header']['content_type'] == $category_id)
-			$correct_content_type = TRUE;
+			if ($data['article']['header']['content_type'] == $category_id)
+			{
+				$correct_content_type = TRUE;
+			}
 		}
 
 		//if the article is a how do i question
@@ -603,35 +638,29 @@ class Howdoi extends Controller
 
 		if (isset($_POST['r_submit_ask']))
 		{
-                	$article_header_id = $this->requests_model->CreateRequest(
-						'suggestion',
-						$_POST['a_category'],
-						$_POST['a_question'],
-						$_POST['a_description'],
-						$this->user_auth->entityId,
-						NULL);
-	                $this->main_frame->AddMessage('success','Suggestion Created.');
+			if (!CheckRolePermissions('HOWDOI_MAKE_SUGGESTION')) return;
+			$article_header_id = $this->requests_model->CreateRequest(
+				'suggestion',
+				$_POST['a_category'],
+				$_POST['a_question'],
+				$_POST['a_description'],
+				$this->user_auth->entityId,
+				NULL);
+			$this->main_frame->AddMessage('success','Suggestion Created.');
 			redirect($_POST['r_redirecturl']);
 		}
 		else if (isset($_POST['r_submit_request']))
 		{
-			if ($this->user_auth->officeType != 'Low')
-			{
-	                	$request_id = $this->requests_model->CreateRequest(
-							'request',
-							$_POST['a_category'],
-							$_POST['a_question'],
-							$_POST['a_description'],
-							$this->user_auth->entityId,
-							$_POST['a_deadline']);
-		                $this->main_frame->AddMessage('success','Request Created.');
-				redirect('/office/howdoi/editrequest/'.$request_id);
-			}
-			else
-			{
-		                $this->main_frame->AddMessage('error','You don\'t have access to create a request.');
-				redirect('/office/howdoi/');
-			}
+			if (!CheckRolePermissions('HOWDOI_MAKE_REQUEST')) return;
+			$request_id = $this->requests_model->CreateRequest(
+				'request',
+				$_POST['a_category'],
+				$_POST['a_question'],
+				$_POST['a_description'],
+				$this->user_auth->entityId,
+				$_POST['a_deadline']);
+			$this->main_frame->AddMessage('success','Request Created.');
+			redirect('/office/howdoi/editrequest/'.$request_id);
 		}
 	}
 
