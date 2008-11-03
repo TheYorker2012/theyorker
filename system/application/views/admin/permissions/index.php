@@ -61,9 +61,22 @@
 	<?php
 	$last_prefix = '';
 	foreach ($permissionDescriptions as $permission => $description) {
-		$new_prefix = substr($permission, 0, strpos($permission, '_'));
+		$new_prefix = substr($permission, 0, strpos($permission.'_', '_'));
 		if ($last_prefix != $new_prefix) {
+			if ($last_prefix !== '') {
+				?></div><?php
+			}
 			?><hr /><?php
+			// Section title, which allows showing / hiding of permissions
+			?><div	id="permissionCategory-<?php echo(xml_escape($new_prefix)); ?>"
+					class="permissionCategoryHead"
+					onclick="permissionCategoryClick(<?php echo(xml_escape(js_literalise($new_prefix))); ?>)"
+				>
+				<div class="name"><?php echo(xml_escape($new_prefix)); ?></div>
+				<div class="description">click to expand or hide</div>
+			</div>
+			<div	id="permissions-<?php echo(xml_escape($new_prefix)); ?>"
+					class="permissionCategory hidden"><?php
 			$last_prefix = $new_prefix;
 		}
 	?>
@@ -86,7 +99,11 @@
 			</div>
 		</div>
 	</div>
-	<?php } ?>
+	<?php }
+	if ($last_prefix !== '') {
+		?></div><?php
+	}
+	?>
 	<hr />
 </div>
 

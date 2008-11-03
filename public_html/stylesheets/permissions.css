@@ -2,11 +2,13 @@
 /* Author: James Hogan <james_hogan@theyorker.co.uk> */
 
 div.permission div.name,
+div.permissionCategoryHead div.name,
 div.role div.name {
 	display: inline;
 }
 
-div.permission div.description {
+div.permission div.description,
+div.permissionCategoryHead div.description {
 	font-size:x-small;
 	display: inline;
 	margin-left: 1em;
@@ -27,7 +29,15 @@ div.user div.roles div.role.highlight {
 }
 
 /* Main boxes */
+div.permissionCategoryHead {
+	background-color: #ccc;
+}
+div.permissionCategory.hidden div.permission {
+	display: none;
+}
+
 div.permission,
+div.permissionCategoryHead,
 div.role,
 div.user {
 	cursor: pointer;
@@ -41,7 +51,7 @@ div#usersBox hr {
 }
 
 
-/* Primary selectionn */
+/* Primary selection */
 div.permission.primary {
 	background-color: #fcc;
 }

@@ -651,6 +651,18 @@ function userSecondary(user)
 	}
 }
 
+/// Event for when a permission category is clicked.
+function permissionCategoryClick(permissionCategory)
+{
+	permissionCat = document.getElementById('permissions-'+permissionCategory);
+	if (CssCheck(permissionCat, 'hidden')) {
+		CssRemove(permissionCat, 'hidden');
+	}
+	else {
+		CssAdd(permissionCat, 'hidden');
+	}
+}
+
 /// Event for when a permission is clicked.
 function permissionClick(permission)
 {
