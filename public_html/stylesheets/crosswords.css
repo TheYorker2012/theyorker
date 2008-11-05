@@ -1,0 +1,94 @@
+/* Styles for crosswords */
+/* Author: James Hogan */
+
+table.crossword {
+	border: 1px solid #FF6A00;
+	border-spacing: 0px;
+
+
+	text-align: center;
+	font-weight: bold;
+	font-size: 14pt;
+}
+
+table.crossword td sup {
+	font-weight: normal;
+	font-size: 8pt;
+	float: left;
+}
+
+table.crossword td input {
+	border: 0px solid white;
+	margin: 0px;
+	width: 100%;
+	height: 1.2em;
+	float: left;
+
+	text-align: center;
+	font-weight: bold;
+	font-size: 14pt;
+}
+
+table.crossword td {
+	background-color: white;
+	border: 1px solid #FF6A00;
+	padding: 0px;
+	margin: 0px;
+	vertical-align: bottom;
+
+	width: 1.5em;
+	height: 1.5em;
+}
+
+table.crossword td.blank {
+	background-color: #FF6A00;
+}
+
+table.crossword td.selected,
+table.crossword td.selected input {
+	background-color: #FFFF88;
+}
+
+table.crossword td.focus,
+table.crossword td.focus input {
+	background-color: #FFAA88;
+}
+
+div.crosswordBox {
+	float: left;
+	width: 60%;
+	padding: 0px;
+	margin: 0px;
+}
+
+div.crosswordCluesBox {
+	float: left;
+	width: 40%;
+	padding: 0px;
+	margin: 0px;
+}
+
+div.crosswordClues {
+	border: 2px solid #FF6A00;
+	padding: 0.5em;
+	margin: 0px 0px 0.5em 0.5em;
+}
+
+div.crosswordClues h2 {
+	margin: 0.2em;
+}
+
+div.crosswordClues p {
+	margin: 0px;
+	cursor: pointer;
+}
+
+div.crosswordClues p.complete {
+	text-decoration: line-through;
+}
+
+div.crosswordClues p.selected {
+	background-color: #FFFF88;
+	border: 1px solid #FFAA88
+}
+
