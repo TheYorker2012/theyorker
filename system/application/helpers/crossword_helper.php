@@ -410,7 +410,7 @@ class CrosswordView
 				$used = is_string($state);
 				if ($used) {
 					?><td id="<?php echo("$name-$x-$y"); ?>" <?php
-						?>onclick="return crosswordClick(<?php echo("'$name', $x, $y, event") ?>)"><?php
+						?>onclick="return crosswordClick(<?php echo("'$name', $x, $y, event") ?>)"><div><?php
 
 					// Clue number
 					$slots = $grid->slotsAt($x, $y, true);
@@ -428,7 +428,7 @@ class CrosswordView
 					       ?>value="<?php
 							//echo(xml_escape($state));
 						   ?>" /><?php
-					?></td><?php
+					?></div></td><?php
 				}
 				else {
 					// Nothing but a blank placemarker
