@@ -20,7 +20,7 @@ class Crossword extends Controller
 		$crossword->addSlot(1, 0, CrosswordGrid::$HORIZONTAL, new CrosswordClue("Ordered pile", "stack"));
 		$crossword->addSlot(7, 0, CrosswordGrid::$HORIZONTAL, new CrosswordClue("Abyss", "chasm"));
 		$crossword->addSlot(0, 2, CrosswordGrid::$HORIZONTAL, new CrosswordClue("Applaud with shouts", "cheer"));
-		$crossword->addSlot(6, 2, CrosswordGrid::$HORIZONTAL, new CrosswordClue("Destroy completely", "wipeout"));
+		$crossword->addSlot(6, 2, CrosswordGrid::$HORIZONTAL, new CrosswordClue("Destroy completely", "wipe out"));
 		$crossword->addSlot(0, 4, CrosswordGrid::$HORIZONTAL, new CrosswordClue("Small frozen blocks", "ice cubes"));
 		$crossword->addSlot(9, 4, CrosswordGrid::$HORIZONTAL, new CrosswordClue("Slight quarrel", "spat"));
 		$crossword->addSlot(0, 6, CrosswordGrid::$HORIZONTAL, new CrosswordClue("One who damages property", "vandal"));
