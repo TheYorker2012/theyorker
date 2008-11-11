@@ -14,6 +14,12 @@ class Crossword extends Controller
 	function index()
 	{
 		if (!CheckPermissions('admin')) return;
+		redirect('crossword/prototype');
+	}
+
+	function prototype()
+	{
+		if (!CheckPermissions('public')) return;
 
 		$crossword = new CrosswordPuzzle(13, 13);
 		// Across
