@@ -404,6 +404,9 @@ function Crossword(name, width, height)
 	this.keyPress = function(x, y, e)
 	{
 		var charCode = e.which;
+		if (undefined == charCode) {
+			charCode = e.keyCode;
+		}
 		// Character keys
 		if (charCode != 0) {
 			var charStr = String.fromCharCode(charCode).toUpperCase();
