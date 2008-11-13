@@ -408,7 +408,7 @@ function Crossword(name, width, height)
 			charCode = e.keyCode;
 		}
 		// Character keys
-		if (charCode != 0) {
+		if (charCode != 0 && !e.ctrlKey && !e.altKey && !e.metaKey) {
 			var charStr = String.fromCharCode(charCode).toUpperCase();
 			if (charStr == " ") {
 				this.modifyValue(x, y, "");
