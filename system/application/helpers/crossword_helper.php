@@ -424,7 +424,8 @@ class CrosswordView
 					// Text input box
 					?><input type="text" cols="1" maxlength="2" <?php
 					       ?>id="<?php echo("$name-edit-$x-$y"); ?>" <?php
-					       ?>onkeypress="return crosswordKeyPress(<?php echo("'$name', $x, $y, event") ?>)" <?php
+					       ?>onkeydown="return crosswordKeyDown(<?php echo("'$name',$x,$y,event") ?>)" <?php
+					       ?>onkeypress="return crosswordKeyPress(<?php echo("'$name',$x,$y,event") ?>)" <?php
 					       ?>value="<?php
 							//echo(xml_escape($state));
 						   ?>" /><?php

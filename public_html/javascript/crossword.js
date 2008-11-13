@@ -350,29 +350,11 @@ function Crossword(name, width, height)
 		}
 	}
 
-	this.keyPress = function(x, y, e)
+	this.keyDown = function(x, y, e)
 	{
 		var keyCode = e.keyCode;
-		var charCode = e.charCode;
-		alert("keyCode: " + keyCode + ", charCode: " + e.charCode + ", which: " + e.which);
-		// Character keys
-		if (charCode != 0) {
-			var charStr = String.fromCharCode(charCode).toUpperCase();
-			if (charStr == " ") {
-				this.modifyValue(x, y, "");
-			}
-			else {
-				var charcheck = /[a-zA-Z ]/;
-				var valid = charcheck.test(charStr);
-				if (valid) {
-					this.modifyValue(x, y, charStr);
-					this.changeCellRelative(x, y, this.orientation().dx(), this.orientation().dy(), false);
-				}
-			}
-			return false;
-		}
 		// Control keys
-		else if (keyCode != 0) {
+		if (keyCode != 0) {
 			if (keyCode == 8 /* backspace */) {
 				// If the cell not modified, go backwards first
 				var modified = this.m_xyModified;
@@ -418,6 +400,28 @@ function Crossword(name, width, height)
 		}
 		return true;
 	}
+
+	this.keyPress = function(x, y, e)
+	{
+		var charCode = e.which;
+		// Character keys
+		if (charCode != 0) {
+			var charStr = String.fromCharCode(charCode).toUpperCase();
+			if (charStr == " ") {
+				this.modifyValue(x, y, "");
+			}
+			else {
+				var charcheck = /[a-zA-Z ]/;
+				var valid = charcheck.test(charStr);
+				if (valid) {
+					this.modifyValue(x, y, charStr);
+					this.changeCellRelative(x, y, this.orientation().dx(), this.orientation().dy(), false);
+				}
+			}
+			return false;
+		}
+		return true;
+	}
 }
 
 function crosswordDeselect(name, e)
@@ -437,6 +441,11 @@ function crosswordSelectSlot(name, x, y, o, e)
 	if (xw.orientation().isVertical() != (o == 1)) {
 		xw.toggleOrientation();
 	}
+}
+
+function crosswordKeyDown(name, x, y, e)
+{
+	return crossword(name).keyDown(x, y, e);
 }
 
 function crosswordKeyPress(name, x, y, e)
