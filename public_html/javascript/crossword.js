@@ -354,6 +354,7 @@ function Crossword(name, width, height)
 	{
 		var keyCode = e.keyCode;
 		var charCode = e.charCode;
+		alert("keyCode: " + keyCode + ", charCode: " + e.charCode + ", which: " + e.which);
 		// Character keys
 		if (charCode != 0) {
 			var charStr = String.fromCharCode(charCode).toUpperCase();
