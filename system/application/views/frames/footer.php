@@ -39,10 +39,11 @@
 		</form>
 	</div>
 	<small>
-		Copyright 2007 The Yorker. Weather data provided by Yahoo. <a href='/policy/'>Privacy Policy</a>
+		Copyright 2007-<?php echo(date('Y')); ?> The Yorker. Weather data provided by Yahoo. <a href='/policy/'>Privacy Policy</a>
 	</small>
 </div>
 
+<?php if ($this->config->item('enable_analytics')) { ?>
 <script type="text/javascript">
 var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
 document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
@@ -52,3 +53,4 @@ var pageTracker = _gat._getTracker("UA-864229-2");
 pageTracker._initData();
 pageTracker._trackPageview();
 </script>
+<?php } ?>
