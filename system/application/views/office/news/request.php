@@ -1,14 +1,17 @@
-	<script type='text/javascript' src='/javascript/calendar_select.js'></script>
-	<script type='text/javascript' src='/javascript/calendar_select-en.js'></script>
-	<script type='text/javascript' src='/javascript/calendar_select-setup.js'></script>
+<script type='text/javascript' src='/javascript/calendar_select.js'></script>
+<script type='text/javascript' src='/javascript/calendar_select-en.js'></script>
+<script type='text/javascript' src='/javascript/calendar_select-setup.js'></script>
 
-	<div class='RightToolbar'>
-		<h4><?php echo(xml_escape($heading)); ?></h4>
+<div id="RightColumn">
+	<h2 class="first"><?php echo(xml_escape($heading)); ?></h2>
+	<div class="Entry">
 		<?php echo($intro); ?>
 	</div>
-
+</div>
+<div id="MainColumn">
 	<form id='new_request' action='/office/news/request' method='post' class='form'>
-		<div class='blue_box'>
+		<div class='BlueBox'>
+			<h2>Edit request</h2>
 			<fieldset>
 				<label for='r_title'>Title:</label>
 				<input type='text' name='r_title' id='r_title' value='<?php echo(xml_escape($this->validation->r_title)); ?>' size='30' />
@@ -49,7 +52,7 @@
 				<?php } ?>
 			</fieldset>
 		</div>
-	<div style='width: 422px;'>
+	<div>
 	 	<input type='submit' name='submit' id='submit' value='Submit <?php echo($status); ?>' class='button' />
 	</div>
 	</form>
@@ -74,3 +77,4 @@
 		// ]]>
 		</script>
 	<?php } ?>
+</div>

@@ -30,10 +30,11 @@
 				<input type="text" id="nick" name="nick" value="<?php echo(xml_escape($this->validation->nick)); ?>" />
 				<br />
 				<span class="label">Gender: </span>
-				<label class="radio" for="genderm">Male</label>
-				<input class="radio" type="radio" id="genderm" name="gender" value="m" <?php if ($this->validation->gender == 'm') { echo('checked="checked" '); } ?>/>
-				<label class="radio" for="genderf">Female</label>
-				<input class="radio" type="radio" id="genderf" name="gender" value="f" <?php if ($this->validation->gender == 'f') { echo 'checked="checked" '; } ?>/>
+				<select name="gender" id="gender" size="1">
+					<option value="n"<?php if ($this->validation->gender === NULL) { echo(' selected="selected"'); } ?>>-</option>
+					<option value="m"<?php if ($this->validation->gender == 'm') { echo(' selected="selected"'); } ?>>Male</option>
+					<option value="f"<?php if ($this->validation->gender == 'f') { echo(' selected="selected"'); } ?>>Female</option>
+				</select>
 				<br />
 				<label for="college">College: </label>
 				<!-- TODO: create fancy picture based college selection -->

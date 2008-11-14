@@ -1,9 +1,9 @@
-<div class="RightToolbar">
-	<h4 class="first">Page Information</h4>
+<div id="RightColumn">
+	<h2 class="first">Page Information</h2>
 	<div class="Entry">
 		<?php echo $page_information; ?>
 	</div>
-	<h4>My Assigned Venues</h4>
+	<h2>My Assigned Venues</h2>
 	<div class="Entry">
 		<?php echo $assigned_venues_text; ?>
 			<?php
@@ -21,7 +21,7 @@
 	<?php
 	if(!empty($waiting_revisions) && count($waiting_revisions)>0) {
 	?>
-	<h4>Revisions Needing Approval</h4>
+	<h2>Revisions Needing Approval</h2>
 	<div class="Entry">
 	<?php
 	echo $revisions_needing_approval;
@@ -40,7 +40,7 @@
 	<?php
 	if(!empty($waiting_review_revisions) && count($waiting_review_revisions)>0) {
 	?>
-	<h4>Reviews Needing Approval</h4>
+	<h2>Reviews Needing Approval</h2>
 	<div class="Entry">
 	<?php
 	echo $reviews_needing_approval;
@@ -64,7 +64,7 @@
 	}
 	if(!empty($leagues) && count($leagues)>0) {
 	?>
-	<h4>Leagues</h4>
+	<h2>Leagues</h2>
 	<div class="Entry">
 		<ul>
 			<?php
@@ -77,7 +77,7 @@
 	<?php
 		}
 	?>
-	<h4>Actions</h4>
+	<h2>Actions</h2>
 	<div class="Entry">
 		<ul>
 			<li><a href="/office/reviewtags">Create/Edit Tags.</a></li>
@@ -87,7 +87,7 @@
 	</div>
 </div>
 <div id="MainColumn">
-	<div class="blue_box">
+	<div class="BlueBox">
 	<?php if(!empty($information_venues)){ ?>
 	<h2>Information</h2>
 	<?php echo $list_text_information; ?>

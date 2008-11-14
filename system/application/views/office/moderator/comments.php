@@ -7,13 +7,15 @@
  */
 ?>
 
-<div class="RightToolbar">
+<div id="RightColumn">
 	<?php
 	if (NULL !== $Description) {
 		?>
-		<h4>What's this?</h4>
+		<h2 class="first">Page Information</h2>
+		<div class="Entry">
+			<?php echo($Description); ?>
+		</div>
 		<?php
-		echo($Description);
 	}
 	?>
 </div>

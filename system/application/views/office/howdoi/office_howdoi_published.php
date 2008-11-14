@@ -41,63 +41,73 @@
 	}
 ?>
 
-<div class="RightToolbar">
-	<?php
-	if (count($user['writer']['requested']) > 0)
-	{
-		echo('<h4>Write Requests</h4>');
-		foreach ($user['writer']['requested'] as $requested)
-		{
-			echo('<a href="/office/howdoi/editquestion/'.$requested['id'].'">'.xml_escape($requested['title']).'</a><br />');
-		}
-		echo('<br />');
-	}
-	if (count($user['writer']['accepted']) > 0)
-	{
-		echo('<h4>Accepted Requests</h4>');
-		foreach ($user['writer']['accepted'] as $accepted)
-		{
-			echo('<a href="/office/howdoi/editquestion/'.$accepted['id'].'">'.xml_escape($accepted['title']).'</a><br />');
-		}
-		echo('<br />');
-	}
-	echo '<h4>Areas for Attention</h4>
-	<div class="Entry">';
+<div id="RightColumn">
+	<h2 class="first">Areas for Attention</h2>
+	<div class="Entry">
+		<ul>
+		<?php
 		if ($status_count['unpublished'] > 0)
 		{
-			echo('<div class="information_box">');
 			if ($status_count['unpublished'] == 1)
-				echo('There is <b>'.$status_count['unpublished'].'</b> <a href="/office/howdoi/published/">Question</a> that is waiting to be published.');
-			else
-				echo('There are <b>'.$status_count['unpublished'].'</b> <a href="/office/howdoi/published/">Questions</a> that are waiting to be published.');
-			echo('</div>');
+			{
+				echo('<li><b>'.$status_count['unpublished'].'</b> <a href="/office/howdoi/published/">Question</a> is waiting to be published.</li>');
+			}else{
+				echo('<li><b>'.$status_count['unpublished'].'</b> <a href="/office/howdoi/published/">Questions</a> are waiting to be published.</li>');
+			}
 		}
 		if ($status_count['requests'] > 0)
 		{
-			echo('<div class="information_box">');
 			if ($status_count['requests'] == 1)
-				echo('There is <b>'.$status_count['requests'].'</b> <a href="/office/howdoi/requests/">Request</a> that requires an answer.');
-			else
-				echo('There are <b>'.$status_count['requests'].'</b> <a href="/office/howdoi/requests/">Requests</a> that require answers.');
-			echo('</div>');
+			{
+				echo('<li><b>'.$status_count['requests'].'</b> <a href="/office/howdoi/requests/">Request</a> requires an answer.</li>');
+			}else{
+				echo('<li><b>'.$status_count['requests'].'</b> <a href="/office/howdoi/requests/">Requests</a> require answers.</li>');
+			}
 		}
 		if ($status_count['suggestions'] > 0)
 		{
-			echo('<div class="information_box">');
 			if ($status_count['suggestions'] == 1)
-				echo('There is <b>'.$status_count['suggestions'].'</b> <a href="/office/howdoi/suggestions/">Suggestion</a> that requires attention.');
-			else
-				echo('There are <b>'.$status_count['suggestions'].'</b> <a href="/office/howdoi/suggestions/">Suggestions</a> that require attention.');
-			echo('</div>');
+			{
+				echo('<li>There is <b>'.$status_count['suggestions'].'</b> <a href="/office/howdoi/suggestions/">Suggestion</a>.</li>');
+			}else{
+				echo('<li>There are <b>'.$status_count['suggestions'].'</b> <a href="/office/howdoi/suggestions/">Suggestions</a>.</li>');
+			}
 		}
+		?>
+		</ul>
+	</div>
 
-	echo('</div>');
+	<?php
+	if (count($user['writer']['requested']) > 0)
+	{
+		echo('<h2>Write Requests</h2>');
+		echo('<div class="Entry">');
+		echo('<ul>');
+		foreach ($user['writer']['requested'] as $requested)
+		{
+			echo('<li><a href="/office/howdoi/editquestion/'.$requested['id'].'">'.xml_escape($requested['title']).'</a></li>');
+		}
+		echo('</ul>');
+		echo('</div>');
+	}
+	if (count($user['writer']['accepted']) > 0)
+	{
+		echo('<h2>Accepted Requests</h2>');
+		echo('<div class="Entry">');
+		echo('<ul>');
+		foreach ($user['writer']['accepted'] as $accepted)
+		{
+			echo('<li><a href="/office/howdoi/editquestion/'.$accepted['id'].'">'.xml_escape($accepted['title']).'</a></li>');
+		}
+		echo('</ul>');
+		echo('</div>');
+	}
 	?>
 </div>
-
-<?php
+<div id="MainColumn">
+	<?php
 	$hr_first = FALSE; //no hr is drawn at the top but between categories
-	echo('<div class="blue_box">');
+	echo('<div class="BlueBox">');
   	echo('<h2>All Questions</h2>');
 	if (count($categories) > 0)
 	{
@@ -124,5 +134,5 @@
 		}
 	}
 	echo('</div>');
-?>
-
+	?>
+</div>

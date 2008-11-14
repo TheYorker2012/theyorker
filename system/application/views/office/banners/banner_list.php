@@ -1,9 +1,9 @@
-<div class='RightToolbar'>
-	<h4 class="first">Information</h4>
+<div id="RightColumn">
+	<h2 class="first">Information</h2>
 	<div class="Entry">
 		<?php echo($page_information); ?>
 	</div>
-	<h4>Actions</h4>
+	<h2>Actions</h2>
 	<div class="Entry">
 		<ul>
 			<li><a href="/office/banners/upload">Upload new banner(s)</a></li>

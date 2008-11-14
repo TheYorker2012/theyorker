@@ -104,14 +104,18 @@
 // ]]>
 </script>
 
-<div class="RightToolbar">
-	<h4><?php echo(xml_escape($section_games_list_page_info_title)); ?></h4>
-	<?php echo($section_games_list_page_info_text); ?>
-	<h4><?php echo(xml_escape($section_games_list_actions_title)); ?></h4>
+<div id="RightColumn">
+	<h2 class="first"><?php echo(xml_escape($section_games_list_page_info_title)); ?></h2>
+	<div class="Entry">
+		<?php echo($section_games_list_page_info_text); ?>
+	</div>
+	<h2><?php echo(xml_escape($section_games_list_actions_title)); ?></h2>
+	<div class="Entry">
 		<ul>
 			<li><a href="#" onclick="add();return false;">Add</a></li>
 			<li><a href="#" onclick="add_entry();return false;">Add Entry</a></li>
 		</ul>
+	</div>
 </div>
 
 <div id="MainColumn">

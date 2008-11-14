@@ -1,16 +1,20 @@
-	<script type='text/javascript' src='/javascript/calendar_select.js'></script>
-	<script type='text/javascript' src='/javascript/calendar_select-en.js'></script>
-	<script type='text/javascript' src='/javascript/calendar_select-setup.js'></script>
+<script type='text/javascript' src='/javascript/calendar_select.js'></script>
+<script type='text/javascript' src='/javascript/calendar_select-en.js'></script>
+<script type='text/javascript' src='/javascript/calendar_select-setup.js'></script>
 
-	<div class='RightToolbar'>
-		<h4><?php echo(xml_escape($heading)); ?></h4>
+<div id="RightColumn">
+	<h2 class="first"><?php echo(xml_escape($heading)); ?></h2>
+	<div class="Entry">
 		<?php echo($intro); ?>
-		<h4>Unassigned Requests</h4>
-		If you choose not select a reporter here then the request will remain <b>unassigned</b> until a reporter is selected. The request will appear on the content schedule.
 	</div>
-
+	<h2>Unassigned Requests</h2>
+	<div class="Entry">
+		<?php echo($unassigned_requests); ?>
+	</div>
+</div>
+<div id="MainColumn">
 	<form id='new_request' action='<?php echo($this->uri->uri_string()); ?>' method='post' class='form'>
-		<div class='blue_box'>
+		<div class='BlueBox'>
 			<fieldset>
 				<label for='r_title'>Title:</label>
 				<?php if ($edit_enable) { ?>
@@ -100,7 +104,7 @@
 				<?php } ?>
 			</fieldset>
 		</div>
-	<div style='width: 422px;'>
+	<div>
 		<?php
 		if ($edit_enable) {
 			if ($user_level == 'editor') {
@@ -143,3 +147,4 @@
 		// ]]>
 		</script>
 	<?php } ?>
+</div>

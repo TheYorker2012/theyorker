@@ -1,0 +1,77 @@
+div.clear {
+	font-size: 1px;
+	margin: 0;
+	padding: 0;
+}
+div#photo_search fieldset, div#photo_search h2 {
+	float: left;
+}
+div#photo_search fieldset input {
+	font-size: large;
+}
+div.search_options {
+	float: right;
+	text-align: right;
+}
+div#preview {
+	position: absolute;
+	display: none;
+}
+div.gallery_thumb_view {
+	float: left;
+	margin-right: 0;
+	margin-top: 0;
+}
+div.gallery_detail_view {
+	float: left;
+	margin-right: 0;
+	margin-top: 0;
+	width: 45%;
+}
+div.gallery_detail_view img {
+	float: left;
+	margin-right: 10px;
+}
+div.gallery_detail_view div {
+	margin-left: 76px;
+}
+
+/* Mass Upload */
+div#massupload_selection div {
+	float: left;
+	margin-right: 0.5em;
+	margin-bottom: 0.5em;
+	padding: 5px;
+	border: 0;
+	cursor: pointer;
+	background-repeat: no-repeat;
+	background-position: center center;
+	position: relative;
+}
+div#massupload_selection div.selected {
+	padding: 4px;
+	border: 1px #999 solid;
+}
+div#massupload_selection div img {
+	display: none;
+
+}
+div#massupload_selection div.selected img {
+	display: block;
+	position: absolute;
+	bottom: 4px;
+	right: 4px;
+}
+div#massupload_selection select {
+	display: none;
+}
+div.photo_props {
+	clear: both;
+}
+div.photo_props img {
+	float: left;
+}
+div.photo_props div {
+	float: left;
+	width: 80%;
+}

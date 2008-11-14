@@ -68,10 +68,13 @@ class Reviewlist extends Controller
 		$data['assigned_venues'] = $this->pr_model->GetUsersAssignedReviewVenues($this->user_auth->entityId, $content_type_codename);
 		//Get Leagues
 		$data['leagues'] = $this->leagues_model->getAllLeagues($content_type_codename);
-		//Get Waiting Revisions, (only show if editor, otherwise they cant approve stuff anyway)
-		if (CheckPermissions('editor')) $data['waiting_revisions'] = $this->pr_model->GetWaitingVenueInformationRevisions($content_type_codename);
-		//Get Waiting Reviews, (only show if editor, otherwise they cant approve stuff anyway)
-		if (CheckPermissions('editor')) $data['waiting_review_revisions'] = $this->pr_model->GetWaitingVenueReviewRevisions($content_type_codename);
+		$user_level = GetUserLevel();
+		if ($user_level=="editor"||$user_level=="admin"){
+			//Get Waiting Revisions, (only show if editor, otherwise they cant approve stuff anyway)
+			$data['waiting_revisions'] = $this->pr_model->GetWaitingVenueInformationRevisions($content_type_codename);
+			//Get Waiting Reviews, (only show if editor, otherwise they cant approve stuff anyway)
+			$data['waiting_review_revisions'] = $this->pr_model->GetWaitingVenueReviewRevisions($content_type_codename);
+		}
 		
 		//////Get data for main page lists
 		$data['information_venues'] = $this->pr_model->GetWorstVenuesForInformation($content_type_codename, 5);

@@ -105,9 +105,11 @@ class Image {
 		$imageStr = $this->image2string($newImage, $info['mime']);
 		switch ($type) {
 			case 'photo':
-				$sql = 'INSERT INTO photos (photo_author_user_entity_id, photo_title, photo_width, photo_height, photo_mime, photo_data)
-				        VALUES (?, ?, ?, ?, ?, "'.mysql_escape_string($imageStr).'")'; // We don't want the binary escaped
-				$this->ci->db->query($sql, array($info['author_id'], $info['title'], $info['x'], $info['y'], $info['mime']));
+				if (!isset($info['public_gallery']))
+					$info['public_gallery'] = 0;
+				$sql = 'INSERT INTO photos (photo_author_user_entity_id, photo_title, photo_width, photo_height, photo_mime, photo_watermark, photo_watermark_colour_id, photo_source, photo_public_gallery, photo_data)
+				        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, "'.mysql_escape_string($imageStr).'")'; // We don't want the binary escaped
+				$this->ci->db->query($sql, array($info['author_id'], $info['title'], $info['x'], $info['y'], $info['mime'], $info['watermark'], $info['watermark_colour_id'], $info['source'], $info['public_gallery']));
 				break;
 			case 'image':
 				if (isset($info['type_id'])) {
@@ -153,9 +155,9 @@ class Image {
 		return false;
 	}
 
-	public function thumbnail($photoID, $type, $x1, $y1, $x2, $y2, $watermark = '') {
-
-		//GRAB
+	public function thumbnail($photoID, $type, $x1, $y1, $x2, $y2) {
+		$this->ci->load->model('photos_model');
+		// GRAB
 		$sql = 'SELECT photo_data, photo_mime FROM photos WHERE photo_id = ? LIMIT 1';
 		$result = $this->ci->db->query($sql, array($photoID));
 		if ($result->num_rows() == 1) {
@@ -165,24 +167,27 @@ class Image {
 			return false;
 		}
 
-		//CROP resized too
+		// CROP
 		$newImage = imagecreatetruecolor($type->x, $type->y);
 		if (!imagecopyresampled($newImage, $image, 0, 0, $x1, $y1, $type->x, $type->y, $x2, $y2)) {
 			return false;
 		}
 
-		//WATERMARK
-		if (strlen($watermark) > 0) {
+		// WATERMARK
+		$watermark = $this->ci->photos_model->GetWatermark($photoID, $type->id);
+		if (($watermark) && (strlen($watermark->watermark) > 0)) {
 			putenv('GDFONTPATH=' . realpath('.').'/images');
-			$grey = imagecolorallocate($newImage, 0xFF, 0xFF, 0xFF);
+			$txt_colour = imagecolorallocate($newImage, $watermark->red, $watermark->green, $watermark->blue);
 			$font = 'arial';
-			imagettftext($newImage, 8, 90, $type->x - 5, $type->y - 5, $grey, $font, htmlspecialchars_decode($watermark));
+			imagettftext($newImage, 8, 90, $type->x - 5, $type->y - 5, $txt_colour, $font, htmlspecialchars_decode($watermark->watermark));
 		}
 
 		//STORE
 		$newImage = $this->image2string($newImage, $result->photo_mime);
-		$sql = 'INSERT INTO photo_thumbs (photo_thumbs_photo_id, photo_thumbs_image_type_id, photo_thumbs_data) VALUES (?, ?, "'.mysql_escape_string($newImage).'")';
+		$sql = 'DELETE FROM photo_thumbs WHERE photo_thumbs_photo_id = ? AND photo_thumbs_image_type_id = ?';
 		$this->ci->db->query($sql, array($photoID, $type->id));
+		$sql = 'INSERT INTO photo_thumbs (photo_thumbs_photo_id, photo_thumbs_image_type_id, photo_thumbs_coord_x, photo_thumbs_coord_y, photo_thumbs_width, photo_thumbs_height, photo_thumbs_data) VALUES (?, ?, ?, ?, ?, ?, "'.mysql_escape_string($newImage).'")';
+		$this->ci->db->query($sql, array($photoID, $type->id, $x1, $y1, $x2, $y2));
 		return true;
 	}
 
@@ -192,10 +197,10 @@ class Image {
 		if ($contents !== false) ob_clean(); else ob_start();
 		switch ($mime) {
 			case 'image/png':
-				imagepng($newImage, null, 9);
+				imagepng($newImage, null, 0);
 				break;
 			case 'image/jpeg':
-				imagejpeg($newImage, null, 90);
+				imagejpeg($newImage, null, 100);
 				break;
 			case 'image/gif':
 				imagegif($newImage);

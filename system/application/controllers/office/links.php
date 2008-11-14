@@ -17,11 +17,11 @@ class Links extends Controller
 	function index()
 	{
 		if (!CheckPermissions('office')) return;
-
-		$this->pages_model->SetPageCode('link_list');
+		$this->pages_model->SetPageCode('office_links_editor');
 
 		$data = array();
-
+		$data['page_information'] = $this->pages_model->GetPropertyWikiText('page_information');
+		
 		$data['officiallinks'] = $this->Links_Model->GetAllOfficialLinks()->result_array();
 		$data['nominatedlinks'] = $this->Links_Model->GetAllNominatedLinks()->result_array();
 
@@ -36,7 +36,8 @@ class Links extends Controller
 	{
 		//has user got access to office
 		if (!CheckPermissions('office')) return;
-
+		$this->pages_model->SetPageCode('office_links_editor');
+		
 		$this->load->model('user_auth');
 
 		if (!($this->user_auth->officeType == 'High' || $this->user_auth->officeType == 'Admin')) {
@@ -45,7 +46,8 @@ class Links extends Controller
 		}
 
 		$data['link'] = $this->Links_Model->GetLink($link_id);
-
+		$data['page_information'] = $this->pages_model->GetPropertyWikiText('page_information');
+		
 		$this->load->library('image');
 		$this->main_frame->SetContentSimple('office/links/link_edit', $data);
 
@@ -57,7 +59,7 @@ class Links extends Controller
 	{
 		//has user got access to office
 		if (!CheckPermissions('office')) return;
-
+		
 		$this->load->model('user_auth');
 
 		if (!($this->user_auth->officeType == 'High' || $this->user_auth->officeType == 'Admin')) {
@@ -77,7 +79,7 @@ class Links extends Controller
 	{
 		//has user got access to office
 		if (!CheckPermissions('office')) return;
-
+		
 		$this->load->model('user_auth');
 
 		if (!($this->user_auth->officeType == 'High' || $this->user_auth->officeType == 'Admin')) {
@@ -142,7 +144,8 @@ class Links extends Controller
 		$data = array();
 
 		/// Get custom page content
-		$this->pages_model->SetPageCode('account_customlinks');
+		$this->pages_model->SetPageCode('office_links_editor');
+		$data['page_information'] = $this->pages_model->GetPropertyWikiText('page_information');
 
 		/// Set up the main frame
 		$this->main_frame->SetContentSimple('office/links/link_custom', $data);

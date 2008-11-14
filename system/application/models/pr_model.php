@@ -987,7 +987,7 @@ class Pr_model extends Model {
 					AND		organisations.organisation_needs_approval = 0
 					AND		organisations.organisation_pr_rep = 1
 					AND		organisations.organisation_directory_entry_name = ?';
-			$query2 = $this->db->query($sql,array($shortname, $shortname));
+			$query2 = $this->db->query($sql,array($shortname));
 			$row2 = $query2->row();
 			$result = array();
 			if ($query2->num_rows() == 1)

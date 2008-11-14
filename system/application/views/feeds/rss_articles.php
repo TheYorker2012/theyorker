@@ -32,10 +32,24 @@ foreach ($rss_items as $item) {
 		$temp_reporters .= $reporter['name'] . ', ';
 	}
 	echo(xml_escape(substr($temp_reporters, 0, -2)) . ')</author>
-		<link>http://' . $_SERVER['SERVER_NAME'] . '/news/' . $item['type_codename'] . '/' . $item['id'] . '</link>
+		<link>http://' . $_SERVER['SERVER_NAME']);
+		if(!empty($item['organisation_codename'])){
+			//If the article has an org name, it is a review.
+			echo('/reviews/' . $item['type_codename'] . '/' . $item['organisation_codename'] . '/');
+		}else{
+			echo('/news/' . $item['type_codename'] . '/');
+		}
+		echo($item['id'] . '</link>
 		<description><![CDATA[' . xml_escape($item['blurb']) . ']]></description>
 		<pubDate>' . date('r',$item['date']) . '</pubDate>
-		<guid isPermaLink=\'true\'>http://' . $_SERVER['SERVER_NAME'] . '/news/' . $item['type_codename'] . '/' . $item['id'] . '</guid>
+		<guid isPermaLink=\'true\'>http://' . $_SERVER['SERVER_NAME']);
+		if(!empty($item['organisation_codename'])){
+			//If the article has an org name, it is a review.
+			echo('/reviews/' . $item['type_codename'] . '/' . $item['organisation_codename'] . '/');
+		}else{
+			echo('/news/' . $item['type_codename'] . '/');
+		}
+		echo($item['id'] . '</guid>
 		</item>');
 }
 echo('</channel></rss>');

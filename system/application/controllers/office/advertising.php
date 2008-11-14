@@ -30,7 +30,8 @@ class Advertising extends Controller
 		$this->pages_model->SetPageCode('advertising_list');
 		
 		$data = array(
-			'adverts'=>$this->advert_model->GetAdverts()
+			'adverts'=>$this->advert_model->GetAdverts(),
+			'page_information' => $this->pages_model->GetPropertyWikiText('page_information')
 		);
 
 		// Set up the directory view
@@ -98,14 +99,40 @@ class Advertising extends Controller
 		
 		//advert is being saved/updated
 		if (isset($_POST['submit_save_advert'])) {
-			$this->advert_model->SaveAdvert(
-				$this->input->post('advert_id'),
-				$this->input->post('advert_name'),
-				$this->input->post('advert_url'),
-				$this->input->post('advert_alt'),
-				$this->input->post('advert_max_views')
-				);
-			$this->messages->AddMessage('success', 'The changes to the advert have been saved.');
+			if($this->input->post('advert_start_date_month')+
+				$this->input->post('advert_start_date_day')+
+				$this->input->post('advert_start_date_year')==0){
+					$start_date=0;
+				}else{
+					$start_date= mktime(0,0,0,
+						(int)$this->input->post('advert_start_date_month'),
+						(int)$this->input->post('advert_start_date_day'),
+						(int)$this->input->post('advert_start_date_year'));
+				}
+			if($this->input->post('advert_end_date_month')+
+				$this->input->post('advert_end_date_day')+
+				$this->input->post('advert_end_date_year')==0){
+					$end_date=0;
+				}else{
+					$end_date= mktime(0,0,0,
+						(int)$this->input->post('advert_end_date_month'),
+						(int)$this->input->post('advert_end_date_day'),
+						(int)$this->input->post('advert_end_date_year'));
+				}
+
+			if($this->advert_model->SaveAdvert(
+					$this->input->post('advert_id'),
+					$this->input->post('advert_name'),
+					$this->input->post('advert_url'),
+					$this->input->post('advert_alt'),
+					$this->input->post('advert_max_views'),
+					(int)$start_date,
+					(int)$end_date
+					)){
+				$this->messages->AddMessage('success', 'The changes to the advert have been saved.');
+			}else{
+				$this->messages->AddMessage('error','Unable to Save.');
+			}
 		}
 		//delete the advert
 		else if (isset($_POST['submit_delete_advert'])) {

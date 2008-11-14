@@ -6,7 +6,10 @@ $config['username_email_postfix'] = '@york.ac.uk';
 $config['company_organisation_id'] = 'theyorker';
 $config['company_entity_id'] = 378;
 
-$config['static_local_path'] = '/home/yorker/static';
+$config['temp_local_path'] = '/home/yorker/www.theyorker/www/tmp/uploads/';
+$config['temp_web_address'] = '/tmp/uploads/';
+
+$config['static_local_path'] = '/home/yorker/static.theyorker';
 $config['static_web_address'] = 'http://static.theyorker.co.uk';
 $config['static_ftp_address'] = 'theyorker.co.uk';
 $config['static_ftp_username'] = 'staticftp';
@@ -21,6 +24,10 @@ $config['pr_officer_name'] = 'Anna Greenleaves and James Koziaryn';
 
 $config['rss_feed_stats'] = false;
 $config['enable_adsense'] = false;
+$config['enable_analytics'] = false;
+
+$config['twitter_admin_userid'] = 'ykr';
+$config['twitter_admin_passwd'] = 'naG88fEn@laTh46ButT';
 
 $config['comments'] = array(
 	// Who has permission to edit a comment

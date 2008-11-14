@@ -10,5 +10,6 @@
 
 // Enable google adsense
 $config['enable_adsense'] = true;
+$config['enable_analytics'] = true;
 
 ?>

@@ -1,163 +1,169 @@
-<div class="blue_box">
-	<h2>information</h2>
-	<form class="form" method="post" action="<?=site_url('office/gallery/show/'.$photoDetails->photo_id.'/save')?>">
+<div class="BlueBox">
+	<div class="search_options">
+		<a href="/office/gallery">
+			<img src="/images/icons/button_back2gallery.png" alt="Go back to the gallery" title="Go back to the gallery" />
+		</a>
+		<br />
+		<a href="/office/gallery/return">
+			<img src="/images/icons/button_insertphoto.png" alt="Insert this photo into an article" title="Insert this photo into an article" />
+		</a>
+	</div>
+
+	<h2>photo information</h2>
+	<form method="post" action="/office/gallery/show/<?php echo($photo->id); ?>/save">
 		<fieldset>
 			<label for="title">Title: </label>
-				<input type="text" name="title" value="<?php echo(xml_escape($photoDetails->photo_title)); ?>" /><br />
+			<input type="text" name="title" id="title" value="<?php echo(xml_escape($photo->title)); ?>" size="30" />
+			<br />
 			<label for="date">Date: </label>
-				<input type="date" name="date" value="<?php echo($photoDetails->photo_timestamp); ?>" /><br />
-			<label for="photographer">Photographer: </label>
-				<select name="photographer">
-					<?php if ($photographer->num_rows() > 0) {
-						foreach($photographer->result() as $person) { ?>
-					<option value="<?php echo($person->user_entity_id); ?>" <?php if ($person->user_entity_id == $photoDetails->photo_author_user_entity_id) echo('selected="selected"'); ?>><?php echo(xml_escape($person->user_firstname.' '.$person->user_surname)); ?></option>
-					<?php }
-					} ?>
-				</select><br />
-			<input type="hidden" name="tags" id="tags" />
-			<div>
-				<div style="float:left;">
-					<h4>Add Tag</h4>
-					<input type="text" id="newtag" autocomplete="off" size="15" onKeyup="tag_suggest()" onKeypress="return checkKeypress(event)" />
-					<input type="button" value="Add" onClick="addTag();updateList();" /><br />
-					<div style="overflow-y: auto;overflow-x: hidden;">
-						<ul id="ntags" style="height:250px; width:190px;list-style: none outside none;">
-						</ul>
-					</div>
+			<div id="date" class="input"><?php echo(date('d/m/y H:i', $photo->timestamp)); ?></div>
+			<br />
+			<label for="uploader">Uploader: </label>
+			<div id="uploader" class="input"><?php echo(xml_escape($photo->user_firstname . ' ' . $photo->user_surname)); ?></div>
+			<br />
+			<label for="source">Source: </label>
+			<input type="text" name="source" id="source" value="<?php echo(xml_escape($photo->source)); ?>" size="30" />
+			<br />
+			<label for="watermark">Watermark: </label>
+			<input type="text" name="watermark" id="watermark" value="<?php echo(xml_escape($photo->watermark)); ?>" />
+			<br />
+			<label for="watermark_colour">Watermark Colour: </label>
+			<select name="watermark_colour" id="watermark_colour" size="1">
+<?php foreach ($watermark_colours as $colour) { ?>
+				<option value="<?php echo($colour->id); ?>"<?php if ($colour->id == $photo->watermark_colour_id) echo(' selected="selected"'); ?>><?php echo($colour->name); ?></option>
+<?php } ?>
+			</select>
+			<br />
+			<label for="tags_container">Tags: </label>
+			<div id="tags_container" class="input">
+				<div id="tags_existing">
+					<?php foreach ($photo_tags as $tag) { ?>
+						<span><img src="/images/icons/tag_orange.png" alt="Photo Tag" title="Photo Tag" />&nbsp;<a href="/office/gallery/change_tag/<?php echo(xml_escape($tag['tag_name'])); ?>"><?php echo(xml_escape($tag['tag_name'])); ?></a></span>
+					<?php } ?>
 				</div>
-				<div style="float:left">
-					<h4>Tagged as:</h4>
-					<div style="overflow-y: auto;overflow-x: hidden;">
-						<ul id="ctags" style="height:250px;width:190px;list-style: none outside none;">
-							<?php
-							if ($photoTag->num_rows() > 0) {
-								foreach ($photoTag->result() as $tag) {
-									$tag_name_xml = xml_escape($tag->tag_name); ?>
-							<li name="list_<?php echo($tag_name_xml); ?>" id="<?php echo($tag_name_xml); ?>"><a onClick="deleteTag('<?php echo($tag_name_xml); ?>')"><img src="/images/icons/delete.png" alt="Remove" title="Remove" /> <?php echo($tag_name_xml); ?></a></li>
-							<?php }
-							} ?>
-						</ul>
-					</div>
+				<div id="tags_addbutton">
+					<a href="#" onclick="return togglePrompt(true);">
+						<img src="/images/icons/button_addtag.png" alt="Add Tag" />
+					</a>
+				</div>
+				<div id="tags_addprompt" style="display:none">
+					<img src="/images/icons/tag_blue_add.png" alt="Add Tag" style="float:left;margin:0.4em 0" />
+					<input type="text" name="add_tag_name" id="add_tag_name" value="" style="font-size:x-small" onkeydown="return processKey(event);" />
+					<input type="button" name="add_tag_submit" id="add_tag_submit" value="Add" style="font-size:x-small" onclick="return addTag();" />
+				</div>
+				<div id="tags_adding" style="display:none">
+					<img src="/images/prototype/prefs/loading.gif" alt="Loading" title="Loading" /> Adding new tag...
 				</div>
 			</div>
+			<label for="public_gallery">Show in Public Gallery: </label>
+			<input type="checkbox" name="public_gallery" id="public_gallery" value="show"<?php if ($photo->public_gallery == 1) echo(' checked="checked"'); ?> />
 			<br />
 			<label for="hidden">Deleted: </label>
-				<input type='checkbox' name='hidden' value="hide" <?php if ($photoDetails->photo_deleted == 1) echo('checked="checked"'); ?> /><br />
-				<label for="hidden-gallery">Removed from Gallery: </label>
-					<input type='checkbox' name='hidden-gallery' value="hide" <?php if ($photoDetails->photo_gallery == 1) echo('checked="checked"'); ?> /><br />
-			<input type="submit" class="button" value="Save" />
+			<input type="checkbox" name="hidden" id="hidden" value="hide"<?php if ($photo->deleted == 1) echo(' checked="checked"'); ?> />
+			<br />
+			<label for="hidden-gallery">Removed from Gallery: </label>
+			<input type="checkbox" name="hidden-gallery" value="hide"<?php if ($photo->gallery == 1) echo(' checked="checked"'); ?> />
+			<br />
+			<input type="submit" class="button" name="save_photo_details" value="Save" />
 		</fieldset>
 	</form>
 </div>
-<div class="grey_box">
-	<h2>previews</h2>
-	<?php foreach($type as $image) {?>
-	<?php 	echo(xml_escape($image->image_type_name)); ?> (<?php echo($image->image_type_width); ?>x<?php echo($image->image_type_height); ?>)<br />
-	<?php 	echo($this->image->getThumb($photoDetails->photo_id, $image->image_type_codename)); ?><br /><br />
-	<?php } ?>
-	Full Size<br />
-	<a href="<?php echo(site_url('photos/full/'.$photoDetails->photo_id)); ?>">Click here to view</a><br /><br />
-	Not happy with these thumbnails? <a href="<?php echo(site_url('office/gallery/edit/'.$photoDetails->photo_id)); ?>">Click here</a> to re-thumbnail.
+
+<div class="BlueBox">
+	<div class="search_options">
+		<a href="/office/gallery/edit/<?php echo($photo->id); ?>">
+			<img src="/images/icons/button_recrop.png" alt="Re-Crop this thumbnail" />
+		</a>
+		<a href="/photos/full/<?php echo($photo->id); ?>">
+			<img src="/images/icons/button_fullsize.png" alt="View Full Image" />
+		</a>
+	</div>
+	<h2>thumbnails</h2>
+	<div>
+		<label for="image_types" style="clear:none;width:auto">Thumbnail Type: </label>
+		<select name="image_types" id="image_types" size="1" onchange="switchThumbnail(this);">
+			<?php for ($i = 0; $i < count($image_types); $i++) { ?>
+				<option value="<?php echo(xml_escape($image_types[$i]->codename)); ?>"<?php if ($i == (count($image_types)-1)) echo(' selected="selected"'); ?>><?php echo(xml_escape($image_types[$i]->name)); ?></option>
+			<?php } ?>
+		</select>
+		<div class="clear"></div>
+	</div>
+	<img id="thumbnail_preview" src="/photos/<?php echo($image_types[(count($image_types)-1)]->codename); ?>/<?php echo($photo->id); ?>" alt="<?php echo(xml_escape($photo->title)); ?>" title="<?php echo(xml_escape($photo->title)); ?>" />
 </div>
+
 <script type="text/javascript">
-// <![CDATA[
+function switchThumbnail (control) {
+	var size = control.options[control.selectedIndex].value;
+	document.getElementById('thumbnail_preview').src = '/photos/' + size + '/<?php echo($photo->id); ?>';
+}
 
-	function tag_suggest() {
-		var new_val = document.getElementById('newtag').value;
-	    xajax_tag_suggest(escape(new_val));
+function togglePrompt (show) {
+	var control = document.getElementById('tags_addbutton');
+	var control2 = document.getElementById('tags_addprompt');
+	if (show) {
+		control2.style.display = 'block';
+		control.style.display = 'none';
+		document.getElementById('add_tag_name').focus();
+	} else {
+		control.style.display = 'block';
+		control2.style.display = 'none';
+		document.getElementById('tags_adding').style.display = 'none';
 	}
+	return false;
+}
 
-	function checkKeypress(e) {
-		var e = (window.event) ? e : e;
-		if (e.keyCode == 13) {
-			addTag();
-			return false;
-		} else {
-			return true;
-		}
-	}
-
-	function updateList() {
-		var tags_el = document.getElementById('tags');
-		tags_el.value = '';
-		var tags = tags_el.childNodes;
-		for (var i=0; i<tags.length; i++) {
-			if (tags[i].nodeType == '1') {
-				tags_el.value += tags[i].id + '+';
-			}
-		}
-	}
-
-	function deleteTag(tagID) {
-		var tags = document.getElementsByName('list_'+tagID);
-		for (var i = 0; i < tags.length; ++i) {
-			tags[i].parentNode.removeChild(tags[i]);
-		}
-		updateList();
-	}
-	
-	function setTag(tagID) {
-		var newtag_el = document.getElementById('newtag');
-		newtag_el.value = tagID;
-	}
-	
-	function notInList(searchItem) {
-		var ctags = document.getElementById('ctags').childNodes;
-		for (var i=0; i<tags.length; i++) {
-			if (tags[i].id == searchItem) {
-				return false;
-			}
-		}
+function processKey (e) {
+	var e = (window.event) ? e : e;
+	if (e.keyCode == 13) {
+		// Enter key was pressed
+		addTag();
+		return false;
+	} else if (e.keyCode == 32) {
+		// Space bar was pressed
+		alert('Spaces are not allowed to be entered.\nThis is because each tag should be a single word.\nPlease try entering a suitable tag again.');
+		return false;
+	} else {
 		return true;
 	}
+}
 
-	function addTag() {
-		var newtag_el = document.getElementById('newtag');
-		var newtagval = newtag_el.value;
-		if (newtagval != "" && notInList(newtagval)) {
-			var ctags_el = document.getElementById('ctags');
-			
-			var li_elem = document.createElement('li');
-			ctags_el.appendChild(li_elem);
-			{
-				li_elem.className = "orange";
-				li_elem.setAttribute('name', "list_"+newtagval);
-				li_elem.id = newtagval;
-				
-				var a_elem = document.createElement('a');
-				li_elem.appendChild(a_elem);
-				{
-					a_elem.onclick = function () {
-						deleteTag(newtagval);
-					}
-					
-					var img_elem = document.createElement('img');
-					a_elem.appendChild(img_elem);
-					{
-						img_elem.src = "/images/icons/delete.png";
-						img_elem.alt = "Remove";
-						img_elem.title = "Remove";
-					}
-					
-					a_elem.appendChild(document.createTextNode(newtagval));
-				}
-			}
-			
-			newtag_el.value = "";
-			updateList()
-			return true;
-		}
+function addTag () {
+	document.getElementById('tags_adding').style.display = 'block';
+	document.getElementById('tags_addprompt').style.display = 'none';
+	var suggestion = document.getElementById('add_tag_name');
+	if (suggestion.value != '') {
+		xajax_tag_suggest(suggestion.value);
+	} else {
+		processTag();
 	}
+	suggestion.value = '';
+	return false;
+}
 
-	var tags_el = document.getElementById('tags');
-	var ctags_el = document.getElementById('ctags');
-	tags_el.value = '';
-	var tags = ctags_el.childNodes;
-	for (var i=0; i<tags.length; i++) {
-		if (tags[i].nodeType == "1") {
-			tags_el.value += tags[i].id + '+';
-		}
-	}
+function clearTags () {
+	document.getElementById('tags_existing').innerHTML = '';
+}
 
-// ]]>
+function createTag (new_tag) {
+	var tag_img = document.createElement('img');
+	tag_img.src = '/images/icons/tag_orange.png';
+	tag_img.alt = 'Photo Tag';
+
+	var tag_link = document.createElement('a');
+	tag_link.href = '/office/gallery/change_tag/' + new_tag;
+	tag_link.appendChild(document.createTextNode(new_tag));
+
+	var container = document.createElement('span');
+	container.appendChild(tag_img);
+	container.appendChild(document.createTextNode(' '));
+	container.appendChild(tag_link);
+
+	var existing = document.getElementById('tags_existing');
+	existing.appendChild(container);
+	existing.appendChild(document.createTextNode(' '));
+}
+
+function processTag () {
+	togglePrompt(false);
+}
 </script>

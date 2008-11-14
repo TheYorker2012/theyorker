@@ -13,18 +13,267 @@ class Photos_model extends Model
 		parent::Model();
 	}
 
-
-	function GetPhotoCount ()
+	function GetWatermarkColours ()
 	{
-		$sql = 'SELECT		COUNT(*) as photo_count
-				FROM		photos';
+		$sql = 'SELECT		photo_watermark_colour_id AS id,
+							photo_watermark_colour_name AS name
+				FROM		photo_watermark_colours
+				ORDER BY	photo_watermark_colour_name ASC';
+		$result = array();
 		$query = $this->db->query($sql);
-		if ($query->num_rows() > 0) {
-			$result = $query->row();
-			return $result->photo_count;
+		foreach ($query->result() as $row) {
+			$result[$row->id] = $row;
 		}
-		return 0;
+		return $result;
 	}
+
+	function GetTypeInfo ($type_codename)
+	{
+		$sql = 'SELECT	image_type_id AS id,
+						image_type_name AS name,
+						image_type_width AS width,
+						image_type_width AS x,
+						image_type_height AS height,
+						image_type_height AS y,
+						image_type_codename AS codename
+				FROM	image_types
+				WHERE	image_type_codename = ?';
+		$query = $this->db->query($sql, array($type_codename));
+		if ($query->num_rows() == 1) {
+			return $query->row();
+		} else {
+			return false;
+		}
+	}
+
+	function GetAllTypesInfo ()
+	{
+		$sql = 'SELECT		image_type_id AS id,
+							image_type_name AS name,
+							image_type_width AS width,
+							image_type_height AS height,
+							image_type_codename AS codename
+				FROM		image_types
+				ORDER BY	image_type_width ASC,
+							image_type_height ASC,
+							image_type_name ASC';
+		return $this->db->query($sql)->result();
+	}
+
+	function GetTagDetails ($tag_name)
+	{
+		$sql = 'SELECT		tags.tag_id,
+							tags.tag_name
+				FROM		tags
+				WHERE		LOWER(tags.tag_name) = LOWER(?)
+				AND			tags.tag_type = \'photo\'';
+		$query = $this->db->query($sql, array($tag_name));
+		if ($query->num_rows() == 1) {
+			return $query->row();
+		} else {
+			return false;
+		}
+	}
+
+	function AddPhotoTag ($tag_name)
+	{
+		$sql = 'INSERT INTO	tags
+				SET			tags.tag_name = LOWER(?),
+							tags.tag_type = \'photo\'';
+		$query = $this->db->query($sql, array($tag_name));
+		return $this->db->insert_id();
+	}
+
+	function AssociatePhotoTag ($photo_id, $tag_id)
+	{
+		$sql = 'INSERT INTO	photo_tags
+				SET			photo_tags.photo_tag_photo_id = ?,
+							photo_tags.photo_tag_tag_id = ?
+				ON DUPLICATE KEY UPDATE photo_tag_tag_id = photo_tag_tag_id';
+		$query = $this->db->query($sql, array($photo_id, $tag_id));
+	}
+
+	function UpdatePhotoDetails ($photo_id, $title, $source, $watermark, $watermark_colour, $hidden, $hidden_gallery, $public_gallery)
+	{
+		$sql = 'UPDATE		photos
+				SET			photos.photo_title = ?,
+							photos.photo_source = ?,
+							photos.photo_watermark = ?,
+							photos.photo_watermark_colour_id = ?,
+							photos.photo_gallery = ?,
+							photos.photo_deleted = ?,
+							photos.photo_public_gallery = ?
+				WHERE		photos.photo_id = ?';
+		$query = $this->db->query($sql, array($title, $source, $watermark, $watermark_colour, $hidden_gallery, $hidden, $public_gallery, $photo_id));
+	}
+
+	function GetOriginalPhotoProperties ($id)
+	{
+		$sql = 'SELECT		photos.photo_id AS id,
+							UNIX_TIMESTAMP(photos.photo_timestamp) AS timestamp,
+							photos.photo_title AS title,
+							photos.photo_width AS width,
+							photos.photo_height AS height,
+							photos.photo_author_user_entity_id AS user_id,
+							users.user_firstname AS user_firstname,
+							users.user_surname AS user_surname,
+							photos.photo_public_gallery AS public_gallery,
+							photos.photo_gallery AS gallery,
+							photos.photo_complete AS complete,
+							photos.photo_deleted AS deleted,
+							photos.photo_watermark AS watermark,
+							photos.photo_watermark_colour_id AS watermark_colour_id,
+							photos.photo_source AS source
+				FROM		photos
+				LEFT JOIN	users
+					ON		photos.photo_author_user_entity_id = users.user_entity_id
+				WHERE		photos.photo_id = ?';
+		$query = $this->db->query($sql, array($id));
+		if ($query->num_rows() == 1) {
+			return $query->row();
+		} else {
+			return false;
+		}
+	}
+
+	function ResetThumbnails ($photo_id)
+	{
+		$sql = 'UPDATE	photo_thumbs
+				SET		photo_thumbs.photo_thumbs_timestamp = NULL
+				WHERE	photo_thumbs.photo_thumbs_photo_id = ?';
+		$query = $this->db->query($sql, array($photo_id));
+	}
+
+	function GetWatermark ($photo_id, $type_id)
+	{
+		$sql = 'SELECT	photos.photo_watermark AS watermark,
+						photo_watermark_colours.photo_watermark_colour_red AS red,
+						photo_watermark_colours.photo_watermark_colour_blue AS blue,
+						photo_watermark_colours.photo_watermark_colour_green AS green
+				FROM	photos,
+						photo_watermark_colours,
+						image_types
+				WHERE	photos.photo_id = ?
+				AND		photos.photo_watermark != ""
+				AND		photos.photo_watermark_colour_id = photo_watermark_colours.photo_watermark_colour_id
+				AND		image_types.image_type_id = ?
+				AND		image_types.image_type_watermark = 1';
+		$query = $this->db->query($sql, array($photo_id, $type_id));
+		if ($query->num_rows() == 1) {
+			return $query->row();
+		} else {
+			return false;
+		}
+	}
+
+	function GetThumbnail ($id, $type)
+	{
+		$sql = 'SELECT	photo_thumbs.photo_thumbs_data AS data,
+						photos.photo_mime AS mime,
+						photo_thumbs.photo_thumbs_coord_x AS x,
+						photo_thumbs.photo_thumbs_coord_y AS y,
+						photo_thumbs.photo_thumbs_width AS width,
+						photo_thumbs.photo_thumbs_height AS height,
+						UNIX_TIMESTAMP(photo_thumbs.photo_thumbs_timestamp) AS timestamp
+				FROM	photo_thumbs,
+						photos
+				WHERE	photo_thumbs.photo_thumbs_photo_id = ?
+				AND		photo_thumbs.photo_thumbs_photo_id = photos.photo_id
+				AND		photo_thumbs.photo_thumbs_image_type_id = ?';
+		$query = $this->db->query($sql, array($id, $type));
+		if ($query->num_rows() == 1) {
+			return $query->row();
+		} else {
+			return false;
+		}
+	}
+
+	function GetFullPhoto ($id)
+	{
+		$sql = 'SELECT	photo_mime AS mime,
+						photo_data AS data,
+						UNIX_TIMESTAMP(photo_timestamp) AS timestamp
+				FROM	photos
+				WHERE	photo_id = ?';
+		$query = $this->db->query($sql, array($id));
+		if ($query->num_rows() == 1) {
+			return $query->row();
+		} else {
+			return false;
+		}
+	}
+
+	function GetErrorImage ($type)
+	{
+		$sql = 'SELECT	image_type_error_mime AS mime,
+						image_type_error_data AS data,
+						UNIX_TIMESTAMP() AS timestamp
+				FROM	image_types WHERE image_type_codename = ?';
+		$query = $this->db->query($sql, array($type));
+		if ($query->num_rows() == 1) {
+			return $query->row();
+		} else {
+			return false;
+		}
+	}
+
+	function GallerySearch ($terms, $current_page, $per_page, $count = false)
+	{
+		$conditions = array();
+		$params = array();
+		foreach ($terms as $term) {
+			$conditions[] = 'LOWER(photos.photo_title) LIKE CONCAT("%", CONCAT(LOWER(?), "%"))';
+			$params[] = $term;
+			$conditions[] = 'LOWER(tags.tag_name) = LOWER(?)';
+			$params[] = $term;
+		}
+		if (count($conditions) > 0) {
+			$conditions = 'AND (' . implode(' OR ', $conditions) . ')';
+		} else {
+			$conditions = '';
+		}
+		if ($count) {
+			$fields = array('COUNT(*) AS total_rows');
+		} else {
+			$fields = array(
+				'photos.photo_id',
+				'photos.photo_timestamp',
+				'photos.photo_author_user_entity_id',
+				'photos.photo_title',
+				'photos.photo_width',
+				'photos.photo_height',
+				'photos.photo_gallery',
+				'photos.photo_complete',
+				'photos.photo_deleted'
+			);
+		}
+		$sql = 'SELECT		' . implode(', ', $fields) . '
+				FROM		photos
+				LEFT JOIN	photo_tags
+					ON		photos.photo_id = photo_tags.photo_tag_photo_id
+				LEFT JOIN	tags
+					ON	(	photo_tags.photo_tag_tag_id = tags.tag_id
+						AND	tags.tag_type = "photo"
+						AND	tags.tag_deleted = 0
+						)
+				WHERE		photos.photo_deleted = 0
+				' . $conditions . '
+				GROUP BY	photos.photo_id
+				ORDER BY	photos.photo_timestamp DESC';
+		if (!$count) {
+			$sql .= ' LIMIT		?, ?';
+			$params[] = (int)$current_page;
+			$params[] = (int)$per_page;
+		}
+		$query = $this->db->query($sql, $params);
+		if ($count) {
+			return $query->num_rows();
+		} else {
+			return $query->result();
+		}
+	}
+
+	// Functions specifically for photo requests listed below
 
 	function GetMyRequests($user_id)
 	{
@@ -387,6 +636,48 @@ class Photos_model extends Model
 				SET		articles.article_thumbnail_photo_id = ?
 				WHERE	articles.article_id = ?';
 		$query = $this->db->query($sql,array($photo_number,$article_id));
+	}
+
+	function GetPhotoDetails ($photo_id)
+	{
+		$sql = 'SELECT	photos.photo_id,
+						photos.photo_title
+				FROM	photos
+				WHERE	photos.photo_id = ?
+				AND		photos.photo_deleted = 0';
+		$query = $this->db->query($sql, array($photo_id));
+		if ($query->num_rows() == 1) {
+			return $query->row();
+		} else {
+			return NULL;
+		}
+	}
+	
+	function GetPhotosTags ($photo_id)
+	{
+		$sql = 'SELECT		photo_tags.photo_tag_tag_id AS tag_id,
+							tags.tag_name
+				FROM		photo_tags,
+							tags
+				WHERE		photo_tags.photo_tag_photo_id = ?
+				AND			photo_tags.photo_tag_tag_id = tags.tag_id
+				AND			tags.tag_type = \'photo\'
+				AND			tags.tag_deleted = 0';
+		$query = $this->db->query($sql, array($photo_id));
+		return $query->result_array();
+	}
+
+	function GetPhotosForTag ($tag_id)
+	{
+		$sql = 'SELECT		photos.photo_id
+				FROM		photo_tags,
+							photos
+				WHERE		photo_tags.photo_tag_tag_id = ?
+				AND			photo_tags.photo_tag_photo_id = photos.photo_id
+				AND			photos.photo_deleted = 0
+				ORDER BY	photos.photo_timestamp DESC';
+		$query = $this->db->query($sql, array($tag_id));
+		return $query->result_array();
 	}
 
 }

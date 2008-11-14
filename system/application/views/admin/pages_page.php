@@ -13,19 +13,24 @@ $property_types = array(
 );
 
 ?>
-<div class="RightToolbar">
+<div id="RightColumn">
 	<?php if (isset($main_text)) { ?>
-		<h4>What's this?</h4>
-		<p><a href="/admin/pages">Back to Pages Administration</a></p>
-		<p><?php echo($main_text); ?></p>
+		<h2 class="first">What's this?</h2>
+		<div class="Entry">
+			<p><a href="/admin/pages">Back to Pages Administration</a></p>
+			<?php echo($main_text); ?>
+		</div>
 	<?php } ?>
 	<?php if (isset($page_help)) { ?>
-		<h4>Helper</h4>
-		<?php echo($page_help); ?>
+		<h2>Helper</h2>
+		<div class="Entry">
+			<?php echo($page_help); ?>
+		</div>
 	<?php } ?>
 </div>
+<div id="MainColumn">
 <?php if ($show_details) { ?>
-	<div class="blue_box">
+	<div class="BlueBox">
 		<h2>Page Details</h2>
 		<form action="<?php echo($target); ?>" method="POST" class="form">
 			<fieldset>
@@ -81,7 +86,7 @@ $property_types = array(
 if (!empty($properties) || $permissions['prop_add']) {
 ?>
 
-<div class="blue_box">
+<div class="BlueBox">
 	<h2>Page Properties</h2>
 	<form action="<?php echo($target); ?>" method="POST" class="form">
 		<fieldset>
@@ -101,7 +106,7 @@ if (!empty($properties) || $permissions['prop_add']) {
 				</p>
 				<input type="hidden" name="label-<?php echo($property['id']);?>" value="<?php echo(xml_escape($property['label']));?>">
 				<input type="hidden" name="type-<?php echo($property['id']);?>" value="<?php echo(xml_escape($property['type']));?>">
-				<textarea name="<?php echo($property['id']);?>" class="full" rows="10" <?php if (!$permissions['prop_edit']) {echo 'READONLY';} ?>><?php echo(xml_escape($property['text']));?></textarea>
+				<textarea name="<?php echo($property['id']);?>" class="full" rows="10" style="width: 360px" <?php if (!$permissions['prop_edit']) {echo 'READONLY';} ?>><?php echo(xml_escape($property['text']));?></textarea>
 				<br />
 			<?php
 			}
@@ -140,3 +145,4 @@ if (!empty($properties) || $permissions['prop_add']) {
 <?php
 }
 ?>
+</div>

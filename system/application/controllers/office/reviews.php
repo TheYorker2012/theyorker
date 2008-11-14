@@ -130,7 +130,7 @@ class Reviews extends Controller
 		}
 
 		// Set up the view
-		$the_view = $this->frames->view('reviews/office_review_overview', $data);
+		$the_view = $this->frames->view('office/reviews/office_review_overview', $data);
 
 		// Set up the public frame
 		$this->main_frame->SetTitleParameters(
@@ -442,7 +442,7 @@ class Reviews extends Controller
 				}
 			}
 			// Set up the public frame
-			$this->main_frame->SetContentSimple('reviews/office_review_information', $data);
+			$this->main_frame->SetContentSimple('office/reviews/office_review_information', $data);
 		}
 
 		$this->main_frame->SetTitleParameters(array(
@@ -506,7 +506,7 @@ class Reviews extends Controller
 		$data['new_tags'] = $this->review_model->GetTagWithoutOrganisation($ContextType,$organisation);
 
 		// Set up the view
-		$the_view = $this->frames->view('reviews/office_review_tags', $data);
+		$the_view = $this->frames->view('office/reviews/office_review_tags', $data);
 
 		// Set up the public frame
 		$this->main_frame->SetTitleParameters(
@@ -572,7 +572,7 @@ class Reviews extends Controller
 			}
 		}
 		// Set up the view
-		$the_view = $this->frames->view('reviews/office_review_leagues', $data);
+		$the_view = $this->frames->view('office/reviews/office_review_leagues', $data);
 
 		// Set up the public frame
 		$this->main_frame->SetTitleParameters(
@@ -612,6 +612,7 @@ class Reviews extends Controller
 			$data['thumbnail_text'] = $this->pages_model->GetPropertyWikitext('thumbnail_text');
 			$data['thumbnail_text_none'] = $this->pages_model->GetPropertyWikitext('thumbnail_text_none');
 			$data['thumbnail_text_no_images'] = $this->pages_model->GetPropertyWikitext('thumbnail_text_no_images');
+			$data['photo_from_gallery'] = $this->pages_model->GetPropertyWikitext('photo_from_gallery');
 			
 			if ($action == 'move') { // Switch hates me, this should be case switch but i won't do it
 				if ($operation == 'up') {
@@ -627,7 +628,12 @@ class Reviews extends Controller
 				return $this->image_upload->recieveUpload('/office/reviews/'.$data['organisation']['shortname'].'/'.$ContextType.'/photos', array('slideshow','small'));
 			} elseif (isset($_SESSION['img'])) {
 				foreach ($_SESSION['img'] as $newID) {
-					$this->slideshow->addPhoto($newID['list'], $data['organisation']['id']);
+					if($this->slideshow->hasPhoto($newID['list'], $data['organisation']['id'])){
+						$this->messages->AddMessage('information','This photo is already in this slideshow.');
+					}else{
+						$this->messages->AddMessage('success','The photo has been added to the slideshow for '.$data['organisation']['name'].'.');
+						$this->slideshow->addPhoto($newID['list'], $data['organisation']['id']);
+					}
 				}
 				unset($_SESSION['img']);
 			}
@@ -769,7 +775,7 @@ class Reviews extends Controller
 		}
 
 		// Set up the view
-		$the_view = $this->frames->view('reviews/office_review_reviews', $data);
+		$the_view = $this->frames->view('office/reviews/office_review_reviews', $data);
 
 		$this->main_frame->IncludeJs('javascript/wikitoolbar.js');
 
@@ -942,7 +948,7 @@ class Reviews extends Controller
 		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
 
 		// Set up the view
-		$the_view = $this->frames->view('reviews/office_review_reviewedit', $data);
+		$the_view = $this->frames->view('office/reviews/office_review_reviewedit', $data);
 
 		$this->main_frame->IncludeJs('javascript/wikitoolbar.js');
 
@@ -977,7 +983,7 @@ class Reviews extends Controller
 		$thread = $this->review_model->GetReviewContextOfficeCommentThread($organisation_id, $content_id);
 		$data['comments'] = $this->comment_views->CreateStandard($thread, $IncludedComment);
 
-		$this->main_frame->SetContentSimple('reviews/office_review_comments', $data);
+		$this->main_frame->SetContentSimple('office/reviews/office_review_comments', $data);
 		$this->main_frame->SetTitleParameters(
 				array('organisation' => $data['organisation']['name'],
 						'content_type' => ucfirst($ContextType)));

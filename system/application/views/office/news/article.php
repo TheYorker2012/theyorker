@@ -181,8 +181,8 @@
 	</script>
 
 	<form action="/office/news/<?php echo $article['id']; ?>" method="post" class="form">
-		<div class="RightToolbar">
-			<h4>Photo Requests</h4>
+		<div id="RightColumn">
+			<h2 class="first">Photo Requests</h2>
 			<div id="photo_requests">
 
 <?php if (count($photo_requests) > 0) {
@@ -208,11 +208,11 @@
 			<div>
 				<input type="text" name="photo_title" id="photo_title" value="Photo Title" />
 				<textarea name="photo_description" id="photo_description" rows="3">Description of Photo required</textarea>
-				<input type="button" name="new_photo" id="new_photo" value="Request Photo" class="button" onclick="createNewPhoto();" />
+				<input type="button" style="width: auto;" name="new_photo" id="new_photo" value="Request Photo" class="button" onclick="createNewPhoto();" />
 				<br class="clear" />
 			</div>
 
-			<h4>Article Status</h4>
+			<h2>Article Status</h2>
 			<div id="revision_status">
 				You are editing revision <b><?php echo($revision['id']); ?></b> which was last saved <b><?php echo(date('D jS F Y @ H:i:s',$revision['last_edit'])); ?></b>
 			</div><br />
@@ -226,25 +226,25 @@
 				<img src="/images/prototype/prefs/loading.gif" alt="Loading" title="Loading" /> Loading Preview...
 			</div>
 			<div id="save_form" class="form">
-				<input type="button" name="save_changes" id="save_changes" value="Save Article" class="button" onclick="updateHeadlinesManual();" />
+				<input type="button" style="width: auto;" name="save_changes" id="save_changes" value="Save Article" class="button" onclick="updateHeadlinesManual();" />
 				<br />
-				<input type="button" name="preview" id="preview" value="Preview Article" class="button" onclick="previewArticle();" />
+				<input type="button" style="width: auto;" name="preview" id="preview" value="Preview Article" class="button" onclick="previewArticle();" />
 				<br />
 				<?php if ($user_level == 'editor') { ?>
-					<input type="button" name="delete" id="delete" value="Delete Article" class="button" onclick="delete_article();" />
+					<input type="button" style="width: auto;" name="delete" id="delete" value="Delete Article" class="button" onclick="delete_article();" />
 				<?php } ?>
 			</div>
 			<br style="clear:both;" /><br style="clear:both;" />
 			<?php if ($user_level == 'editor') { ?>
-				<h4>Publish Article</h4>
+				<h2>Publish Article</h2>
 				<div id="publish_form" class="form">
-					<input type="submit" name="publish" id="publish" value="Publish Article" class="button" />
+					<input type="submit" style="width: auto;" name="publish" id="publish" value="Publish Article" class="button" />
 				</div>
 			<?php } ?>
 		</div>
-
+	<div id="MainColumn">
 		<div id="content_request">
-			<div class="blue_box">
+			<div class="BlueBox">
 				<h2><?php echo(xml_escape($request_heading)); ?></h2>
 				<fieldset>
 					<label for="title">Title:</label>
@@ -288,7 +288,7 @@
 		</div>
 
 		<div id="content_article" class="hide">
-			<div class="blue_box">
+			<div class="BlueBox">
 				<h2>main article body...</h2>
 				<fieldset>
 					<label for="headline">Headline:</label>
@@ -311,7 +311,7 @@
 			</div>
 		</div>
 
-		<div id="content_comments" class="hide" style="width:422px;">
+		<div id="content_comments" class="hide">
 			<?php
 			// Comments if they're included
 			if (isset($comments) && NULL !== $comments) {
@@ -321,7 +321,7 @@
 		</div>
 
 		<div id="content_revisions" class="hide">
-			<div class="blue_box">
+			<div class="BlueBox">
 				<h2>revisions...</h2>
 				<div id="revision_container">
 				<?php foreach ($revisions as $rev) { ?>
@@ -337,7 +337,7 @@
 		</div>
 
 		<div id="content_sidebar" class="hide">
-			<div class="blue_box">
+			<div class="BlueBox">
 				<h2>fact box...</h2>
 				<div id="factbox_load" class="ajax_loading hide">
 					<img src="/images/prototype/prefs/loading.gif" alt="Creating" title="Creating" /> Creating new fact box...
@@ -348,7 +348,7 @@
 				<div id="factbox_create"<?php if (isset($revision['fact_box'])) { echo ' class="hide"'; } ?>>
 					There is currently no fact box for this article.
 					<br />
-					<input type="button" name="make_factbox" id="make_factbox" class="button" style="float: none;" value="Create Fact Box" onclick="newFactbox();" />
+					<input type="button" style="width: auto;" name="make_factbox" id="make_factbox" class="button" style="float: none;" value="Create Fact Box" onclick="newFactbox();" />
 				</div>
 				<div id="factbox_container"<?php if (!isset($revision['fact_box'])) { echo ' class="hide"'; } ?>>
 					<fieldset>
@@ -358,12 +358,13 @@
 						<label for="factbox" class="full">Factbox Content</label>
 						<textarea name="factbox" id="factbox" class="full" rows="18"  onkeyup="articleContentUpdate('Factbox');"><?php if (isset($revision['fact_box'])) { echo(xml_escape($revision['fact_box']['text'])); } ?></textarea>
 						<br />
-						<input type="button" name="remove_factbox" id="remove_factbox" class="button" value="Delete Fact Box" onclick="deleteFactbox();" />
+						<input type="button" style="width: auto;" name="remove_factbox" id="remove_factbox" class="button" value="Delete Fact Box" onclick="deleteFactbox();" />
 					</fieldset>
 				</div>
 			</div>
 		</div>
-	</form>
+	</div>
+</form>
 
 	<script type="text/javascript">
 	// <![CDATA[

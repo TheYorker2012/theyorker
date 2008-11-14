@@ -1,12 +1,20 @@
 <?php
 function printarticlelink($article) {
 	echo('	<div style="border-bottom:1px #999 solid;">'."\n");
-	echo('		<a href="/news/'.$article['type_codename'].'/'.$article['id'].'">'."\n");
+	echo('				<a href="/news/'.$article['type_codename'].'/');
+	if(!empty($article['organisation_codename']))echo($article['organisation_codename'].'/');//for reviews
+	echo($article['id'].'">'."\n");
 	echo('			'.$article['photo_xhtml']."\n");
 	echo('		</a>'."\n");
 	echo('		<div class="ArticleEntry">'."\n");
 	echo('			<h3 class="Headline">'."\n");
-	echo('				<a href="/news/'.$article['type_codename'].'/'.$article['id'].'">'."\n");
+	if(!empty($article['organisation_codename'])){
+		//If the article has an org name, it is a review.
+		echo('				<a href="/reviews/'.$article['type_codename'].'/'.$article['organisation_codename'].'/');
+	}else{
+		echo('				<a href="/news/'.$article['type_codename'].'/');
+	}
+	echo($article['id'].'">'."\n");
 	echo('					'.xml_escape($article['heading'])."\n");
 	echo('				</a>'."\n");
 	echo('			</h3>'."\n");

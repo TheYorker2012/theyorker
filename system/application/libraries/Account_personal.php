@@ -39,7 +39,7 @@ class Account_personal extends FramesFrame
 		$rules['storepassword'] = '';
 		$rules['facebook'] = '';
 		$rules['nick'] = 'trim|required|alpha_numeric';
-		$rules['gender'] = 'trim|required';
+		$rules['gender'] = 'trim';
 		$rules['college'] = 'trim|required|numeric';
 		$rules['year'] = 'trim|required|numeric';
 		$rules['time'] = 'trim|required|numeric';
@@ -59,9 +59,7 @@ class Account_personal extends FramesFrame
 		$errors = array();
 		if ($CI->validation->run()) {
 			// Personal details validation
-			if (!$CI->prefs_model->genderCheck($_POST['gender'])) {
-				array_push($errors, 'You must select your gender');
-			}
+			$CI->validation->gender = $CI->prefs_model->genderCheck($_POST['gender']);
 			if (!$CI->prefs_model->collegeExists($_POST['college'])) {
 				array_push($errors, 'Please select the college you are a member of');
 			}

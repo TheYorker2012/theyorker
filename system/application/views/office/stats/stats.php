@@ -147,6 +147,10 @@
 		<div style="text-align: center;">
 			<img src="<?php echo xml_escape($comments_img_url); ?>" alt="Total Comments Posted Graph" />
 		</div>
+		<ul>
+			<li><?php echo xml_escape($members_who_have_posted); ?>% of members have posted at least once.</li>
+			<li><?php echo xml_escape($members_who_have_posted_5m); ?>% of members have posted five or more times.</li>
+		</ul>
 		<h3>Top commenters</h3>
 		<div class="ArticleBox">
 			<table>

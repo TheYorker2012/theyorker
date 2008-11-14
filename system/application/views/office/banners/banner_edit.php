@@ -1,5 +1,5 @@
-<div class='RightToolbar'>
-	<h4 class="first">Page Information</h4>
+<div id="RightColumn">
+	<h2 class="first">Page Information</h2>
 	<div class="Entry">
 		<?php echo($page_information); ?>
 	</div>

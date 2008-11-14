@@ -1,15 +1,17 @@
-	<script type='text/javascript' src='/javascript/calendar_select.js'></script>
-	<script type='text/javascript' src='/javascript/calendar_select-en.js'></script>
-	<script type='text/javascript' src='/javascript/calendar_select-setup.js'></script>
+<script type='text/javascript' src='/javascript/calendar_select.js'></script>
+<script type='text/javascript' src='/javascript/calendar_select-en.js'></script>
+<script type='text/javascript' src='/javascript/calendar_select-setup.js'></script>
 
-	<div class='RightToolbar'>
-		<h4><?php echo(xml_escape($heading)); ?></h4>
+<div id="RightColumn">
+	<h2 class="first"><?php echo(xml_escape($heading)); ?></h2>
+	<div class="Entry">
 		<?php echo($intro_text); ?>
 	</div>
-
+</div>
+<div id="MainColumn">
 <?php if (count($errors) > 0) { ?>
 	<form action="/office/news/<?php echo($article['id']); ?>" method="post" class="form">
-		<div class='blue_box'>
+		<div class='BlueBox'>
 			<h2>Unable to Publish Article</h2>
 			<p>
 			You are unable to publish this article as vital required information is missing. Please
@@ -25,7 +27,7 @@
 	</form>
 <?php } else { ?>
 	<form id='publish_request' action='/office/news/<?php echo($article['id']); ?>' method='post' class='form'>
-		<div class='blue_box'>
+		<div class='BlueBox'>
 			<fieldset>
 				<label for='r_title'>Title:</label>
 				<div id='r_title' style='float: left; margin: 5px 10px;'><?php echo(xml_escape($article['request_title'])); ?></div>
@@ -41,10 +43,10 @@
 				<br />
 			</fieldset>
 		</div>
-	<div style='width: 422px;'>
-		<input type='hidden' name='publish' id='publish' value='Publish Article' />
-	 	<input type='submit' name='confirm_publish' id='confirm_publish' value='Publish' class='button' />
-	</div>
+		<div>
+			<input type='hidden' name='publish' id='publish' value='Publish Article' />
+		 	<input type='submit' name='confirm_publish' id='confirm_publish' value='Publish' class='button' />
+		</div>
 	</form>
 
 	<script type='text/javascript'>
@@ -68,3 +70,4 @@
 	// ]]>
 	</script>
 <?php } ?>
+</div>

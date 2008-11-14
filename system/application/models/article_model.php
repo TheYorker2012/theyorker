@@ -31,7 +31,7 @@ class Article_model extends Model
 				AND			business_cards.business_card_deleted = 0';
 		$query = $this->db->query($sql, array($user_id));
 		$result = array();
-		if ($query->num_rows() == 1) {
+		if ($query->num_rows() > 0) {
 			$row = $query->row();
 			$result['id'] = $row->business_card_id;
 			$result['name'] = $row->business_card_name;
@@ -122,6 +122,7 @@ class Article_model extends Model
 				 article_contents.article_content_subheading AS subheadline,
 				 article_contents.article_content_subtext AS subtext,
 				 article_contents.article_content_wikitext AS text,
+				 article_contents.article_content_wikitext_cache AS cache,
 				 article_contents.article_content_blurb AS blurb
 				FROM article_contents
 				WHERE article_contents.article_content_id = ?';

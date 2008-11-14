@@ -61,7 +61,8 @@ class Charity extends Controller
 		
 		//get list of the charities
 		$data['charities'] = $this->charity_model->GetCharities();
-
+		$data['page_information'] = $this->pages_model->GetPropertyWikitext('page_information');
+		
 		// Set up the view
 		$the_view = $this->frames->view('office/charity/list', $data);
 		
@@ -86,7 +87,8 @@ class Charity extends Controller
 		//get the current users id and office access
 		$data['user']['id'] = $this->user_auth->entityId;
 		$data['user']['officetype'] = $this->user_auth->officeType;
-
+		$data['page_information'] = $this->pages_model->GetPropertyWikitext('page_information');
+		
 		// Set up the view
 		$the_view = $this->frames->view('office/charity/add', $data);
 		
@@ -112,6 +114,7 @@ class Charity extends Controller
 		//get the current users id and office access
 		$data['user']['id'] = $this->user_auth->entityId;
 		$data['user']['officetype'] = $this->user_auth->officeType;
+		$data['page_information'] = $this->pages_model->GetPropertyWikitext('page_information');
 		
 		//get list of the charities
 		$data['charities'] = $this->charity_model->GetCharities();
@@ -291,6 +294,8 @@ class Charity extends Controller
 		$data['article'] = $this->news_model->GetFullArticle($article_id);
 		$data['article']['header'] = $this->article_model->GetArticleHeader($article_id);
 		
+		$data['page_information'] = $this->pages_model->GetPropertyWikitext('page_information');
+		
 		// Set up the public frame
 		$this->main_frame->SetTitleParameters(array('name' => $charity_name));
 		$this->main_frame->SetContentSimple('office/charity/request', $data);
@@ -318,6 +323,8 @@ class Charity extends Controller
 		//get the current users id and office access
 		$data['user']['id'] = $this->user_auth->entityId;
 		$data['user']['officetype'] = $this->user_auth->officeType;
+		
+		$data['page_information'] = $this->pages_model->GetPropertyWikitext('page_information');
 
 		// Set up the view
 		$the_view = $this->frames->view('office/charity/modify', $data);
@@ -366,6 +373,8 @@ class Charity extends Controller
 		//get the current users id and office access
 		$data['user']['id'] = $this->user_auth->entityId;
 		$data['user']['officetype'] = $this->user_auth->officeType;
+		
+		$data['page_information'] = $this->pages_model->GetPropertyWikitext('page_information');
 		
 		//get all progress reports for the campaign
 		$pr_temp = $this->progressreports_model->GetCharityCampaignProgressReports(
@@ -420,6 +429,8 @@ class Charity extends Controller
 		//get the current users id and office access
 		$data['user']['id'] = $this->user_auth->entityId;
 		$data['user']['officetype'] = $this->user_auth->officeType;
+		
+		$data['page_information'] = $this->pages_model->GetPropertyWikitext('page_information');
 		
 		//get campaign info
 		$charity_name = $this->charity_model->GetCharityName($charity_id);
@@ -517,6 +528,8 @@ class Charity extends Controller
 		$data['user']['id'] = $this->user_auth->entityId;
 		$data['user']['officetype'] = $this->user_auth->officeType;
 		
+		$data['page_information'] = $this->pages_model->GetPropertyWikitext('page_information');
+		
 		//get charity info
 		$charity_name = $this->charity_model->GetCharityName($charity_id);
 		$article_id = $this->charity_model->GetCharityArticleID($charity_id);
@@ -554,6 +567,8 @@ class Charity extends Controller
 		//get the current users id and office access
 		$data['user']['id'] = $this->user_auth->entityId;
 		$data['user']['officetype'] = $this->user_auth->officeType;
+		
+		$data['page_information'] = $this->pages_model->GetPropertyWikitext('page_information');
 
 		/** store the parameters passed to the method so it can be
 		    used for links in the view */

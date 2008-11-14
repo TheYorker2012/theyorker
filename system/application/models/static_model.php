@@ -26,7 +26,7 @@ class Static_model extends Model
 				if (($entry != '.') && ($entry != '..')) {
 					if (is_dir($path . '/' . $entry)) {
 						$dirs[] = $entry;
-					} elseif ((count($exts) == 0) || ((($ext = strrchr($entry, '.')) !== FALSE) && (in_array(substr($ext, 1), $exts)))) {
+					} elseif ((count($exts) == 0) || ((($ext = strrchr($entry, '.')) !== FALSE) && (in_array(strtolower(substr($ext, 1)), $exts)))) {
 						$files[] = $link . '/' . $entry;
 					}
 				}

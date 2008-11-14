@@ -95,8 +95,8 @@
 				if (!$( 'previewArea-<?php echo $Single->image_type_id?>' ).empty()) $( 'previewArea-<?php echo $Single->image_type_id?>' ).removeChild($( 'previewArea-<?php echo $Single->image_type_id?>' ).firstChild);
 				if (this.curCrop != null) this.curCrop.remove();
 				this.curCrop = new Cropper.ImgWithPreview( 'uploadedImage', {
-					minWidth: <?php echo $Single->image_type_width?>,
-					minHeight: <?php echo $Single->image_type_height?>,
+					maxWidth: w,
+					maxHeight: h,
 					ratioDim: { x: <?php echo $Single->image_type_width?>, y: <?php echo $Single->image_type_height?> },
 					displayOnInit: true,
 					onEndCrop: onEndCrop,

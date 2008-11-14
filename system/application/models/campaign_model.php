@@ -338,7 +338,6 @@ class Campaign_model extends Model
 					AND		campaign_deleted = FALSE
 					AND		campaign_status = "live"';
 			$query = $this->db->query($sql,array($row->max_campaign_votes));
-			echo($row->max_campaign_votes);
 		$this->db->trans_complete();
 		if ($query->num_rows() == 1) //return true if there is only one campaign which has the max no of votes
 			return TRUE;

@@ -117,7 +117,7 @@ foreach ($main_article['related_articles'] as $related)
 
         <?php echo($main_article['text']); ?>
 
-		<div style="text-align: right">
+		<div class="share_article">
 <?php if ($article_type == 'podcasts') { ?>
 			<span style="float:left">
 				<a href="itpc://<?php echo($this->config->item('podcast_rss_feed')); ?>">
@@ -134,6 +134,48 @@ foreach ($main_article['related_articles'] as $related)
 			<p class='form'><button class="button" onclick="window.location='/office/news/<?php echo $main_article['id']; ?>';">GO BACK TO NEWS OFFICE</button></p>
 		<?php } ?>
 	</div>
+	
+	<?php if (isset($main_article['article_poll'])) { ?>
+		<?php if ($main_article['article_poll']['info']['is_competition']) { ?>
+			<form id="competition" action="<?php echo($PHP_SELF); ?>" method="post">
+				<div class="BlueBox">
+					<h2>Competition</h2>
+					<?php echo($main_article['article_poll']['info']['question']); ?>
+
+					<?php if ($main_article['article_poll']['message'] != '') { ?>
+						<p><?php echo($main_article['article_poll']['message']); ?></p>
+					<?php } else { ?>
+						<fieldset>
+							<div>
+								<label for="comp_answer">Answer:</label>
+								<select name="comp_answer" id="comp_answer" size="1">
+									<option selected="selected">&nbsp;</option>
+									<?php foreach ($main_article['article_poll']['options'] as $option) { ?>
+										<option value="<?php echo($option['id']); ?>"><?php echo($option['name']); ?></option>
+									<?php } ?>
+								</select>
+							</div>
+						</fieldset>
+						<p>Competition closes on <?php echo(date('l, jS F Y', $main_article['article_poll']['info']['finish_time'])); ?> at <?php echo(date('H:i', $main_article['article_poll']['info']['finish_time'])); ?></p>
+						<h2>Contact Details</h2>
+						<p>
+							<b>Name</b>: <?php echo(xml_escape($main_article['article_poll']['user']['user_firstname'] . ' ' . $main_article['article_poll']['user']['user_surname'])); ?><br />
+							<b>E-Mail</b>: <?php echo($main_article['article_poll']['user']['user_email']); ?><br />
+							<a href="/account/personal">Click here</a> to change your contact details.
+						</p>
+						<fieldset>
+							<input type="submit" value="Enter Competition" class="button" />
+						</fieldset>
+					<?php } ?>
+				</div>
+			</form>
+		<?php } else { ?>
+			<div id="poll" class="BlueBox">
+				<h2>Poll</h2>
+			</div>
+		<?php } ?>
+	<?php } ?>
+
 	<?php if (count($main_article['links']) > 0) { ?>
 	<div class="BlueBox">
 		<h2><?php echo(xml_escape($links_heading)); ?></h2>
