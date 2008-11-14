@@ -867,6 +867,7 @@ class News extends Controller
 	        $this->xajax->registerFunction(array('_newFactbox', &$this, '_newFactbox'));
 	        $this->xajax->registerFunction(array('_removeFactBox', &$this, '_removeFactBox'));
 	        $this->xajax->registerFunction(array('_newPhoto', &$this, '_newPhoto'));
+ 	        $this->xajax->registerFunction(array('_galleryPhoto', &$this, '_galleryPhoto'));
 	        $this->xajax->registerFunction(array('_updatePhoto', &$this, '_updatePhoto'));
 	        $this->xajax->registerFunction(array('_deleteArticle', &$this, '_deleteArticle'));
 	        $this->xajax->registerFunction(array('_getMediaFiles', &$this, '_getMediaFiles'));
@@ -990,6 +991,28 @@ class News extends Controller
 				}
 				$xajax_response->addScriptCall('photo_created','/photos/small/'.$photo['chosen_photo'],$photo['id'],$photo['title'],date('d/m/y H:i', $photo['time']),$photo['photo_number'],$main,$thumb);
 			}
+		} else {
+			$xajax_response->addAlert('You do not have the permissions required to add a photo request for this article!');
+		}
+		return $xajax_response;
+	}
+
+	function _galleryPhoto()
+	{
+		$this->load->library('image');
+		$xajax_response = new xajaxResponse();
+		$article_id = $this->uri->segment(3);
+		$data['article'] = $this->article_model->GetArticleDetails($article_id);
+
+		// Make it so we only have to worry about two levels of access as admins can do everything editors can
+		$data['user_level'] = GetUserLevel();
+		if ($data['user_level'] == 'admin') {
+			$data['user_level'] = 'editor';
+		}
+		if (($data['user_level'] == 'editor') || ($this->requests_model->IsUserRequestedForArticle($article_id, $this->user_auth->entityId) == 'accepted')) {
+			$new_photo_id = $this->photos_model->AddNewPhotoRequest($this->user_auth->entityId,$article_id,'','');
+
+			$xajax_response->addRedirect();
 		} else {
 			$xajax_response->addAlert('You do not have the permissions required to add a photo request for this article!');
 		}
