@@ -12,7 +12,8 @@
 $config['enable_adsense'] = true;
 $config['enable_analytics'] = true;
 
-$config['temp_local_path'] = '/srv/www/public_html/tmp/uploads/';
+$config['temp_local_path'] = '/srv/www/public_html/tmp/';
+$config['temp_web_address'] = '/tmp/';
 $config['static_local_path'] = '/srv/static';
 
 ?>
