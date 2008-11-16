@@ -42,7 +42,7 @@ class Gallery extends Controller {
 			);
 		}
 
-		if ($this->input->post('search_button')) {
+		if (isset($_POST['search'])) {
 			$_SESSION['gallery_search']['term'] = $this->input->post('search');
 		}
 
