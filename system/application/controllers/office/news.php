@@ -537,6 +537,31 @@ class News extends Controller
 						$data['user_level'] = 'editor';
 					}
 
+					// Quick way of adding photos to an article straight from the gallery
+					if (isset($_SESSION['img'])) {
+						if (isset($_POST['add_photos'])) {
+							foreach ($_POST['imgadd'] as $photo) {
+								$photo_title = $_POST['img' . $photo . '_title'];
+								$photo_alt = $_POST['img' . $photo . '_alt'];
+								$photo_req_id = $this->photos_model->AddNewPhotoRequest($this->user_auth->entityId,$article_id,$photo_title,$photo_alt);
+								$this->photos_model->SuggestPhoto($photo_req_id,$photo,'Added to article straight from gallery.',$this->user_auth->entityId);
+								$this->photos_model->FlagRequestReady($photo_req_id);
+								$this->photos_model->SelectPhoto($photo_req_id,$photo,$this->user_auth->entityId);
+							}
+							unset($_SESSION['img']);
+							redirect('/office/news/' . $article_id);
+						} else {
+							$this->load->library('image');
+							$this->pages_model->SetPageCode('office_news_photo_suggest');
+							$this->main_frame->SetContentSimple('office/news/photo_suggest', $data);
+							$this->main_frame->SetTitleParameters(
+								array('title' => $article_info['requesttitle'])
+							);
+							$this->main_frame->Load();
+						}
+						return;
+					}
+
 					/// Determine what operation to perform
 					switch ($article_info['status']) {
 						case 'pulled':
@@ -867,7 +892,6 @@ class News extends Controller
 	        $this->xajax->registerFunction(array('_newFactbox', &$this, '_newFactbox'));
 	        $this->xajax->registerFunction(array('_removeFactBox', &$this, '_removeFactBox'));
 	        $this->xajax->registerFunction(array('_newPhoto', &$this, '_newPhoto'));
- 	        $this->xajax->registerFunction(array('_galleryPhoto', &$this, '_galleryPhoto'));
 	        $this->xajax->registerFunction(array('_updatePhoto', &$this, '_updatePhoto'));
 	        $this->xajax->registerFunction(array('_deleteArticle', &$this, '_deleteArticle'));
 	        $this->xajax->registerFunction(array('_getMediaFiles', &$this, '_getMediaFiles'));
@@ -991,28 +1015,6 @@ class News extends Controller
 				}
 				$xajax_response->addScriptCall('photo_created','/photos/small/'.$photo['chosen_photo'],$photo['id'],$photo['title'],date('d/m/y H:i', $photo['time']),$photo['photo_number'],$main,$thumb);
 			}
-		} else {
-			$xajax_response->addAlert('You do not have the permissions required to add a photo request for this article!');
-		}
-		return $xajax_response;
-	}
-
-	function _galleryPhoto()
-	{
-		$this->load->library('image');
-		$xajax_response = new xajaxResponse();
-		$article_id = $this->uri->segment(3);
-		$data['article'] = $this->article_model->GetArticleDetails($article_id);
-
-		// Make it so we only have to worry about two levels of access as admins can do everything editors can
-		$data['user_level'] = GetUserLevel();
-		if ($data['user_level'] == 'admin') {
-			$data['user_level'] = 'editor';
-		}
-		if (($data['user_level'] == 'editor') || ($this->requests_model->IsUserRequestedForArticle($article_id, $this->user_auth->entityId) == 'accepted')) {
-			$new_photo_id = $this->photos_model->AddNewPhotoRequest($this->user_auth->entityId,$article_id,'','');
-
-			$xajax_response->addRedirect();
 		} else {
 			$xajax_response->addAlert('You do not have the permissions required to add a photo request for this article!');
 		}
