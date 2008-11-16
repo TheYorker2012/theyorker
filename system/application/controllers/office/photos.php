@@ -123,25 +123,25 @@ class Photos extends Controller
 				/// Access matrix
 				$data['access']['details'] = array(
 					'editor'		=>	TRUE,
-					'photographer'	=>	FALSE,
+					'photographer'	=>	TRUE,
 					'reporter'		=>	TRUE,
 					'everyone'		=>	FALSE
 				);
 				$data['access']['ready'] = array(
 					'editor'		=>	TRUE,
 					'photographer'	=>	TRUE,
-					'reporter'		=>	FALSE,
+					'reporter'		=>	TRUE,
 					'everyone'		=>	FALSE
 				);
 				$data['access']['complete'] = array(
 					'editor'		=>	TRUE,
-					'photographer'	=>	FALSE,
-					'reporter'		=>	FALSE,
+					'photographer'	=>	TRUE,
+					'reporter'		=>	TRUE,
 					'everyone'		=>	FALSE
 				);
 				$data['access']['cancel'] = array(
 					'editor'		=>	TRUE,
-					'photographer'	=>	FALSE,
+					'photographer'	=>	TRUE,
 					'reporter'		=>	TRUE,
 					'everyone'		=>	FALSE
 				);
@@ -163,7 +163,7 @@ class Photos extends Controller
 				if ($data['status'] == 'completed') {
 					$data['access']['details'] = array(
 						'editor'		=>	TRUE,
-						'photographer'	=>	FALSE,
+						'photographer'	=>	TRUE,
 						'reporter'		=>	TRUE,
 						'everyone'		=>	FALSE
 					);

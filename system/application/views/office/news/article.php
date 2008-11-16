@@ -58,6 +58,10 @@
 		xajax__updatePhoto(id,operation);
 	}
 
+	function selectGalleryPhoto() {
+		window.location = '/office/gallery';
+	}
+
 	function createNewPhoto() {
 		var title = document.getElementById('photo_title').value;
 		var description = document.getElementById('photo_description').value;
@@ -188,7 +192,7 @@
 <?php if (count($photo_requests) > 0) {
 	foreach ($photo_requests as $request) { ?>
 				<div style="margin-bottom:5px;">
-					<a href="/office/photos/view/<?php echo($request['id']); ?>"><?php echo $this->image->getThumb($request['chosen_photo'], 'small', array('style' => 'float: left; margin-right: 5px;'))?></a>
+					<a href="/office/photos/view/<?php echo($request['id']); ?>"><?php echo $this->image->getThumb($request['chosen_photo'], 'small', false, array('style' => 'float: left; margin-right: 5px;'))?></a>
 					<b>Photo <?php echo($request['photo_number']); ?></b>
 					<?php if ($article['photo_main'] == $request['photo_number']) { echo('(M)'); } ?>
 					<?php if ($article['photo_thumbnail'] == $request['photo_number']) { echo('(T)'); } ?>
@@ -206,6 +210,7 @@
 	} ?>
 			</div>
 			<div>
+				<input type="button" style="width: auto;" name="photo_select" id="photo_select" value="Add Gallery Photo" class="button" onclick="selectGalleryPhoto();" />
 				<input type="text" name="photo_title" id="photo_title" value="Photo Title" />
 				<textarea name="photo_description" id="photo_description" rows="3">Description of Photo required</textarea>
 				<input type="button" style="width: auto;" name="new_photo" id="new_photo" value="Request Photo" class="button" onclick="createNewPhoto();" />

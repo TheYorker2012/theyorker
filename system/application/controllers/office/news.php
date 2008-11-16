@@ -537,6 +537,31 @@ class News extends Controller
 						$data['user_level'] = 'editor';
 					}
 
+					// Quick way of adding photos to an article straight from the gallery
+					if (isset($_SESSION['img'])) {
+						if (isset($_POST['add_photos'])) {
+							foreach ($_POST['imgadd'] as $photo) {
+								$photo_title = $_POST['img' . $photo . '_title'];
+								$photo_alt = $_POST['img' . $photo . '_alt'];
+								$photo_req_id = $this->photos_model->AddNewPhotoRequest($this->user_auth->entityId,$article_id,$photo_title,$photo_alt);
+								$this->photos_model->SuggestPhoto($photo_req_id,$photo,'Added to article straight from gallery.',$this->user_auth->entityId);
+								$this->photos_model->FlagRequestReady($photo_req_id);
+								$this->photos_model->SelectPhoto($photo_req_id,$photo,$this->user_auth->entityId);
+							}
+							unset($_SESSION['img']);
+							redirect('/office/news/' . $article_id);
+						} else {
+							$this->load->library('image');
+							$this->pages_model->SetPageCode('office_news_photo_suggest');
+							$this->main_frame->SetContentSimple('office/news/photo_suggest', $data);
+							$this->main_frame->SetTitleParameters(
+								array('title' => $article_info['requesttitle'])
+							);
+							$this->main_frame->Load();
+						}
+						return;
+					}
+
 					/// Determine what operation to perform
 					switch ($article_info['status']) {
 						case 'pulled':
