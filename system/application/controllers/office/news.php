@@ -538,7 +538,7 @@ class News extends Controller
 					}
 
 					// Quick way of adding photos to an article straight from the gallery
-					if (isset($_SESSION['img'])) {
+					if (isset($_SESSION['img']) && (count($_SESSION['img']) > 0)) {
 						if (isset($_POST['add_photos'])) {
 							if (count($_POST['imgadd']) > 0) {
 								foreach ($_POST['imgadd'] as $photo) {
@@ -549,7 +549,7 @@ class News extends Controller
 									$this->photos_model->FlagRequestReady($photo_req_id);
 									$this->photos_model->SelectPhoto($photo_req_id,$photo,$this->user_auth->entityId);
 								}
-							}	
+							}
 							unset($_SESSION['img']);
 							redirect('/office/news/' . $article_id);
 						} else {
