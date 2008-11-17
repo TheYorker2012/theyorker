@@ -31,7 +31,7 @@ class Photos extends Controller
 				$properties = $this->photos_model->GetOriginalPhotoProperties($id);
 				if (!$properties)
 					show_404();
-				if (isset($photo->x)) {
+				if (isset($photo->width) && ($photo->width > 0)) {
 					// Need to re-generate thumbnail
 					$new_x = $photo->x;
 					$new_y = $photo->y;
