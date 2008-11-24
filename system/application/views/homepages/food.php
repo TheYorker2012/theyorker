@@ -5,7 +5,7 @@
 	<div class="Entry">
 		<div class="Puffer">
 			<a href="/reviews/food">
-				<img src="/images/prototype/news/food_reviews.jpg" alt="Food Reviews" title="Food Reviews" />
+				<img src="/images/prototype/news/food_reviews.jpg" alt="Food Reviews (Photo: Jennifer Dickert)" title="Food Reviews (Photo: Jennifer Dickert)" />
 			</a>
 		</div>
 		<?php $this->homepage_boxes->print_puffer_column($puffers); ?>
