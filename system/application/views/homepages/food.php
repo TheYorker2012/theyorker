@@ -3,12 +3,17 @@
 		<?php echo(xml_escape($links_heading)); ?>
 	</h2>
 	<div class="Entry">
+		<div class="Puffer">
+			<a href="/reviews/food">
+				<img src="/images/prototype/news/food_reviews.jpg" alt="Food Reviews" title="Food Reviews" />
+			</a>
+		</div>
 		<?php $this->homepage_boxes->print_puffer_column($puffers); ?>
 	</div>
 </div>
 <div id="MainColumn">
 	<div id="HomeBanner">
-		<?php 
+		<?php
 		$this->homepage_boxes->print_homepage_banner($banner);
 		?>
 	</div>

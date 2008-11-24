@@ -170,6 +170,7 @@ class News extends Controller {
 					'links'					=>	array(),
 					'related_articles'		=>	array(),
 					'fact_boxes'			=>	array(),
+					'poll_id'				=>	NULL,
 				);
 			} else {
 				$main_article = $this->News_model->GetFullArticle($latest_article_ids[0]);
