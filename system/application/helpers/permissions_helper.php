@@ -244,6 +244,89 @@ function OutputMode($Set = NULL)
 	return $output_mode;
 }
 
+/// Get a list of missing permissions
+function GetMissingPermissions($permissions)
+{
+	$CI = &get_instance();
+	$CI->load->model('permissions_model');
+	
+	$userPermissions = & $CI->permissions_model->getUserPermissions();
+	$arguments = func_get_args();
+	$missingPermissions = array();
+	foreach ($arguments as $argument) {
+		if (!is_array($argument)) {
+			$argument = array($argument);
+		}
+		foreach ($argument as $permission) {
+			if (!isset($userPermissions[$permission])) {
+				$missingPermissions[] = $permission;
+			}
+		}
+	}
+	
+	return $missingPermissions;
+}
+
+/// Check that role permissions are satisfied.
+/**
+ * @param $Passive (optional) If true, just add a message.
+ * @param $Permissions array,string Permission(s)
+ * @return bool Whether permission exists.
+ */
+function CheckRolePermissions($Passive)
+{
+	/// @pre CheckPermissions must already have been called.
+	if (!isset(get_instance()->user_auth)) {
+		$backtrace = debug_backtrace();
+		trigger_error('CheckPermissions should be called before CheckRolePermissions in function '.xml_escape($backtrace[1]['function']).' at:<br />'.
+			'File: '.xml_escape($backtrace[0]['file']).'<br />'.
+			'Line: '.xml_escape($backtrace[0]['line']),
+			E_USER_ERROR);
+		exit(1);
+	}
+	
+	$arguments = func_get_args();
+	if ( is_bool($Passive) )
+	{
+		array_shift($arguments);
+	}
+	$missingPermissions = call_user_func_array('GetMissingPermissions',$arguments);
+	if (empty($missingPermissions)) {
+		return true;
+	}
+	else {
+		$CI = & get_instance();
+		
+		// produce a nice error message (plural sensitive)
+		$permissionsString = '"'.implode('", "', $missingPermissions).'"';
+		if (count($missingPermissions) != 1) {
+			$errorMessage = 'You do not have the following permissions that are required to perform this operation: '.$permissionsString.'.';
+		}
+		else {
+			$errorMessage = 'You do not have the permission '.$permissionsString.' that is required to perform this operation.';
+		}
+
+		if ( $Passive === true )
+		{
+			$CI->messages->AddMessage('error', xml_escape($errorMessage));
+		}
+		else
+		{
+			// set http status code and display a pretty error
+			header('HTTP/1.1 403 Permission Denied: '.$errorMessage);
+			$CI->load->library('custom_pages');
+			$scope = array(
+				'ErrorMessage' => $errorMessage,
+			);
+			$CI->main_frame->SetContent(new CustomPageView('permissions_403','error', $scope));
+		
+			// forcefully load the main frame with the error
+			$CI->main_frame->Load();
+		}
+		return false;
+	}
+}
+
 /// Check the access permissions.
 /**
  * @param $Permission string or array of the following levels (in the order that

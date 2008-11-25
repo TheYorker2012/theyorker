@@ -121,6 +121,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 					<li><a href="/office/news/arts/">Arts</a></li>
 					<li><a href="/office/news/sport/">Sport</a></li>
 					<li><a href="/office/news/blogs/">Blogs</a></li>
+					<li><a href="/office/news/food/">Food</a></li>
 					<li><a href="/office/news/videocasts/">Videocasts</a></li>
 					<li><a href="/office/news/comment/">News Comment</a></li>
 					<li><a href="/office/podcasts/">Podcasts</a></li>

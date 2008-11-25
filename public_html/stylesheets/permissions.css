@@ -1,0 +1,105 @@
+/* Styles for the role-based permissions editor */
+/* Author: James Hogan <james_hogan@theyorker.co.uk> */
+
+div.permission div.name,
+div.permissionCategoryHead div.name,
+div.role div.name {
+	display: inline;
+}
+
+div.permission div.description,
+div.permissionCategoryHead div.description {
+	font-size:x-small;
+	display: inline;
+	margin-left: 1em;
+}
+
+div.role div.permissions div.permission,
+div.user div.roles div.role {
+	display: inline;
+	margin-left: 0.5em;
+	font-size:x-small;
+}
+
+div.permission div.name.highlight,
+div.role div.name.highlight,
+div.role div.permissions div.permission.highlight,
+div.user div.roles div.role.highlight {
+	background-color: #caf;
+}
+
+/* Main boxes */
+div.permissionCategoryHead {
+	background-color: #ccc;
+}
+div.permissionCategory.hidden div.permission {
+	display: none;
+}
+
+div.permission,
+div.permissionCategoryHead,
+div.role,
+div.user {
+	cursor: pointer;
+}
+
+div#permissionsBox hr,
+div#rolesBox hr,
+div#usersBox hr {
+	margin-top: 0.1em;
+	margin-bottom: 0.1em;
+}
+
+
+/* Primary selection */
+div.permission.primary {
+	background-color: #fcc;
+}
+div.role.primary {
+	background-color: #cfc;
+}
+div.user.primary {
+	background-color: #ccf;
+}
+div.permission.primary,
+div.role.primary,
+div.user.primary {
+	border: 1px solid black;
+}
+
+/* Secondary selection */
+div.permission.secondary {
+	background-color: #fed;
+}
+div.role.secondary {
+	background-color: #dfe;
+}
+div.user.secondary {
+	background-color: #edf;
+}
+
+div.permission div.action,
+div.role div.action,
+div.user div.action {
+	float: left;
+	display: none;
+}
+
+div.secondary div.permission div.action,
+div.secondary.implicit div.role div.action,
+div.secondary div.role.explicit div.action,
+div.secondary div.user div.action {
+	display: block;
+	width:1em;
+	height:1em;
+	margin-right: 0.5em;
+	border:1px solid black;
+	background-color: #ffc;
+}
+
+div.secondary div.permission.secondary div.action,
+div.secondary.implicit div.role.secondary div.action,
+div.secondary div.role.explicit.secondary div.action,
+div.secondary div.user.secondary div.action {
+	background-color: #0e0;
+}

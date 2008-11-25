@@ -14,7 +14,7 @@
 
 <?php foreach ($bylines as $byline) {
 	$this->load->view('/office/bylines/byline', $byline); ?>
-	<div>
+	<div style="float:left;">
 		<span style="float:right">
 			<b>Ops:</b>
 			<a href="/office/bylines/view_byline/<?php echo($byline['business_card_id']); ?>/">

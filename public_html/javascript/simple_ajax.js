@@ -1,13 +1,27 @@
-function AJAXInteraction(url, post, callback)
+function AJAXInteraction(url, post, callback, failcallback)
 {
 	var req = init();
 	req.onreadystatechange = processRequest;
 		
 	function init() {
-		if (window.XMLHttpRequest) {
-		return new XMLHttpRequest();
-		} else if (window.ActiveXObject) {
-		return new ActiveXObject("Microsoft.XMLHTTP");
+		try {
+			// Firefox, Opera 8.0+, Safari
+			return new XMLHttpRequest();
+		}
+		catch (e) {
+			// Internet Explorer
+			try {
+				return new ActiveXObject("Msxml2.XMLHTTP");
+			}
+			catch (e) {
+				try {
+					return new ActiveXObject("Microsoft.XMLHTTP");
+				}
+				catch (e) {
+					alert("Your browser does not support AJAX!");
+					return null;
+				}
+			}
 		}
 	}
 	
@@ -16,7 +30,14 @@ function AJAXInteraction(url, post, callback)
 		if (req.readyState == 4) {
 			// status of 200 signifies sucessful HTTP call
 			if (req.status == 200) {
-				if (callback) callback(req.responseXML);
+				if (callback) {
+					callback(req.responseXML);
+				}
+			}
+			else {
+				if (undefined != failcallback) {
+					failcallback(req.status, req.statusText);
+				}
 			}
 		}
 	}
