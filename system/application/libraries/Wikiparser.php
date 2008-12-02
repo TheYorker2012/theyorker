@@ -409,10 +409,10 @@ class Wikiparser {
 				so.addVariable("file","' . $href . '");
 //				so.addVariable("image","##TODO##");
 				// Colours
-				so.addVariable("backcolor","0xFF6A00");
-				so.addVariable("frontcolor","0xFFFFFF");
-				so.addVariable("lightcolor","0x000000");
-				so.addVariable("screencolor","0xFFFFFF");
+				so.addVariable("backcolor","FF6A00");
+				so.addVariable("frontcolor","FFFFFF");
+				so.addVariable("lightcolor","000000");
+				so.addVariable("screencolor","FFFFFF");
 				// Layout
 				so.addVariable("height","' . $control_height . '");
 				so.addVariable("width","' . $control_width . '");
