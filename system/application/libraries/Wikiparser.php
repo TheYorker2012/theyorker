@@ -391,7 +391,8 @@ class Wikiparser {
 		} elseif ($this->enable_mediaplayer && 'media' === $namespace) {
 			static $mediaplayer_count = 0;
 			$mediaplayer_count++;
-			$control_height = ((strlen($href) > 4) && (substr($href, -4) == '.mp3')) ? 20 : 280;
+			$control_width = 480;
+			$control_height = ((strlen($href) > 4) && (substr($href, -4) == '.mp3')) ? 20 : 290;
 			$output = '
 				<div id="mp' . $mediaplayer_count . '_container" style="text-align:center">
 					<div style="border: 1px solid #999999;">
@@ -401,21 +402,27 @@ class Wikiparser {
 					</div>
 				</div>
 				<script type="text/javascript">
-				var so = new SWFObject("/flash/mediaplayer.swf","mp' . $mediaplayer_count . '","340","' . $control_height . '","8");
+				var so = new SWFObject("/flash/mediaplayer.swf","mp' . $mediaplayer_count . '","' . $control_width . '","' . $control_height . '","8");
 				so.addParam("allowscriptaccess","samedomain");
 				so.addParam("allowfullscreen","true");
-				so.addVariable("height","' . $control_height . '");
-				so.addVariable("width","340");
+				// File properties
 				so.addVariable("file","' . $href . '");
-				so.addVariable("id","' . $href . '");
-				so.addVariable("callback","analytics");
+//				so.addVariable("image","##TODO##");
+				// Colours
 				so.addVariable("backcolor","0xFF6A00");
 				so.addVariable("frontcolor","0xFFFFFF");
 				so.addVariable("lightcolor","0x000000");
 				so.addVariable("screencolor","0xFFFFFF");
+				// Layout
+				so.addVariable("height","' . $control_height . '");
+				so.addVariable("width","' . $control_width . '");
+				// Behaviour
 				so.addVariable("logo","/images/prototype/news/video_overlay_icon.png");
-				so.addVariable("overstretch","true");
-				so.addVariable("showdownload","true");
+				// External
+				so.addVariable("id","' . $href . '");
+				// Plugins
+				so.addVariable("plugins","googlytics-1");
+				// Print out player
 				so.write("mp' . $mediaplayer_count . '_container");
 				</script>';
 			if ($this->in_paragraph) {

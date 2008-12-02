@@ -254,7 +254,11 @@ class News extends Controller {
 			$this->main_frame->SetData('main_image', $main_article['primary_photo_link']);
 
 		// Set up the public frame
-		$this->main_frame->SetContentSimple('news/news', $data);
+		if ($article_type == 'videocasts') {
+			$this->main_frame->SetContentSimple('news/videocasts', $data);
+		} else {
+			$this->main_frame->SetContentSimple('news/news', $data);
+		}
 
 		// Load the public frame view (which will load the content view)
 		$this->main_frame->Load();
