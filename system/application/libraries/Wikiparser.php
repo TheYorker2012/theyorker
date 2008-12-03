@@ -391,8 +391,8 @@ class Wikiparser {
 		} elseif ($this->enable_mediaplayer && 'media' === $namespace) {
 			static $mediaplayer_count = 0;
 			$mediaplayer_count++;
-			$control_width = 480;
-			$control_height = ((strlen($href) > 4) && (substr($href, -4) == '.mp3')) ? 20 : 290;
+			$control_width = ((strlen($href) > 4) && (substr($href, -4) == '.mp3')) ? 340 : 580;
+			$control_height = ((strlen($href) > 4) && (substr($href, -4) == '.mp3')) ? 20 : 346;
 			$output = '
 				<div id="mp' . $mediaplayer_count . '_container" style="text-align:center">
 					<div style="border: 1px solid #999999;">
