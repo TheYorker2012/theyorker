@@ -411,7 +411,7 @@ class Wikiparser {
 				// Colours
 				so.addVariable("backcolor","FF6A00");
 				so.addVariable("frontcolor","FFFFFF");
-				so.addVariable("lightcolor","000000");
+				so.addVariable("lightcolor","FFFFFF");
 				so.addVariable("screencolor","FFFFFF");
 				// Layout
 				so.addVariable("height","' . $control_height . '");
