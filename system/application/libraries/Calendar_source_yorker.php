@@ -621,7 +621,66 @@ class CalendarSourceYorker extends CalendarSource
 		);
 		$CI = & get_instance();
 		$query = $CI->db->query($sql, $bind);
-		return $CI->db->affected_rows();
+		$affected = $CI->db->affected_rows();
+		if ($affected > 0) {
+			// Send the email to this person
+			$body_template    = $CI->pages_model->GetPropertyText('calendar_notification_event_submission', '_emails', null);
+			$subject_template = $CI->pages_model->GetPropertyText('calendar_notification_event_submission_subject', '_emails',
+																  '%%CALNAME%% event submission: "%%EVSUMMARY%%"');
+			if (null !== $body_template) {
+				// It has worked
+				// We should now email the VIPs to let them know
+				$sql = 'SELECT	`user_firstname`	AS FIRSTNAME,'
+					 . '		`user_surname`		AS SURNAME,'
+					 . '		`user_nickname`		AS NICKNAME,'
+					 . '		`user_email`		AS EMAIL,'
+					 . '		`organisation_name`	AS CALNAME,'
+					 . '		`organisation_directory_entry_name`	AS CALSHORTNAME'
+					 . ' FROM `subscriptions`'
+					 . ' INNER JOIN `users`'
+					 . '	ON	`subscription_user_entity_id` = `user_entity_id`'
+					 . ' INNER JOIN `organisations`'
+					 . '	ON	`organisation_entity_id` = `subscription_organisation_entity_id`'
+					 . ' WHERE	`subscription_vip_status` = "approved"'
+					 . '	AND	`subscription_deleted` = FALSE'
+					 . '	AND `subscription_organisation_entity_id` = ?';
+				$vips = $CI->db->query($sql, array($Id))->result_array();
+				if (!empty($vips)) {
+					$CI->load->helper('yorkermail');
+					foreach ($vips as $vip) {
+						// Find names of organisers
+						$orgs;
+						foreach ($Event->Organisations as $org) {
+							if ($org['confirmed']) {
+								$organisation = & $org['org'];
+								$orgs[] = $organisation->Name;
+							}
+						}
+						$vip['EVSUMMARY'] = $Event->Name;
+						$vip['ORGNAME'] = implode(', ', $orgs);
+						$shortname = $vip['CALSHORTNAME'];
+						$vip['URL'] = "http://www.theyorker.co.uk/viparea/$shortname/calendar";
+
+						// Put together the email
+						$keys = array_keys($vip);
+						foreach ($keys as & $key) {
+							$key = "%%$key%%";
+						}
+						$to = $vip['FIRSTNAME'] . ' ' . $vip['SURNAME'] . ' <' . $vip['EMAIL'] . '>';
+						$from = 'The Yorker Calendar';
+						$body = str_replace($keys, array_values($vip), $body_template);
+						$subject = str_replace($keys, array_values($vip), $subject_template);
+						try {
+							yorkermail($to, $subject, $body, $from);
+						}
+						// Carry on regardless
+						catch (Exception $e) {
+						}
+					}
+				}
+			}
+		}
+		return $affected;
 	}
 	
 	// MAKING CHANGES **********************************************************
