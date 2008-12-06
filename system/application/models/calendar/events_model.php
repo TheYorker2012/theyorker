@@ -936,6 +936,56 @@ class Events_model extends Model
 		return $query->result_array();
 	}
 
+	/// Get event submissions.
+	/**
+	 * @return array of event submissions:
+	 *  - 'event_id'
+	 *  - 'name'
+	 */
+	function GetEventSubmissions()
+	{
+		$sql = 'SELECT	event_id	AS event_id,'
+		     . '		event_name	AS name'
+		     . ' FROM	event_entities'
+		     . ' INNER JOIN	events'
+		     . ' 		ON	event_id = event_entity_event_id'
+		     . ' WHERE	event_entity_entity_id = '.$this->GetActiveEntityId()
+		     . '	AND	event_entity_relationship = "subscribe"'
+			 . '	AND	event_entity_confirmed = False'
+			 . '	AND	event_deleted = False';
+		$query = $this->db->query($sql);
+		return $query->result_array();
+	}
+	
+	/// Accept an event submission.
+	function AcceptEventSubmission($event_id)
+	{
+		$occurrence_query = new EventOccurrenceQuery();
+		$sql = '
+			UPDATE	event_entities
+			SET		event_entity_confirmed = TRUE
+			WHERE	event_entity_entity_id = '.$this->GetActiveEntityId().'
+				AND	event_entity_event_id = ?
+				AND	event_entity_relationship = "subscribe"
+				AND	event_entity_confirmed = FALSE';
+		$this->db->query($sql, array($event_id));
+		return $this->db->affected_rows();
+	}
+	
+	/// Reject an event submission.
+	function RejectEventSubmission($event_id)
+	{
+		$occurrence_query = new EventOccurrenceQuery();
+		$sql = '
+			DELETE FROM	event_entities
+			WHERE	event_entity_entity_id = '.$this->GetActiveEntityId().'
+				AND	event_entity_event_id = ?
+				AND	event_entity_relationship = "subscribe"
+				AND	event_entity_confirmed = FALSE';
+		$this->db->query($sql, array($event_id));
+		return $this->db->affected_rows();
+	}
+
 	/// Get occurrences which have changed so that the user needs informing.
 	/**
 	 * @return array of occurrences:
@@ -944,7 +994,7 @@ class Events_model extends Model
 	 *  - 'name'
 	 *  - 'state'
 	 *  - 'start_time'
-	 *  - 'start_time'
+	 *  - 'end_time'
 	 *  - 'time_associated'
 	 */
 	function GetOccurrenceAlerts()

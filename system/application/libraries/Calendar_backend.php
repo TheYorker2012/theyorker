@@ -159,8 +159,10 @@ class CalendarEvent
 	public $DescriptionHtml	= NULL;
 	/// string,NULL Description of location.
 	public $LocationDescription	= NULL;
-	/// array[&CalendarOrganisation] Array of owner organisation references.
+	/// array[&CalendarOrganisation => Bool] Array of owner organisation references and whether confirmed.
 	public $Organisations	= array();
+	/// array[&CalendarOrganisation => Bool] Array of subscribing organisation references and whether confirmed.
+	public $Subscribers		= array();
 	/// timestamp,NULL Time of last significant updaate to the event.
 	public $LastUpdate		= NULL;
 	/// string Status of the user regarding the event (must be in @a $ValidUserStatuses).
@@ -186,17 +188,41 @@ class CalendarEvent
 	/// Add an organisation to the organisations managing the event.
 	/**
 	 * @param $Organisation &CalendarOrganisation Reference to organisation.
+	 * @param $Confirmed bool Whether the organisation has confirmed.
 	 */
-	function AddOrganisation(&$Organisation)
+	function AddOrganisation(&$Organisation, $Confirmed = true)
 	{
 		// If the event already has this organisation, don't add again.
 		foreach ($this->Organisations as $org) {
-			if ($org->OrganisationId === $Organisation->OrganisationId) {
+			if ($org['org']->OrganisationId === $Organisation->OrganisationId) {
 				return;
 			}
 		}
 		// Add to end.
-		$this->Organisations[] = &$Organisation;
+		$this->Organisations[] = array(
+			'org' => &$Organisation,
+			'confirmed' => $Confirmed,
+		);
+	}
+
+	/// Add an organisation to the organisations subscribed to an event.
+	/**
+	 * @param $Organisation &CalendarOrganisation Reference to organisation.
+	 * @param $Confirmed bool Whether the organisation has confirmed.
+	 */
+	function AddSubscriber(&$Organisation, $Confirmed = true)
+	{
+		// If the event already has this organisation, don't add again.
+		foreach ($this->Subscribers as $org) {
+			if ($org['org']->OrganisationId === $Organisation->OrganisationId) {
+				return;
+			}
+		}
+		// Add to end.
+		$this->Subscribers[] = array(
+			'org' => &$Organisation,
+			'confirmed' => $Confirmed,
+		);
 	}
 	
 	/// Get the occurrences of this event which have a certain user permission.
@@ -746,6 +772,12 @@ abstract class CalendarSource
 			-1 => array('summary' => 'Not supported'),
 			-2 => array('summary' => 'Permission denied'),
 		);
+		if (isset($error_descriptions[$ErrorCode])) {
+			return $error_descriptions[$ErrorCode];
+		}
+		else {
+			return array('summary' => 'Unrecognised error');
+		}
 	}
 }
 

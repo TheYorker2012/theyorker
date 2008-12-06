@@ -90,9 +90,11 @@ $CI = & get_instance();
 				} else {
 					echo('<div>');
 				}
+				// Owners
 				if (!empty($Event->Organisations)) {
 					$organisers = array();
-					foreach ($Event->Organisations as $organisation) {
+					foreach ($Event->Organisations as $org) {
+						$organisation = &$org['org'];
 						$org_text = '';
 						if ($organisation->InDirectory) {
 							$org_text .= '<a href="'.site_url('directory/'.$organisation->ShortName).'">';
@@ -101,9 +103,33 @@ $CI = & get_instance();
 						if ($organisation->InDirectory) {
 							$org_text .= '</a>';
 						}
+						if (!$org['confirmed']) {
+							$org_text .= ' (unconfirmed)';
+						}
 						$organisers[] = $org_text;
 					}
 					echo('Organiser'.(count($organisers)>1 ? 's' : '').': '.implode(', ', $organisers));
+					echo('<br />');
+				}
+				// Subscribers
+				if (!empty($Event->Subscribers)) {
+					$organisers = array();
+					foreach ($Event->Subscribers as $org) {
+						$organisation = &$org['org'];
+						$org_text = '';
+						if ($organisation->InDirectory) {
+							$org_text .= '<a href="'.site_url('directory/'.$organisation->ShortName).'">';
+						}
+						$org_text .= xml_escape($organisation->Name);
+						if ($organisation->InDirectory) {
+							$org_text .= '</a>';
+						}
+						if (!$org['confirmed']) {
+							$org_text .= ' (unconfirmed)';
+						}
+						$organisers[] = $org_text;
+					}
+					echo('Calendar'.(count($organisers)>1 ? 's' : '').': '.implode(', ', $organisers));
 					echo('<br />');
 				}
 				echo('</div>');

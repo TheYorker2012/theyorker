@@ -185,6 +185,9 @@ class CalendarSourceYorker extends CalendarSource
 			$this->mQuery->ExpressionSubscribed().'	AS subscribed,'.
 			$this->mQuery->ExpressionOwned().'		AS owned,'.
 			
+			'event_entities.event_entity_confirmed		AS org_confirmed,'.
+			'event_entities.event_entity_relationship	AS org_relationship,'.
+
 			'organisations.organisation_entity_id	AS org_id,'.
 			'organisations.organisation_name		AS org_name,'.
 			'organisations.organisation_directory_entry_name AS org_shortname';
@@ -353,7 +356,14 @@ class CalendarSourceYorker extends CalendarSource
 					$organisation->Name = $row['org_name'];
 					$organisation->ShortName = $row['org_shortname'];
 				}
-				$events[$event_id]->AddOrganisation($organisations[$org_id]);
+				if ($row['org_relationship'] == 'subscribe') {
+					$events[$event_id]->AddSubscriber($organisations[$org_id],
+						0 != $row['org_confirmed']);
+				}
+				else {
+					$events[$event_id]->AddOrganisation($organisations[$org_id],
+						NULL === $row['org_confirmed'] || 0 != $row['org_confirmed']);
+				}
 			}
 		}
 	}
@@ -366,6 +376,7 @@ class CalendarSourceYorker extends CalendarSource
 	function MainQuery($Fields, $Where)
 	{
 		/// @todo Optimise main event query to avoid left joins amap
+		// FIXME unconfirmed subscriptions will only show up to the primary owner, not secondary owners
 		$sql = '
 		SELECT '.$Fields.' FROM event_occurrences
 		INNER JOIN events
@@ -373,11 +384,18 @@ class CalendarSourceYorker extends CalendarSource
 			AND	(events.event_deleted = 0 || event_occurrence_state = "cancelled")
 		LEFT JOIN event_types
 			ON	events.event_type_id = event_types.event_type_id
-		LEFT JOIN event_entities
-			ON	event_entities.event_entity_event_id = events.event_id
+		LEFT JOIN event_entities AS event_entities_link
+			ON	event_entities_link.event_entity_event_id = events.event_id
+			AND	(	event_entities_link.event_entity_confirmed = TRUE
+				OR	event_organiser_entity_id	= '.$this->mQuery->GetEntityId().')
 		LEFT JOIN organisations
 			ON	organisations.organisation_entity_id
-					IN (event_entities.event_entity_entity_id, events.event_organiser_entity_id)
+					IN (event_entities_link.event_entity_entity_id, events.event_organiser_entity_id)
+		LEFT JOIN event_entities
+			ON	event_entities.event_entity_event_id = events.event_id
+			AND	(	event_entities.event_entity_confirmed = TRUE
+				OR	event_organiser_entity_id	= '.$this->mQuery->GetEntityId().')
+			AND	event_entities.event_entity_entity_id = organisations.organisation_entity_id
 		LEFT JOIN event_subscriptions
 			ON	event_subscriptions.event_subscription_organisation_entity_id
 					IN (event_entities.event_entity_entity_id, events.event_organiser_entity_id)
@@ -557,16 +575,24 @@ class CalendarSourceYorker extends CalendarSource
 	 */
 	function GetAllOpenCalendars()
 	{
-		return array(
-			853 => array(
-				'name' => 'The Yorker Specials',
-				'description_xml' => '<p>Events in The Yorker Specials are automatically visible on every user\'s calendar.  It is meant for events of general interest to all University of York students.</p>',
-			),
-			11 => array(
-				'name' => 'Derwent Events',
-				'description_xml' => '<p>Events of general interest to students of Derwent college</p>',
-			),
-		);
+		$sql = 'SELECT `organisation_entity_id` AS entity_id,'
+		     . '       `organisation_name` AS name,'
+		     . '       `organisation_event_submission_text` AS text'
+		     . ' FROM  `organisations`'
+		     . ' WHERE `organisation_events` = True'
+		     . ' AND   `organisation_event_submission_text` IS NOT NULL'
+			 . ' ORDER BY `organisation_name` ASC';
+		$CI = & get_instance();
+		$open_calendars = $CI->db->query($sql)->result_array();
+		$result = array();
+		foreach ($open_calendars as $row) {
+			$result[(int)$row['entity_id']] = array(
+				'id'              => $row['entity_id'],
+				'name'            => $row['name'],
+				'description_xml' => '<p>'.xml_escape($row['text']).'</p>',
+			);
+		}
+		return $result;
 	}
 
 	/// Submit an event to be included on an open calendar.
@@ -577,7 +603,25 @@ class CalendarSourceYorker extends CalendarSource
 	 */
 	function SubmitEventToCalendar(& $Event, $Id)
 	{
-		return -1;
+		// This checks that the org is capable of receiving submissions
+		// and that the event exists, but not that the event is visible or whatever
+		$sql = 'INSERT INTO event_entities'
+		     . '  (`event_entity_entity_id`, `event_entity_event_id`, `event_entity_relationship`, `event_entity_confirmed`)'
+		     . ' SELECT	`organisation_entity_id`, `event_id`, ?, ?'
+		     . '   FROM		`organisations`, `events`'
+		     . '   WHERE	`organisation_entity_id` = ?'
+		     . '     AND	`organisation_events` = True'
+		     . '     AND	`organisation_event_submission_text` IS NOT NULL'
+		     . '     AND	`event_id` = ?'
+		     . '   LIMIT 1'
+		     . ' ON DUPLICATE KEY UPDATE `event_entity_confirmed`=`event_entity_confirmed`';
+		$bind = array(
+			'subscribe', false,
+			$Id, $Event->SourceEventId, 
+		);
+		$CI = & get_instance();
+		$query = $CI->db->query($sql, $bind);
+		return $CI->db->affected_rows();
 	}
 	
 	// MAKING CHANGES **********************************************************

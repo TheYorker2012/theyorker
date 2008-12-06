@@ -168,14 +168,21 @@ class CalendarPaths
 	}
 	
 	/// Get the event information path.
-	function EventInfo($Event, $range = NULL, $filter = NULL)
+	function EventRawInfo($SourceId, $EventId, $range = NULL, $filter = NULL)
 	{
 		return $this->mPath .
-			'/src/'.	$Event->Source->GetSourceId().
-			'/event/'.	$Event->SourceEventId.
-			'/info'.
+			"/src/$SourceId/event/$EventId/info".
 			'/'.(NULL !== $range  ? $range  : 'default').
 			'/'.(NULL !== $filter ? $filter : 'default');
+	}
+	
+	/// Get the event information path.
+	function EventInfo($Event, $range = NULL, $filter = NULL)
+	{
+		return $this->EventRawInfo(
+			$Event->Source->GetSourceId(),
+			$Event->SourceEventId,
+			$range, $filter);
 	}
 	
 	/// Get the event edit path.
@@ -1388,11 +1395,20 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 					return redirect($path.'/'.$tail);
 				}
 			}
+
+			// Get the open calendars excluding any owners or subscribers
+			$open_calendars = $this->mSource->GetAllOpenCalendars();
+			foreach ($event->Organisations as $org) {
+				unset($open_calendars[$org['org']->SourceOrganisationId]);
+			}
+			foreach ($event->Subscribers as $org) {
+				unset($open_calendars[$org['org']->SourceOrganisationId]);
+			}
 			
 			$data = array(
 				'Event' => &$event,
 				'ShowPublicity' => ($event->UserStatus == 'owner') && isset($this->mPermissions['publicity']),
-				'OpenCalendars' => $this->mSource->GetAllOpenCalendars(),
+				'OpenCalendars' => $open_calendars,
 				'ReadOnly' => $this->mSource->IsSupported('create'),
 				'FailRedirect' => '/'.$tail,
 				'Path' => $this->mPaths,
@@ -1762,24 +1778,61 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			return;
 		}
 
+		// Get the redirect url tail
+		$args = func_get_args();
+		$tail = implode('/', $args);
+
 		// Fetch the specified event
 		$calendar_data = new CalendarData();
 		$this->mMainSource->FetchEvent($calendar_data, $source_id, $event_id);
 		$events = $calendar_data->GetEvents();
 		if (array_key_exists(0, $events)) {
 			$event = $events[0];
+			$redirect_path = $this->mPaths->EventInfo($event).'/'.$tail;
 
 			// Some of the event must be published
-			// The calendar mustn't already be subscribed to the event
-			// The calendar must be valid and accept submissions
-		
-			// Get the redirect url tail
-			$args = func_get_args();
-			$tail = implode('/', $args);
+			$some_published = false;
+			foreach ($event->Occurrences as &$occ) {
+				if ($occ->State == 'published') {
+					$some_published = true;
+					break;
+				}
+			}
+			if (!$some_published) {
+				$this->messages->AddMessage('error', 'No occurrences of this event are yet published. You must publish the event before you can submit it to an open calendar.');
+				redirect($redirect_path);
+			}
 
-			$this->messages->AddMessage('error', 'Nothing really happened!');
-			redirect($this->mPaths->EventInfo($event).'/'.$tail);
+			// The calendar must be valid and accept submissions
+			// We'll find this out when we try and submit
+			$calendarId = (int)$_POST['evview_open_calendar'];
+			$open_calendars = $this->mSource->GetAllOpenCalendars();
+			foreach ($event->Organisations as $org) {
+				unset($open_calendars[$org['org']->SourceOrganisationId]);
+			}
+			foreach ($event->Subscribers as $org) {
+				unset($open_calendars[$org['org']->SourceOrganisationId]);
+			}
+			if (!isset($open_calendars[$calendarId])) {
+				$this->messages->AddMessage('error', 'The specified calendar is invalid or is not a calendar that this event can be submitted to.');
+				redirect($redirect_path);
+			}
+			$result = $event->Source->SubmitEventToCalendar($event, $calendarId);
+			if ($result < 0) {
+				$error_description = $event->Source->GetErrorDescription($result);
+				$this->messages->AddMessage('error', 'Could not submit this event to the specified calendar: '.xml_escape($error_description['summary']).'.');
+				redirect($redirect_path);
+			}
+			else if ($result == 0) {
+				$this->messages->AddMessage('information', 'This event has already been submitted to '.xml_escape($open_calendars[$calendarId]['name']).'.');
+				redirect($redirect_path);
+			}
+
+			$this->messages->AddMessage('success', 'Event was successfully submitted to '.xml_escape($open_calendars[$calendarId]['name']).'.');
+			redirect($redirect_path);
 		}
+		$this->messages->AddMessage('error', 'Event not found!');
+		redirect($tail);
 	}
 		
 	
