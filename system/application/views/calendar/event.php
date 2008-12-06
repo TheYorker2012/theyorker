@@ -6,11 +6,16 @@
  *
  * @param $Event CalendarEvent Event information.
  * @param $Occurrence CalendarEvent,NULL Occurrence information.
+ * @param $ShowPublicity bool Whether to show the publicity box.
+ * @param $OpenCalendars array[int => array()] Open calendars information.
  * @param $ReadOnly bool Whether the source is read only.
  * @param $Attendees array[string] Attending users.
  * @param $FailRedirect string URL fail redirect path.
  * @param $Path array[string => url] Paths to common event links. used:
  *	- 'delete'
+ * @param $Texts array[stirng => xhtml] Texts from page properties:
+ *  - 'open_calendars_blurb'
+ *  - 'advertising_blurb'
  */
 
 
@@ -264,4 +269,67 @@ $CI = & get_instance();
 			</form>
 		<?php } ?>
 	</div>
+
+	<?php
+	/*
+	 * The following box is visible to VIPs and allows the event to be submitted to an open calendar.
+	 * Naturally lets also plug our own advertising services.
+	 */
+	if ($ShowPublicity) {
+	?>
+	<div class="BlueBox">
+		<h2>Publicity</h2>
+
+		<?php
+		if (count($OpenCalendars) > 0) {
+		?>
+		<?php echo($Texts['open_calendars_blurb']); ?>
+
+		<form class="form" method="post" action="<?php echo(site_url($Path->EventSubmit($Event)).$FailRedirect); ?>">
+			<fieldset>
+				<?php
+				$firstId = -1;
+				foreach ($OpenCalendars as $id => $calendar) {
+					$firstId = (int)$id;
+					break;
+				}
+				?>
+				<select name="evview_open_calendar" onchange="changeOpenCalendarSelection(this.value, <?php echo($firstId); ?>);">
+					<?php
+					foreach ($OpenCalendars as $id => $calendar) {
+						?><option<?php
+						if ($id === $firstId) {
+							?> selected="selected"<?php
+						}
+						?> value="<?php echo((int)$id); ?>"><?php
+						echo(xml_escape($calendar['name']));
+						?></option><?php
+					}
+					?>
+				</select>
+				<div class="BlueBox">
+					<?php
+					foreach ($OpenCalendars as $id => $calendar) {
+						?><div<?php
+						if ($id !== $firstId) {
+							?> style="display: none"<?php
+						}
+						?> id="open_cal_desc_<?php echo((int)$id); ?>"><?php
+						echo($calendar['description_xml']);
+						?></div><?php
+					}
+					?>
+				</div>
+				<input class="button" type="submit" name="evview_submit_to_calendar" value="Submit Event" />
+			</fieldset>
+		</form>
+		<?php
+		}
+		?>
+
+		<?php echo($Texts['advertising_blurb']); ?>
+	</div>
+	<?php
+	}
+	?>
 </div>

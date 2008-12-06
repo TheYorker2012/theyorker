@@ -547,6 +547,38 @@ class CalendarSourceYorker extends CalendarSource
 		$CI = & get_instance();
 		return 'MATCH (events.event_name, events.event_description, events.event_blurb'/*, organisations.organisation_name*/.') AGAINST ('.$CI->db->escape($this->mSearchPhrase).')';
 	}
+
+	// SUBMISSION TO PUBLIC CALENDARS ******************************************
+
+	/// Get a list of all calendars to which events can be submitted.
+	/**
+	 * @return array[id => array].
+	 *  - NULL if not supported.
+	 */
+	function GetAllOpenCalendars()
+	{
+		return array(
+			853 => array(
+				'name' => 'The Yorker Specials',
+				'description_xml' => '<p>Events in The Yorker Specials are automatically visible on every user\'s calendar.  It is meant for events of general interest to all University of York students.</p>',
+			),
+			11 => array(
+				'name' => 'Derwent Events',
+				'description_xml' => '<p>Events of general interest to students of Derwent college</p>',
+			),
+		);
+	}
+
+	/// Submit an event to be included on an open calendar.
+	/**
+	 * @param $Event CalendarEvent The event to submit.
+	 * @param $Id Int The id of the calendar (the keys return by GetAllOpenCalendars()).
+	 * @return 0 on success or error code.
+	 */
+	function SubmitEventToCalendar(& $Event, $Id)
+	{
+		return -1;
+	}
 	
 	// MAKING CHANGES **********************************************************
 	

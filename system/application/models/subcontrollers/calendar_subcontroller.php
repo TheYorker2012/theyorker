@@ -24,6 +24,7 @@
 			/event/$event			- about a specific event
 				/[info]				- view info about specific event
 				/edit				- edit a specific event
+				/submit             - submit to an open calendar
 				/op/$op				- operations such as delete, publish etc
 				/occ/$occurrence	- stuff about a specific occurrence
 					/[info]/$range	- view info
@@ -186,6 +187,15 @@ class CalendarPaths
 			'/edit'.
 			'/'.(NULL !== $range  ? $range  : 'default').
 			'/'.(NULL !== $filter ? $filter : 'default');
+	}
+
+	/// Get the event submission path.
+	function EventSubmit($Event)
+	{
+		return $this->mPath .
+			'/src/'.	$Event->Source->GetSourceId().
+			'/event/'.	$Event->SourceEventId.
+			'/submit';
 	}
 	
 	/// Get the event publish path.
@@ -503,6 +513,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 										'edit' => 'src_event_edit',
 									),
 								),
+								'submit' => 'src_event_submit',
 								'op' => $event_op,
 								'occ' => array(
 									'*' => array(
@@ -1380,9 +1391,15 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			
 			$data = array(
 				'Event' => &$event,
+				'ShowPublicity' => ($event->UserStatus == 'owner') && isset($this->mPermissions['publicity']),
+				'OpenCalendars' => $this->mSource->GetAllOpenCalendars(),
 				'ReadOnly' => $this->mSource->IsSupported('create'),
 				'FailRedirect' => '/'.$tail,
 				'Path' => $this->mPaths,
+				'Texts' => array(
+					'open_calendars_blurb' => $this->pages_model->GetPropertyWikitext('open_calendars_blurb'),
+					'advertising_blurb'    => $this->pages_model->GetPropertyWikitext('advertising_blurb'),
+				),
 			);
 			if (NULL !== $occurrence_id) {
 				$data['Occurrence'] = &$found_occurrence;
@@ -1404,6 +1421,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			$this->SetupTabs('', $link_time);
 			
 			$this->main_frame->IncludeCss('stylesheets/calendar.css');
+			$this->main_frame->IncludeJs('javascript/calendar_info.js');
 			$this->main_frame->SetContent(
 				new FramesView('calendar/event', $data)
 			);
@@ -1730,6 +1748,40 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 		}
 		$this->main_frame->Load();
 	}
+	
+	function src_event_submit()
+	{
+		if (!CheckPermissions($this->mPermission)) return;
+		
+		// Get data from uri resolution.
+		$source_id = $this->mData['SourceId'];
+		$event_id = $this->mData['EventId'];
+
+		// Validate the source
+		if (!$this->_GetSource()) {
+			return;
+		}
+
+		// Fetch the specified event
+		$calendar_data = new CalendarData();
+		$this->mMainSource->FetchEvent($calendar_data, $source_id, $event_id);
+		$events = $calendar_data->GetEvents();
+		if (array_key_exists(0, $events)) {
+			$event = $events[0];
+
+			// Some of the event must be published
+			// The calendar mustn't already be subscribed to the event
+			// The calendar must be valid and accept submissions
+		
+			// Get the redirect url tail
+			$args = func_get_args();
+			$tail = implode('/', $args);
+
+			$this->messages->AddMessage('error', 'Nothing really happened!');
+			redirect($this->mPaths->EventInfo($event).'/'.$tail);
+		}
+	}
+		
 	
 	/// AJAX: Validate post recurrence data asynchronously.
 	function ajax_recursimplevalidate()

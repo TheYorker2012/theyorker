@@ -558,6 +558,29 @@ abstract class CalendarSource
 	 * @param $Data CalendarData Data object to add events to.
 	 */
 	protected abstract function _FetchEvents(&$Data);
+
+	// SUBMISSION TO PUBLIC CALENDARS ******************************************
+
+	/// Get a list of all calendars to which events can be submitted.
+	/**
+	 * @return array[id => array].
+	 *  - NULL if not supported.
+	 */
+	function GetAllOpenCalendars()
+	{
+		return NULL;
+	}
+
+	/// Submit an event to be included on an open calendar.
+	/**
+	 * @param $Event CalendarEvent The event to submit.
+	 * @param $Id Int The id of the calendar (the keys return by GetAllOpenCalendars()).
+	 * @return 0 on success or error code.
+	 */
+	function SubmitEventToCalendar(& $Event, $Id)
+	{
+		return -1;
+	}
 	
 	// MAKING CHANGES **********************************************************
 	
@@ -720,7 +743,7 @@ abstract class CalendarSource
 	function GetErrorDescription($ErrorCode)
 	{
 		static $error_descriptions = array(
-			-1 => array('summary' => 'Not supporteed'),
+			-1 => array('summary' => 'Not supported'),
 			-2 => array('summary' => 'Permission denied'),
 		);
 	}
@@ -1170,6 +1193,38 @@ class CalendarSources extends CalendarSource
 	protected function _FetchEvents(&$Data)
 	{
 	}
+
+	/// Get a list of all calendars to which events can be submitted.
+	/**
+	 * @param $SourceId int Event source id.
+	 * @return array[id => array].
+	 *  - NULL if not supported.
+	 */
+	function GetAllOpenCalendars($SourceId)
+	{
+		if (array_key_exists($SourceId, $this->mSources)) {
+			return $this->mSources[$SourceId]->GetAllOpenCalendars();
+		} else {
+			return parent::GetAllOpenCalendars();
+		}
+	}
+
+	/// Submit an event to be included on an open calendar.
+	/**
+	 * @param $SourceId int Event source id.
+	 * @param $Event CalendarEvent The event to submit.
+	 * @param $Id Int The id of the calendar (the keys return by GetAllOpenCalendars()).
+	 * @return 0 on success or error code.
+	 */
+	function SubmitEventToCalendar($SourceId, & $Event, $Id)
+	{
+		if (array_key_exists($SourceId, $this->mSources)) {
+			return $this->mSources[$SourceId]->SubmitEventToCalendar($Event, $Id);
+		} else {
+			return parent::SubmitEventToCalendar($Event, $Id);
+		}
+	}
+	
 	
 	/// Set the user's attending status on an occurrence.
 	/**
