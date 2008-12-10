@@ -202,14 +202,19 @@ function changePreview (box, option, article_id, article_type, photo_id, photo_t
 			<div class="clear"></div>
 
 			<div class="FlexiBox Box12">
-				<div class="pl_header" style="margin-bottom:5px;">what's on?</div>
-				<ul class="comments" style="margin:0 5px;">
-					<li style="list-style-image:url('/images/prototype/calendar/calendar-small.gif');">09:15 - 11:15 <b>EVO Practical</b> - CS/007</li>
-					<li style="list-style-image:url('/images/prototype/calendar/calendar-small.gif');">11:15 - 13:15 <b>COP Lecture</b> - G/013</li>
-					<li style="list-style-image:url('/images/prototype/calendar/calendar-small.gif');">14:45 - 16:45 <b>Multi-Skill Coaching</b> - Huntington School</li>
-					<li style="list-style-image:url('/images/prototype/calendar/calendar-small.gif');">18:00 - 20:00 <b>Yorker Meeting</b> - Vanbrugh Bar</li>
-					<li style="list-style-image:url('/images/prototype/calendar/calendar-small.gif');">20:00 - 00:00 <b>Bar Crawl</b> - Town</li>
-				</ul>
+				<div class="FlexiBox Box12b">
+					<br /><br /><br /><br /><br />
+				</div>
+				<div class="FlexiBox Box12">
+					<div class="pl_header" style="margin-bottom:5px;">what's on?</div>
+					<ul class="comments" style="margin:0 5px;">
+						<li style="list-style-image:url('/images/prototype/calendar/calendar-small.gif');">09:15 - 11:15 <b>EVO Practical</b> - CS/007</li>
+						<li style="list-style-image:url('/images/prototype/calendar/calendar-small.gif');">11:15 - 13:15 <b>COP Lecture</b> - G/013</li>
+						<li style="list-style-image:url('/images/prototype/calendar/calendar-small.gif');">14:45 - 16:45 <b>Multi-Skill Coaching</b> - Huntington School</li>
+						<li style="list-style-image:url('/images/prototype/calendar/calendar-small.gif');">18:00 - 20:00 <b>Yorker Meeting</b> - Vanbrugh Bar</li>
+						<li style="list-style-image:url('/images/prototype/calendar/calendar-small.gif');">20:00 - 00:00 <b>Bar Crawl</b> - Town</li>
+					</ul>
+				</div>
 			</div>
 			<div class="FlexiBox Box12 FlexiBoxLast">
 				<div class="pl_header" style="margin-bottom:5px;">latest comments</div>
