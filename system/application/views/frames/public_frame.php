@@ -34,7 +34,7 @@ if (isset($medium_type)) { ?>
 	<link rel="alternate" type="application/rss+xml" title="The Yorker - Campus News" href="/feeds/news" />
 
 
-	<link href="/stylesheets/new.css" rel="stylesheet" type="text/css" />
+	<link href="/stylesheets/v2.css" rel="stylesheet" type="text/css" />
 	<!--[if lte IE 6]><link href="/stylesheets/new-ie6fix.css" rel="stylesheet" type="text/css" /><![endif]-->
 
 	<?php
@@ -46,40 +46,78 @@ if (isset($medium_type)) { ?>
 
 <body onload="onLoadHandler()" onunload="onUnloadHandler()">
 	<div id="Header">
-		<div id="HeaderMenu">
-			<span style="color: #999999; font-size: 0.9em">
-			<?php
-			// Set by GenerateToplinks in mainframe_helper
-			if (isset($toplinks)) {
-				foreach ($toplinks as $link) {
-					if (is_string($link)) {
-						echo('<span style="color: #000000;">'.xml_escape($link).'</span> | ');
-					} elseif (is_array($link)) {
-						echo('<a href="'.xml_escape($link[1]).'">'.xml_escape($link[0]).'</a> | ');
+		<div id="HeaderItems">
+			<div id="HeaderMenu">
+				<?php
+				// Set by GenerateToplinks in mainframe_helper
+				if (isset($toplinks)) {
+					foreach ($toplinks as $link) {
+						if (is_string($link)) {
+							echo(xml_escape($link). ' | ');
+						} elseif (is_array($link)) {
+							echo('<a href="' . xml_escape($link[1]) . '">' . xml_escape($link[0]) . '</a> | ');
+						}
 					}
 				}
-			}
-			?>
-			<a href="<?php echo($this->config->item('static_web_address')); ?>/pdf/advertisewithus.pdf">advertise with us</a> | 
-			<a href="/account/">my account</a> |
-			<a href="/about/">about us</a> |
-			<a href="/pages/join_our_team/">join us</a> |
-			<a href="/faq/">FAQs</a>
-			</span>
-		</div>
-
-		<div id="TopBanner">
-			<h1 id="TopBannerName">
-				<a href="/"><img src="/images/prototype/header/header_Layer-1.gif" width="300" height="108" alt="The Yorker"/></a>
-			</h1>
-			<div id="TopBannerPictures">
-				<img src="/images/prototype/header/header_Layer-4.gif" alt="News" />
-				<img src="/images/prototype/header/header_Layer-3.gif" alt="Calendar" />
-				<img src="/images/prototype/header/header_Layer-2.gif" alt="Reviews" />
+				?>
+				<a href="/account/">my account</a>
 			</div>
+			<div id="HeaderTime">
+				16:44
+			</div>
+		</div>
+		<h1 id="Logo"><a href="/"><img src="/images/version2/frame/logo.png" alt="The Yorker" /></a></h1>
+	</div>
+
+	<div id="Bar">
+		<div id="BarTicker">
+			latest news: <a href="http://www.theyorker.co.uk/news/uninews/2414">More students to miss out on grants</a>
 		</div>
 	</div>
 
+	<div id="Navigation">
+		<ul id="Tabs">
+			<li class="current"><a href="/home">home</a></li>
+			<li><a href="/news/uninews">news</a></li>
+			<li><a href="/sport">sport</a></li>
+			<li><a href="/arts">arts</a></li>
+			<li><a href="/lifestyle">lifestyle</a></li>
+			<li><a href="/home">stuff</a></li>
+		</ul>
+	</div>
+
+	<div id="Page">
+		<div id="MainBodyPane">
+		
+<!-- BEGIN generated content -->
+<?php
+	// TODO: check this works properly
+
+	// Navigation bar
+	if (isset($content['navbars']) && is_array($content['navbars'])) {
+		foreach ($content['navbars'] as $navbar) {
+			$navbar->Load();
+		}
+	} elseif (isset($content['navbar'])) {
+		$content['navbar']->Load();
+	}
+
+	// Display each message
+	foreach ($messages as $message) {
+		// Display the message
+		$message->Load();
+	}
+
+	// Display the main content
+	$content[0]->Load();
+?>
+<!-- END generated content -->
+
+			<div class="clear"></div>
+		</div>
+	</div>
+
+<?php /*
 	<div id="Page">
 		<div id="NavigationColumn">
 			<form id="searchbox_003080001858553066416:dyddjbcpdlc" action="http://www.google.com/search">
@@ -102,18 +140,12 @@ if (isset($medium_type)) { ?>
 					<li class="first"><a href="/news/uninews">Uni News</a></li>
 					<li><a href="/sport/">Sport</a></li>
 					<li><a href="/news/comment/">News Comment</a></li>
-					<?php /*
-					<li><a href="/news/national/">UK &amp; World News</a></li>
-					*/ ?>
 					<li><a href="/news/features/">Features</a></li>
 					<li><a href="/lifestyle/">Lifestyle</a></li>
 					<li><a href="/arts/">Arts</a></li>
 					<li><a href="/blogs/">Blogs</a></li>
 					<li><a href="/food/">Food</a></li>
 					<li><a href="/reviews/drink">Drink</a></li>
-					<?php /*
-					<li><a href="/reviews/culture">Culture</a></li>
-					*/ ?>
 					<li><a href="/news/videocasts">Videocasts</a></li>
 					<li><a href="/campaign/">Campaigns</a></li>
 					<li><a href="/news/archive/">Archive</a></li>
@@ -125,12 +157,6 @@ if (isset($medium_type)) { ?>
 					<li><a href="http://yorkipedia.theyorker.co.uk">Yorkipedia</a></li>
 					<li><a href="/games/">Game Zone</a></li>
 				</ul>
-				<?php /*
-				<ul>
-					<li class="first"><a href="/viparea/">Enter VIP Area</a></li>
-					<li><a href="/office/">Enter Office</a></li>
-				</ul>
-				*/ ?>
 				<?php
 				if (isset($extra_menu_buttons) && !empty($extra_menu_buttons)) {
 					echo('<ul>');
@@ -197,6 +223,7 @@ if (isset($medium_type)) { ?>
 
 		</div>
 	</div>
+*/ ?>
 
 
 	<?php

@@ -34,25 +34,15 @@ function inputBlur(element) {
 // ** END Search box code **
 
 // ** BEGIN feedback form code **
+var feedbackStatus = true;
 function showFeedback() {
-	var showFeedbackObj = document.getElementById('ShowFeedback');
+	feedbackStatus = !feedbackStatus;
 	var feedbackObj = document.getElementById('FeedbackForm');
-	showFeedbackObj.style.display = 'none';
-	feedbackObj.style.display = 'block';
-
+	feedbackObj.style.display = (feedbackStatus) ? 'block' : 'none';
 	return false;
 }
 
-function hideFeedback() {
-	var showFeedbackObj = document.getElementById('ShowFeedback');
-	var feedbackObj = document.getElementById('FeedbackForm');
-	showFeedbackObj.style.display = 'block';
-	feedbackObj.style.display = 'none';
-
-	return false;
-}
-
-onLoadFunctions.push(hideFeedback);
+onLoadFunctions.push(showFeedback);
 // ** END feedback form code **
 
 
