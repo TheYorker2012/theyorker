@@ -66,10 +66,21 @@ if (isset($medium_type)) { ?>
 				16:44
 			</div>
 		</div>
-		<h1 id="Logo"><a href="/"><img src="/images/version2/frame/logo.png" alt="The Yorker" /></a></h1>
+		<h1 id="HeaderLogo"><a href="/"><img src="/images/version2/frame/logo.png" alt="The Yorker" /></a></h1>
 	</div>
 
 	<div id="Bar">
+		<div id="BarSearch">
+			<form id="searchbox_003080001858553066416:dyddjbcpdlc" action="http://www.google.com/search">
+				<fieldset>
+					<input type="hidden" name="cx" value="003080001858553066416:dyddjbcpdlc" />
+					<input type="hidden" name="cof" value="FORID:0" />
+				</fieldset>
+				<fieldset id="SearchBox">
+					<input name="q" type="text" size="20" value="Search for..." onfocus="inputFocus(this);" onblur="inputBlur(this);" />
+				</fieldset>
+			</form>
+		</div>
 		<div id="BarTicker">
 			latest news: <a href="http://www.theyorker.co.uk/news/uninews/2414">More students to miss out on grants</a>
 		</div>

@@ -161,6 +161,14 @@ div#Bar {
 	background-color: #f06d26;
 }
 
+div#BarSearch {
+	float: right;
+}
+
+div#BarSearch input {
+	font-size: small;
+}
+
 div#BarTicker {
 	color: #fff;
 	padding: 3px 15px;
@@ -228,10 +236,11 @@ div#Navigation ul#Tabs li a:hover {
 fieldset#SearchBox {
 	display: block;
 	margin: 0em 0em 0.5em 0em;
-	border: solid 1px #20c1f0;
+	/*border: solid 1px #20c1f0;*/
 	background-image: url(/images/prototype/header/search.png);
 	background-repeat: no-repeat;
 	background-position: 3px 3px;
+	background-color: #f2f2f2;
 	padding: 2px 2px 2px 22px;
 	overflow: hidden;
 }
@@ -241,9 +250,9 @@ fieldset#SearchBox input {
 	width: 100%;
 	margin: 0;
 	padding: 0;
-	color: #20c1f0;
+	color: #999;
 	/* Border necessary to remove native border in KHTML browsers */
-	border: 1px solid white;
+	/*border: 1px solid white;*/
 }
 
 /* Formatting for the navigation on the left */
