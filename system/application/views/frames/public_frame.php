@@ -83,6 +83,12 @@ if (isset($medium_type)) { ?>
 			<li><a href="/arts">arts</a></li>
 			<li><a href="/lifestyle">lifestyle</a></li>
 			<li><a href="/home">stuff</a></li>
+
+			<li class="link"><a href="http://www.yusu.org/"><img src="/image/link/248" width="20" height="20" alt="YUSU" title="YUSU" /></a></li>
+			<li class="link"><a href="http://www.facebook.com/"><img src="/image/link/246" width="20" height="20" alt="Facebook" title="Facebook" /></a></li>
+			<li class="link"><a href="http://news.bbc.co.uk/"><img src="/image/link/245" width="20" height="20" alt="BBC News" title="BBC News" /></a></li>
+			<li class="link"><a href="http://en.wikipedia.org/"><img src="/image/link/244" width="20" height="20" alt="Wikipedia" title="Wikipedia" /></a></li>
+			<li class="link"><a href="http://gmail.google.com/"><img src="/image/link/250" width="20" height="20" alt="Gmail" title="Gmail" /></a></li>
 		</ul>
 	</div>
 

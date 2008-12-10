@@ -192,6 +192,13 @@ div#Navigation ul#Tabs li {
 	margin-bottom: -2px;
 }
 
+div#Navigation ul#Tabs li.link {
+	float: right;
+	border: 0;
+	padding: 0.2em 0;
+	min-width: 0;
+}
+
 div#Navigation ul#Tabs li.current {
 	border-color: #f06d26;
 	border-bottom: 2px solid #f2f2f2;
