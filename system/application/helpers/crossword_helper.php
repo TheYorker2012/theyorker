@@ -441,6 +441,23 @@ class CrosswordView
 			echo("\n");
 		}
 		?></table><?php
+		// <temporary>
+		// progress bar
+		?><div style="border: 1px solid #ff6a00; margin-top: 0.2em;"><?php
+			?><div style="background-color: #ffaa00; width: 34%; color: white; text-align: right; padding: 2px;"><?php
+				?>34%<?php
+			?></div>10<?php
+		?></div><?php
+		?><div><?php
+			?><input type="button" class="button" value="Reveal Clue" disabled="disabled" /><?php
+			?><input type="button" class="button" value="Check Clue" /><?php
+		?></div><?php
+		?><br /><br /><?php
+		?><div><?php
+			?><input type="button" class="button" value="Check Finished Crossword" disabled="disabled" /><?php
+			?><input type="button" class="button" value="Save Crossword for Later" /><?php
+		?></div><?php
+		// </temporary>
 		?></div><?php
 
 		// List of clues
