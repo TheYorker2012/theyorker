@@ -9,7 +9,7 @@ class Crosswords extends Controller
 	{
 		parent::Controller();
 
-		$this->load->helper("crossword");
+		$this->load->model('crosswords_model');
 	}
 
 	/** Main index page.
@@ -70,13 +70,55 @@ class Crosswords extends Controller
 		if (!CheckPermissions('office')) return;
 		if (null === $category) {
 			if (!CheckRolePermissions('CROSSWORD_CATEGORIES_INDEX')) return;
+			$this->pages_model->SetPageCode('crosswords_office_cats');
+			$data = array(
+				'Permissions' => array(
+					'category_add' => $this->permissions_model->hasUserPermission('CROSSWORD_CATEGORY_ADD'),
+				),
+				'Categories' => array(
+					1 => array(
+						'name' => 'Quick Crosswords',
+						'short_name' => 'quick',
+					),
+					2 => array(
+						'name' => 'Cryptic Crosswords',
+						'short_name' => 'cryptic',
+					),
+				),
+			);
+			$this->main_frame->SetContentSimple('crosswords/office/categories', $data);
 		}
 		else {
+			$layouts = $this->crosswords_model->GetAllLayouts();
+			$data = array(
+				'MaxLengths' => array(
+					'name'       => 255,
+					'short_name' => 32,
+				),
+				'Layouts' => $layouts,
+				'Category' => array(
+					'name'          => '',
+					'short_name'    => '',
+					'default_width' => 13,
+					'default_height' => 13,
+				),
+			);
 			if ('add' === $category) {
 				if (!CheckRolePermissions('CROSSWORD_CATEGORY_ADD')) return;
+				$this->pages_model->SetPageCode('crosswords_office_cat_add');
+				if (empty($layouts)) {
+					$this->messages->AddMessage('error',
+						'No crossword layouts have been set up. '.
+						'Please <a href="'.site_url('office/crosswords/layouts/add').'">add a layout</a> before adding categories.');
+				}
+				else {
+					$this->main_frame->SetContentSimple('crosswords/office/category_edit', $data);
+				}
 			}
 			else {
 				if (!CheckRolePermissions('CROSSWORD_CATEGORY_MODIFY')) return;
+				$this->pages_model->SetPageCode('crosswords_office_cat_edit');
+				$this->main_frame->SetContentSimple('crosswords/office/category_edit', $data);
 			}
 		}
 		$this->main_frame->Load();
