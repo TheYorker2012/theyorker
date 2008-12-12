@@ -54,8 +54,8 @@ class CrosswordClue
 	private $m_solution;
 }
 
-/// A slot in the grid.
-class CrosswordGridSlot
+/// A light in the grid.
+class CrosswordGridLight
 {
 	/// Construct.
 	function __construct($x, $y, $orientation, $length)
@@ -100,13 +100,13 @@ class CrosswordGridSlot
 	 * Private variables
 	 */
 
-	/// Coordinates of slot.
+	/// Coordinates of light.
 	private $m_x, $m_y;
 
-	/// Orientation of slot.
+	/// Orientation of light.
 	private $m_orientation;
 
-	/// Length of slot.
+	/// Length of light.
 	private $m_length;
 }
 
@@ -122,7 +122,7 @@ class CrosswordGrid
 	{
 		$this->m_width = $width;
 		$this->m_height = $height;
-		$this->m_slots = array(self::$HORIZONTAL => array(),
+		$this->m_lights = array(self::$HORIZONTAL => array(),
 		                       self::$VERTICAL   => array());
 		$this->m_grid = array();
 		for ($x = 0; $x < $width; ++$x) {
@@ -148,31 +148,31 @@ class CrosswordGrid
 		}
 	}
 
-	/** Add a slot to the grid.
+	/** Add a light to the grid.
 	 * @returns true if successful, false otherwise.
 	 */
-	function addSlot($slot)
+	function addLight($light)
 	{
-		$this->m_slots[$slot->orientation()][$slot->x()][$slot->y()] = &$slot;
-		ksort($this->m_slots[$slot->orientation()]);
-		ksort($this->m_slots[$slot->orientation()][$slot->x()]);
-		$dx = $slot->dx();
-		$dy = $slot->dy();
-		for ($i = 0; $i < $slot->length(); ++$i) {
-			$this->setCellState($slot->x()+($i*$dx),
-					$slot->y()+($i*$dy), "", false);
+		$this->m_lights[$light->orientation()][$light->x()][$light->y()] = &$light;
+		ksort($this->m_lights[$light->orientation()]);
+		ksort($this->m_lights[$light->orientation()][$light->x()]);
+		$dx = $light->dx();
+		$dy = $light->dy();
+		for ($i = 0; $i < $light->length(); ++$i) {
+			$this->setCellState($light->x()+($i*$dx),
+					$light->y()+($i*$dy), "", false);
 		}
 		return true;
 	}
 
-	/// Find whether a slot is unused.
-	function slotUnused($slot)
+	/// Find whether a light is unused.
+	function lightUnused($light)
 	{
-		$dx = $slot->dx();
-		$dy = $slot->dy();
-		for ($i = 0; $i < $slot->length(); ++$i) {
-			if (is_string($this->cellState($slot->x()+($i*$dx),
-			                               $slot->y()+($i*$dy)))) {
+		$dx = $light->dx();
+		$dy = $light->dy();
+		for ($i = 0; $i < $light->length(); ++$i) {
+			if (is_string($this->cellState($light->x()+($i*$dx),
+			                               $light->y()+($i*$dy)))) {
 				return false;
 			}
 		}
@@ -184,14 +184,14 @@ class CrosswordGrid
 	 * @param $y int Y coordinate.
 	 * @param $state null/string State at (@p $x, @p $y).
 	 *               Must be null, "", or a single capital letter.
-	 * @param $onlyIfSlot bool Prevents change if coordinates specify a blank.
+	 * @param $onlyIfLight bool Prevents change if coordinates specify a blank.
 	 * @returns true on success, false otherwise.
 	 */
-	function setCellState($x, $y, $state, $onlyIfSlot = true)
+	function setCellState($x, $y, $state, $onlyIfLight = true)
 	{
 		if ($x >= 0 && $y >= 0 &&
 		    $x < $this->m_width && $y < $this->m_height &&
-		    (!$onlyIfSlot || $this->m_grid[$x][$y] !== null)
+		    (!$onlyIfLight || $this->m_grid[$x][$y] !== null)
 			) {
 			if (null !== $state) {
 				if (is_string($state)) {
@@ -212,18 +212,18 @@ class CrosswordGrid
 	}
 
 	/** Set the text of multiple adjacent cells.
-	 * @param $slot Slot Slot description object.
+	 * @param $light Light Light description object.
 	 * @param $text string text.
 	 * @returns Number of cells changed.
 	 */
-	function setSlotText($slot, $text)
+	function setLightText($light, $text)
 	{
 		$len = strlen($text);
-		$dx = $slot->dx();
-		$dy = $slot->dy();
+		$dx = $light->dx();
+		$dy = $light->dy();
 		for ($i = 0; $i < $len; ++$i) {
-			if (!$this->setCellState($slot->x()+($i*$dx),
-			                         $slot->y()+($i*$dy), substr($text, $i, 1), true)) {
+			if (!$this->setCellState($light->x()+($i*$dx),
+			                         $light->y()+($i*$dy), substr($text, $i, 1), true)) {
 				return $i;
 			}
 		}
@@ -265,18 +265,18 @@ class CrosswordGrid
 		}
 	}
 
-	/** Get the list of slots overlapping a cell.
-	 * @returns array[Slot]
+	/** Get the list of lights overlapping a cell.
+	 * @returns array[Light]
 	 */
-	function slotsAt($x, $y, $immediate = true)
+	function lightsAt($x, $y, $immediate = true)
 	{
 		$results = array();
 		// Horizontal
 		if ($x < $this->m_width) {
 			$i = $x;
 			while ($i >= 0 && null !== $this->m_grid[$i][$y]) {
-				if (isset($this->m_slots[self::$HORIZONTAL][$i][$y])) {
-					$results[] = &$this->m_slots[self::$HORIZONTAL][$i][$y];
+				if (isset($this->m_lights[self::$HORIZONTAL][$i][$y])) {
+					$results[] = &$this->m_lights[self::$HORIZONTAL][$i][$y];
 					break;
 				}
 				if ($immediate) {
@@ -289,8 +289,8 @@ class CrosswordGrid
 		if ($y < $this->m_height) {
 			$i = $y;
 			while ($i >= 0 && null !== $this->m_grid[$x][$i]) {
-				if (isset($this->m_slots[self::$VERTICAL][$x][$i])) {
-					$results[] = &$this->m_slots[self::$VERTICAL][$x][$i];
+				if (isset($this->m_lights[self::$VERTICAL][$x][$i])) {
+					$results[] = &$this->m_lights[self::$VERTICAL][$x][$i];
 					break;
 				}
 				if ($immediate) {
@@ -312,14 +312,14 @@ class CrosswordGrid
 	/// Number of cells high.
 	private $m_height;
 
-	/// Slots indexed by orientation, X, Y coordinate.
-	private $m_slots;
+	/// Lights indexed by orientation, X, Y coordinate.
+	private $m_lights;
 
 	/// array[int x=>array[int y=>{null,string}]]
 	private $m_grid;
 }
 
-class CrosswordPuzzleSlot extends CrosswordGridSlot
+class CrosswordPuzzleLight extends CrosswordGridLight
 {
 	function __construct($x, $y, $orientation, &$clue)
 	{
@@ -331,7 +331,7 @@ class CrosswordPuzzleSlot extends CrosswordGridSlot
 	 * Accessors
 	 */
 	
-	/// Get the clue in this slot.
+	/// Get the clue in this light.
 	function clue()
 	{
 		return $this->m_clue;
@@ -341,7 +341,7 @@ class CrosswordPuzzleSlot extends CrosswordGridSlot
 	 * Private variables
 	 */
 
-	/// The clue in this slot.
+	/// The clue in this light.
 	private $m_clue;
 }
 
@@ -357,13 +357,13 @@ class CrosswordPuzzle
 	 * Modifiers
 	 */
 
-	/** Add a slot to the grid.
+	/** Add a light to the grid.
 	 */
-	function addSlot($x, $y, $orientation, &$clue)
+	function addLight($x, $y, $orientation, &$clue)
 	{
-		$slot = new CrosswordPuzzleSlot($x, $y, $orientation, $clue);
-		$this->m_grid->addSlot($slot);
-		$this->m_grid->setSlotText($slot, $clue->solution());
+		$light = new CrosswordPuzzleLight($x, $y, $orientation, $clue);
+		$this->m_grid->addLight($light);
+		$this->m_grid->setLightText($light, $clue->solution());
 	}
 
 	/*
@@ -413,11 +413,11 @@ class CrosswordView
 						?>onclick="return crosswordClick(<?php echo("'$name', $x, $y, event") ?>)"><div><?php
 
 					// Clue number
-					$slots = $grid->slotsAt($x, $y, true);
-					if (!empty($slots)) {
+					$lights = $grid->lightsAt($x, $y, true);
+					if (!empty($lights)) {
 						++$clueNumber;
-						foreach ($slots as &$slot) {
-							$clues[$slot->orientation()][$clueNumber] = array($slot->clue(), $x, $y);
+						foreach ($lights as &$light) {
+							$clues[$light->orientation()][$clueNumber] = array($light->clue(), $x, $y);
 						}
 						?><sup><?php echo($clueNumber); ?></sup><?
 					}
@@ -458,7 +458,7 @@ class CrosswordView
 				$x = $clueInfo[1];
 				$y = $clueInfo[2];
 				?><p id="<?php echo("$name-clue-$x-$y-$orientation"); ?>" <?php
-					?>onclick="crosswordSelectSlot(<?php echo("'$name', $x, $y, $orientation, event"); ?>)"><?php
+					?>onclick="crosswordSelectLight(<?php echo("'$name', $x, $y, $orientation, event"); ?>)"><?php
 				echo($number.' ');
 				$lengths = $clue->wordLengths();
 				echo(xml_escape($clue->clue()));

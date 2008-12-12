@@ -144,8 +144,8 @@ function Crossword(name, width, height)
 		return document.getElementById(this.m_name+"-"+x+"-"+y);
 	}
 
-	// Get a list of cells in a slot, the first being the one specified
-	this.slot = function(x, y, orientation, editBox)
+	// Get a list of cells in a light, the first being the one specified
+	this.light = function(x, y, orientation, editBox)
 	{
 		var result = []
 		var cell = (editBox ? this.editBox(x, y) : this.cell(x, y));
@@ -200,7 +200,7 @@ function Crossword(name, width, height)
 
 	this.isClueComplete = function(x, y, o)
 	{
-		var boxes = this.slot(x, y, o, this.value, true);
+		var boxes = this.light(x, y, o, this.value, true);
 		for (var i = 0; i < boxes.length; ++i) {
 			if (boxes[i].value == "") {
 				return false;
@@ -215,22 +215,22 @@ function Crossword(name, width, height)
 	}
 
 
-	this.selectSlot = function(slot)
+	this.selectLight = function(light)
 	{
-		if (null != slot[0]) {
-			CssAdd(slot[0], "focus");
+		if (null != light[0]) {
+			CssAdd(light[0], "focus");
 		}
-		for (var i = 0; i < slot.length; ++i) {
-			CssAdd(slot[i], "selected");
+		for (var i = 0; i < light.length; ++i) {
+			CssAdd(light[i], "selected");
 		}
 	}
-	this.deselectSlot = function(slot)
+	this.deselectLight = function(light)
 	{
-		if (null != slot[0]) {
-			CssRemove(slot[0], "focus");
+		if (null != light[0]) {
+			CssRemove(light[0], "focus");
 		}
-		for (var i = 0; i < slot.length; ++i) {
-			CssRemove(slot[i], "selected");
+		for (var i = 0; i < light.length; ++i) {
+			CssRemove(light[i], "selected");
 		}
 	}
 
@@ -264,9 +264,9 @@ function Crossword(name, width, height)
 
 	this.toggleOrientation = function()
 	{
-		// Deselect previous slot
-		var slot = this.slot(this.m_x, this.m_y, this.m_orientation, false);
-		this.deselectSlot(slot);
+		// Deselect previous light
+		var light = this.light(this.m_x, this.m_y, this.m_orientation, false);
+		this.deselectLight(light);
 		var clue = this.clueOf(this.m_x, this.m_y, this.m_orientation);
 		if (null != clue) {
 			CssRemove(clue, "selected");
@@ -280,9 +280,9 @@ function Crossword(name, width, height)
 			this.m_orientation.toggle();
 		}
 
-		// Select new slot
-		slot = this.slot(this.m_x, this.m_y, this.m_orientation, false);
-		this.selectSlot(slot);
+		// Select new light
+		light = this.light(this.m_x, this.m_y, this.m_orientation, false);
+		this.selectLight(light);
 		clue = this.clueOf(this.m_x, this.m_y, this.m_orientation);
 		if (null != clue) {
 			CssAdd(clue, "selected");
@@ -295,9 +295,9 @@ function Crossword(name, width, height)
 		if (x != this.m_x || y != this.m_y) {
 			this.m_xyModified = false;
 		}
-		// Deselect previous slot
-		var slot = this.slot(this.m_x, this.m_y, this.m_orientation, false);
-		this.deselectSlot(slot);
+		// Deselect previous light
+		var light = this.light(this.m_x, this.m_y, this.m_orientation, false);
+		this.deselectLight(light);
 		var clue = this.clueOf(this.m_x, this.m_y, this.m_orientation);
 		if (null != clue) {
 			CssRemove(clue, "selected");
@@ -316,9 +316,9 @@ function Crossword(name, width, height)
 				this.m_orientation.toggle();
 			}
 
-			// Select new slot
-			slot = this.slot(x, y, this.m_orientation, false);
-			this.selectSlot(slot);
+			// Select new light
+			light = this.light(x, y, this.m_orientation, false);
+			this.selectLight(light);
 			clue = this.clueOf(x, y, this.m_orientation);
 			if (null != clue) {
 				CssAdd(clue, "selected");
@@ -437,7 +437,7 @@ function crosswordClick(name, x, y, e)
 	return crossword(name).click(x, y, e);
 }
 
-function crosswordSelectSlot(name, x, y, o, e)
+function crosswordSelectLight(name, x, y, o, e)
 {
 	var xw = crossword(name);
 	xw.changeCell(x, y);
