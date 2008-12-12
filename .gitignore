@@ -1,3 +1,4 @@
 # Backup and autosave files
 *~
+*.swp
 *.autosave
