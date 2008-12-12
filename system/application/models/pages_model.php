@@ -323,10 +323,11 @@ class Pages_model extends Model
 	 *	- string Page code of page to get property from.
 	 *	- TRUE Get page property from global properties.
 	 *	- FALSE Current page code specified using SetPageCode.
+	 * @param $Scope array Scope variables.
 	 * @return array Array page property as specified by @a $ArraySpec.
 	 * @pre (@a $PageCode === FALSE) => (PageCodeSet() === TRUE))
 	 */
-	function GetPropertyArrayNew($Name, $PageCode = FALSE)
+	function GetPropertyArrayNew($Name, $PageCode = FALSE, $Scope = array())
 	{
 		// property type retrieval functions
 		$property_types = array(
@@ -363,7 +364,7 @@ class Pages_model extends Model
 			}
 			foreach ($property[0] as $type => $info) {
 				if (array_key_exists($type, $property_types)) {
-					$cur['_'.$type] = $this->$property_types[$type]($label, $PageCode);
+					$cur['_'.$type] = $this->$property_types[$type]($label, $PageCode, false, $Scope);
 				}
 			}
 		
