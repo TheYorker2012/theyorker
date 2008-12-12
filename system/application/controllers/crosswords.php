@@ -2,7 +2,7 @@
 
 /** Displays and manages crossword puzzles
  */
-class Crossword extends Controller
+class Crosswords extends Controller
 {
 	function __construct()
 	{
@@ -14,7 +14,7 @@ class Crossword extends Controller
 	function index()
 	{
 		if (!CheckPermissions('admin')) return;
-		redirect('crossword/prototype');
+		redirect('crosswords/prototype');
 	}
 
 	function prototype()
@@ -56,7 +56,7 @@ class Crossword extends Controller
 		$data = array();
 		$data['crossword'] = $crosswordView;
 
-		$this->main_frame->SetContentSimple('crossword/index', $data);
+		$this->main_frame->SetContentSimple('crosswords/index', $data);
 		$this->main_frame->includeCss('stylesheets/crosswords.css');
 		$this->main_frame->includeJs('javascript/crossword.js');
 		$this->main_frame->Load();

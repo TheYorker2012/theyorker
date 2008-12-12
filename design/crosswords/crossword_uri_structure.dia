@@ -150,7 +150,7 @@ schedule#</dia:string>
             <dia:real val="0.80000000000000004"/>
           </dia:attribute>
           <dia:attribute name="pos">
-            <dia:point val="-40.5987,-5.2175"/>
+            <dia:point val="-40.5988,-5.2175"/>
           </dia:attribute>
           <dia:attribute name="color">
             <dia:color val="#000000"/>
@@ -345,7 +345,7 @@ redirects to default tip category#</dia:string>
             <dia:real val="0.80000000000000004"/>
           </dia:attribute>
           <dia:attribute name="pos">
-            <dia:point val="19.8037,23.8825"/>
+            <dia:point val="19.8038,23.8825"/>
           </dia:attribute>
           <dia:attribute name="color">
             <dia:color val="#000000"/>
@@ -509,13 +509,13 @@ shows all tips in a tip category#</dia:string>
         <dia:point val="-32.1225,5.94"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="-32.1225,5.94;-21.235,9.34"/>
+        <dia:rectangle val="-32.1225,5.94;-20.645,9.34"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
         <dia:point val="-32.1225,5.94"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
-        <dia:real val="10.887499999999999"/>
+        <dia:real val="11.477500000000001"/>
       </dia:attribute>
       <dia:attribute name="elem_height">
         <dia:real val="3.4000000000000004"/>
@@ -530,7 +530,7 @@ shows all tips in a tip category#</dia:string>
         <dia:composite type="text">
           <dia:attribute name="string">
             <dia:string>#/office/crosswords/cats
-[CROSSWORD_CATEGORY_INDEX]
+[CROSSWORD_CATEGORIES_INDEX]
 shows categories information#</dia:string>
           </dia:attribute>
           <dia:attribute name="font">
@@ -540,7 +540,7 @@ shows categories information#</dia:string>
             <dia:real val="0.80000000000000004"/>
           </dia:attribute>
           <dia:attribute name="pos">
-            <dia:point val="-26.6787,6.9825"/>
+            <dia:point val="-26.3838,6.9825"/>
           </dia:attribute>
           <dia:attribute name="color">
             <dia:color val="#000000"/>
@@ -618,7 +618,7 @@ view category information#</dia:string>
             <dia:real val="0.80000000000000004"/>
           </dia:attribute>
           <dia:attribute name="pos">
-            <dia:point val="-11.3338,7.0975"/>
+            <dia:point val="-11.3337,7.0975"/>
           </dia:attribute>
           <dia:attribute name="color">
             <dia:color val="#000000"/>
@@ -631,14 +631,14 @@ view category information#</dia:string>
     </dia:object>
     <dia:object type="Standard - BezierLine" version="0" id="O14">
       <dia:attribute name="obj_pos">
-        <dia:point val="-21.235,7.64"/>
+        <dia:point val="-20.645,7.64"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="-21.2864,7.255;-16.5725,8.255"/>
+        <dia:rectangle val="-20.6964,7.255;-16.5725,8.255"/>
       </dia:attribute>
       <dia:attribute name="bez_points">
-        <dia:point val="-21.235,7.64"/>
-        <dia:point val="-19.4375,7.59"/>
+        <dia:point val="-20.645,7.64"/>
+        <dia:point val="-18.8475,7.59"/>
         <dia:point val="-18.0169,7.755"/>
         <dia:point val="-16.6225,7.755"/>
       </dia:attribute>
@@ -740,16 +740,16 @@ edit category information#</dia:string>
     </dia:object>
     <dia:object type="UML - Activity" version="0" id="O17">
       <dia:attribute name="obj_pos">
-        <dia:point val="5.9275,-2.945"/>
+        <dia:point val="4.65471,-3.29855"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="5.9275,-2.945;15.0575,3.655"/>
+        <dia:rectangle val="4.65471,-3.29855;16.9322,3.30145"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
-        <dia:point val="5.9275,-2.945"/>
+        <dia:point val="4.65471,-3.29855"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
-        <dia:real val="9.129999999999999"/>
+        <dia:real val="12.2775"/>
       </dia:attribute>
       <dia:attribute name="elem_height">
         <dia:real val="6.6000000000000005"/>
@@ -763,7 +763,7 @@ edit category information#</dia:string>
       <dia:attribute name="text">
         <dia:composite type="text">
           <dia:attribute name="string">
-            <dia:string>#/office/crosswords/$xwordid
+            <dia:string>#/office/crosswords/crossword/$xwordid
 [CROSSWORD_VIEW]
 view crossword information
 reassign crossword
@@ -778,7 +778,7 @@ associated tips#</dia:string>
             <dia:real val="0.80000000000000004"/>
           </dia:attribute>
           <dia:attribute name="pos">
-            <dia:point val="10.4925,-1.9025"/>
+            <dia:point val="10.7935,-2.25605"/>
           </dia:attribute>
           <dia:attribute name="color">
             <dia:color val="#000000"/>
@@ -843,13 +843,13 @@ next/previous etc#</dia:string>
         <dia:point val="27.0451,-7.345"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="27.0451,-7.345;37.4926,-2.345"/>
+        <dia:rectangle val="27.0451,-7.345;40.6401,-2.345"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
         <dia:point val="27.0451,-7.345"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
-        <dia:real val="10.4475"/>
+        <dia:real val="13.595000000000001"/>
       </dia:attribute>
       <dia:attribute name="elem_height">
         <dia:real val="5"/>
@@ -863,7 +863,7 @@ next/previous etc#</dia:string>
       <dia:attribute name="text">
         <dia:composite type="text">
           <dia:attribute name="string">
-            <dia:string>#/office/crosswords/$xwordid/edit
+            <dia:string>#/office/crosswords/crossword/$xwordid/edit
 [CROSSWORD_MODIFY]
 [CROSSWORD_AUTHOR_ADD]
 edit the crossword
@@ -876,7 +876,7 @@ add tips to crossword#</dia:string>
             <dia:real val="0.80000000000000004"/>
           </dia:attribute>
           <dia:attribute name="pos">
-            <dia:point val="32.2689,-6.3025"/>
+            <dia:point val="33.8426,-6.3025"/>
           </dia:attribute>
           <dia:attribute name="color">
             <dia:color val="#000000"/>
@@ -889,14 +889,14 @@ add tips to crossword#</dia:string>
     </dia:object>
     <dia:object type="Standard - BezierLine" version="0" id="O20">
       <dia:attribute name="obj_pos">
-        <dia:point val="15.0575,0.355"/>
+        <dia:point val="16.9322,0.00144661"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="14.999,0.29648;38.3799,13.0311"/>
+        <dia:rectangle val="16.8737,-0.0570733;38.38,13.0311"/>
       </dia:attribute>
       <dia:attribute name="bez_points">
-        <dia:point val="15.0575,0.355"/>
-        <dia:point val="16.1493,6.05"/>
+        <dia:point val="16.9322,0.00144661"/>
+        <dia:point val="18.024,5.69645"/>
         <dia:point val="38.0592,6.34"/>
         <dia:point val="37.8788,12.9675"/>
       </dia:attribute>
@@ -923,13 +923,13 @@ add tips to crossword#</dia:string>
         <dia:point val="-6.045,7.755"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="-6.50054,3.5219;10.9938,8.0531"/>
+        <dia:rectangle val="-6.50054,3.16835;11.2948,8.0531"/>
       </dia:attribute>
       <dia:attribute name="bez_points">
         <dia:point val="-6.045,7.755"/>
         <dia:point val="-2.87572,2.4125"/>
-        <dia:point val="9.94928,6.85"/>
-        <dia:point val="10.4925,3.655"/>
+        <dia:point val="10.2502,6.49645"/>
+        <dia:point val="10.7935,3.30145"/>
       </dia:attribute>
       <dia:attribute name="corner_types">
         <dia:enum val="0"/>
@@ -960,14 +960,14 @@ add tips to crossword#</dia:string>
     </dia:object>
     <dia:object type="Standard - BezierLine" version="0" id="O22">
       <dia:attribute name="obj_pos">
-        <dia:point val="15.0575,0.355"/>
+        <dia:point val="16.9322,0.00144661"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="14.6437,-5.34547;27.1001,0.716361"/>
+        <dia:rectangle val="16.5184,-5.34547;27.1001,0.362809"/>
       </dia:attribute>
       <dia:attribute name="bez_points">
-        <dia:point val="15.0575,0.355"/>
-        <dia:point val="17.3493,-2.35"/>
+        <dia:point val="16.9322,0.00144661"/>
+        <dia:point val="19.224,-2.70355"/>
         <dia:point val="22.5117,-4.8"/>
         <dia:point val="27.0451,-4.845"/>
       </dia:attribute>
@@ -1003,13 +1003,13 @@ add tips to crossword#</dia:string>
         <dia:point val="27.1267,-0.995"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="27.1267,-0.995;37.8817,3.205"/>
+        <dia:rectangle val="27.1267,-0.995;41.0292,3.205"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
         <dia:point val="27.1267,-0.995"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
-        <dia:real val="10.754999999999999"/>
+        <dia:real val="13.9025"/>
       </dia:attribute>
       <dia:attribute name="elem_height">
         <dia:real val="4.2000000000000002"/>
@@ -1023,7 +1023,7 @@ add tips to crossword#</dia:string>
       <dia:attribute name="text">
         <dia:composite type="text">
           <dia:attribute name="string">
-            <dia:string>#/office/crosswords/$xwordid/stats
+            <dia:string>#/office/crosswords/crossword/$xwordid/stats
 [CROSSWORD_STATS_BASIC]
 [CROSSWORD_STATS_DETAILED]
 view stats for a crossword#</dia:string>
@@ -1035,7 +1035,7 @@ view stats for a crossword#</dia:string>
             <dia:real val="0.80000000000000004"/>
           </dia:attribute>
           <dia:attribute name="pos">
-            <dia:point val="32.5042,0.0475"/>
+            <dia:point val="34.078,0.0475"/>
           </dia:attribute>
           <dia:attribute name="color">
             <dia:color val="#000000"/>
@@ -1048,14 +1048,14 @@ view stats for a crossword#</dia:string>
     </dia:object>
     <dia:object type="Standard - BezierLine" version="0" id="O24">
       <dia:attribute name="obj_pos">
-        <dia:point val="15.0575,0.355"/>
+        <dia:point val="16.9322,0.00144661"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="14.8408,-0.132289;27.217,1.60741"/>
+        <dia:rectangle val="16.7155,-0.485843;27.217,1.60741"/>
       </dia:attribute>
       <dia:attribute name="bez_points">
-        <dia:point val="15.0575,0.355"/>
-        <dia:point val="17.3993,1.2"/>
+        <dia:point val="16.9322,0.00144661"/>
+        <dia:point val="19.274,0.846447"/>
         <dia:point val="22.2617,1.5"/>
         <dia:point val="27.1267,1.105"/>
       </dia:attribute>
@@ -1091,13 +1091,13 @@ view stats for a crossword#</dia:string>
         <dia:point val="-30.3733,-12.9075"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="-30.3733,-12.9075;-21.7258,-9.5075"/>
+        <dia:rectangle val="-30.3733,-12.9075;-21.3558,-9.5075"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
         <dia:point val="-30.3733,-12.9075"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
-        <dia:real val="8.6474999999999991"/>
+        <dia:real val="9.0175000000000001"/>
       </dia:attribute>
       <dia:attribute name="elem_height">
         <dia:real val="3.4000000000000004"/>
@@ -1112,7 +1112,7 @@ view stats for a crossword#</dia:string>
         <dia:composite type="text">
           <dia:attribute name="string">
             <dia:string>#/office/crosswords/tips
-[CROSSWORD_TIP_INDEX]
+[CROSSWORD_TIPS_INDEX]
 list tip categories#</dia:string>
           </dia:attribute>
           <dia:attribute name="font">
@@ -1122,7 +1122,7 @@ list tip categories#</dia:string>
             <dia:real val="0.80000000000000004"/>
           </dia:attribute>
           <dia:attribute name="pos">
-            <dia:point val="-26.0496,-11.865"/>
+            <dia:point val="-25.8646,-11.865"/>
           </dia:attribute>
           <dia:attribute name="color">
             <dia:color val="#000000"/>
@@ -1169,13 +1169,13 @@ list tip categories#</dia:string>
         <dia:point val="-16.3233,-15.12"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="-16.3233,-15.12;-3.85832,-6.92"/>
+        <dia:rectangle val="-16.3233,-15.12;-3.8133,-6.92"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
         <dia:point val="-16.3233,-15.12"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
-        <dia:real val="12.465"/>
+        <dia:real val="12.51"/>
       </dia:attribute>
       <dia:attribute name="elem_height">
         <dia:real val="8.1999999999999993"/>
@@ -1193,7 +1193,7 @@ list tip categories#</dia:string>
 /office/crosswords/tips/$catid
 [CROSSWORD_TIP_CATEGORY_INDEX]
 [CROSSWORD_TIP_CATEGORY_ADD]
-[CROSSWORD_TIP_CATEGORY_EDIT]
+[CROSSWORD_TIP_CATEGORY_MODIFY]
 [CROSSWORD_TIP_CATEGORY_DELETE]
 [CROSSWORD_TIP_DELETE]
 view/edit/add tip category
@@ -1206,7 +1206,7 @@ list tips in category#</dia:string>
             <dia:real val="0.80000000000000004"/>
           </dia:attribute>
           <dia:attribute name="pos">
-            <dia:point val="-10.0908,-14.0775"/>
+            <dia:point val="-10.0683,-14.0775"/>
           </dia:attribute>
           <dia:attribute name="color">
             <dia:color val="#000000"/>
@@ -1269,14 +1269,14 @@ set which crossword it is published with#</dia:string>
     </dia:object>
     <dia:object type="Standard - BezierLine" version="0" id="O29">
       <dia:attribute name="obj_pos">
-        <dia:point val="-21.7258,-11.2075"/>
+        <dia:point val="-21.3558,-11.2075"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="-21.7772,-11.52;-16.2733,-10.52"/>
+        <dia:rectangle val="-21.4072,-11.52;-16.2733,-10.52"/>
       </dia:attribute>
       <dia:attribute name="bez_points">
-        <dia:point val="-21.7258,-11.2075"/>
-        <dia:point val="-19.9283,-11.2575"/>
+        <dia:point val="-21.3558,-11.2075"/>
+        <dia:point val="-19.5583,-11.2575"/>
         <dia:point val="-17.7177,-11.02"/>
         <dia:point val="-16.3233,-11.02"/>
       </dia:attribute>
@@ -1300,14 +1300,14 @@ set which crossword it is published with#</dia:string>
     </dia:object>
     <dia:object type="Standard - BezierLine" version="0" id="O30">
       <dia:attribute name="obj_pos">
-        <dia:point val="-3.85832,-11.02"/>
+        <dia:point val="-3.8133,-11.02"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="-3.9222,-11.5212;3.77668,-10.37"/>
+        <dia:rectangle val="-3.87718,-11.5212;3.77668,-10.37"/>
       </dia:attribute>
       <dia:attribute name="bez_points">
-        <dia:point val="-3.85832,-11.02"/>
-        <dia:point val="-2.06082,-11.07"/>
+        <dia:point val="-3.8133,-11.02"/>
+        <dia:point val="-2.0158,-11.07"/>
         <dia:point val="2.33228,-10.87"/>
         <dia:point val="3.72668,-10.87"/>
       </dia:attribute>
@@ -1343,13 +1343,13 @@ set which crossword it is published with#</dia:string>
         <dia:point val="10.8029,-7.97"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="9.99062,-8.04425;11.3048,-2.86999"/>
+        <dia:rectangle val="10.2916,-8.04424;11.3047,-3.22355"/>
       </dia:attribute>
       <dia:attribute name="bez_points">
         <dia:point val="10.8029,-7.97"/>
         <dia:point val="10.6243,-4.3"/>
-        <dia:point val="10.3743,-5.3"/>
-        <dia:point val="10.4925,-2.945"/>
+        <dia:point val="10.6753,-5.65355"/>
+        <dia:point val="10.7935,-3.29855"/>
       </dia:attribute>
       <dia:attribute name="corner_types">
         <dia:enum val="0"/>
@@ -1430,7 +1430,7 @@ shows layouts information#</dia:string>
         <dia:point val="-16.5607,-4.72"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="-16.5607,-4.72;-5.06322,-0.52"/>
+        <dia:rectangle val="-16.5607,-4.72;-5.0632,-0.52"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
         <dia:point val="-16.5607,-4.72"/>
@@ -1537,14 +1537,14 @@ shows layouts information#</dia:string>
     </dia:object>
     <dia:object type="Standard - BezierLine" version="0" id="O36">
       <dia:attribute name="obj_pos">
-        <dia:point val="5.9275,0.355"/>
+        <dia:point val="4.65471,0.00144661"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="-5.12293,-3.12088;5.98093,0.408429"/>
+        <dia:rectangle val="-5.12293,-3.12088;4.70814,0.0548756"/>
       </dia:attribute>
       <dia:attribute name="bez_points">
-        <dia:point val="5.9275,0.355"/>
-        <dia:point val="1.64928,0.05"/>
+        <dia:point val="4.65471,0.00144661"/>
+        <dia:point val="0.376488,-0.303553"/>
         <dia:point val="-1.46322,-2.55"/>
         <dia:point val="-5.06322,-2.62"/>
       </dia:attribute>
@@ -1642,7 +1642,7 @@ shows layouts information#</dia:string>
         <dia:point val="-16.0382,17.625"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="-21.2332,15.1525;-15.9957,17.625"/>
+        <dia:rectangle val="-21.2332,15.28;-16.0382,17.625"/>
       </dia:attribute>
       <dia:attribute name="text">
         <dia:composite type="text">
@@ -1656,7 +1656,7 @@ shows layouts information#</dia:string>
             <dia:real val="2"/>
           </dia:attribute>
           <dia:attribute name="pos">
-            <dia:point val="-16.0382,16.55"/>
+            <dia:point val="-16.0382,16.635"/>
           </dia:attribute>
           <dia:attribute name="color">
             <dia:color val="#ff0000"/>
@@ -1675,7 +1675,7 @@ shows layouts information#</dia:string>
         <dia:point val="-15.0382,21.175"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="-15.0382,18.7025;-9.78322,21.175"/>
+        <dia:rectangle val="-15.0382,18.83;-9.8257,21.175"/>
       </dia:attribute>
       <dia:attribute name="text">
         <dia:composite type="text">
@@ -1689,7 +1689,7 @@ shows layouts information#</dia:string>
             <dia:real val="2"/>
           </dia:attribute>
           <dia:attribute name="pos">
-            <dia:point val="-15.0382,20.1"/>
+            <dia:point val="-15.0382,20.185"/>
           </dia:attribute>
           <dia:attribute name="color">
             <dia:color val="#ff0000"/>
