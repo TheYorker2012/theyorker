@@ -1,7 +1,10 @@
 CREATE TABLE `crossword_layouts` (
 	`crossword_layout_id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
 	`crossword_layout_name` VARCHAR( 32 ) NOT NULL ,
-	`crossword_layout_description` TEXT NOT NULL 
+	`crossword_layout_description` TEXT NOT NULL ,
+	UNIQUE (
+		`crossword_layout_name` 
+	)
 ) ENGINE = INNODB COMMENT = 'Layout of crosswords in html';
 
 CREATE TABLE `crossword_categories` (

@@ -1440,7 +1440,7 @@ REFERENCES users.user_entity_id#</dia:string>
         <dia:point val="-38.925,12.455"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="-38.975,12.405;-26.125,18.255"/>
+        <dia:rectangle val="-38.975,12.405;-26.125,19.305"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
         <dia:point val="-38.925,12.455"/>
@@ -1449,7 +1449,7 @@ REFERENCES users.user_entity_id#</dia:string>
         <dia:real val="12.75"/>
       </dia:attribute>
       <dia:attribute name="elem_height">
-        <dia:real val="5.7499999999999991"/>
+        <dia:real val="6.7999999999999989"/>
       </dia:attribute>
       <dia:attribute name="name">
         <dia:string>#crossword_layouts#</dia:string>
@@ -1570,7 +1570,7 @@ REFERENCES users.user_entity_id#</dia:string>
             <dia:string>##</dia:string>
           </dia:attribute>
           <dia:attribute name="comment">
-            <dia:string>##</dia:string>
+            <dia:string>#UNIQUE#</dia:string>
           </dia:attribute>
           <dia:attribute name="visibility">
             <dia:enum val="0"/>

@@ -1,6 +1,6 @@
 <?php
 /**
- * @file views/crosswords/office/categorie_edit.php
+ * @file views/crosswords/office/category_edit.php
  * @param $Permissions array[string => bool]
  * @param $MaxLengths array[string => int]
  *  - name

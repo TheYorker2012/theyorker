@@ -44,6 +44,39 @@ class Crosswords extends Controller
 		$this->main_frame->Load();
 	}
 
+	/// Validate layout input from user.
+	private function _validateLayoutPost(&$Layout, $MaxLengths)
+	{
+		$posted_layout = array(
+			'name'        => $this->input->post('xword_layout_name'),
+			'description' => $this->input->post('xword_layout_description'),
+		);
+		$valid_input = true;
+		if (false !== $posted_layout['name']) {
+			if (strlen($posted_layout['name']) > (int)$MaxLengths['name']) {
+				$this->messages->AddMessage('error',
+					'Layout name was too long. '.
+					'It must be no longer than '.(int)$MaxLengths['name'].' characters long.');
+				$valid_input = false;
+			}
+			else if (strlen($posted_layout['name']) <= 3) {
+				$this->messages->AddMessage('error',
+					'Layout name was too short. '.
+					'It must be at least 3 characters long.');
+				$valid_input = false;
+			}
+			$Layout['name'] = $posted_layout['name'];
+		} else {
+			$valid_input = false;
+		}
+		if (false !== $posted_layout['description']) {
+			$Layout['description'] = $posted_layout['description'];
+		} else {
+			$valid_input = false;
+		}
+		return $valid_input;
+	}
+
 	/** Layout management.
 	 */
 	function layouts($layout = null)
@@ -51,13 +84,100 @@ class Crosswords extends Controller
 		if (!CheckPermissions('office')) return;
 		if (null === $layout) {
 			if (!CheckRolePermissions('CROSSWORD_LAYOUTS_INDEX')) return;
+			$this->pages_model->SetPageCode('crosswords_office_layouts');
+			$data = array(
+				'Permissions' => array(
+					'layout_add' => $this->permissions_model->hasUserPermission('CROSSWORD_LAYOUT_ADD'),
+					'layout_edit' => $this->permissions_model->hasUserPermission('CROSSWORD_LAYOUT_MODIFY'),
+				),
+				'Layouts' => $this->crosswords_model->GetAllLayouts(),
+			);
+			$this->main_frame->SetContentSimple('crosswords/office/layouts', $data);
 		}
 		else {
+			$ret = (isset($_GET['ret']) ? $_GET['ret'] : null);
+			$effective_ret = (null === $ret ? 'office/crosswords/layouts' : $ret);
+			$action = site_url($this->uri->uri_string());
+			if ($ret !== null) {
+				$action .= '?ret='.urlencode($ret);
+			}
+			$data = array(
+				'MaxLengths' => array(
+					'name' => 32,
+				),
+				'Layout'     => array(
+					'name'        => '',
+					'description' => '',
+				),
+				'Actions'    => array(),
+				'PostAction' => $action,
+			);
 			if ('add' === $layout) {
 				if (!CheckRolePermissions('CROSSWORD_LAYOUT_ADD')) return;
+				// Check post input
+				$cancelled = (false !== $this->input->post('xword_layout_cancel'));
+				if ($cancelled) {
+					redirect($effective_ret);
+				}
+				$valid_input = $this->_validateLayoutPost($data['Layout'], $data['MaxLengths']);
+				// Do the adding if possible
+				if ($valid_input) {
+					$messages = $this->crosswords_model->AddLayout($data['Layout']);
+					$this->messages->AddMessages($messages);
+					if (!isset($messages['error']) || empty($messages['error'])) {
+						redirect($effective_ret);
+					}
+				}
+				// Setup output
+				$this->pages_model->SetPageCode('crosswords_office_layout_add');
+				$data['Actions']['add'] = 'Add Layout';
+				$data['Actions']['cancel'] = 'Cancel';
+				$this->main_frame->SetContentSimple('crosswords/office/layout_edit', $data);
+			}
+			elseif (is_numeric($layout)) {
+				$layout = (int)$layout;
+
+				if (!CheckRolePermissions('CROSSWORD_LAYOUT_MODIFY')) return;
+				// Retreive current data about the layout.
+				$layoutData = $this->crosswords_model->GetLayoutById($layout);
+				if (null === $data['Layout']) {
+					$this->messages->AddMessage('error', "No crossword layout with the id $layout exists.");
+					redirect($effective_ret);
+				}
+				$data['Layout'] = $layoutData;
+				// Check post input
+				$cancelled = (false !== $this->input->post('xword_layout_cancel'));
+				if ($cancelled) {
+					redirect($effective_ret);
+				}
+				$valid_input = $this->_validateLayoutPost($data['Layout'], $data['MaxLengths']);
+				// Do the saving if possible
+				if ($valid_input) {
+					// Don't bother if nothing has changed
+					if ($data['Layout']['name'] != $layoutData['name'] ||
+						$data['Layout']['description'] != $layoutData['description'])
+					{
+						$messages = $this->crosswords_model->ModifyLayout($layout, $data['Layout']);
+					}
+					else {
+						$messages = array(
+							'information' => array(xml_escape('You didn\'t make any changes.')),
+						);
+					}
+					$this->messages->AddMessages($messages);
+					if (!isset($messages['error']) || empty($messages['error'])) {
+						redirect($effective_ret);
+					}
+				}
+				// Setup output
+				$this->pages_model->SetPageCode('crosswords_office_layout_edit');
+				$data['Actions']['save'] = 'Save Layout';
+				$data['Actions']['cancel'] = 'Cancel';
+				$this->main_frame->SetContentSimple('crosswords/office/layout_edit', $data);
 			}
 			else {
-				if (!CheckRolePermissions('CROSSWORD_LAYOUT_MODIFY')) return;
+				// not numeric
+				show_404();
 			}
 		}
 		$this->main_frame->Load();
@@ -90,6 +210,7 @@ class Crosswords extends Controller
 		}
 		else {
 			$layouts = $this->crosswords_model->GetAllLayouts();
+			$action = $this->uri->uri_string();
 			$data = array(
 				'MaxLengths' => array(
 					'name'       => 255,
@@ -109,7 +230,7 @@ class Crosswords extends Controller
 				if (empty($layouts)) {
 					$this->messages->AddMessage('error',
 						'No crossword layouts have been set up. '.
-						'Please <a href="'.site_url('office/crosswords/layouts/add').'">add a layout</a> before adding categories.');
+						'Please <a href="'.site_url('office/crosswords/layouts/add').'?ret='.xml_escape(urlencode($action)).'">add a layout</a> before adding categories.');
 				}
 				else {
 					$this->main_frame->SetContentSimple('crosswords/office/category_edit', $data);
