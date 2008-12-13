@@ -89,6 +89,7 @@ class Crosswords extends Controller
 			$this->pages_model->SetPageCode('crosswords_office_layouts');
 			$data = array(
 				'Permissions' => array(
+					'index' => $this->permissions_model->hasUserPermission('CROSSWORD_INDEX'),
 					'layout_add' => $this->permissions_model->hasUserPermission('CROSSWORD_LAYOUT_ADD'),
 					'layout_edit' => $this->permissions_model->hasUserPermission('CROSSWORD_LAYOUT_MODIFY'),
 				),
@@ -143,7 +144,7 @@ class Crosswords extends Controller
 				if (!CheckRolePermissions('CROSSWORD_LAYOUT_MODIFY')) return;
 				// Retreive current data about the layout.
 				$layoutData = $this->crosswords_model->GetLayoutById($layout);
-				if (null === $data['Layout']) {
+				if (null === $layoutData) {
 					$this->messages->AddMessage('error', "No crossword layout with the id $layout exists.");
 					redirect($effective_ret);
 				}
@@ -322,15 +323,19 @@ class Crosswords extends Controller
 	function cats($category = null, $op = null)
 	{
 		if (!CheckPermissions('office')) return;
+		$this->load->model('permissions_model');
+		$permissions = array(
+			'index'            => $this->permissions_model->hasUserPermission('CROSSWORD_INDEX'),
+			'categories_index' => $this->permissions_model->hasUserPermission('CROSSWORD_CATEGORIES_INDEX'),
+			'category_add'     => $this->permissions_model->hasUserPermission('CROSSWORD_CATEGORY_ADD'),
+			'category_view'    => $this->permissions_model->hasUserPermission('CROSSWORD_CATEGORY_VIEW'),
+			'category_edit'    => $this->permissions_model->hasUserPermission('CROSSWORD_CATEGORY_MODIFY'),
+		);
 		if (null === $category) {
 			if (!CheckRolePermissions('CROSSWORD_CATEGORIES_INDEX')) return;
 			$this->pages_model->SetPageCode('crosswords_office_cats');
 			$data = array(
-				'Permissions' => array(
-					'category_add' => $this->permissions_model->hasUserPermission('CROSSWORD_CATEGORY_ADD'),
-					'category_view' => $this->permissions_model->hasUserPermission('CROSSWORD_CATEGORY_VIEW'),
-					'category_edit' => $this->permissions_model->hasUserPermission('CROSSWORD_CATEGORY_MODIFY'),
-				),
+				'Permissions' => &$permissions,
 				'Categories' => $this->crosswords_model->GetAllCategories(),
 			);
 			$this->main_frame->SetContentSimple('crosswords/office/categories', $data);
@@ -345,6 +350,7 @@ class Crosswords extends Controller
 			}
 			$layouts = $this->crosswords_model->GetAllLayouts();
 			$data = array(
+				'Permissions' => &$permissions,
 				'MaxLengths' => array(
 					'name'       => 255,
 					'short_name' => 32,
@@ -394,52 +400,68 @@ class Crosswords extends Controller
 			elseif (is_numeric($category)) {
 				$category = (int)$category;
 
-				if ($op !== 'edit') {
+				if ($op == 'edit') {
+					if (!CheckRolePermissions('CROSSWORD_CATEGORY_MODIFY')) return;
+					$this->pages_model->SetPageCode('crosswords_office_cat_edit');
+				}
+				elseif ($op === null) {
+					if (!CheckRolePermissions('CROSSWORD_CATEGORY_VIEW')) return;
+					$this->pages_model->SetPageCode('crosswords_office_cat_view');
+				}
+				else {
 					show_404();
 				}
 
-				if (!CheckRolePermissions('CROSSWORD_CATEGORY_MODIFY')) return;
-				$this->pages_model->SetPageCode('crosswords_office_cat_edit');
 				// Retreive current data about the category.
 				$categoryData = $this->crosswords_model->GetCategoryById($category);
-				if (null === $data['Category']) {
+				if (null === $categoryData) {
 					$this->messages->AddMessage('error', "No crossword category with the id $category exists.");
 					redirect($effective_ret);
 				}
 				$data['Category'] = $categoryData;
-				// Check post input
-				$cancelled = (false !== $this->input->post('xword_cat_cancel'));
-				if ($cancelled) {
-					redirect($effective_ret);
-				}
-				$valid_input = $this->_validateCategoryPost($data['Category'], $data['MaxLengths'], $layouts);
-				// Do the saving if possible
-				if ($valid_input) {
-					// Don't bother if nothing has changed
-					if ($data['Category']['name'] != $categoryData['name'] ||
-						$data['Category']['short_name'] != $categoryData['short_name'] ||
-						$data['Category']['default_width'] != $categoryData['default_width'] ||
-						$data['Category']['default_height'] != $categoryData['default_height'] ||
-						$data['Category']['default_layout_id'] != $categoryData['default_layout_id'] ||
-						$data['Category']['default_has_normal_clues'] != $categoryData['default_has_normal_clues'] ||
-						$data['Category']['default_has_cryptic_clues'] != $categoryData['default_has_cryptic_clues'] ||
-						$data['Category']['default_winners'] != $categoryData['default_winners'])
-					{
-						$messages = $this->crosswords_model->ModifyCategory($category, $data['Category']);
-					}
-					else {
-						$messages = array(
-							'information' => array(xml_escape('You didn\'t make any changes.')),
-						);
-					}
-					$this->messages->AddMessages($messages);
-					if (!isset($messages['error']) || empty($messages['error'])) {
+				// Provide some info for the title
+				$this->main_frame->SetTitleParameters(array(
+					'CATEGORY' => $categoryData['name'],
+				));
+
+				if ($op == 'edit') {
+					// Check post input
+					$cancelled = (false !== $this->input->post('xword_cat_cancel'));
+					if ($cancelled) {
 						redirect($effective_ret);
 					}
+					$valid_input = $this->_validateCategoryPost($data['Category'], $data['MaxLengths'], $layouts);
+					// Do the saving if possible
+					if ($valid_input) {
+						// Don't bother if nothing has changed
+						if ($data['Category']['name'] != $categoryData['name'] ||
+							$data['Category']['short_name'] != $categoryData['short_name'] ||
+							$data['Category']['default_width'] != $categoryData['default_width'] ||
+							$data['Category']['default_height'] != $categoryData['default_height'] ||
+							$data['Category']['default_layout_id'] != $categoryData['default_layout_id'] ||
+							$data['Category']['default_has_normal_clues'] != $categoryData['default_has_normal_clues'] ||
+							$data['Category']['default_has_cryptic_clues'] != $categoryData['default_has_cryptic_clues'] ||
+							$data['Category']['default_winners'] != $categoryData['default_winners'])
+						{
+							$messages = $this->crosswords_model->ModifyCategory($category, $data['Category']);
+						}
+						else {
+							$messages = array(
+								'information' => array(xml_escape('You didn\'t make any changes.')),
+							);
+						}
+						$this->messages->AddMessages($messages);
+						if (!isset($messages['error']) || empty($messages['error'])) {
+							redirect($effective_ret);
+						}
+					}
+					$data['Actions']['save'] = 'Save Category';
+					$data['Actions']['cancel'] = 'Cancel';
+					$this->main_frame->SetContentSimple('crosswords/office/category_edit', $data);
 				}
-				$data['Actions']['save'] = 'Save Category';
-				$data['Actions']['cancel'] = 'Cancel';
-				$this->main_frame->SetContentSimple('crosswords/office/category_edit', $data);
+				else {
+					$this->main_frame->SetContentSimple('crosswords/office/category_view', $data);
+				}
 			}
 			else {
 				show_404();
