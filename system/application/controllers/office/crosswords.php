@@ -491,22 +491,27 @@ class Crosswords extends Controller
 		if (!CheckPermissions('office')) return;
 		if (null !== $crossword && is_numeric($crossword)) {
 			$crossword = (int)$crossword;
+
+			$this->load->model('permissions_model');
+			$data = array(
+				'Permissions' => array(
+					'modify' => $this->permissions_model->hasUserPermission('CROSSWORD_MODIFY'),
+					'stats_basic' => $this->permissions_model->hasUserPermission('CROSSWORD_STATS_BASIC'),
+				),
+				'Crossword' => array(
+					'id' => $crossword,
+				),
+			);
+
 			if (null == $operation) {
 				if (!CheckRolePermissions('CROSSWORD_VIEW')) return;
 				$this->pages_model->SetPageCode('crosswords_office_xword_view');
-				$data = array(
-					'Permissions' => array(
-						'modify' => $this->permissions_model->hasUserPermission('CROSSWORD_MODIFY'),
-						'stats_basic' => $this->permissions_model->hasUserPermission('CROSSWORD_STATS_BASIC'),
-					),
-					'Crossword' => array(
-						'id' => $crossword,
-					),
-				);
 				$this->main_frame->SetContentSimple('crosswords/office/crossword_view', $data);
 			}
 			else if ('edit' === $operation) {
 				if (!CheckRolePermissions('CROSSWORD_VIEW', 'CROSSWORD_MODIFY')) return;
+				$this->pages_model->SetPageCode('crosswords_office_xword_edit');
+				$this->main_frame->SetContentSimple('crosswords/office/crossword_edit', $data);
 			}
 			else if ('stats' === $operation) {
 				if (!CheckRolePermissions('CROSSWORD_STATS_BASIC')) return;
