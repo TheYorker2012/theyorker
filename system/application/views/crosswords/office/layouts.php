@@ -14,6 +14,7 @@ if ($Permissions['layout_add']) {
 	?><div class="BlueBox"><?php
 	?><ul><?php
 	?><li><a href="<?php echo(site_url('office/crosswords/layouts/add')); ?>">Add a New Layout</a></li><?php
+	?><li><a href="<?php echo(site_url('office/crosswords')); ?>">Return to crosswords management</a></li><?php
 	?></ul><?php
 	?></div><?php
 }

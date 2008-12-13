@@ -328,6 +328,8 @@ class Crosswords extends Controller
 			$data = array(
 				'Permissions' => array(
 					'category_add' => $this->permissions_model->hasUserPermission('CROSSWORD_CATEGORY_ADD'),
+					'category_view' => $this->permissions_model->hasUserPermission('CROSSWORD_CATEGORY_VIEW'),
+					'category_edit' => $this->permissions_model->hasUserPermission('CROSSWORD_CATEGORY_MODIFY'),
 				),
 				'Categories' => $this->crosswords_model->GetAllCategories(),
 			);
