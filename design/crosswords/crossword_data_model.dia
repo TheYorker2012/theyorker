@@ -68,13 +68,13 @@
         <dia:point val="4.45,1.65"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="4.4,1.6;20.045,22.8"/>
+        <dia:rectangle val="4.4,1.6;21.45,22.8"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
         <dia:point val="4.45,1.65"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
-        <dia:real val="15.544999999999998"/>
+        <dia:real val="16.949999999999999"/>
       </dia:attribute>
       <dia:attribute name="elem_height">
         <dia:real val="21.100000000000009"/>
@@ -287,7 +287,7 @@
             <dia:string>#UNSIGNED TINYINT#</dia:string>
           </dia:attribute>
           <dia:attribute name="value">
-            <dia:string>##</dia:string>
+            <dia:string>#0#</dia:string>
           </dia:attribute>
           <dia:attribute name="comment">
             <dia:string>#[0,100]#</dia:string>
@@ -448,7 +448,7 @@
             <dia:string>#INT#</dia:string>
           </dia:attribute>
           <dia:attribute name="value">
-            <dia:string>##</dia:string>
+            <dia:string>#NULL#</dia:string>
           </dia:attribute>
           <dia:attribute name="comment">
             <dia:string>#REFERENCES comment_threads.comment_thread_id#</dia:string>
@@ -2015,13 +2015,13 @@ REFERENCES users.user_entity_id#</dia:string>
     </dia:object>
     <dia:object type="UML - Association" version="1" id="O8">
       <dia:attribute name="obj_pos">
-        <dia:point val="19.995,4.25"/>
+        <dia:point val="21.4,4.25"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="19.945,-0.3775;29.725,5.1675"/>
+        <dia:rectangle val="21.35,-0.3775;29.725,5.1675"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="19.995,4.25"/>
+        <dia:point val="21.4,4.25"/>
         <dia:point val="26.5753,4.25"/>
         <dia:point val="26.5753,0.305"/>
         <dia:point val="29.675,0.305"/>
@@ -2083,13 +2083,13 @@ REFERENCES users.user_entity_id#</dia:string>
     </dia:object>
     <dia:object type="UML - Association" version="1" id="O9">
       <dia:attribute name="obj_pos">
-        <dia:point val="19.995,4.25"/>
+        <dia:point val="21.4,4.25"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="19.945,3.45;30.225,20.7225"/>
+        <dia:rectangle val="21.35,3.45;30.225,20.7225"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="19.995,4.25"/>
+        <dia:point val="21.4,4.25"/>
         <dia:point val="26.825,4.25"/>
         <dia:point val="26.825,19.805"/>
         <dia:point val="30.175,19.805"/>
@@ -2151,13 +2151,13 @@ REFERENCES users.user_entity_id#</dia:string>
     </dia:object>
     <dia:object type="UML - Association" version="1" id="O10">
       <dia:attribute name="obj_pos">
-        <dia:point val="19.995,4.25"/>
+        <dia:point val="21.4,4.25"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="19.945,3.45;31.375,30.1225"/>
+        <dia:rectangle val="21.35,3.45;31.375,30.1225"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="19.995,4.25"/>
+        <dia:point val="21.4,4.25"/>
         <dia:point val="23.27,4.25"/>
         <dia:point val="23.27,29.205"/>
         <dia:point val="31.325,29.205"/>
@@ -2219,13 +2219,13 @@ REFERENCES users.user_entity_id#</dia:string>
     </dia:object>
     <dia:object type="UML - Association" version="1" id="O11">
       <dia:attribute name="obj_pos">
-        <dia:point val="19.995,4.25"/>
+        <dia:point val="21.4,4.25"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="19.945,-10.3775;26.775,5.1675"/>
+        <dia:rectangle val="21.35,-10.3775;26.775,5.1675"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="19.995,4.25"/>
+        <dia:point val="21.4,4.25"/>
         <dia:point val="24.9753,4.25"/>
         <dia:point val="24.9753,-9.695"/>
         <dia:point val="26.725,-9.695"/>

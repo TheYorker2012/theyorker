@@ -283,6 +283,43 @@ class Crosswords_model extends model
 	/*
 	 * Crosswords
 	 */
+
+	/** Add a new crossword to a category.
+	 * @param $category_id int Crossword category id.
+	 * @return int,null Crossword id or null on failure.
+	 */
+	function AddCrossword($category_id)
+	{
+		// Copy defaults from category
+		// This does a convenient check that the category exists
+		$sql =	'INSERT INTO `crosswords` ('.
+				'	`crossword_width`, '.
+				'	`crossword_height`, '.
+				'	`crossword_has_normal_clues`, '.
+				'	`crossword_has_cryptic_clues`, '.
+				'	`crossword_category_id`, '.
+				'	`crossword_layout_id`, '.
+				'	`crossword_winners` '.
+				') '.
+				'SELECT '.
+				'	`crossword_category_default_width`, '.
+				'	`crossword_category_default_height`, '.
+				'	`crossword_category_default_has_normal_clues`, '.
+				'	`crossword_category_default_has_cryptic_clues`, '.
+				'	`crossword_category_id`, '.
+				'	`crossword_category_default_layout_id`, '.
+				'	`crossword_category_default_winners` '.
+				'FROM `crossword_categories` '.
+				'WHERE	`crossword_category_id` = ? ';
+		$bind = array($category_id);
+		$this->db->query($sql, $bind);
+		if ($this->db->affected_rows() < 1) {
+			return null;
+		}
+		else {
+			return $this->db->insert_id();
+		}
+	}
 }
 
 ?>

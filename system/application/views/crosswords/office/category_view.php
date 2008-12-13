@@ -10,6 +10,8 @@
  *  - default_layout_id
  *  - default_has_normal_clues
  *  - default_has_cryptic_clues
+ * @param $Crosswords array of crossword objects
+ * @param $PostAction
  */
 ?>
 
@@ -24,4 +26,25 @@
 	}
 ?>
 	</ul>
+</div>
+
+<div class="BlueBox">
+	<h2>Crosswords</h2>
+	<ul>
+<?php
+	if ($Permissions['crossword_add']) {
+		?>
+		<form method="POST" action="<?php echo($PostAction); ?>" class="form">
+			<fieldset>
+				<input	name="xword_cat_view_add_crossword" class="button"
+						type="submit" value="Add Crossword" />
+			</fieldset>
+		</form>
+		<?php
+	}
+	?></ul><?php
+	foreach ($Crosswords as $id => $crossword) {
+		?><hr /><?php
+	}
+?>
 </div>

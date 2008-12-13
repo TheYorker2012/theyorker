@@ -330,6 +330,9 @@ class Crosswords extends Controller
 			'category_add'     => $this->permissions_model->hasUserPermission('CROSSWORD_CATEGORY_ADD'),
 			'category_view'    => $this->permissions_model->hasUserPermission('CROSSWORD_CATEGORY_VIEW'),
 			'category_edit'    => $this->permissions_model->hasUserPermission('CROSSWORD_CATEGORY_MODIFY'),
+			'crossword_add'    => $this->permissions_model->hasUserPermission('CROSSWORD_ADD'),
+			'crossword_view'   => $this->permissions_model->hasUserPermission('CROSSWORD_VIEW'),
+			'crossword_edit'   => $this->permissions_model->hasUserPermission('CROSSWORD_MODIFY'),
 		);
 		if (null === $category) {
 			if (!CheckRolePermissions('CROSSWORD_CATEGORIES_INDEX')) return;
@@ -460,6 +463,17 @@ class Crosswords extends Controller
 					$this->main_frame->SetContentSimple('crosswords/office/category_edit', $data);
 				}
 				else {
+					if (false !== $this->input->post('xword_cat_view_add_crossword')) {
+						if (!CheckRolePermissions('CROSSWORD_ADD')) return;
+						$new_category_id = $this->crosswords_model->AddCrossword($category);
+						if (null !== $new_category_id) {
+							redirect("office/crosswords/$new_category_id");
+						}
+						else {
+							$this->messages->AddMessage('error', 'Could not add a new crossword to this category.');
+						}
+					}
+					$data['Crosswords'] = array();
 					$this->main_frame->SetContentSimple('crosswords/office/category_view', $data);
 				}
 			}

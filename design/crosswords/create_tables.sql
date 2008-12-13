@@ -33,14 +33,14 @@ CREATE TABLE `crosswords` (
 	`crossword_height` TINYINT UNSIGNED NOT NULL ,
 	`crossword_has_normal_clues` TINYINT( 1 ) NOT NULL ,
 	`crossword_has_cryptic_clues` TINYINT( 1 ) NOT NULL ,
-	`crossword_completeness` TINYINT UNSIGNED NOT NULL COMMENT '[0,100]',
+	`crossword_completeness` TINYINT UNSIGNED NOT NULL DEFAULT '0' COMMENT '[0,100]',
 	`crossword_category_id` INT NOT NULL ,
 	`crossword_layout_id` INT NOT NULL ,
 	`crossword_deadline` TIMESTAMP NULL ,
 	`crossword_publication` TIMESTAMP NULL ,
 	`crossword_expiry` TIMESTAMP NULL ,
 	`crossword_winners` INT UNSIGNED NOT NULL ,
-	`crossword_public_comment_thread_id` INT NOT NULL,
+	`crossword_public_comment_thread_id` INT NULL,
 	FOREIGN KEY (
 		`crossword_category_id`
 	) REFERENCES `crossword_categories` (
