@@ -4,9 +4,10 @@
  * @param $Permissions array[string => bool] including:
  * @param $Crossword array of crossword information:
  *	- 'id'
+ * @param $Grid
  */
 ?>
 
-<div class="BlueBox">
-</div>
-
+<?php
+$Grid->Load();
+?>

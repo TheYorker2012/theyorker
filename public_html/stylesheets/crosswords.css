@@ -11,6 +11,14 @@ table.crossword {
 	font-size: 14pt;
 }
 
+div.crosswordEdit table.crossword {
+	border-spacing: 1px;
+}
+
+table.crossword td.blank sup {
+	display: none;
+}
+
 table.crossword td sup {
 	font-weight: normal;
 	font-size: 6pt;
@@ -47,9 +55,25 @@ table.crossword td {
 	height: 1.5em;
 }
 
-table.crossword td.blank {
+/* Blank cells */
+
+table.crossword td.blank,
+table.crossword td.blank input {
 	background-color: #FF6A00;
 }
+
+table.crossword td.blank.selected,
+table.crossword td.blank.selected input {
+	background-color: #FFAA00;
+}
+
+table.crossword td.blank.focus,
+table.crossword td.blank.focus input {
+	background-color: #FFAA00;
+	border: 1px solid red;
+}
+
+/* Selected cells */
 
 table.crossword td.selected,
 table.crossword td.selected input {

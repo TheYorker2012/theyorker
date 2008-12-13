@@ -385,9 +385,10 @@ class CrosswordPuzzle
 
 class CrosswordView
 {
-	function __construct(&$crossword)
+	function __construct(&$crossword, $edit = false)
 	{
 		$this->m_crossword = $crossword;
+		$this->m_edit = $edit;
 	}
 
 	function Load()
@@ -400,6 +401,9 @@ class CrosswordView
 		$clues = array();
 
 		?><div class="crosswordBox"><?php
+		if ($this->m_edit) {
+			?><div class="crosswordEdit"><?php
+		}
 		// Render main crossword grid
 		?><table class="crossword"><?php
 		echo("\n");
@@ -408,8 +412,8 @@ class CrosswordView
 			for ($x = 0; $x < $width; ++$x) {
 				$state = $grid->cellState($x, $y);
 				$used = is_string($state);
-				if ($used) {
-					?><td id="<?php echo("$name-$x-$y"); ?>" <?php
+				if ($used || $this->m_edit) {
+					?><td <?php if (!$used) { ?>class="blank" <?php } ?>id="<?php echo("$name-$x-$y"); ?>" <?php
 						?>onclick="return crosswordClick(<?php echo("'$name', $x, $y, event") ?>)"><div><?php
 
 					// Clue number
@@ -419,7 +423,10 @@ class CrosswordView
 						foreach ($lights as &$light) {
 							$clues[$light->orientation()][$clueNumber] = array($light->clue(), $x, $y);
 						}
-						?><sup><?php echo($clueNumber); ?></sup><?
+						?><sup id="<?php echo("$name-num-$x-$y"); ?>"><?php echo($clueNumber); ?></sup><?php
+					}
+					elseif ($this->m_edit) {
+						?><sup id="<?php echo("$name-num-$x-$y"); ?>"></sup><?php
 					}
 					// Text input box
 					?><input type="text" cols="1" maxlength="2" <?php
@@ -427,7 +434,9 @@ class CrosswordView
 					       ?>onkeydown="return crosswordKeyDown(<?php echo("'$name',$x,$y,event") ?>)" <?php
 					       ?>onkeypress="return crosswordKeyPress(<?php echo("'$name',$x,$y,event") ?>)" <?php
 					       ?>value="<?php
-							//echo(xml_escape($state));
+					if ($this->m_edit) {
+							echo(xml_escape($state));
+					}
 						   ?>" /><?php
 					?></div></td><?php
 				}
@@ -441,6 +450,9 @@ class CrosswordView
 			echo("\n");
 		}
 		?></table><?php
+		if ($this->m_edit) {
+			?></div><?php
+		}
 		?></div><?php
 
 		// List of clues
@@ -486,6 +498,7 @@ class CrosswordView
 	}
 
 	private $m_crossword;
+	private $m_edit;
 }
 
 ?>
