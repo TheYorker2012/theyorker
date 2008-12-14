@@ -78,7 +78,10 @@ table.crossword td.blank.selected input {
 table.crossword td.blank.focus,
 table.crossword td.blank.focus input {
 	background-color: #FFAA00;
-	border: 1px solid red;
+}
+
+table.crossword td.focus {
+	border: 2px solid red;
 }
 
 /* Selected cells */
