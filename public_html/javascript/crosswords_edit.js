@@ -50,7 +50,7 @@ function CrosswordEdit(name, width, height)
 			else {
 				spacerClass = "vsp";
 			}
-			if (this.m_xySpaced) {
+			if (this.m_xySpaced && !this.isCellBlank(x-this.m_orientation.dx(), y-this.m_orientation.dy())) {
 				CssAdd(cell, spacerClass);
 			}
 			else {
