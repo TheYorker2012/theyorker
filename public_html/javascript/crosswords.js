@@ -90,6 +90,7 @@ function Crossword(name, width, height)
 	this.m_y = -1;
 	this.m_orientation = newHorizontal();
 	this.m_xyModified = false;
+	this.m_xySpaced = false;
 	this.m_light = [];
 
 	this.width = function()
@@ -291,6 +292,8 @@ function Crossword(name, width, height)
 
 	this.toggleOrientation = function()
 	{
+		this.m_xySpaced = false;
+
 		// Deselect previous light
 		this.deselectLight(this.m_light);
 		var clue = this.clueOf(this.m_x, this.m_y, this.m_orientation);
@@ -320,6 +323,7 @@ function Crossword(name, width, height)
 		var edit = this.editBox(x, y);
 		if (x != this.m_x || y != this.m_y) {
 			this.m_xyModified = false;
+			this.m_xySpaced = false;
 		}
 		// Deselect previous light
 		this.deselectLight(this.m_light);
@@ -437,6 +441,7 @@ function Crossword(name, width, height)
 			var charStr = String.fromCharCode(charCode).toUpperCase();
 			if (charStr == " ") {
 				this.modifyValue(x, y, "");
+				this.m_xySpaced = true;
 			}
 			else {
 				var charcheck = /[a-zA-Z ]/;

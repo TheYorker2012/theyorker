@@ -36,6 +36,29 @@ function CrosswordEdit(name, width, height)
 		}
 	}
 
+	thisCrossword.Crossword_modifyValue = thisCrossword.modifyValue;
+	thisCrossword.modifyValue = function(x, y, v)
+	{
+		this.Crossword_modifyValue(x, y, v);
+		var cell = this.cell(x, y);
+		if (null != cell) {
+			// If we're spaced
+			var spacerClass;
+			if (this.m_orientation.isHorizontal()) {
+				spacerClass = "hsp";
+			}
+			else {
+				spacerClass = "vsp";
+			}
+			if (this.m_xySpaced) {
+				CssAdd(cell, spacerClass);
+			}
+			else {
+				CssRemove(cell, spacerClass);
+			}
+		}
+	}
+
 	return thisCrossword;
 }
 

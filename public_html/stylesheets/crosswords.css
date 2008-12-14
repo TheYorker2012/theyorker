@@ -11,10 +11,6 @@ table.crossword {
 	font-size: 14pt;
 }
 
-div.crosswordEdit table.crossword {
-	border-spacing: 1px;
-}
-
 table.crossword td.blank sup {
 	display: none;
 }
