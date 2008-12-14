@@ -21,9 +21,9 @@ class CrosswordClue
 	}
 
 	/// Get the solution.
-	function solution()
+	function solution($sep = '')
 	{
-		return join('', $this->m_solution);
+		return join($sep, $this->m_solution);
 	}
 
 	/// Get the absolute length of the solution.
@@ -123,13 +123,14 @@ class CrosswordGrid
 		$this->m_width = $width;
 		$this->m_height = $height;
 		$this->m_lights = array(self::$HORIZONTAL => array(),
-		                       self::$VERTICAL   => array());
+		                        self::$VERTICAL   => array());
 		$this->m_grid = array();
 		for ($x = 0; $x < $width; ++$x) {
 			for ($y = 0; $y < $height; ++$y) {
 				$this->m_grid[$x][$y] = null;
 			}
 		}
+		$this->m_spacers = array();
 	}
 
 	/*
@@ -146,6 +147,7 @@ class CrosswordGrid
 				}
 			}
 		}
+		$this->m_spacers = array();
 	}
 
 	/** Add a light to the grid.
@@ -211,6 +213,22 @@ class CrosswordGrid
 		}
 	}
 
+	/** Set the spacing in a direction at a cell.
+	 * @param $orientation int orientation.
+	 * @param $x int position x coordinate.
+	 * @param $y int position y coordinate.
+	 * @param $spaced bool whether spaced for this cell.
+	 */
+	function setCellSpacer($orientation, $x, $y, $spaced = true)
+	{
+		if ($spaced) {
+			$this->m_spacers[$orientation][$x][$y] = true;
+		}
+		else {
+			unset($this->m_spacers[$orientation][$x][$y]);
+		}
+	}
+
 	/** Set the text of multiple adjacent cells.
 	 * @param $light Light Light description object.
 	 * @param $text string text.
@@ -221,9 +239,16 @@ class CrosswordGrid
 		$len = strlen($text);
 		$dx = $light->dx();
 		$dy = $light->dy();
+		$spaces = 0;
 		for ($i = 0; $i < $len; ++$i) {
-			if (!$this->setCellState($light->x()+($i*$dx),
-			                         $light->y()+($i*$dy), substr($text, $i, 1), true)) {
+			$char = substr($text, $i, 1);
+			if ($char === ' ') {
+				$this->setCellSpacer($light->orientation(), $light->x()+(($i-$spaces)*$dx),
+				                                            $light->y()+(($i-$spaces)*$dy));
+				++$spaces;
+			}
+			elseif (!$this->setCellState($light->x()+(($i-$spaces)*$dx),
+			                             $light->y()+(($i-$spaces)*$dy), $char, true)) {
 				return $i;
 			}
 		}
@@ -263,6 +288,17 @@ class CrosswordGrid
 		else {
 			return null;
 		}
+	}
+
+	/** Get whether a cell has spacers horizontally or vertically.
+	 * @return array[bool] whether it has a spacer in x and y direction.
+	 */
+	function cellSpacers($x, $y)
+	{
+		return array(
+			isset($this->m_spacers[0][$x][$y]),
+			isset($this->m_spacers[1][$x][$y]),
+		);
 	}
 
 	/** Get the list of lights overlapping a cell.
@@ -317,6 +353,9 @@ class CrosswordGrid
 
 	/// array[int x=>array[int y=>{null,string}]]
 	private $m_grid;
+
+	/// Whether each cell is preceeded by a space, indexed by orientation, X, Y coordinate.
+	private $m_spacers;
 }
 
 class CrosswordPuzzleLight extends CrosswordGridLight
@@ -363,7 +402,7 @@ class CrosswordPuzzle
 	{
 		$light = new CrosswordPuzzleLight($x, $y, $orientation, $clue);
 		$this->m_grid->addLight($light);
-		$this->m_grid->setLightText($light, $clue->solution());
+		$this->m_grid->setLightText($light, $clue->solution(' '));
 	}
 
 	/*
@@ -413,7 +452,23 @@ class CrosswordView
 				$state = $grid->cellState($x, $y);
 				$used = is_string($state);
 				if ($used || $this->m_edit) {
-					?><td <?php if (!$used) { ?>class="blank" <?php } ?>id="<?php echo("$name-$x-$y"); ?>" <?php
+					$classes = array();
+					if (!$used) {
+						$classes[] = 'blank';
+					}
+					// Spacers on this cell?
+					$spacers = $grid->cellSpacers($x, $y);
+					if ($spacers[CrosswordGrid::$HORIZONTAL]) {
+						$classes[] = 'hsp';
+					}
+					if ($spacers[CrosswordGrid::$VERTICAL]) {
+						$classes[] = 'vsp';
+					}
+					?><td <?php
+						if (!empty($classes)) {
+							echo('class="'.implode(' ',$classes).'" ');
+						}
+						?>id="<?php echo("$name-$x-$y"); ?>" <?php
 						?>onclick="return crosswordClick(<?php echo("'$name', $x, $y, event") ?>)"><div><?php
 
 					// Clue number

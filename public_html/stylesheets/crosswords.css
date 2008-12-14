@@ -55,6 +55,14 @@ table.crossword td {
 	height: 1.5em;
 }
 
+/* Cells with a space before */
+table.crossword td.hsp {
+	border-left: 3px solid #FF6A00;
+}
+table.crossword td.vsp {
+	border-top: 3px solid #FF6A00;
+}
+
 /* Blank cells */
 
 table.crossword td.blank,

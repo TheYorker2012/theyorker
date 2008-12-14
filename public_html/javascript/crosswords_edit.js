@@ -10,16 +10,16 @@
 
 function CrosswordEdit(name, width, height)
 {
-	self = new Crossword(name, width, height);
+	thisCrossword = new Crossword(name, width, height);
 
-	self.Crossword_changeCell = self.changeCell;
-	self.changeCell = function(x, y)
+	thisCrossword.Crossword_changeCell = thisCrossword.changeCell;
+	thisCrossword.changeCell = function(x, y)
 	{
 		this.Crossword_changeCell(x,y);
 	}
 
-	self.Crossword_updateCellFilled = self.updateCellFilled;
-	self.updateCellFilled = function(x, y)
+	thisCrossword.Crossword_updateCellFilled = thisCrossword.updateCellFilled;
+	thisCrossword.updateCellFilled = function(x, y)
 	{
 		// Set blankness
 		var editBox = this.editBox(x, y);
@@ -36,8 +36,7 @@ function CrosswordEdit(name, width, height)
 		}
 	}
 
-	return self;
+	return thisCrossword;
 }
 
 grid = CrosswordEdit("xw", 13, 13);
-
