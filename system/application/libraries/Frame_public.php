@@ -235,7 +235,7 @@ class Frame_public extends FrameNavbar
 				$this->mHttpHeader = $CI->pages_model->GetHttpHeader();
 			}
 		}
-		
+
 		$this->mDataArray['messages'] = $CI->messages->GetMessages();
 		// if applicable, send http header
 		if (NULL !== $this->mHttpHeader) {

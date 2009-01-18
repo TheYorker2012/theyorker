@@ -25,7 +25,9 @@ class Lifestyle extends Controller
 	function index()
 	{
 		if (!CheckPermissions('public')) return;
-		
+
+$this->main_frame->SetData('menu_tab', 'lifestyle');
+
 		$homepage_article_type = 'lifestyle';
 		//Get page properties information
 		$this->pages_model->SetPageCode('homepage_'.$homepage_article_type);

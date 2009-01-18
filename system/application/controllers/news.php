@@ -60,6 +60,8 @@ class News extends Controller {
 		// Load public view
 		if (!CheckPermissions('public')) return;
 
+$this->main_frame->SetData('menu_tab', 'news');
+
 		$type_info = $this->News_model->getArticleTypeInformation($article_type);
 		if (count($type_info) == 0) {
 			$article_type = 'uninews';

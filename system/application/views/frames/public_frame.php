@@ -35,6 +35,7 @@ if (isset($medium_type)) { ?>
 
 
 	<link href="/stylesheets/v2.css" rel="stylesheet" type="text/css" />
+	<!--[if IE]><link href="/stylesheets/v2-iefix.css" rel="stylesheet" type="text/css" /><![endif]-->
 	<!--[if lte IE 6]><link href="/stylesheets/new-ie6fix.css" rel="stylesheet" type="text/css" /><![endif]-->
 
 	<?php
@@ -86,14 +87,40 @@ if (isset($medium_type)) { ?>
 		</div>
 	</div>
 
+<?php
+$menu = array(
+	array('home', '/home', array()),
+	array('news', '/news', array()),
+	array('sport', '/sport', array()),
+	array('arts', '/arts', array()),
+	array('lifestyle', '/lifestyle', array('last')),
+);
+// Has a tab been set as selected?
+$menu_style = '';
+if (!empty($menu_tab)) {
+	$menu_key = null;
+	for ($x = 0; $x < count($menu); $x++) {
+		if ($menu[$x][0] == $menu_tab) {
+			$menu_key = $x;
+			break;
+		}
+	}
+	if ($menu_key !== null) {
+		$menu[$menu_key][2][] = 'current';
+		if (($menu_key - 1) > -1) {
+			$menu[$menu_key - 1][2][] = 'next';
+		} else {
+			$menu_style = 'next';
+		}
+	}
+}
+?>
+
 	<div id="Navigation">
-		<ul id="Tabs">
-			<li class="current"><a href="/home">home</a></li>
-			<li><a href="/news/uninews">news</a></li>
-			<li><a href="/sport">sport</a></li>
-			<li><a href="/arts">arts</a></li>
-			<li><a href="/lifestyle">lifestyle</a></li>
-			<li><a href="/home">stuff</a></li>
+		<ul id="Tabs"<?php if (!empty($menu_style)) echo(' class="' . $menu_style . '"'); ?>>
+<?php foreach ($menu as $tab) { ?>
+			<li<?php if (!empty($tab[2])) echo(' class="' . implode(' ', $tab[2]) . '"'); ?>><a href="<?php echo($tab[1]); ?>"><?php echo($tab[0]); ?></a></li>
+<?php } ?>
 
 			<li class="link"><a href="http://www.yusu.org/"><img src="/image/link/248" width="20" height="20" alt="YUSU" title="YUSU" /></a></li>
 			<li class="link"><a href="http://www.facebook.com/"><img src="/image/link/246" width="20" height="20" alt="Facebook" title="Facebook" /></a></li>
@@ -105,7 +132,7 @@ if (isset($medium_type)) { ?>
 
 	<div id="Page">
 		<div id="MainBodyPane">
-		
+
 <!-- BEGIN generated content -->
 <?php
 	// TODO: check this works properly

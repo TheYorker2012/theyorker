@@ -72,21 +72,22 @@ if ($Comment['deleted']) {
 
 ?>
 
-<div id="CommentItem<?php echo($Comment['comment_id']); ?>" class="BlueBox"<?php if ($anonymous) { echo(' style="border-color:#999;"'); } ?>>
-	<div style="float:right;margin:0.2em 0.5em;text-align:right">
-		<?php
-		if (!$show_as_deleted) {
-			if ($anonymous) {
-				?><img src="/images/prototype/directory/members/anon.png" alt="Anonymous" title="Anonymous Comment" /><?php
-			} else {
-				?><img src="/images/prototype/directory/members/no_image.png" alt="User Comment" title="User Comment" /><?php
-			}
+<div style="float:<?php echo((isset($Comment['comment_order_num']) && ($Comment['comment_order_num'] % 2)) ? 'left' : 'right'); ?>;margin:0.2em 0.5em;text-align:right">
+	<?php
+	if (!$show_as_deleted) {
+		if ($anonymous) {
+			?><img src="/images/prototype/directory/members/anon.png" alt="Anonymous" title="Anonymous Comment" /><?php
+		} else {
+			?><img src="/images/prototype/directory/members/no_image.png" alt="User Comment" title="User Comment" /><?php
 		}
-		?>
-		<?php if (!$show_as_deleted && NULL !== $Comment['rating']) {
-			echo('<br />' . star_rating($Comment['rating']));
-		} ?>
-	</div>
+	}
+	?>
+	<?php if (!$show_as_deleted && NULL !== $Comment['rating']) {
+		echo('<br />' . star_rating($Comment['rating']));
+	} ?>
+</div>
+
+<div id="CommentItem<?php echo($Comment['comment_id']); ?>" class="CommentBox CommentBox<?php if (isset($Comment['comment_order_num'])) echo(($Comment['comment_order_num'] % 2) ? 'Right' : 'Left'); ?>"<?php if ($anonymous) { echo(' style="border-color:#999;"'); } ?>>
 	<div style="background-color:<?php echo ($anonymous) ? '#999' : '#20c1f0' ; ?>;color:#fff;padding:0.2em;margin:0">
 		#<?php echo((isset($Comment['comment_order_num']) ? $Comment['comment_order_num'] : '') . ' ' . $author_xml); ?> - <?php echo($Comment['post_time']); ?>
 	</div>

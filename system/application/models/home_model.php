@@ -20,63 +20,42 @@ class Home_Model extends Model {
 	 * If forecast is over 4 housr old, it is updated. Latest forecast is always returned.
 	 */
 	function GetWeather() {
-		//Return all forecasts that are less than 4 hours old. (Should be either 1 or 0).
+		// Return all forecasts that are less than 4 hours old. (Should be either 1 or 0).
 		$sql = 'SELECT weather_cache_timestamp, weather_cache_html
 			FROM weather_cache
 			WHERE weather_cache_timestamp > DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 4 HOUR) ';
 		$query = $this->db->query($sql);
-		//If 0 rows returned then get up to date weather
+		// If 0 rows returned then get up to date weather
 		if ($query->num_rows() == 0) {
-			//Get the rss feed
+			// Get the rss feed
 			try {
-				$weather_data = 'http://xml.weather.yahoo.com/forecastrss?p=UKXX0162&u=c';
+				$weather_data = 'http://weather.yahooapis.com/forecastrss?p=UKXX0162&u=c';
 				$response = @file_get_contents($weather_data);
 				if (false === $response) {
 					$html = null;
-				}
-				else {
+				} else {
 					$weather = new simplexmlelement($response);
 					$weather->registerXPathNamespace('data','http://xml.weather.yahoo.com/ns/rss/1.0');
 					$weather_forecast = $weather->xpath('//channel/item/data:forecast');
-					//Generate the html to be displayed
-					$html = '<table id="weather">';
-					$html .= '	<tr><td align="center">';
-					$html .= '		<div class="Date">'.date('l jS',strtotime($weather_forecast[0]->attributes()->date)).'</div>';
-					$html .= '	</td>';
-					$html .= '	<td align="center">';
-					$html .= '		<div class="Date">'.date('l jS',strtotime($weather_forecast[1]->attributes()->date)).'</div>';
-					$html .= '	</td></tr>';
-					$html .= '	<tr><td align="center">';
-					$html .= '		<img src="http://us.i1.yimg.com/us.yimg.com/i/us/we/52/'.xml_escape($weather_forecast[0]->attributes()->code).'.gif" title="'.xml_escape($weather_forecast[0]->attributes()->text).'" alt="'.xml_escape($weather_forecast[0]->attributes()->text).'" />';
-					$html .= '	</td>';
-					$html .= '	<td align="center">';
-					$html .= '		<img src="http://us.i1.yimg.com/us.yimg.com/i/us/we/52/'.xml_escape($weather_forecast[1]->attributes()->code).'.gif" title="'.xml_escape($weather_forecast[1]->attributes()->text).'" alt="'.xml_escape($weather_forecast[1]->attributes()->text).'" />';
-					$html .= '	</td></tr>';
-					$html .= '	<tr><td align="center">';
-					$html .= '		'.xml_escape($weather_forecast[0]->attributes()->low).'&#176;C - '.xml_escape($weather_forecast[0]->attributes()->high).'&#176;C';
-					$html .= '	</td>';
-					$html .= '	<td align="center">';
-					$html .= '		'.xml_escape($weather_forecast[1]->attributes()->low).'&#176;C - '.xml_escape($weather_forecast[1]->attributes()->high).'&#176;C';
-					$html .= '	</td></tr>';
-					$html .= '</table>';
-					//$html .= '<p class="Discreet">Data provided by Yahoo</p>';
-					/// @todo Can't we use REPLACE INTO here?
-					//Delete the old weather forecast
-					$sql = 'DELETE FROM weather_cache';
-					$query = $this->db->query($sql);
-					//Add the new weather forecast
-					$sql = 'INSERT INTO weather_cache(weather_cache_html) VALUES (?)';
-					$query = $this->db->query($sql,array($html));
+					// Generate the html to be displayed
+//					$html .= '		<div class="Date">'.date('l jS',strtotime($weather_forecast[0]->attributes()->date)).'</div>';
+//					$html .= '		<div class="Date">'.date('l jS',strtotime($weather_forecast[1]->attributes()->date)).'</div>';
+					$html = '<img src="http://us.i1.yimg.com/us.yimg.com/i/us/we/52/'.xml_escape($weather_forecast[0]->attributes()->code).'.gif" title="'.xml_escape($weather_forecast[0]->attributes()->text).'" alt="'.xml_escape($weather_forecast[0]->attributes()->text).'" />';
+//					$html .= '		<img src="http://us.i1.yimg.com/us.yimg.com/i/us/we/52/'.xml_escape($weather_forecast[1]->attributes()->code).'.gif" title="'.xml_escape($weather_forecast[1]->attributes()->text).'" alt="'.xml_escape($weather_forecast[1]->attributes()->text).'" />';
+//					$html .= '		'.xml_escape($weather_forecast[0]->attributes()->low).'&#176;C - '.xml_escape($weather_forecast[0]->attributes()->high).'&#176;C';
+//					$html .= '		'.xml_escape($weather_forecast[1]->attributes()->low).'&#176;C - '.xml_escape($weather_forecast[1]->attributes()->high).'&#176;C';
+					$sql = 'UPDATE weather_cache SET weather_cache_html = ?';
+					$query = $this->db->query($sql, array($html));
 				}
 			} catch (Exception $e) {
 				$html = null;
 			}
-			//Return the new html
+			// Return the new html
 			return $html;
 		} else {
-		//Otherwise return cached forecast from table
+			// Otherwise return cached forecast from table
 			$row = $query->row();
-			//Return cached html
+			// Return cached html
 			return $row->weather_cache_html;
 		}
 	}

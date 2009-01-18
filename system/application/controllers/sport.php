@@ -26,7 +26,9 @@ class Sport extends Controller
 	function index()
 	{
 		if (!CheckPermissions('public')) return;
-		
+
+$this->main_frame->SetData('menu_tab', 'sport');
+
 		$homepage_article_type = 'sport';
 		//Get page properties information
 		$this->pages_model->SetPageCode('homepage_'.$homepage_article_type);

@@ -90,7 +90,9 @@ class Home extends Controller {
 	{
 		OutputModes(array('xhtml','fbml'));
 		if (!CheckPermissions('public')) return;
-		
+
+$this->main_frame->SetData('menu_tab', 'home');
+
 		//poll handling
 		$poll_id = $this->polls_model->GetDisplayedPoll();
 		$user_voted = $this->polls_model->HasUserVoted($poll_id, $this->user_auth->entityId);

@@ -1,6 +1,6 @@
 			<div class="FlexiBox Box23">
 				<div style="position:relative;height:200px;">
-					<div style="position:absolute;bottom:0;left:0;background-color:#999;color:#999;font-weight:bold;font-size:25pt;display:inline;opacity:0.7;">Collegiate system: what do you think?</div>
+					<div style="position:absolute;bottom:0;left:0;background-color:#000;color:#999;font-weight:bold;font-size:25pt;display:inline;opacity:0.6;">Collegiate system: what do you think?</div>
 					<div style="position:absolute;bottom:0;left:0;color:#fff;font-weight:bold;font-size:25pt;display:inline;">Collegiate system: what do you think?</div>
 					<a href="/"><img src="/photos/home/1097" alt="Langwith College" /></a>
 				</div>
@@ -9,7 +9,7 @@
 
 <style type="text/css">
 div.pl_header {
-	background-color: #999;
+	background-color: #000;
 	color: #fff;
 	font-weight: bold;
 	text-align: left;
