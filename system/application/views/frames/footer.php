@@ -1,7 +1,7 @@
 <!--
 Weather data provided by Yahoo.
 -->
-
+<!--
 <div id="Footer">
 	<ul class="FooterLinks">
 		<li class="first"><a href="/about">About Us</a></li>
@@ -60,6 +60,29 @@ Weather data provided by Yahoo.
 		</div>
 	</div>
 	<div class="clear"></div>
+</div>
+-->
+
+<style type="text/css">
+div.bottomlinks a {
+	color: #000;
+}
+</style>
+
+<div class="bottomlinks" style="text-align:center;width:984px;margin:0 auto; padding:0;color:#f06d26;">
+	<div style="float:left;text-align:left;">
+		<a href="">About Us</a> |
+		<a href="">Join Us</a> |
+		<a href="">Advertising</a> |
+		<a href="">FAQs</a> |
+		<a href="">RSS Feeds</a> |
+		<a href="">Contact Us</a> |
+		<a href="">Privacy Policy</a>
+	</div>
+	<div style="float:right;text-align:right;">
+		<a href="">What do you think of this page?</a>
+	</div>
+	The Yorker
 </div>
 
 <?php if ($this->config->item('enable_analytics')) { ?>

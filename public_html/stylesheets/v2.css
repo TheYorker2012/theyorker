@@ -148,17 +148,25 @@ div#HeaderItems {
 	padding-right: 15px;
 }
 
+div#HeaderMenu {
+	margin-top: 5px;
+}
+
 div#HeaderMenu a {
 	color: #000;
 }
 
 div#HeaderTime {
 	color: #fff;
-	font-size: 35pt;
+	/*font-size: 35pt;*/
+	padding: 0;
+	margin: 0;
+	line-height: 1.0;
 }
 
 div#Bar {
 	background-color: #f06d26;
+	margin-bottom: 5px;
 }
 
 div#BarSearch {
@@ -210,6 +218,7 @@ div#Navigation ul#Tabs li a {
 	color: #4d4d4d;
 	text-decoration: none;
 	font-size: 12pt;
+	min-width: 3.8em;
 }
 
 div#Navigation ul#Tabs li.current a {
@@ -231,19 +240,20 @@ div#Navigation ul#Tabs li.last.current a {
 }
 
 div#Navigation ul#Tabs li a:hover {
-	font-weight: bold;
+	/*font-weight: bold;*/
+	color: #222;
 }
 
 div#Navigation ul#Tabs li.link {
 	float: right;
 	border: 0;
-	padding: 0.2em 0;
-	min-width: 0;
+	padding: 0.2em 0.4em 0.2em 0;
 }
 
 div#Navigation ul#Tabs li.link a {
 	padding: 0;
 	background-image: none;
+	min-width: 0;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -253,24 +263,27 @@ div#Navigation ul#Tabs li.link a {
 /* Formatting for the search box */
 fieldset#SearchBox {
 	display: block;
-	margin: 0em 0em 0.5em 0em;
+	/*margin: 0em 0em 0.5em 0em;*/
 	/*border: solid 1px #20c1f0;*/
-	background-image: url(/images/prototype/header/search.png);
-	background-repeat: no-repeat;
-	background-position: 3px 3px;
-	background-color: #f2f2f2;
-	padding: 2px 2px 2px 22px;
+	/*background-image: url(/images/prototype/header/search.png);*/
+	/*background-repeat: no-repeat;*/
+	/*background-position: 3px 3px;*/
+	/*background-color: #f2f2f2;*/
+	/*padding: 2px 2px 2px 22px;*/
+	padding: 0px 10px;
 	overflow: hidden;
+	background: #F2F2F2;
 }
 
 fieldset#SearchBox input {
 	display: block;
 	width: 100%;
 	margin: 0;
-	padding: 0;
+	padding: 2px 0 1px 0;
 	color: #999;
 	/* Border necessary to remove native border in KHTML browsers */
 	/*border: 1px solid white;*/
+	border: 1px #F06D26 solid;
 }
 
 /* Formatting for the navigation on the left */
@@ -371,14 +384,15 @@ h1#PageTitle a {
 /* Formatting for the (optional) bar on the right */
 div#RightColumn {
 	float: right;
-	width: 230px;
+	/*width: 230px;*/
+	width: 320px;
 }
 
 div#RightColumn h2 {
 	background-color: #999;
-	font-size: 10pt;
-	color: white;
-	padding: 0.4em;
+	font-size: 12pt;
+	color: #fff;
+	padding: 0.3em;
 	margin: 1.0em 0em 0.5em 0em;
 }
 
@@ -453,12 +467,15 @@ div.ArticleEntry h3 {
 }
 
 div#MainColumn {
-	margin-right: 240px;
+	/*margin-right: 240px;*/
+	/*margin-right: 480px;*/
+	margin-right: 325px;
 }
 
 /* Formatting for content boxes in main page area */
 div.BlueBox {
-	border: 1px solid #20c1f0;
+	/*border: 1px solid #20c1f0;*/
+	border: 1px solid #999;
 	margin: 0em 0em 0.5em 0em;
 	text-align: left;
 	background-color: #ffffff;
@@ -468,7 +485,8 @@ div.BlueBox {
 }
 
 div.BlueBox h2 {
-	color: #20c1f0;
+	/*color: #20c1f0;*/
+	color: #999;
 }
 
 div.BlueBox h3 {
@@ -649,6 +667,7 @@ div.message_error, div.message_warning, div.message_information, div.message_suc
 	float: left;
 	border: 1px solid black;
 	margin-bottom: 0.5em;
+	background-color: #ffffff;
 }
 
 div.message_error img, div.message_warning img, div.message_information img, div.message_success img {
@@ -814,12 +833,19 @@ a.fb_share_button:hover {
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 div.CommentBox {
-	border: 1px solid #20c1f0;
-	margin: 0em 0em 0.5em 0em;
+	/*border: 1px solid #20c1f0;*/
+	/*margin: 0em 0em 0.5em 0em;*/
+	padding: 0;
+	margin: 0;
 	text-align: left;
 	background-color: #ffffff;
 	/*float: left;*/
 	/*width: 100%;*/
+}
+
+div.CommentBox p {
+	margin: 0;
+	padding: 0.5em;
 }
 
 div.CommentBoxLeft {
@@ -831,7 +857,7 @@ div.CommentBoxRight {
 }
 
 div.CommentBox > * {
-	margin: 10px;
+	/*padding: 10px;*/
 }
 
 ul.comment_edit li {

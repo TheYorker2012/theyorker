@@ -41,8 +41,7 @@ function showFeedback() {
 	feedbackObj.style.display = (feedbackStatus) ? 'block' : 'none';
 	return false;
 }
-
-onLoadFunctions.push(showFeedback);
+//onLoadFunctions.push(showFeedback);
 // ** END feedback form code **
 
 

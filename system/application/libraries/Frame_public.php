@@ -14,6 +14,8 @@ $CI->load->library('adverts');
 $CI->load->library('frame_navbar');
 $CI->load->model('pages_model');
 
+$CI->load->library('academic_calendar');
+
 /**
  * @brief Main public frame library class.
  *
@@ -77,6 +79,13 @@ class Frame_public extends FrameNavbar
 			$this->mDataArray['login']['username'] = $entity_id = $CI->user_auth->username;
 		}
 		$this->mDataArray['uri'] = $CI->uri->uri_string();
+		
+		$adate = new Academic_time(mktime());
+		$this->mDataArray['date_week'] = $adate->AcademicWeek();
+		//$this->mDataArray['date_day'] = $adate->AcademicDay();
+		$this->mDataArray['date_day'] = $adate->Format('l');
+		$this->mDataArray['date_date'] = $adate->Format('dS');
+		$this->mDataArray['date_month'] = $adate->Format('F');
 	}
 	
 	/// Add keywords to the page.

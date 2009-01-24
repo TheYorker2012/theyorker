@@ -43,6 +43,23 @@ if (isset($medium_type)) { ?>
 		include('top_script.php');
 	?>
 
+<script type="text/javascript">
+// @TODO: Change date, month and week number
+function updateTime () {
+	var today = new Date();
+	var h = today.getHours();
+	var m = checkTime(today.getMinutes());
+	document.getElementById('HeaderTime').innerHTML = h+':'+m;
+	var timer = setTimeout('updateTime()', 1000);
+}
+
+function checkTime(i) {
+	if (i < 10) return '0' + i;
+	return i;
+}
+onLoadFunctions.push(updateTime);
+</script>
+
 </head>
 
 <body onload="onLoadHandler()" onunload="onUnloadHandler()">
@@ -63,14 +80,21 @@ if (isset($medium_type)) { ?>
 				?>
 				<a href="/account/">my account</a>
 			</div>
-			<div id="HeaderTime">
-				16:44
+			<div id="HeaderTime" style="font-size:40px;float:right;margin-top:10px;">
+				<?php echo(date('H:i')); ?>
+			</div>
+			<div style="float:right;color:#fff;font-size:16px;margin-top:10px;margin-right:10px;line-height:1.2;">
+				<?php echo($date_day); ?><br />
+				<b>Week <?php echo($date_week); ?></b>
 			</div>
 		</div>
 		<h1 id="HeaderLogo"><a href="/"><img src="/images/version2/frame/logo.png" alt="The Yorker" /></a></h1>
 	</div>
 
 	<div id="Bar">
+		<div style="float:right;text-align:center;padding: 3px 20px;color:#fff;">
+			<?php echo($date_date . ' ' . $date_month); ?>
+		</div>
 		<div id="BarSearch">
 			<form id="searchbox_003080001858553066416:dyddjbcpdlc" action="http://www.google.com/search">
 				<fieldset>
@@ -83,7 +107,7 @@ if (isset($medium_type)) { ?>
 			</form>
 		</div>
 		<div id="BarTicker">
-			latest news: <a href="http://www.theyorker.co.uk/news/uninews/2414">More students to miss out on grants</a>
+			latest news: <a href="/news/uninews/2414">More students to miss out on grants</a>
 		</div>
 	</div>
 

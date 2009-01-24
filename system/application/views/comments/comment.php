@@ -92,15 +92,17 @@ $report_link = ' href="'.$ReportUrlPrefix.$Comment['thread_id'].'/'.$Comment['co
 	} ?>
 </div>
 -->
-<div id="CommentItem<?php echo($Comment['comment_id']); ?>" class="CommentBox" style="margin-bottom:5px;">
-	<div style="background-color:<?php echo(($anonymous) ? '#fff' : '#fff'); ?>;color:<?php echo(($anonymous) ? '#333' : '#333'); ?>;padding:0.2em;margin:0;<?php if (!$anonymous) { ?>border-bottom: 1px #f06d26 solid;<?php } else { ?>border-bottom:1px solid #999;<?php } ?>">
-		<div style="float:right;">
-			<a <?php echo($report_link); ?> style="color:#fff">
-				<img src="/images/icons/comments_delete.png" alt="Report Abuse" title="Report Abuse" /> Report
-			</a>
-		</div>
-
-		#<?php echo((isset($Comment['comment_order_num']) ? $Comment['comment_order_num'] : '') . ' ' . $author_xml); ?> - <?php echo($Comment['post_time']); ?>
+<div id="CommentItem<?php echo($Comment['comment_id']); ?>" class="CommentBox" style="margin-bottom:5px;border-top:3px solid <?php echo(($anonymous) ? '#999' : '#f06d26'); ?>;">
+	<div style="background-color:<?php echo(($anonymous) ? '#fff' : '#fff'); ?>;color:<?php echo(($anonymous) ? '#333' : '#333'); ?>;padding:0.2em;margin:0;float:left;width:120px;">
+		#<?php echo((isset($Comment['comment_order_num']) ? $Comment['comment_order_num'] : '') . ' ' . $author_xml); ?>
+		<br />
+		<span style="font-size:x-small">
+			<?php echo($Comment['post_time']); ?>
+		</span>
+		<br />
+		<a <?php echo($report_link); ?> style="color:#555;font-size:x-small;">
+			<img src="/images/icons/comments_delete.png" alt="Report Abuse" title="Report Abuse" /> Report
+		</a>
 	</div>
 <?php
 	if (!empty($Comment['edits'])) {
@@ -202,8 +204,8 @@ $report_link = ' href="'.$ReportUrlPrefix.$Comment['thread_id'].'/'.$Comment['co
 			echo('</p>');
 		}
 	}
-	if (!$show_as_deleted) {
+	//if (!$show_as_deleted) {
 		?><div style="clear:both"></div><?php
-	}
+	//}
 	?>
 </div>

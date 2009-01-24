@@ -33,12 +33,10 @@
 
 $active_group = "default";
 
-// This is the IP of ado.is-a-geek.net
-// IP because mysql server won't allow connections to the domain name from localhost, must be localhost/ip
-$db['default']['hostname'] = "72.36.234.210";
-$db['default']['username'] = "yorkerremote";
-$db['default']['password'] = "df97nvc02d90dg";
-$db['default']['database'] = "yorkerremote";
+$db['default']['hostname'] = "localhost";
+$db['default']['username'] = "root";
+$db['default']['password'] = "wreKe4";
+$db['default']['database'] = "yorker_live";
 $db['default']['dbdriver'] = "mysql";
 $db['default']['dbprefix'] = "";
 $db['default']['active_r'] = TRUE;

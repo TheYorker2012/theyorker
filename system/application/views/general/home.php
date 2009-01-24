@@ -1,20 +1,21 @@
 			<div class="FlexiBox Box23">
 				<div style="position:relative;height:200px;">
-					<div style="position:absolute;bottom:0;left:0;background-color:#000;color:#999;font-weight:bold;font-size:25pt;display:inline;opacity:0.6;">Collegiate system: what do you think?</div>
+					<div style="position:absolute;bottom:0;left:0;background-color:#999;color:#999;font-weight:bold;font-size:25pt;display:inline;opacity:0.6;">Collegiate system: what do you think?</div>
 					<div style="position:absolute;bottom:0;left:0;color:#fff;font-weight:bold;font-size:25pt;display:inline;">Collegiate system: what do you think?</div>
-					<a href="/"><img src="/photos/home/1097" alt="Langwith College" /></a>
+					<a href="/"><img src="/photos/home/51" alt="Langwith College" /></a>
 				</div>
 			</div>
 			<div class="FlexiBox Box13 FlexiBoxLast">
 
 <style type="text/css">
 div.pl_header {
-	background-color: #000;
+	background-color: #999;
 	color: #fff;
 	font-weight: bold;
 	text-align: left;
 	font-size: 12pt;
-	padding: 3px 5px;
+	/*padding: 3px 5px;*/
+	padding: 0.3em;
 }
 div.pl_list {
 	height: 100px;
@@ -106,15 +107,15 @@ function changePreview (box, option, article_id, article_type, photo_id, photo_t
 				</div>
 				<div>
 					<a href="/news/videocasts/924">
-						<img src="/photos/small/183" alt="" title="" style="float:left;margin:0 5px 5px 5px;" />
+						<img src="/photos/small/2465" alt="" title="" style="float:left;margin:0 5px 5px 5px;" />
 						Alcuin 1sts win college football title
 					</a>
 					<div style="padding:0;margin:0;" class="Date">Monday, 14th January 2008</div>
 					<div style="clear:both;"></div>
 				</div>
 				<div>
-					<a href="/news/videocasts/858">
-						<img src="/photos/small/178" alt="" title="" style="float:left;margin:0 5px 5px 5px;" />
+					<a href="/news/videocasts/1708">
+						<img src="/photos/small/1708" alt="" title="" style="float:left;margin:0 5px 5px 5px;" />
 						Astro-turf to be re-laid over summer
 					</a>
 					<div style="padding:0;margin:0;" class="Date">Monday, 14th January 2008</div>
@@ -122,7 +123,7 @@ function changePreview (box, option, article_id, article_type, photo_id, photo_t
 				</div>
 				<div>
 					<a href="/news/videocasts/574">
-						<img src="/photos/small/1077" alt="" title="" style="float:left;margin:0 5px 5px 5px;" />
+						<img src="/photos/small/892" alt="" title="" style="float:left;margin:0 5px 5px 5px;" />
 						York Uni closer to a swimming pool
 					</a>
 					<div style="padding:0;margin:0;" class="Date">Monday, 14th January 2008</div>
@@ -132,16 +133,16 @@ function changePreview (box, option, article_id, article_type, photo_id, photo_t
 			<div class="FlexiBox Box13">
 				<div class="pl_header" style="margin-bottom:5px;">latest arts</div>
 				<div>
-					<a href="/news/videocasts/999">
-						<img src="/photos/small/1032" alt="" title="" style="float:left;margin:0 5px 5px 5px;" />
+					<a href="/news/videocasts/1002">
+						<img src="/photos/small/1002" alt="" title="" style="float:left;margin:0 5px 5px 5px;" />
 						Talking shop with Ramsey Street's Harold Bishop
 					</a>
 					<div style="padding:0;margin:0;" class="Date">Monday, 14th January 2008</div>
 					<div style="clear:both;"></div>
 				</div>
 				<div>
-					<a href="/news/videocasts/924">
-						<img src="/photos/small/937" alt="" title="" style="float:left;margin:0 5px 5px 5px;" />
+					<a href="/news/videocasts/1002">
+						<img src="/photos/small/1123" alt="" title="" style="float:left;margin:0 5px 5px 5px;" />
 						Student scam victim speaks out
 					</a>
 					<div style="padding:0;margin:0;" class="Date">Monday, 14th January 2008</div>
@@ -149,7 +150,7 @@ function changePreview (box, option, article_id, article_type, photo_id, photo_t
 				</div>
 				<div>
 					<a href="/news/videocasts/858">
-						<img src="/photos/small/810" alt="" title="" style="float:left;margin:0 5px 5px 5px;" />
+						<img src="/photos/small/2573" alt="" title="" style="float:left;margin:0 5px 5px 5px;" />
 						NUS convince students to stay
 					</a>
 					<div style="padding:0;margin:0;" class="Date">Monday, 14th January 2008</div>
@@ -157,7 +158,7 @@ function changePreview (box, option, article_id, article_type, photo_id, photo_t
 				</div>
 				<div>
 					<a href="/news/videocasts/574">
-						<img src="/photos/small/544" alt="" title="" style="float:left;margin:0 5px 5px 5px;" />
+						<img src="/photos/small/1406" alt="" title="" style="float:left;margin:0 5px 5px 5px;" />
 						Videocasts: Coming Soon
 					</a>
 					<div style="padding:0;margin:0;" class="Date">Monday, 14th January 2008</div>
@@ -168,7 +169,7 @@ function changePreview (box, option, article_id, article_type, photo_id, photo_t
 				<div class="pl_header" style="margin-bottom:5px;">latest lifestyle</div>
 				<div>
 					<a href="/news/getaway/1089">
-						<img src="/photos/small/1064" alt="" title="" style="float:left;margin:0 5px 5px 5px;" />
+						<img src="/photos/small/1632" alt="" title="" style="float:left;margin:0 5px 5px 5px;" />
 						Oxford: dreaming spires, amongst other things
 					</a>
 					<div style="padding:0;margin:0;" class="Date">Monday, 14th January 2008</div>
@@ -176,15 +177,15 @@ function changePreview (box, option, article_id, article_type, photo_id, photo_t
 				</div>
 				<div>
 					<a href="/news/freshchef/1082">
-						<img src="/photos/small/1063" alt="" title="" style="float:left;margin:0 5px 5px 5px;" />
+						<img src="/photos/small/1146" alt="" title="" style="float:left;margin:0 5px 5px 5px;" />
 						A penny saved...
 					</a>
 					<div style="padding:0;margin:0;" class="Date">Monday, 14th January 2008</div>
 					<div style="clear:both;"></div>
 				</div>
 				<div>
-					<a href="/news/lifesaver/1053">
-						<img src="/photos/small/1046" alt="" title="" style="float:left;margin:0 5px 5px 5px;" />
+					<a href="/news/lifesaver/1071">
+						<img src="/photos/small/1071" alt="" title="" style="float:left;margin:0 5px 5px 5px;" />
 						Keep fit the WAG way
 					</a>
 					<div style="padding:0;margin:0;" class="Date">Monday, 14th January 2008</div>
@@ -192,7 +193,7 @@ function changePreview (box, option, article_id, article_type, photo_id, photo_t
 				</div>
 				<div>
 					<a href="/news/thelook/1060">
-						<img src="/photos/small/1048" alt="" title="" style="float:left;margin:0 5px 5px 5px;" />
+						<img src="/photos/small/2427" alt="" title="" style="float:left;margin:0 5px 5px 5px;" />
 						Fashion resolutions for 2008
 					</a>
 					<div style="padding:0;margin:0;" class="Date">Monday, 14th January 2008</div>

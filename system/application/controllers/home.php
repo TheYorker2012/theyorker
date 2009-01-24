@@ -216,7 +216,8 @@ $this->main_frame->SetData('menu_tab', 'home');
 		}
 
 		//Obtain weather
-		$data['weather_forecast'] = $this->Home_Model->GetWeather();
+		//$data['weather_forecast'] = $this->Home_Model->GetWeather();
+		$data['weather_forecast'] = array();
 
 		//Obtain quote
 		$data['quote'] = $this->Home_Model->GetQuote();
