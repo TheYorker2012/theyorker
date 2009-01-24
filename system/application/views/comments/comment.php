@@ -70,8 +70,13 @@ if ($Comment['deleted']) {
 	);
 }
 
+// @TODO: Clean this up
+// @TEMPORARY
+$report_link = ' href="'.$ReportUrlPrefix.$Comment['thread_id'].'/'.$Comment['comment_id'].$ReportUrlPostfix.'"';
+
 ?>
 
+<!--
 <div style="float:<?php echo((isset($Comment['comment_order_num']) && ($Comment['comment_order_num'] % 2)) ? 'left' : 'right'); ?>;margin:0.2em 0.5em;text-align:right">
 	<?php
 	if (!$show_as_deleted) {
@@ -86,9 +91,15 @@ if ($Comment['deleted']) {
 		echo('<br />' . star_rating($Comment['rating']));
 	} ?>
 </div>
+-->
+<div id="CommentItem<?php echo($Comment['comment_id']); ?>" class="CommentBox" style="margin-bottom:5px;">
+	<div style="background-color:<?php echo(($anonymous) ? '#fff' : '#fff'); ?>;color:<?php echo(($anonymous) ? '#333' : '#333'); ?>;padding:0.2em;margin:0;<?php if (!$anonymous) { ?>border-bottom: 1px #f06d26 solid;<?php } else { ?>border-bottom:1px solid #999;<?php } ?>">
+		<div style="float:right;">
+			<a <?php echo($report_link); ?> style="color:#fff">
+				<img src="/images/icons/comments_delete.png" alt="Report Abuse" title="Report Abuse" /> Report
+			</a>
+		</div>
 
-<div id="CommentItem<?php echo($Comment['comment_id']); ?>" class="CommentBox CommentBox<?php if (isset($Comment['comment_order_num'])) echo(($Comment['comment_order_num'] % 2) ? 'Right' : 'Left'); ?>"<?php if ($anonymous) { echo(' style="border-color:#999;"'); } ?>>
-	<div style="background-color:<?php echo ($anonymous) ? '#999' : '#20c1f0' ; ?>;color:#fff;padding:0.2em;margin:0">
 		#<?php echo((isset($Comment['comment_order_num']) ? $Comment['comment_order_num'] : '') . ' ' . $author_xml); ?> - <?php echo($Comment['post_time']); ?>
 	</div>
 <?php
@@ -184,7 +195,6 @@ if ($Comment['deleted']) {
 			} else {
 				$report_link = '';
 			}
-			$links[] = '<a'.$report_link.'><img src="/images/icons/comments_delete.png" alt="" title="Report Abuse" /> Report Abuse</a>';
 		}
 		if (!empty($links) && !isset($Comment['no_links'])) {
 			echo('<p style="font-size:x-small;">');
