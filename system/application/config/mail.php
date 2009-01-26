@@ -5,6 +5,6 @@
 // We may also need more options in here for mail servers which need
 // authentication to send mail.
 
-$config['mail']['smtp_server'] = 'ado.is-a-geek.net'
+$config['mail']['smtp_server'] = 'theyorker.co.uk'
 
 ?>
