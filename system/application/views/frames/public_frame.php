@@ -47,7 +47,7 @@ if (isset($medium_type)) { ?>
 // @TODO: Change date, month and week number
 function updateTime () {
 	var today = new Date();
-	var h = today.getHours();
+	var h = checkTime(today.getHours());
 	var m = checkTime(today.getMinutes());
 	document.getElementById('HeaderTime').innerHTML = h+':'+m;
 	var timer = setTimeout('updateTime()', 1000);
