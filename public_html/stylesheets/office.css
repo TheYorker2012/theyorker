@@ -1,3 +1,14 @@
+/* Common */
+.clear { clear: both; }
+.clear_right { clear: right; }
+.right { text-align: right; }
+.bold { font-weight: bold; }
+
+/* Wider office */
+div#Header, div#Page, div#Footer {
+	width: 984px;
+}
+
 /* Formatting for the navigation on the left */
 div#NavigationMenu ul {
 	display: block;
