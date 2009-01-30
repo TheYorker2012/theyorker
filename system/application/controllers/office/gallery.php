@@ -6,7 +6,7 @@
  *	@author		Chris Travis (cdt502 - ctravis@gmail.com)
  */
 
-define('PHOTOS_PERPAGE', 48);
+define('PHOTOS_PERPAGE', 66);
 define('VIEW_WIDTH', 600);
 
 class Gallery extends Controller {
