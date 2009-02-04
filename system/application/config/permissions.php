@@ -20,7 +20,12 @@ $config['permissions'] = array(
 	'ADVERTISING_MODIFY'               => '(unimplemented) Modify adverts',
 	'ADVERTISING_LIVE'                 => '(unimplemented) Make an advert live',
 	'ADVERTISING_PULL'                 => '(unimplemented) Pull a live advert',
-	
+
+	'ANNOUNCEMENT_VIEW'                => 'View all announcements',
+	'ANNOUNCEMENT_SEND'                => 'Send an announcement to a group of users',
+	'ANNOUNCEMENT_MODIFY'              => 'Modify announcements',
+	'ANNOUNCEMENT_DELETE'              => 'Delete announcements',
+
 	/// @todo Review and implement article permissions
 	'ARTICLE_VIEW'                     => '(unimplemented) View article contents',
 	'ARTICLE_ADD'                      => '(unimplemented) Create new articles',
@@ -39,7 +44,10 @@ $config['permissions'] = array(
 	'BANNERS_VIEW'                     => '(unimplemented) View banners',
 	'BANNERS_UPLOAD'                   => '(unimplemented) Upload new banners',
 	'BANNERS_MODIFY'                   => '(unimplemented) Modify banners',
-	
+
+	/// @todo Review and implement bylines permissions
+	'BYLINES_VIEW'                     => '(unimplemented) User can have a byline',
+
 	/// @todo Review and implement campaign permissions
 	'CAMPAIGN_VIEW'                    => '(unimplemented) View campaigns',
 	'CAMPAIGN_ADD'                     => '(unimplemented) Add new campaign',
@@ -61,7 +69,7 @@ $config['permissions'] = array(
 	'FEEDBACK_VIEW'                    => '(unimplemented) View site feedback messages',
 	'FEEDBACK_VIEW_DELETED'            => '(unimplemented) View deleted site feedback messages',
 	'FEEDBACK_DELETE'                  => '(unimplemented) Delete site feedback messages',
-	
+
 	/// @todo Review and implement gallery permissions
 	'GALLERY_VIEW'                     => '(unimplemented) View photo gallery',
 	'GALLERY_UPLOAD'                   => '(unimplemented) Upload new photos into gallery',

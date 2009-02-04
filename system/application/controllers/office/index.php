@@ -9,6 +9,7 @@ class Index extends Controller
 	function __construct()
 	{
 		parent::Controller();
+		$this->load->model('notifications_model');
 		/// Load requests office model
 		$this->load->model('requests_model');
 		/// Load photos office model
@@ -33,16 +34,13 @@ class Index extends Controller
 			}
 		}
 
-		//from the editor message
-		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
-		
-		//requests table data
+		$data['announcements'] = $this->notifications_model->getAnnouncements();
 		$data['my_requests'] = $all_requests;
 
 		// Set up the content
+		$this->main_frame->IncludeCss('/stylesheets/office_interface.css');
+		$this->main_frame->IncludeJs('/javascript/office_interface.js');
 		$this->main_frame->SetContentSimple('office/index', $data);
-		
-		// Load the main frame
 		$this->main_frame->Load();
 	}
 }

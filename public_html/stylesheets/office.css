@@ -1,8 +1,11 @@
 /* Common */
 .clear { clear: both; }
 .clear_right { clear: right; }
+.center { text-align: center; }
 .right { text-align: right; }
 .bold { font-weight: bold; }
+.hide { display: none; }
+.show { display: block; }
 
 /* Wider office */
 div#Header, div#Page, div#Footer {
