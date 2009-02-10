@@ -136,5 +136,11 @@ class Notifications_model extends Model
 		$query = $this->db->query($sql, array($role, $subject, $wikitext, $cache, $this->user_auth->entityId, $byline));
 	}
 
+	function markAsRead($notification_id, $user_id) {
+		$sql = 'REPLACE INTO notifications_read SET
+				notification_id = ?,
+				notification_user_entity_id = ?';
+		$query = $this->db->query($sql, array($notification_id, $user_id));
+	}
 }
 ?>

@@ -3,7 +3,7 @@ onLoadFunctions.push(loadPage);
 
 // Announcements
 var current_announcement = 0;
-function showAnnouncement(id) {
+function showAnnouncement(id, status) {
 	if ((current_announcement != 0) && (current_announcement != id)) {
 		// Slide away
 		document.getElementById('announcement_' + current_announcement).style.display = 'none';
@@ -16,6 +16,10 @@ function showAnnouncement(id) {
 		// Slide in
 		document.getElementById('announcement_' + id).style.display = 'block';
 		current_announcement = id;
+		// Mark it as read
+		if (status == 'unread') {
+			xajax__readAnnouncement(id);
+		}
 	}
 	return false;
 }
@@ -61,13 +65,13 @@ switch (count($my_requests)) {
 				?>
 				<div class="item">
 					<div class="header <?php echo($status); ?>">
-						<a href="#" onclick="return showAnnouncement(<?php echo(xml_escape($announce->id)); ?>);">
+						<a href="#" onclick="return showAnnouncement(<?php echo(xml_escape($announce->id) . ',\'' . $status . '\''); ?>);">
 							<img src="/images/version2/office/smallicon_announcements_<?php echo($status); ?>.png" alt="<?php echo($status); ?>" title="<?php echo($status); ?>" />
 						</a>
 						<div class="date">
 							<?php echo(date('d/m/y H:i', $announce->time)); ?>
 						</div>
-						<a href="#" onclick="return showAnnouncement(<?php echo(xml_escape($announce->id)); ?>);">
+						<a href="#" onclick="return showAnnouncement(<?php echo(xml_escape($announce->id) . ',\'' . $status . '\''); ?>);">
 							<?php echo(xml_escape($announce->subject)); ?>
 						</a>
 					</div>

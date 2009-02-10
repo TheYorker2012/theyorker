@@ -20,6 +20,11 @@ class Index extends Controller
 	{
 		if (!CheckPermissions('office')) return;
 
+		// AJAX
+		$this->load->library('xajax');
+        $this->xajax->registerFunction(array('_readAnnouncement', &$this, '_readAnnouncement'));
+        $this->xajax->processRequests();
+
 		$this->pages_model->SetPageCode('office_index');
 
 		$article_requests = $this->requests_model->GetMyRequests($this->user_auth->entityId);
@@ -38,10 +43,19 @@ class Index extends Controller
 		$data['my_requests'] = $all_requests;
 
 		// Set up the content
+		$this->main_frame->SetExtraHead($this->xajax->getJavascript(null, '/javascript/xajax.js'));
 		$this->main_frame->IncludeCss('/stylesheets/office_interface.css');
 		$this->main_frame->IncludeJs('/javascript/office_interface.js');
 		$this->main_frame->SetContentSimple('office/index', $data);
 		$this->main_frame->Load();
+	}
+	
+	function _readAnnouncement ($notification_id = NULL) {
+		$xajax_response = new xajaxResponse();
+		if (!empty($notification_id)) {
+			$this->notifications_model->markAsRead($notification_id, $this->user_auth->entityId);
+		}
+		return $xajax_response;
 	}
 }
 
