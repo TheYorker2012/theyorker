@@ -1,3 +1,26 @@
+<script type="text/javascript">
+function getUsers (control) {
+	document.getElementById('recipients').innerHTML = '';
+	var control_value = control.options[control.selectedIndex].value;
+	if (control_value != '')
+		xajax__getRecipients(control_value);
+}
+
+function recipientList (users) {
+	var person = document.createElement('img');
+	person.src = '/images/prototype/news/person.gif';
+	person.alt = 'User';
+
+	var display = document.getElementById('recipients');
+	for (var x = 0; x < users.length; x++) {
+		var temp = document.createElement('div');
+		temp.appendChild(person.cloneNode(false));
+		temp.appendChild(document.createTextNode(users[x]));
+		display.appendChild(temp);
+	}
+}
+</script>
+
 <?php if (isset($preview)) { ?>
 	<div class="BlueBox">
 		<h2>announcement preview</h2>
@@ -29,13 +52,15 @@
 	<form action="" method="post">
 		<fieldset>
 			<label for="sendto">Recipients</label>
-			<select name="sendto" id="sendto">
+			<select name="sendto" id="sendto" onchange="getUsers(this);">
+				<option></option>
 <?php foreach ($roles as $role) { ?>
 				<option value="<?php echo($role->role); ?>"<?php if (isset($_POST['sendto']) && $role->role == $_POST['sendto']) echo(' selected="selected"'); ?>><?php echo($role->role); ?></option>
 <?php } ?>
 			</select>
+			<div id="recipients" style="float:left;clear:left;margin-left:30%;"></div>
 			<label for="subject">Subject:</label>
-			<input type="text" name="subject" id="subject" value="<?php if (isset($_POST['subject'])) echo($_POST['subject']); ?>" />
+			<input type="text" name="subject" id="subject" value="<?php if (isset($_POST['subject'])) echo($_POST['subject']); ?>" size="40" />
 			<label for="content">Content:</label>
 			<textarea name="content" id="content" rows="10" cols="50"><?php if (isset($_POST['content'])) echo($_POST['content']); ?></textarea>
 			<label for="sender">Sender Byline:</label>

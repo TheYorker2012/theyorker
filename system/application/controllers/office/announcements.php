@@ -31,6 +31,11 @@ class Announcements extends Controller
 		if (!CheckPermissions('office')) return;
 		if (!CheckRolePermissions('ANNOUNCEMENT_SEND')) return;
 
+		// AJAX
+		$this->load->library('xajax');
+        $this->xajax->registerFunction(array('_getRecipients', &$this, '_getRecipients'));
+        $this->xajax->processRequests();
+
 		$this->pages_model->SetPageCode('office_announcements');
 
 		$data['roles'] = $this->notifications_model->getAllUserRoles();
@@ -63,8 +68,22 @@ class Announcements extends Controller
 
 		// Set up the content
 		$this->main_frame->IncludeCss('/stylesheets/office_interface.css');
+		$this->main_frame->SetExtraHead($this->xajax->getJavascript(null, '/javascript/xajax.js'));
 		$this->main_frame->SetContentSimple('office/announcements/post', $data);
 		$this->main_frame->Load();
+	}
+	
+	function _getRecipients ($role = NULL) {
+		$xajax_response = new xajaxResponse();
+		if (!empty($role)) {
+			$query = $this->notifications_model->getAllUsersWithRole($role);
+			$users = array();
+			foreach ($query as $user) {
+				$users[] = $user->firstname . ' ' . $user->surname;
+			}
+			$xajax_response->addScriptCall('recipientList', $users);
+		}
+		return $xajax_response;
 	}
 }
 

@@ -42,6 +42,29 @@ class Notifications_model extends Model
 		$query = $this->db->query($sql);
 		return $query->result();
 	}
+	
+	function getAllUsersWithRole ($role_codename) {
+		$sql = 'SELECT		users.user_entity_id AS id,
+							users.user_firstname AS firstname,
+							users.user_surname AS surname
+				FROM		users';
+
+		switch ($role_codename) {
+			case 'LEVEL_ADMIN':
+				$sql .= ' WHERE users.user_office_access = 1 AND users.user_office_password IS NOT NULL AND users.user_admin = 1';
+				break;
+			case 'LEVEL_EDITOR':
+				$sql .= ' WHERE users.user_office_access = 1 AND users.user_office_password IS NOT NULL';
+				break;
+			case 'LEVEL_OFFICER':
+				$sql .= ' WHERE users.user_office_access = 1';
+				break;
+			default:
+				$sql .= ', user_roles WHERE user_roles.user_role_role_name = ? AND user_roles.user_role_user_entity_id = users.user_entity_id';
+		}
+		$query = $this->db->query($sql, array($role_codename));
+		return $query->result();
+	}
 
 	function getAnnouncements ()
 	{
