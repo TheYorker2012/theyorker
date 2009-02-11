@@ -146,8 +146,8 @@ printMenu($this, 'Sections', array(
 
 printMenu($this, 'Info + Reviews', array(
 	array('Directory', '/office/prlist', ''),
-	array('Food', '/office/reviewlist/food', ''),
-	array('Drink', '/office/reviewlist/drink', ''),
+	array('Food', '/office/reviewlist/foodreviews', ''),
+	array('Drink', '/office/reviewlist/drinkreviews', ''),
 	array('Review Tags', '/office/reviewtags', ''),
 	array('Leagues', '/office/leagues', ''),
 	array('PR System', '/office/pr/summary', ''),
