@@ -56,6 +56,12 @@ switch (count($my_requests)) {
 	<div id="office_canvas">
 		<div id="office_pages">
 			<div class="office_page" id="page_announcements">
+				<div class="actions">
+					<a href="/office/organisation">
+						<img src="/images/version2/office/button_organisation.png" alt="Organisation Chart" />
+					</a>
+				</div>
+
 				<img src="/images/version2/office/icon_announcements.png" alt="Announcements" class="title" />
 				<h2>Announcements</h2>
 
@@ -92,7 +98,7 @@ switch (count($my_requests)) {
 						<img src="/images/version2/office/button_createarticle.png" alt="New Article" />
 					</a>
 				</div>
-				<img src="/images/version2/office/icon_announcements.png" alt="Announcements" class="title" />
+				<img src="/images/version2/office/icon_article.png" alt="Your Articles" class="title" />
 				<h2>Your Articles</h2>
 
 				<table>
