@@ -111,7 +111,9 @@ $config['permissions'] = array(
 	
 	/// @todo Implement management area permissions
 	'MANAGE'                           => '(unimplemented) Access office management area',
-	
+
+	'ORGCHART_VIEW'                    => 'View the organisation chart for The Yorker LTD',
+
 	/// @todo Implement page permissions
 	'PAGES_VIEW'                       => '(unimplemented) View pages and pages list',
 	'PAGES_CUSTOM_NEW'                 => '(unimplemented) Create new custom pages',
