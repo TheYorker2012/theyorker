@@ -44,12 +44,12 @@ $property_types = array(
 					if (!$permissions['rename']) {
 						echo(' readonly="readonly"');
 					}
-					?>>
+					?> />
 				<br />
 				<label id="title_label" for="title">Header Title:</label>
 				<input name="head_title" size="35" value="<?php if (!empty($head_title)) { echo(xml_escape($head_title));} ?>" />
 				<label for="title_separate">Separate header and body titles</label>
-				<input type="checkbox" name="title_separate"<?=($title_separate ? ' checked="checked"' : '')?> />
+				<input type="checkbox" name="title_separate"<?php echo(($title_separate) ? ' checked="checked"' : ''); ?> />
 				<div id="separate_title">
 					<label for="body_title">Body Title:</label>
 					<input name="body_title" size="35" value="<?php if (!empty($body_title)) { echo(xml_escape($body_title));} ?>" />
@@ -77,7 +77,7 @@ $property_types = array(
 			</fieldset>
 			<fieldset>
 				<label for="save_button"></label>
-				<input type="submit" class="button" name="save_button" value="Save">
+				<input type="submit" class="button" name="save_button" value="Save" />
 			</fieldset>
 		</form>
 	</div>
@@ -93,20 +93,19 @@ if (!empty($properties) || $permissions['prop_add']) {
 			<?php
 			foreach ($properties as $property) {
 			?>
-				<p style="font-size:small;">
-					<b>Property Name : </b><?php echo(xml_escape($property['label']));?><br />
-					<b>Property Type : </b><?php
-						echo(xml_escape(isset($property_types[$property['type']])
-								? $property_types[$property['type']]
-								: $property['type']));
-					?><br />
-					<?php if ($permissions['prop_delete']) { ?>
-						<input type="checkbox" name="delete-<?php echo($property['id']);?>"> Delete this property
-					<?php } ?>
-				</p>
+				<label>Property Name:</label>
+				<div style="float:left;margin: 5px 0 0 10px;"><?php echo(xml_escape($property['label'])); ?></div>
+				<br />
+				<label>Property Type:</label>
+				<div style="float:left;margin:5px 0 0 10px;"><?php echo(xml_escape(isset($property_types[$property['type']]) ? $property_types[$property['type']] : $property['type'])); ?></div>
+				<br />
+				<?php if ($permissions['prop_delete']) { ?>
+					<label for="delete-<?php echo($property['id']);?>">Delete Property:</label>
+					<input type="checkbox" name="delete-<?php echo($property['id']);?>" id="delete-<?php echo($property['id']);?>" />
+				<?php } ?>
 				<input type="hidden" name="label-<?php echo($property['id']);?>" value="<?php echo(xml_escape($property['label']));?>">
 				<input type="hidden" name="type-<?php echo($property['id']);?>" value="<?php echo(xml_escape($property['type']));?>">
-				<textarea name="<?php echo($property['id']);?>" class="full" rows="10" style="width: 360px" <?php if (!$permissions['prop_edit']) {echo 'READONLY';} ?>><?php echo(xml_escape($property['text']));?></textarea>
+				<textarea name="<?php echo($property['id']);?>" class="full" rows="10" cols="40" style="clear:left;" <?php if (!$permissions['prop_edit']) {echo 'READONLY';} ?>><?php echo(xml_escape($property['text']));?></textarea>
 				<br />
 			<?php
 			}
@@ -118,14 +117,17 @@ if (!empty($properties) || $permissions['prop_add']) {
 			// See public_html/javascript/clone.js
 			?>
 			<div id="source" style="display:none">
-				<label>Property Name : <input name="label-newprop" value=""></label>
-				<label>Property Type : 
-					<select name="type-newprop">
+				<label>Property Name:</label>
+				<input name="label-newprop" value="" />
+				<br />
+				<label>Property Type:</label>
+				<select name="type-newprop">
 <?php foreach ($property_types as $code => $name) { ?>
-						<option value="<?php echo(xml_escape($code)); ?>"><?php echo(xml_escape($name)); ?></option>
+					<option value="<?php echo(xml_escape($code)); ?>"><?php echo(xml_escape($name)); ?></option>
 <?php } ?>
-					</select></label>
-				<textarea name="newprop" class="full" rows="10"></textarea>
+				</select>
+				<br />
+				<textarea name="newprop" class="full" rows="10" cols="40" style="clear:left"></textarea>
 				<br />
 			</div>
 			<?php
