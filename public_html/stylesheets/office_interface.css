@@ -135,7 +135,8 @@ div.content {
 	background-color: #f2f2f2;
 }
 
-div.content p {
+div.content p,
+div.content h3 {
 	margin-top: 0;
 }
 
