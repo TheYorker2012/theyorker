@@ -207,6 +207,7 @@ class Home extends Controller {
 			$data['poll_vote_box'] = null;
 		}
 
+		$this->main_frame->SetData('menu_tab', 'home');
 		$this->main_frame->SetContentSimple('general/home', $data);
 		$this->main_frame->IncludeCss('stylesheets/home.css');
 		$this->main_frame->Load();
