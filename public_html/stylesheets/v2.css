@@ -838,6 +838,12 @@ div.CommentAnonymous {
 	border-top-color: #999;
 }
 
+div.CommentDeleted {
+	border-top-width: 0;
+	text-align: center;
+	background-color: transparent;
+}
+
 div.CommentBox p {
 	margin-top: 0;
 	padding: 0.2em 0.2em 0 0;

@@ -51,24 +51,7 @@ if (!function_exists('star_rating')) {
 
 $show_as_deleted = $Comment['deleted'] && (!isset($Mode) || ($Mode != 'mod' && $Mode != 'debug'));
 $anonymous = ($Comment['author'] == 'Anonymous');
-
-$author_xml = xml_escape($Comment['author']);
-
-if ($show_as_deleted) {
-	$author_xml = '<em>comment removed</em>';
-	$Comment['xhtml'] = '';
-	$Comment['edits'] = array();
-} else {
-	$author_xml = '<b>'.$author_xml.'</b>';
-}
-if ($Comment['deleted']) {
-	$Comment['edits'][] = array(
-		'action' => 'del',
-		'edit_time' => $Comment['deleted_time'],
-		'by_author' => $Comment['deleted_by_owner'],
-		'name'      => $Comment['deleted_name'],
-	);
-}
+$author_xml = '<b>' . xml_escape($Comment['author']) . '</b>';
 
 // Only show 'report abuse' link if 'no_report' index isn't set
 // Don't provide a working 'report abuse' link if only showing a comment preview
@@ -77,6 +60,13 @@ if (!$Comment['owned'] && !isset($Comment['preview']) && (!array_key_exists('no_
 }
 
 ?>
+
+<?php if ($show_as_deleted) { ?>
+	<div id="CommentItem<?php echo($Comment['comment_id']); ?>" class="CommentBox CommentDeleted">
+		<img src="/images/icons/delete.png" alt="Comment Deleted" title="Comment Deleted" />
+		comment deleted by <?php echo($Comment['deleted_by_owner'] ? 'the author' : 'a moderator'); ?>
+	</div>
+<?php } else { ?>
 
 <div id="CommentItem<?php echo($Comment['comment_id']); ?>" class="CommentBox<?php if ($anonymous) echo(' CommentAnonymous'); ?>">
 	<div class="CommentInfo">
@@ -199,3 +189,5 @@ if (!$Comment['owned'] && !isset($Comment['preview']) && (!array_key_exists('no_
 
 	</div>
 </div>
+
+<?php } ?>
