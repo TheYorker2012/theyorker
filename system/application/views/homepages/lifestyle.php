@@ -23,6 +23,7 @@
 		</div>
 		<?php } ?>
 	</div>
+	<?php if ($last) { ?><div class="clear"></div><?php } ?>
 <?php } ?>
 
 <?php
