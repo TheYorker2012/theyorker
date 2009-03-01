@@ -45,6 +45,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 
 <body onload="onLoadHandler()" onunload="onUnloadHandler()">
 	<div id="Header">
+		<h1 id="HeaderLogo"><a href="/"><img src="/images/version2/frame/logo.png" alt="The Yorker" /></a></h1>
 		<div id="HeaderItems">
 			<div id="HeaderMenu">
 				<?php
@@ -73,7 +74,6 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 				</div>
 			</div>
 		</div>
-		<h1 id="HeaderLogo"><a href="/"><img src="/images/version2/frame/logo.png" alt="The Yorker" /></a></h1>
 	</div>
 
 	<div id="Bar">

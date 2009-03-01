@@ -133,10 +133,11 @@ div#NavigationColumn {
 div#Header {
 	background-image: url('/images/version2/frame/header_bg.png');
 	background-repeat: no-repeat;
+	height: 100px;
 }
 
 h1#HeaderLogo {
-	height: 100px;
+	float: left;
 	margin: 0;
 	/* Required only when other stylesheets are included */
 	padding: 0;
