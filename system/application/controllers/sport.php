@@ -41,9 +41,10 @@ class Sport extends Controller
 		$featured_article_id = $this->News_model->GetLatestFeaturedId($homepage_article_type);
 		if ($featured_article_id === NULL) {
 			// No featured article, use the most recent
-			$featured_article_id = $this->News_model->GetLatestId($homepage_article_type, 1);
+			$latest_article_id = $this->News_model->GetLatestId($homepage_article_type, 1);
+			$featured_article_id = $latest_article_id[0];
 		}
-		$data['main_articles'] = $this->Home_Hack_Model->getArticleTitles(array($featured_article_id[0]), '%W, %D %M %Y');
+		$data['main_articles'] = $this->Home_Hack_Model->getArticleTitles(array($featured_article_id), '%W, %D %M %Y');
 
 		// Get sub-types for article section
 		$data['section_articles'] = array();
