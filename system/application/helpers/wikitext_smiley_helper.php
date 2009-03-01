@@ -14,7 +14,7 @@ $CI->load->helper('smiley');
  * @param	string	the URL to the folder containing the smiley images
  * @return	string
  */	
-function wikitext_parse_smileys($str = '', $image_url = 'smileys/', $smileys = NULL)
+function wikitext_parse_smileys($str = '', $image_url = 'images/smileys/', $smileys = NULL)
 {
 	if ($image_url == '')
 	{
