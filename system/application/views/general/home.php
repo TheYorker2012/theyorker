@@ -32,7 +32,7 @@ function changePreview (option, article_id, article_type, photo_id, photo_title)
 	</div>
 	<div class="ArticleRolloverImage">
 		<a id="ArticleRolloverLink" href="/news/uninews/234">
-			<img id="ArticleRolloverImg" src="/photos/preview/1095" alt="Photo Title" title="Photo Title" />
+			<img id="ArticleRolloverImg" src="/photos/preview/<?php echo(xml_escape($articles['uninews'][$x]['photo_id'])); ?>" alt="<?php echo(xml_escape($articles['uninews'][$x]['photo_title'])); ?>" title="<?php echo(xml_escape($articles['uninews'][$x]['photo_title'])); ?>" />
 		</a>
 	</div>
 	<div class="ArticleRolloverList">
