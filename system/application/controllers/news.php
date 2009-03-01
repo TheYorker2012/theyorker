@@ -76,7 +76,7 @@ class News extends Controller {
 			}
 		}
 		// Get the latest article ids from the model.
-		$latest_article_ids = $this->News_model->GetLatestId($article_type,12);
+		$latest_article_ids = $this->News_model->GetLatestId($article_type,13);
 		
 		if ($type_info['parent_id'] != NULL) {
 			$parent = $this->News_model->getArticleTypeCodename($type_info['parent_id']);
@@ -223,13 +223,13 @@ class News extends Controller {
 
 		/// Get some of the 2nd- and 3rd-latest articles
 		$news_previews = array();
-		for ($index = 1; $index <= 3 && $index < count($latest_article_ids); $index++) {
+		for ($index = 1; $index <= 4 && $index < count($latest_article_ids); $index++) {
 			array_push($news_previews, $this->News_model->GetSummaryArticle($latest_article_ids[$index], "Right"));
 		}
 
 		/// Get less of the next 3 newest articles
 		$news_others = array();
-		for ($index = 4; $index < count($latest_article_ids); $index++) {
+		for ($index = 5; $index < count($latest_article_ids); $index++) {
 			array_push($news_others, $this->News_model->GetSimpleArticle($latest_article_ids[$index], "Left"));
 		}
 

@@ -25,7 +25,7 @@
 <div class="BlueBox" id="SectionCommentAdd">
 	<?php
 	if (!$LoggedIn) {
-		echo('<h2>Add Comment</h2>');
+		echo('<h2>add comment</h2>');
 		echo('<p>You must <a href="'.$LoginUrl.'">log in</a> to submit a comment</p>');
 	} else { ?>
 		<script type="text/javascript" src="/javascript/wikitoolbar.js"></script>
@@ -92,7 +92,7 @@
 		<?php
 		// Show the preview
 		if (NULL !== $Preview) {
-			echo('<h2>Comment Preview:</h2>');
+			echo('<h2>comment preview</h2>');
 			$CI = &get_instance();
 			echo('<div id="CommentPreview">');
 			$CI->load->view('comments/comment', array(
@@ -102,7 +102,7 @@
 			echo '</div>';
 		}
 		?>
-		<h2><?php echo($AlreadyExists?'Edit':'Add'); ?> Comment</h2>
+		<h2><?php echo($AlreadyExists?'edit':'add'); ?> comment</h2>
 		<form class="form" id="CommentAdd" method="post" action="<?php echo($FormTarget); ?>">
 			<fieldset>
 				<?php /*
@@ -122,19 +122,23 @@
 					<div style="clear:both"></div>
 				</div>
 
-				<?php if ($Thread['allow_anonymous_comments']) { ?>
-					<label for="CommentAddAnonymous" style="width:35%;">Post Anonymously:</label>
-					<input type="checkbox" name="CommentAddAnonymous" id="CommentAddAnonymous"<?php if ($DefaultAnonymous) echo(' checked="checked"'); ?> />
-				<?php } ?>
-
-				<p>
-				<textarea name="CommentAddContent" id="CommentAddContent" cols="40" rows="4"><?php echo(xml_escape($DefaultContent)); ?></textarea>
-				</p>
+				<div>
+					<?php if ($Thread['allow_anonymous_comments']) { ?>
+						<label for="CommentAddAnonymous">Post Anonymously:</label>
+						<input type="checkbox" name="CommentAddAnonymous" id="CommentAddAnonymous"<?php if ($DefaultAnonymous) echo(' checked="checked"'); ?> />
+						<br />
+					<?php } ?>
+					<p>
+						<textarea name="CommentAddContent" id="CommentAddContent" cols="72" rows="4"><?php echo(xml_escape($DefaultContent)); ?></textarea>
+					</p>
+				</div>
 			</fieldset>
-			
+
 			<fieldset>
 				<div class="comment_policy">
 					<p><a href="#" onclick="return moveObject('SmileySelect',event,10,10);">Insert Smiley</a></p>
+				</div>
+				<div class="comment_policy">
 					<?php echo($WarningMessageXml); ?>
 				</div>
 				

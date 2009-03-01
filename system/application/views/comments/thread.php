@@ -38,7 +38,7 @@ if (!function_exists('star_rating_large')) {
 
 if ($Thread['allow_ratings']) {
 	echo('<div class="BlueBox">');
-	echo('<h2>User Ratings</h2>');
+	echo('<h2>user ratings</h2>');
 	if (NULL !== $Thread['average_rating']) {
 		echo('<p>Average rating of '.star_rating_large($Thread['average_rating'],'Average').
 			$Thread['num_ratings'].' user ratings</p>');

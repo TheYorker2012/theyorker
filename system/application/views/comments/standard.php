@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file views/comments/standard.php
  * @brief Standard comment layout.
@@ -9,13 +8,18 @@
  * @param $CommentList   ViewsView.
  */
 ?>
-<a id="comments">&nbsp;</a>
+
+<div class="CommentsTitle">
+	<div>
+		<a href="#comments" id="comments">comments</a>
+	</div>
+</div>
+
 <?php
 if (isset($CommentThread)) {
 	$CommentThread->Load();
 }
 ?>
-<h2 style="color:#20c1f0;">Comments</h2>
 <?php
 if (isset($CommentList)) {
 	$CommentList->Load();
@@ -23,5 +27,4 @@ if (isset($CommentList)) {
 if (isset($CommentAdd)) {
 	$CommentAdd->Load();
 }
-
 ?>
