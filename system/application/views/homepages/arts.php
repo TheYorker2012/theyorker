@@ -6,10 +6,11 @@
 	</div>
 </div>
 
-<?php function ArticleList ($section, $articles, $last = false) { ?>
+<?php function ArticleList ($section, $articles, $last = false) {
+	if (count($articles) == 0) return; ?>
 	<div class="ArticleListBox FlexiBox Box13<?php if ($last) echo(' FlexiBoxLast'); ?>">
 		<div class="ArticleListTitle">
-			<a href="/<?php echo($section); ?>">latest <?php echo($section); ?></a>
+			<a href="/news/<?php echo($articles[0]['article_type'] . '/' . $articles[0]['id']); ?>">latest <?php echo($section); ?></a>
 		</div>
 		<?php foreach ($articles as $article) { ?>
 		<div>
