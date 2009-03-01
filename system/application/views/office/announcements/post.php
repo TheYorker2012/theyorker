@@ -58,11 +58,15 @@ function recipientList (users) {
 				<option value="<?php echo($role->role); ?>"<?php if (isset($_POST['sendto']) && $role->role == $_POST['sendto']) echo(' selected="selected"'); ?>><?php echo($role->role); ?></option>
 <?php } ?>
 			</select>
+			<br />
 			<div id="recipients" style="float:left;clear:left;margin-left:30%;"></div>
+			<br />
 			<label for="subject">Subject:</label>
 			<input type="text" name="subject" id="subject" value="<?php if (isset($_POST['subject'])) echo($_POST['subject']); ?>" size="40" />
+			<br />
 			<label for="content">Content:</label>
 			<textarea name="content" id="content" rows="10" cols="50"><?php if (isset($_POST['content'])) echo($_POST['content']); ?></textarea>
+			<br />
 			<label for="sender">Sender Byline:</label>
 			<select name="sender" id="sender">
 <?php foreach ($bylines as $byline) { ?>
