@@ -10,7 +10,7 @@
 	<h2 style="float:left">search by...</h2>
 	<form method="post" action="<?php echo(site_url('office/gallery')); ?>">
 		<fieldset>
-			<input type="text" name="search" id="search" value="<?php if (isset($_SESSION['gallery_search']['term'])) echo($_SESSION['gallery_search']['term']); ?>" size="25" />
+			<input type="text" name="search" id="search" value="<?php if (isset($_SESSION['gallery_search']['term'])) echo($_SESSION['gallery_search']['term']); ?>" size="35" />
 			<input type="submit" name="search_button" value="Go" />
 		</fieldset>
 	</form>
