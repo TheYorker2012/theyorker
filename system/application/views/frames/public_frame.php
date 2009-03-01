@@ -41,8 +41,6 @@ if (isset($medium_type)) { ?>
 	<!--[if IE]><link href="/stylesheets/v2-iefix.css" rel="stylesheet" type="text/css" /><![endif]-->
 	<!--[if lte IE 6]><link href="/stylesheets/v2-ie6fix.css" rel="stylesheet" type="text/css" /><![endif]-->
 
-	<script type="text/javascript" src="/javascript/jquery.js"></script>
-	<script type="text/javascript" src="/javascript/ticker.js"></script>
 	<script type="text/javascript">
 	tickerInit('BarNews');
 <?php if (!empty($ticker)) { ?>

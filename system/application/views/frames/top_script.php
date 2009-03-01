@@ -1,4 +1,7 @@
 	<script type="text/javascript" src="/javascript/common.js"></script>
+	<script type="text/javascript" src="/javascript/prototype.js"></script>
+	<script type="text/javascript" src="/javascript/scriptaculous.js?load=effects"></script>
+	<script type="text/javascript" src="/javascript/ticker.js"></script>
 
 	<script type="text/javascript">
 	//<![CDATA[

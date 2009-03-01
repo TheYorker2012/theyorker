@@ -1,12 +1,13 @@
 /**
  *	@brief		JavaScript News Ticker
- *	@requires	JQuery
+ *	@requires	Prototype
+ *	@requires	Scriptaculous
  *	@author		Chris Travis
  */
 
 var tickerDisplaySpeed = 6000;
-var tickerFadeInSpeed = 2000;
-var tickerFadeOutSpeed = 1000;
+var tickerFadeInSpeed = 2.0;
+var tickerFadeOutSpeed = 1.0;
 var tickerArticles = new Array();
 var tickerCurrentArticle = -1;
 var tickerContainer = null;
@@ -36,12 +37,15 @@ function tickerNext () {
 	} else {
 		var ele = ele_title;
 	}
-	$("#" + tickerContainer).empty();
-	$("#" + tickerContainer).append(ele);
-	$("#" + tickerContainer).fadeIn(tickerFadeInSpeed);
+	$(tickerContainer).innerHTML = '';
+	$(tickerContainer).appendChild(ele);
+//	$(tickerContainer).fadeIn(tickerFadeInSpeed);
+	Effect.Appear(tickerContainer, {duration: tickerFadeInSpeed});
 	this.timer = setTimeout('tickerHide()', tickerDisplaySpeed);
 }
 
 function tickerHide () {
-	$("#" + tickerContainer).fadeOut(tickerFadeOutSpeed, tickerNext);
+//	$(tickerContainer).fadeOut(tickerFadeOutSpeed, tickerNext);
+	Effect.Fade(tickerContainer, {duration: tickerFadeOutSpeed});
+	this.timer = setTimeout('tickerNext()', tickerFadeOutSpeed * 1000);
 }
