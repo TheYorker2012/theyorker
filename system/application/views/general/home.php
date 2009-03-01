@@ -1,103 +1,84 @@
-<div id="RightColumn">
-	<h2 class="first">My Links</h2>
-	<div class="Entry">
-<?php 	if ($link->num_rows() > 0)
-	{
-		/// @todo FIXME data from database should be processed in the model
-		foreach($link->result() as $picture){
-			echo('	<a href="'.xml_escape($picture->link_url).'" target="_blank">'.
-				$this->image->getImage( // getImage does the escaping
-					$picture->link_image_id, 'link',
-					array(
-						'title'	=> $picture->link_name,
-						'alt'	=> $picture->link_name,
-					)
-				).
-				'</a>'."\n"
-			);
+<div class="FlexiBox Box23">
+	<div id="DisplayBox">
+		<div id="DisplayBoxBg"><?php echo(xml_escape($articles['uninews'][0]['heading'])); ?></div>
+		<div id="DisplayBoxText"><a href="/news/<?php echo(xml_escape($articles['uninews'][0]['article_type'] . '/' . $articles['uninews'][0]['id'])); ?>"><?php echo(xml_escape($articles['uninews'][0]['heading'])); ?></a></div>
+		<a href="/news/<?php echo(xml_escape($articles['uninews'][0]['article_type'] . '/' . $articles['uninews'][0]['id'])); ?>"><img src="/photos/home/<?php echo(xml_escape($articles['uninews'][0]['photo_id'])); ?>" alt="<?php echo(xml_escape($articles['uninews'][0]['photo_title'])); ?>" /></a>
+	</div>
+</div>
+
+<script type="text/javascript">
+function changePreview (option, article_id, article_type, photo_id, photo_title) {
+	document.getElementById('ArticleRolloverLink').href = '/news/' + article_type + '/' + article_id;
+	document.getElementById('ArticleRolloverImg').src = '/photos/preview/' + photo_id;
+	document.getElementById('ArticleRolloverImg').alt = photo_title;
+	document.getElementById('ArticleRolloverImg').title = photo_title;
+	var x = 1;
+	var ele = document.getElementById('articleRollover_' + x);
+	while ((ele != undefined) && (ele != null)) {
+		if (x == option) {
+			ele.className = 'selected';
+		} else {
+			ele.className = '';
 		}
-	} else {
-// 		<a href="/account/links">You have no links</a>
+		x = x + 1;
+		var ele = document.getElementById('articleRollover_' + x);
 	}
-?>
-		<a class="RightColumnAction"  href="/account/links">Customise</a>
-	</div>
-	
-<?php
-	if (null !== $poll_vote_box)
-	{
-		$poll_vote_box->Load();
-	}
-?>
+}
+</script>
 
-	<h2>Search the Web</h2>
-	<div class="Entry">
-		<form method="get" action="http://www.google.co.uk/search" target="_blank">
-			<fieldset class="inline">
-				<input type="hidden" name="ie" value="UTF-8" />
-				<input type="hidden" name="oe" value="UTF-8" />
-				<a href="http://www.google.co.uk/" target="_blank">
-					<img src="http://www.google.co.uk/logos/Logo_40wht.gif" alt="Google" />
-				</a>
-				<input type="text" name="q" value="" />
-				<input type="submit" class="button" name="btnG" value="Search" target="_blank" />
-			</fieldset>
-		</form>
+<div class="ArticleRolloverBox FlexiBox Box13 FlexiBoxLast">
+	<div class="ArticleListTitle">
+		<a href="/news">latest news</a>
 	</div>
-
-	<h2>My Webmail </h2>
-	<div class="Entry">
-		<a class="MailLogo" href="https://webmail.york.ac.uk/" target="_blank">
-			<img src="/images/prototype/news/test/webmail_large.jpg" alt="Webmail Logo" />
+	<div class="ArticleRolloverImage">
+		<a id="ArticleRolloverLink" href="/news/uninews/234">
+			<img id="ArticleRolloverImg" src="/photos/preview/1095" alt="Photo Title" title="Photo Title" />
 		</a>
-		<p class="MailText">
-			<a href="https://webmail.york.ac.uk/" target="_blank">E-mail</a>
-		</p>
 	</div>
+	<div class="ArticleRolloverList">
+		<?php for ($x = 1; $x < count($articles['uninews']); $x++) { ?>
+			<div id="articleRollover_<?php echo($x); ?>" <?php if ($x == 1) echo('class="selected" '); ?>onmouseover="changePreview(<?php echo($x); ?>, <?php echo(xml_escape($articles['uninews'][$x]['id'])); ?>, 'uninews', <?php echo(xml_escape($articles['uninews'][$x]['photo_id'])); ?>, '<?php echo(xml_escape($articles['uninews'][$x]['photo_title'])); ?>');">
+				<a href="/news/<?php echo(xml_escape($articles['uninews'][$x]['article_type'])); ?>/<?php echo(xml_escape($articles['uninews'][$x]['id'])); ?>">
+					<?php echo(xml_escape($articles['uninews'][$x]['heading'])); ?>
+				</a>
+			</div>
+		<?php } ?>
+	</div>
+</div>
+<div class="FlexiBox Box13b FlexiBoxLast"><br /><br /><br /><br /></div>
+<div class="clear"></div>
 
-	<h2>Upcoming Events</h2>
-	<div class="Entry">
+<?php function ArticleList ($section, $articles, $last = false) { ?>
+	<div class="ArticleListBox FlexiBox Box13<?php if ($last) echo(' FlexiBoxLast'); ?>">
+		<div class="ArticleListTitle">
+			<a href="/<?php echo($section); ?>">latest <?php echo($section); ?></a>
+		</div>
+		<?php foreach ($articles as $article) { ?>
+		<div>
+			<a href="/news/<?php echo(xml_escape($article['article_type'] . '/' . $article['id'])); ?>">
+				<img src="/photos/small/<?php echo(xml_escape($article['photo_id'])); ?>" alt="<?php echo(xml_escape($article['photo_title'])); ?>" title="<?php echo(xml_escape($article['photo_title'])); ?>" />
+				<?php echo(xml_escape($article['heading'])); ?>
+			</a>
+			<div class="Date"><?php echo(xml_escape($article['date'])); ?></div>
+			<div class="clear"></div>
+		</div>
+		<?php } ?>
+	</div>
+<?php } ?>
+
+<?php ArticleList('sport', $articles['sport']); ?>
+<?php ArticleList('arts', $articles['arts']); ?>
+<?php ArticleList('lifestyle', $articles['lifestyle'], true); ?>
+<div class="clear"></div>
+
+<div class="FlexiBox Box12">
+	<div class="FlexiBox Box12b">
+		<br /><br /><br /><br /><br />
+	</div>
+	<div class="FlexiBox Box12">
+		<div class="ArticleListTitle">upcoming events</div>
 		<?php $events->Load(); ?>
 	</div>
-	<?php /*
-	<h2>To Do</h2>
-	<div class="Entry">
-		<?php $todo->Load(); ?>
-	</div>
-	*/ ?>
-
-<?php
-if ($weather_forecast != null) {
-?>
-	<h2>York Weather</h2>
-	<div class="Entry">
-		<?php echo($weather_forecast);?>
-	</div>
-
-	<h2>Quote of the Day</h2>
-	<div class="Entry">
-		"<?php echo(xml_escape($quote->quote_text));?>" - <b><?php echo(xml_escape($quote->quote_author));?></b>
-	</div>
-<?php
-}
-?>
 </div>
 
-<div id="MainColumn">
-	<div id="HomeBanner">
-		<?php 
-		$this->homepage_boxes->print_homepage_banner($banner);
-		?>
-	</div>
-
-	<?php 
-		$this->homepage_boxes->print_box_with_picture_list($articles['uninews'],'latest news','news');
-		if($special['lifestyle']['show']) { $this->homepage_boxes->print_specials_box($special['lifestyle']['title'],$special['lifestyle']['data']); }
-		$this->homepage_boxes->print_box_with_picture_list($articles['arts'],'latest arts','news');
-		$this->homepage_boxes->print_box_with_picture_list($articles['sport'],'latest sport','news');
-		if($special['blogs']['show']) { $this->homepage_boxes->print_specials_box($special['blogs']['title'],$special['blogs']['data']); }
-		$this->homepage_boxes->print_box_with_picture_list($articles['features'],'latest features','news');
-		$this->homepage_boxes->print_box_with_picture_list($articles['videocasts'],'latest videocasts','news');
-		$latest_comments->Load();
-	?>
-</div>
+<?php $latest_comments->Load(); ?>
