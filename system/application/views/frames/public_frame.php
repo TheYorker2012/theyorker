@@ -113,7 +113,7 @@ if (isset($medium_type)) { ?>
 <?php
 $menu = array(
 	array('home', '/', array('first')),
-	array('news', '/news', array()),
+	array('news', '/uninews', array()),
 	array('sport', '/sport', array()),
 	array('arts', '/arts', array()),
 	array('lifestyle', '/lifestyle', array('last')),
