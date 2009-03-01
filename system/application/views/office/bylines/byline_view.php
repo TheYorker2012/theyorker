@@ -19,7 +19,7 @@
 <div id="MainColumn">
 
 <?php $this->load->view('/office/bylines/byline', $byline_info); ?>
-	<div style="float:left;">
+	<div style="float:left;width:100%;margin-bottom:0.5em;">
 		<b>Owner:</b>
 		<a href="/office/bylines/user/<?php echo(($byline_info['business_card_user_entity_id'] == NULL) ? '-1' : $byline_info['business_card_user_entity_id']); ?>">
 			<?php if (($byline_info['user_firstname'] == NULL) && ($byline_info['user_surname'] == NULL)) {

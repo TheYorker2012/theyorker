@@ -1,9 +1,9 @@
 	<div id="Byline<?php echo($business_card_id); ?>" class="BlueBox">
 		<div style="float:right;margin:0.2em 0.5em;text-align:right">
-			<img src="<?php echo(($business_card_image_href != '') ? $business_card_image_href : site_url('images/prototype/directory/members/no_image.png')); ?>" alt="<?php echo(xml_escape($business_card_name)); ?>" title="<?php echo(xml_escape($business_card_name)); ?>" />
+			<img src="<?php echo(($business_card_image_href != '') ? $business_card_image_href : site_url('images/prototype/directory/members/anon.png')); ?>" alt="<?php echo(xml_escape($business_card_name)); ?>" title="<?php echo(xml_escape($business_card_name)); ?>" />
 		</div>
 
-		<div style="background-color:#20c1f0;color:#fff;padding:0.2em;margin:0;font-weight:bold;font-size:medium;">
+		<div style="background-color:#999;color:#fff;padding:0.2em;margin:0;font-weight:bold;font-size:medium;">
 			<?php echo(xml_escape($business_card_name)); ?>
 		</div>
 
