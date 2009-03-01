@@ -27,8 +27,8 @@ $config['permissions'] = array(
 	'ANNOUNCEMENT_DELETE'              => 'Delete announcements',
 
 	/// @todo Review and implement article permissions
-	'ARTICLE_VIEW'                     => '(unimplemented) View article contents',
-	'ARTICLE_ADD'                      => '(unimplemented) Create new articles',
+	'ARTICLE_VIEW'                     => 'View article contents',
+	'ARTICLE_ADD'                      => 'Create new articles',
 	'ARTICLE_MODIFY'                   => '(unimplemented) Modify articles',
 	'ARTICLE_DELETE'                   => '(unimplemented) Delete articles',
 	'ARTICLE_PUBLISH'                  => '(unimplemented) Publish articles',

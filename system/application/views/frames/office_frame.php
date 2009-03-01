@@ -19,75 +19,104 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 		}
 	?> - The Yorker</title>
 
-	<link rel="shortcut icon" href="/images/yorker.ico" />
-	<link rel="alternate" type="application/rss+xml" title="The Yorker - Campus News" href="/news/rss" />
-	<link href="/stylesheets/new.css" rel="stylesheet" type="text/css" />
-	<link href="/stylesheets/stylesheet.css" rel="stylesheet" type="text/css" />
+	<link rel="shortcut icon" href="/images/favicon.png" />
+	<link rel="alternate" type="application/rss+xml" title="The Yorker - Campus News" href="/feeds/news" />
 
-	<!--<link href="/stylesheets/new.css" rel="stylesheet" type="text/css" /> -->
-	<!--[if lte IE 6]><link href="/stylesheets/new-ie6fix.css" rel="stylesheet" type="text/css" /><![endif]-->
+	<link href="/stylesheets/v2.css" rel="stylesheet" type="text/css" />
 	<link href="/stylesheets/office.css" rel="stylesheet" type="text/css" />
 
-	<?php
-	if (isset($extra_css)) {
-		echo('<link href="'.$extra_css.'" rel="stylesheet" type="text/css" />'."\n");
-	}
-	?>
+	<?php include('top_script.php'); ?>
 
-	<?php
-		// Get common javascript
-		include('top_script.php');
-	?>
+	<!--[if IE]><link href="/stylesheets/v2-iefix.css" rel="stylesheet" type="text/css" /><![endif]-->
+	<!--[if lte IE 6]><link href="/stylesheets/v2-ie6fix.css" rel="stylesheet" type="text/css" /><![endif]-->
+
+	<script type="text/javascript" src="/javascript/jquery.js"></script>
+	<script type="text/javascript" src="/javascript/ticker.js"></script>
+	<script type="text/javascript">
+	tickerInit('BarNews');
+<?php if (!empty($ticker)) { ?>
+	<?php for ($x = 1; $x < count($ticker); $x++) { ?>
+	tickerAdd('<?php echo(xml_escape($ticker[$x]->headline)); ?>', '/<?php echo(xml_escape($ticker[$x]->section . '/' . $ticker[$x]->type . '/' . $ticker[$x]->id)); ?>');
+	<?php } ?>
+	tickerAdd('<?php echo(xml_escape($ticker[0]->headline)); ?>', '/<?php echo(xml_escape($ticker[0]->section . '/' . $ticker[0]->type . '/' . $ticker[0]->id)); ?>');
+<?php } ?>
+	onLoadFunctions.push(tickerStart);
+	</script>
+
 </head>
 
 <body onload="onLoadHandler()" onunload="onUnloadHandler()">
 	<div id="Header">
-		<div id="HeaderMenu">
-			<span style="color: #999999; font-size: 0.9em">
-			<?php
-			// Set by GenerateToplinks in mainframe_helper
-			if (isset($toplinks)) {
-				foreach ($toplinks as $link) {
-					if (is_string($link)) {
-						echo('<span style="color: #000000;">'.xml_escape($link).'</span> | ');
-					} elseif (is_array($link)) {
-						echo('<a href="'.xml_escape($link[1]).'">'.xml_escape($link[0]).'</a> | ');
+		<div id="HeaderItems">
+			<div id="HeaderMenu">
+				<?php
+				// Set by GenerateToplinks in mainframe_helper
+				if (isset($toplinks)) {
+					foreach ($toplinks as $link) {
+						if (is_string($link)) {
+							echo(xml_escape($link). ' | ');
+						} elseif (is_array($link)) {
+							echo('<a href="' . xml_escape($link[1]) . '">' . xml_escape($link[0]) . '</a> | ');
+						}
 					}
 				}
-			}
-			?>
-			<a href="/about/">about us</a> |
-			<a href="/faq/">FAQs</a>
-			</span>
-		</div>
-
-		<div id="TopBanner">
-			<h1 id="TopBannerName">
-				<a href="/"><img src="/images/prototype/header/header_Layer-1.gif" width="300" height="108" alt="The Yorker"/></a>
-			</h1>
-			<div id="TopBannerPictures">
-				<a href="/office"><img src="/images/prototype/header/office_header.jpg" alt="Office" title="Office" /></a>
-				<a href="/logout/office"><img src="/images/prototype/header/office_header2.jpg" alt="Logout of Office" title="Logout of Office" /></a>
+				?>
+				<a href="/account/">my account</a>
 			</div>
+			<div id="HeaderTime">
+				<?php echo($date['time']); ?>
+			</div>
+			<div id="HeaderDate">
+				<div id="HeaderDay">
+					<?php echo($date['day']); ?>
+				</div>
+				<div id="HeaderWeek">
+					Week <?php echo($date['week']); ?>
+				</div>
+			</div>
+		</div>
+		<h1 id="HeaderLogo"><a href="/"><img src="/images/version2/frame/logo.png" alt="The Yorker" /></a></h1>
+	</div>
+
+	<div id="Bar">
+		<div id="BarDate">
+			<?php echo($date['date'] . ' ' . $date['month']); ?>
+		</div>
+		<div id="BarSearch">
+			<form id="searchbox_003080001858553066416:dyddjbcpdlc" action="http://www.google.com/search">
+				<input type="hidden" name="cx" value="003080001858553066416:dyddjbcpdlc" />
+				<input type="hidden" name="cof" value="FORID:0" />
+				<input name="q" type="text" size="25" value="Search for..." onfocus="inputFocus(this);" onblur="inputBlur(this);" />
+			</form>
+		</div>
+		<div id="BarTicker">
+			<span id="BarLatest">latest news:</span>
+			<span id="BarNews">
+				<?php if (!empty($ticker)) { ?>
+				<a href="/<?php echo(xml_escape($ticker[0]->section . '/' . $ticker[0]->type . '/' . $ticker[0]->id)); ?>">
+					<?php echo(xml_escape($ticker[0]->headline)); ?>
+				</a>
+				<?php } ?>
+			</span>
 		</div>
 	</div>
 
-   	<div id="Page">
-		<div id="NavigationColumn">
-			<form id="searchbox_003080001858553066416:dyddjbcpdlc" action="http://www.google.com/search">
-				<fieldset>
-					<input type="hidden" name="cx" value="003080001858553066416:dyddjbcpdlc" />
-					<input type="hidden" name="cof" value="FORID:0" />
-				</fieldset>
-				<fieldset id="SearchBox">
-					<input name="q" type="text" size="40" value="Search for..." onfocus="inputFocus(this);" onblur="inputBlur(this);" />
-				</fieldset>
-			</form>
-			<div id="NavigationMenu">
+	<div id="Navigation">
+		<ul id="Tabs">
+			<li class="first next"><a href="/">Public Site</a></li>
+			<li class="current"><a href="/office">Office</a></li>
+			<li class="last"><a href="http://mail.theyorker.co.uk">Webmail</a></li>
+		</ul>
+	</div>
+
+	<div id="Page">
+		<div id="MainBodyPane">
+
+
+
+			<div id="NavigationColumn">
+				<div id="NavigationMenu">
 <?php
-/**
- *	@param	Array of arrays (link title, URL, permission)
- */
 function printMenu ($CI, $title, $links, $firstMenu = false) {
 	$linkCount = count($links);
 	for ($i = 0; $i < $linkCount; $i++) {
@@ -170,37 +199,26 @@ printMenu($this, 'Homepage', array(
 ));
 
 ?>
-				<?php
-				if (isset($extra_menu_buttons) && !empty($extra_menu_buttons)) {
-					echo('<ul>');
-					foreach ($extra_menu_buttons as $key => $button) {
-						echo('<li'.(!$key ? ' class="first"':'').'>');
-						if (is_string($button)) {
-							echo($button);
-						} else {
-							echo('<a href="'.$button[1].'">'.$button[0].'</a>');
+					<?php
+					if (isset($extra_menu_buttons) && !empty($extra_menu_buttons)) {
+						echo('<ul>');
+						foreach ($extra_menu_buttons as $key => $button) {
+							echo('<li'.(!$key ? ' class="first"':'').'>');
+							if (is_string($button)) {
+								echo($button);
+							} else {
+								echo('<a href="'.$button[1].'">'.$button[0].'</a>');
+							}
+							echo('</li>');
 						}
-						echo('</li>');
+						echo('</ul>');
 					}
-					echo('</ul>');
-				}
-				?>
+					?>
+				</div>
 			</div>
-		</div>
 
-		<div id="MainBodyPane">
-			<h1 id="PageTitle">
-				<?php
-				if(isset($body_title)) {
-					echo htmlentities($body_title, ENT_QUOTES, 'utf-8')."\n";
-				} else {
-					echo 'no pagename'."\n";
-				}
-				if(isset($paged_edit_url) && NULL !== $paged_edit_url) {
-					echo("<a href=\"$paged_edit_url\">[edit]</a>");
-				}
-				?>
-			</h1>
+
+			<div id="ContentColumn">
 
 <!-- BEGIN generated content -->
 <?php
@@ -226,14 +244,11 @@ printMenu($this, 'Homepage', array(
 ?>
 <!-- END generated content -->
 
+			</div>
+			<div class="clear"></div>
 		</div>
 	</div>
 
-
-	<?php
-		// Get common footer
-		include('footer.php');
-	?>
-
+	<?php include('footer.php'); ?>
 </body>
 </html>

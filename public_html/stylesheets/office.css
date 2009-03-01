@@ -7,11 +7,6 @@
 .hide { display: none; }
 .show { display: block; }
 
-/* Wider office */
-div#Header, div#Page, div#Footer {
-	width: 984px;
-}
-
 /* Formatting for the navigation on the left */
 div#NavigationMenu ul {
 	display: block;

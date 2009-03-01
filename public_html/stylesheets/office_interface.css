@@ -5,7 +5,7 @@
 div#office_container {
 	float: left;
 	width: 100%;
-	background-image: url('/images/version2/office/fake_bg.jpg');
+	background-image: url('/images/version2/office/fake_bg.png');
 	background-position: right;
 	background-repeat: repeat-y;
 }
@@ -13,7 +13,8 @@ div#office_container {
 /* Page Content */
 div#office_canvas {
 	margin-right: 140px;
-	border: 1px #20C1F0 solid;
+	border: 1px #999 solid;
+	background-color: #fff;
 	border-right: 0;
 }
 
@@ -29,8 +30,9 @@ div.office_page {
 }
 
 div.office_page h2 {
+	margin-top: 0;
 	line-height: 32px;
-	color: #20c1f0;
+	color: #999;
 }
 
 div.office_page img.title {
@@ -47,17 +49,18 @@ div#office_sidebar {
 div#office_sidebar ul {
 	margin: 10px 0;
 	display: block;
-	border-top: 1px #20c1f0 solid;
+	border-top: 1px #999 solid;
 }
 
 div#office_sidebar ul li {
 	padding: 0.2em 0 0.2em 5px;
-	border: 1px #20c1f0 solid;
+	border: 1px #999 solid;
 	border-top: 0;
+	background-color: #fff;
 }
 
 div#office_sidebar ul li.current {
-	background-color: #20c1f0;
+	background-color: #999;
 }
 
 div#office_sidebar ul li.current a {
@@ -80,6 +83,17 @@ div#office_container div#office_sidebar ul li#nav_comments { list-style-image: u
 div#office_container div#office_sidebar ul li#nav_publish { list-style-image: url('/images/icons/package.png'); }
 
 
+/**
+ *	Forms
+ */
+
+div#office_container label {
+	width: 20%;
+}
+
+div#office_container textarea {
+	width: 70%;
+}
 
 
 
@@ -133,6 +147,8 @@ div.content {
 	display: none;
 	padding: 5px;
 	background-color: #f2f2f2;
+	border: #999 solid;
+	border-width: 0 1px 1px 1px;
 }
 
 div.content p,

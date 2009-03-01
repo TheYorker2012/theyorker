@@ -134,6 +134,8 @@ if (!empty($properties) || $permissions['prop_add']) {
 			// New properties are put here (destination div)
 			?>
 			<input type="hidden" name="destination" id="destination" value="1" />
+		</fieldset>
+		<fieldset>
 			<input type="button" class="button" onClick="AddClone('source', 'destination')" value="Add Property"/>
 			<?php }
 			if ($permissions['prop_edit']) {
