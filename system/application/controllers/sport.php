@@ -11,7 +11,6 @@ class Sport extends Controller
 		$this->load->model('News_model');
 		$this->load->model('Home_Model');
 		$this->load->model('Home_Hack_Model');
-		$this->load->library('Homepage_boxes');
 	}
 	
 	private function getNumberOfType($articles,$type_codename)
