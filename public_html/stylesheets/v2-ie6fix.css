@@ -1,0 +1,49 @@
+img {
+	behavior: url('/javascript/iepngfix.htc');
+}
+
+div#googlemaps img {
+	behavior: default;
+}
+
+div#Navigation ul#Tabs li a {
+	display: inline;
+	margin-bottom: -2px;
+}
+
+div#Navigation ul#Tabs li.current a {
+	background-image: url('/images/version2/frame/tab_active.jpg');
+}
+
+ul#Navbar {
+	/*width: expression(document.getElementById("Header").width - 144);*/
+	width: 840px;
+}
+
+ul#Navbar li {
+	width: expression("7em");
+}
+
+div.BlueBox {
+	/*width: expression((document.getElementById("RightColumn") == null) ? (document.body.clientWidth - 144) : (document.body.clientWidth - 474));*/
+	width: expression((document.getElementById("RightColumn") == null) ? "840px" : "510px");
+	padding: 10px;
+}
+
+div.message_error, div.message_warning, div.message_information, div.message_success {
+	/*width: expression(document.body.clientWidth - 144);*/
+	width: 840px;
+	padding: 0.3em;
+}
+
+div#office_container {
+	width: 840px;
+}
+
+div#office_pages {
+	width: 700px;
+}
+
+div.office_page table {
+	width: 690px;
+}

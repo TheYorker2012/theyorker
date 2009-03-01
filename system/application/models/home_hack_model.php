@@ -75,7 +75,7 @@ class Home_Hack_Model extends Model {
 		return $result;
 	}
 
-	function getArticleTitles($articles) {
+	function getArticleTitles($articles, $dateFormat) {
 		if (count($articles) == 0)
 			return array();
 
@@ -88,6 +88,10 @@ class Home_Hack_Model extends Model {
 					AS id,
 				article_contents.article_content_heading
 					AS heading,
+				DATE_FORMAT(
+					articles.article_publish_date,
+					?)
+					AS date,
 				photo_requests.photo_request_chosen_photo_id
 					AS photo_id,
 				photo_requests.photo_request_title
@@ -110,7 +114,7 @@ class Home_Hack_Model extends Model {
 			ORDER BY
 				article_publish_date DESC';
 
-		$query = $this->db->query($sql, array());
+		$query = $this->db->query($sql, array($dateFormat));
 		return $query->result_array();
 	}
 

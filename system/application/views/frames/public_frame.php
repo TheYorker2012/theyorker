@@ -7,6 +7,9 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
+	<meta name="description" content="<?php echo(xml_escape($description)); ?>" />
+	<meta name="keywords" content="<?php echo(xml_escape($keywords)); ?>" />
+	<meta name="verify-v1" content="slrlMuizkqTRTqt5W2zF1EZ6nMrwx+/qRmNDJ7xt2m8=" />
 <?php if (isset($head_title)) { ?>
 	<meta name="title" content="<?php echo(xml_escape($head_title)); ?> - The Yorker" />
 <?php }
@@ -17,9 +20,6 @@ if (isset($main_image)) { ?>
 if (isset($medium_type)) { ?>
 	<meta name="medium" content="<?php echo($medium_type); ?>" />
 <?php } ?>
-	<meta name="description" content="<?php echo(xml_escape($description)); ?>" />
-	<meta name="keywords" content="<?php echo(xml_escape($keywords)); ?>" />
-	<meta name="verify-v1" content="slrlMuizkqTRTqt5W2zF1EZ6nMrwx+/qRmNDJ7xt2m8=" />
 
 	<title><?php
 		// FIXME: backwards compatibility, remove when all pages are shown with titles
@@ -30,147 +30,131 @@ if (isset($medium_type)) { ?>
 		}
 	?> - The Yorker</title>
 
-	<link rel="shortcut icon" href="/images/yorker.ico" />
+	<link rel="shortcut icon" href="/images/favicon.png" />
 	<link rel="alternate" type="application/rss+xml" title="The Yorker - Campus News" href="/feeds/news" />
 
+	<link href="/stylesheets/v2.css" rel="stylesheet" type="text/css" />
+	<link href="/stylesheets/office.css" rel="stylesheet" type="text/css" />
 
-	<link href="/stylesheets/new.css" rel="stylesheet" type="text/css" />
-	<!--[if lte IE 6]><link href="/stylesheets/new-ie6fix.css" rel="stylesheet" type="text/css" /><![endif]-->
+	<?php include('top_script.php'); ?>
 
-	<?php
-		// Get common javascript
-		include('top_script.php');
-	?>
+	<!--[if IE]><link href="/stylesheets/v2-iefix.css" rel="stylesheet" type="text/css" /><![endif]-->
+	<!--[if lte IE 6]><link href="/stylesheets/v2-ie6fix.css" rel="stylesheet" type="text/css" /><![endif]-->
+
+	<script type="text/javascript" src="/javascript/jquery.js"></script>
+	<script type="text/javascript" src="/javascript/ticker.js"></script>
+	<script type="text/javascript">
+	tickerInit('BarNews');
+<?php if (!empty($ticker)) { ?>
+	<?php for ($x = 1; $x < count($ticker); $x++) { ?>
+	tickerAdd('<?php echo(xml_escape($ticker[$x]->headline)); ?>', '/<?php echo(xml_escape($ticker[$x]->section . '/' . $ticker[$x]->type . '/' . $ticker[$x]->id)); ?>');
+	<?php } ?>
+	tickerAdd('<?php echo(xml_escape($ticker[0]->headline)); ?>', '/<?php echo(xml_escape($ticker[0]->section . '/' . $ticker[0]->type . '/' . $ticker[0]->id)); ?>');
+<?php } ?>
+	onLoadFunctions.push(tickerStart);
+	</script>
 
 </head>
 
 <body onload="onLoadHandler()" onunload="onUnloadHandler()">
 	<div id="Header">
-		<div id="HeaderMenu">
-			<span style="color: #999999; font-size: 0.9em">
-			<?php
-			// Set by GenerateToplinks in mainframe_helper
-			if (isset($toplinks)) {
-				foreach ($toplinks as $link) {
-					if (is_string($link)) {
-						echo('<span style="color: #000000;">'.xml_escape($link).'</span> | ');
-					} elseif (is_array($link)) {
-						echo('<a href="'.xml_escape($link[1]).'">'.xml_escape($link[0]).'</a> | ');
+		<div id="HeaderItems">
+			<div id="HeaderMenu">
+				<?php
+				// Set by GenerateToplinks in mainframe_helper
+				if (isset($toplinks)) {
+					foreach ($toplinks as $link) {
+						if (is_string($link)) {
+							echo(xml_escape($link). ' | ');
+						} elseif (is_array($link)) {
+							echo('<a href="' . xml_escape($link[1]) . '">' . xml_escape($link[0]) . '</a> | ');
+						}
 					}
 				}
-			}
-			?>
-			<a href="<?php echo($this->config->item('static_web_address')); ?>/pdf/advertisewithus.pdf">advertise with us</a> | 
-			<a href="/account/">my account</a> |
-			<a href="/about/">about us</a> |
-			<a href="/pages/join_our_team/">join us</a> |
-			<a href="/faq/">FAQs</a>
-			</span>
-		</div>
-
-		<div id="TopBanner">
-			<h1 id="TopBannerName">
-				<a href="/"><img src="/images/prototype/header/header_Layer-1.gif" width="300" height="108" alt="The Yorker"/></a>
-			</h1>
-			<div id="TopBannerPictures">
-				<img src="/images/prototype/header/header_Layer-4.gif" alt="News" />
-				<img src="/images/prototype/header/header_Layer-3.gif" alt="Calendar" />
-				<img src="/images/prototype/header/header_Layer-2.gif" alt="Reviews" />
+				?>
+				<a href="/account/">my account</a>
 			</div>
+			<div id="HeaderTime">
+				<?php echo($date['time']); ?>
+			</div>
+			<div id="HeaderDate">
+				<div id="HeaderDay">
+					<?php echo($date['day']); ?>
+				</div>
+				<div id="HeaderWeek">
+					Week <?php echo($date['week']); ?>
+				</div>
+			</div>
+		</div>
+		<h1 id="HeaderLogo"><a href="/"><img src="/images/version2/frame/logo.png" alt="The Yorker" /></a></h1>
+	</div>
+	
+	<div id="Bar">
+		<div id="BarDate">
+			<?php echo($date['date'] . ' ' . $date['month']); ?>
+		</div>
+		<div id="BarSearch">
+			<form id="searchbox_003080001858553066416:dyddjbcpdlc" action="http://www.google.com/search">
+				<input type="hidden" name="cx" value="003080001858553066416:dyddjbcpdlc" />
+				<input type="hidden" name="cof" value="FORID:0" />
+				<input name="q" type="text" size="25" value="Search for..." onfocus="inputFocus(this);" onblur="inputBlur(this);" />
+			</form>
+		</div>
+		<div id="BarTicker">
+			<span id="BarLatest">latest news:</span>
+			<span id="BarNews">
+				<?php if (!empty($ticker)) { ?>
+				<a href="/<?php echo(xml_escape($ticker[0]->section . '/' . $ticker[0]->type . '/' . $ticker[0]->id)); ?>">
+					<?php echo(xml_escape($ticker[0]->headline)); ?>
+				</a>
+				<?php } ?>
+			</span>
 		</div>
 	</div>
 
-	<div id="Page">
-		<div id="NavigationColumn">
-			<form id="searchbox_003080001858553066416:dyddjbcpdlc" action="http://www.google.com/search">
-				<fieldset>
-					<input type="hidden" name="cx" value="003080001858553066416:dyddjbcpdlc" />
-					<input type="hidden" name="cof" value="FORID:0" />
-				</fieldset>
-				<fieldset id="SearchBox">
-					<input name="q" type="text" size="40" value="Search for..." onfocus="inputFocus(this);" onblur="inputBlur(this);" />
-				</fieldset>
-			</form>
-			<div id="NavigationMenu">
-				<!-- Nasty "first" class used as IE6 doesn't have :first-child -->
-				<ul class="first">
-					<li class="first"><a href="/">My Home</a></li>
-					<li><a href="/calendar/">My Calendar</a></li>
-					<li><a href="/directory/">Directory</a></li>
-				</ul>
-				<ul>
-					<li class="first"><a href="/news/uninews">Uni News</a></li>
-					<li><a href="/sport/">Sport</a></li>
-					<li><a href="/news/comment/">News Comment</a></li>
-					<?php /*
-					<li><a href="/news/national/">UK &amp; World News</a></li>
-					*/ ?>
-					<li><a href="/news/features/">Features</a></li>
-					<li><a href="/lifestyle/">Lifestyle</a></li>
-					<li><a href="/arts/">Arts</a></li>
-					<li><a href="/blogs/">Blogs</a></li>
-					<li><a href="/food/">Food</a></li>
-					<li><a href="/reviews/drink">Drink</a></li>
-					<?php /*
-					<li><a href="/reviews/culture">Culture</a></li>
-					*/ ?>
-					<li><a href="/news/videocasts">Videocasts</a></li>
-					<li><a href="/campaign/">Campaigns</a></li>
-					<li><a href="/news/archive/">Archive</a></li>
-					<li><a href="/feeds/">Feeds</a></li>
-				</ul>
-				<ul>
-					<li class="first"><a href="/charity/">Our Charity</a></li>
-					<li><a href="/howdoi/">How Do I</a></li>
-					<li><a href="http://yorkipedia.theyorker.co.uk">Yorkipedia</a></li>
-					<li><a href="/games/">Game Zone</a></li>
-				</ul>
-				<?php /*
-				<ul>
-					<li class="first"><a href="/viparea/">Enter VIP Area</a></li>
-					<li><a href="/office/">Enter Office</a></li>
-				</ul>
-				*/ ?>
-				<?php
-				if (isset($extra_menu_buttons) && !empty($extra_menu_buttons)) {
-					echo('<ul>');
-					foreach ($extra_menu_buttons as $key => $button) {
-						echo('<li'.(!$key ? ' class="first"':'').'>');
-						if (is_string($button)) {
-							echo(xml_escape($button));
-						} else {
-							echo('<a href="'.$button[1].'">'.xml_escape($button[0]).'</a>');
-						}
-						echo('</li>');
-					}
-					echo('</ul>');
-				}
-				?>
-			</div>
-
 <?php
-	if (isset($advert) && !empty($advert['image_id']) && !empty($advert['url'])) {
-		echo('			<a href="'.xml_escape($advert['url']).'" target="_blank"><img src="/image/advert/'.$advert['image_id'].'" width="120" height="600" style="margin-top: 40px;" alt="'.xml_escape($advert['alt']).'" title="'.xml_escape($advert['alt']).'" /></a>'."\n");
-	} elseif ($this->config->item('enable_adsense')) {
-		$this->load->view('frames/adsense');
+$menu = array(
+	array('home', '/', array('first')),
+	array('news', '/news', array()),
+	array('sport', '/sport', array()),
+	array('arts', '/arts', array()),
+	array('lifestyle', '/lifestyle', array('last')),
+);
+// Has a tab been set as selected?
+$menu_style = '';
+if (!empty($menu_tab)) {
+	$menu_key = null;
+	for ($x = 0; $x < count($menu); $x++) {
+		if ($menu[$x][0] == $menu_tab) {
+			$menu_key = $x;
+			break;
+		}
 	}
+	if ($menu_key !== null) {
+		$menu[$menu_key][2][] = 'current';
+		if (($menu_key - 1) > -1) {
+			$menu[$menu_key - 1][2][] = 'next';
+		} else {
+			$menu_style = 'next';
+		}
+	}
+}
 ?>
-		</div>
 
+	<div id="Navigation">
+		<ul id="Tabs"<?php if (!empty($menu_style)) echo(' class="' . $menu_style . '"'); ?>>
+<?php foreach ($menu as $tab) { ?>
+			<li<?php if (!empty($tab[2])) echo(' class="' . implode(' ', $tab[2]) . '"'); ?>><a href="<?php echo($tab[1]); ?>"><?php echo($tab[0]); ?></a></li>
+<?php } ?>
+<?php foreach ($links as $link) { ?>
+			<li class="link"><?php echo($link); ?></li>
+<?php } ?>
+		</ul>
+	</div>
+
+	<div id="Page">
 		<div id="MainBodyPane">
-			<h1 id="PageTitle">
-				<?php
-				if(isset($body_title)) {
-					echo xml_escape($body_title)."\n";
-				} else {
-					echo 'no pagename'."\n";
-				}
-				if(isset($paged_edit_url) && NULL !== $paged_edit_url) {
-					echo('<a href="'.$paged_edit_url.'">[edit]</a>');
-				}
-				?>
-			</h1>
-
+		
 <!-- BEGIN generated content -->
 <?php
 	// TODO: check this works properly
@@ -195,14 +179,10 @@ if (isset($medium_type)) { ?>
 ?>
 <!-- END generated content -->
 
+			<div class="clear"></div>
 		</div>
 	</div>
 
-
-	<?php
-		// Get common footer
-		include('footer.php');
-	?>
-
+	<?php include('footer.php'); ?>
 </body>
 </html>
