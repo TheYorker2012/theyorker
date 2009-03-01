@@ -56,7 +56,7 @@ class Uninews extends Controller
 			$data['section_articles'][strtolower($type['name'])] = $this->Home_Hack_Model->getArticleTitles($article_ids, '%W, %D %M %Y');
 		}
 
-		$this->main_frame->SetData('menu_tab', 'arts');
+		$this->main_frame->SetData('menu_tab', 'news');
 		$this->main_frame->IncludeCss('stylesheets/home.css');
 		$this->main_frame->SetContentSimple('homepages/'.$homepage_article_type, $data);
 		$this->main_frame->Load();
