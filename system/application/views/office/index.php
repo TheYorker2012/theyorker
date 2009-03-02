@@ -88,6 +88,7 @@ switch (count($my_requests)) {
 							<div><?php echo(xml_escape($announce->user_title)); ?></div>
 						</div>
 						<?php echo($announce->content); ?>
+						<div class="clear"></div>
 					</div>
 				</div>
 				<?php } ?>
