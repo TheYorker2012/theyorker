@@ -68,6 +68,17 @@ class Notifications_model extends Model
 
 	function getAnnouncements ()
 	{
+		$implicitRoles = array();
+		switch (GetUserLevel()) {
+			case 'admin':
+				$implicitRoles[] = 'LEVEL_ADMIN';
+				// Fall-thru
+			case 'editor':
+				$implicitRoles[] = 'LEVEL_EDITOR';
+				// Fall-thru
+			case 'office':
+				$implicitRoles[] = 'LEVEL_OFFICER';
+		}
 		$sql = 'SELECT		notifications.notification_id AS id,
 							notifications.notification_subject AS subject,
 							notifications.notification_wikitext_cache AS content,
@@ -85,11 +96,14 @@ class Notifications_model extends Model
 						)
 				WHERE		notifications.notification_type = "announcement"
 				AND			notifications.notification_deleted = 0
-				AND			notifications.notification_role IN (
-					SELECT user_role_role_name
-					FROM user_roles
-					WHERE user_role_user_entity_id = ?
-				)
+				AND	(		notifications.notification_role IN
+							(
+								SELECT user_role_role_name
+								FROM user_roles
+								WHERE user_role_user_entity_id = ?
+							)
+					OR		notifications.notification_role IN ("' . implode('","', $implicitRoles) . '")
+					)
 				ORDER BY	notifications.notification_date DESC
 				LIMIT		0, 20';
 		$query = $this->db->query($sql, array($this->user_auth->entityId, $this->user_auth->entityId));
