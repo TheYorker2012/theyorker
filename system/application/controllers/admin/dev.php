@@ -9,11 +9,24 @@ class Dev extends Controller {
 		$this->pages_model->SetPageCode('admin_status');
 		
 		$op  = '<a href="/admin/dev/phpinfo">PHP information</a><br />';
-		$op .= 'If you think this is wrong then email mg512<br />';
-		$op .= 'Info dumps follow:<br /><pre>';
-		exec('svn info ..', $ops);
-		$op .= implode("\n",$ops);
-		$op .= '<pre />';
+		$commands = array(
+			'Branch info' => 'git branch',
+			'Recent commits' => 'git log HEAD~5..HEAD',
+		);
+		foreach ($commands as $name => $command) {
+			$ops = array();
+			$return = -1;
+			exec($command.' 2>&1', $ops, $return);
+			$op .= '<hr /><h2>'.xml_escape($name).' (`'.xml_escape($command).'`='.$return.')</h2><p>';
+			// Join and escape
+			$text = xml_escape(implode("\n",$ops));
+			// Turn any git hashes into links to gitweb
+			$text = preg_replace('/([a-f0-9]{40})/','<a href="http://dev2.theyorker.co.uk/gitweb?p=theyorker;a=commit;h=$1">$1</a>', $text);
+			// Newlines into html
+			$text = str_replace("\n",'<br />', $text);
+			$op .= $text;
+			$op .= '</p>';
+		}
 		
 		$this->main_frame->SetContent(new SimpleView($op));
 		$this->main_frame->Load();
