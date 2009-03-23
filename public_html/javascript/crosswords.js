@@ -223,8 +223,13 @@ function CrosswordLight(x, y, orientation)
 	this.m_x = x;
 	this.m_y = y;
 	this.m_orientation = orientation;
+	this.m_number = 0;
+	this.m_numberEls = [null, null];
 	this.m_cells = new Array();
-	this.m_clues = new Array();
+	this.m_clues = [null, null];
+	this.m_clueEls = [null, null];
+	this.m_wordlenEl = null;
+	this.m_cluetextEl = null;
 
 	this.select = function(selected)
 	{
@@ -312,6 +317,20 @@ function CrosswordLight(x, y, orientation)
 		lens.push(count);
 		return lens;
 	}
+
+	/// Set the number
+	this.setNumber = function(num)
+	{
+		if (this.m_number != num)
+		{
+			for (var i = 0; i < this.m_numberEls.length; ++i) {
+				if (null != this.m_numberEls[i]) {
+					this.m_numberEls[i].nodeValue = num;
+				}
+			}
+			this.m_number = num;
+		}
+	}
 }
 
 function Crossword(name, width, height)
@@ -375,7 +394,7 @@ function Crossword(name, width, height)
 
 	this.clue = function(x, y, o)
 	{
-		return document.getElementById(this.m_name+"-clue-"+x+"-"+y+"-"+(o.isVertical()?1:0));
+		return document.getElementById(this.m_name+"-"+o.val()+"-clue-"+x+"-"+y);
 	}
 
 	this.clueOf = function(x, y, o)
@@ -758,10 +777,25 @@ function crosswordKeyPress(name, x, y, e)
 
 function crosswordToggleInlineAnswers()
 {
-	items = document.getElementsByName("crosswordClues");
+	var items = document.getElementsByName("crosswordClues");
+	var hideValues = CssCheck(items[0], "hideValues");
 	for (var i = 0; i < items.length; ++i) {
 		CssToggle(items[i], "hideValues");
 	}
+	var link = document.getElementById("toggleInlineAnswers");
+	link.textContent = (hideValues ? "Hide inline answers" : "Show inline answers");
+}
+
+function crosswordToggleCrypticClues()
+{
+	var items = document.getElementsByName("crosswordClues");
+	var hideCryptic = CssCheck(items[0], "hideCryptic");
+	for (var i = 0; i < items.length; ++i) {
+		CssToggle(items[i], "hideCryptic");
+		CssToggle(items[i], "hideQuick");
+	}
+	var link = document.getElementById("toggleCrypticClues");
+	link.textContent = (hideCryptic ? "Show simple clues" : "Show cryptic clues");
 }
 
 onLoadFunctions.push(function() {

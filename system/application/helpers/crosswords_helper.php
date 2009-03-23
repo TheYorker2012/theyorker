@@ -543,7 +543,8 @@ class CrosswordView
 		if ($this->m_edit) {
 			?></div><?php
 		}
-		?><a href="#" onclick="crosswordToggleInlineAnswers();">Toggle inline answers</a><?php
+		?><a id="toggleInlineAnswers" onclick="crosswordToggleInlineAnswers();">Show inline answers</a><br /><?php
+		?><a id="toggleCrypticClues" onclick="crosswordToggleCrypticClues();">Show cryptic clues</a><br /><?php
 		?></div><?php
 
 		// List of clues
@@ -557,7 +558,7 @@ class CrosswordView
 					CrosswordGrid::$VERTICAL	=> 1);
 		foreach ($clues as $orientation => &$oclues) {
 			?><div class="crosswordCluesBox"><?php
-			?><div name="crosswordClues" class="<?php echo($orClasses[$orientation]); ?> hideValues"><?php
+			?><div name="crosswordClues" class="<?php echo($orClasses[$orientation]); ?> hideValues hideCryptic"><?php
 			?><h2><?php
 			echo(xml_escape($titles[$orientation]));
 			?></h2><?php
@@ -566,7 +567,7 @@ class CrosswordView
 				$clue = &$clueInfo[0];
 				$x = $clueInfo[1];
 				$y = $clueInfo[2];
-				?><div id="<?php echo("$name-clue-$x-$y-$orientation"); ?>" <?php
+				?><div id="<?php echo("$name-$orientation-clue-$x-$y"); ?>" <?php
 					if (false) {
 					?>onclick="crosswordSelectLight(<?php echo("'$name', $x, $y, $orientation, event"); ?>)"<?php
 					}
@@ -575,10 +576,17 @@ class CrosswordView
 				?><span onclick="crosswordSelectLight(<?php
 					echo("'$name', $x, $y, $orientation, event");
 					?>)"><?php
-				echo($number.' ');
-				$lengths = $clue->wordLengths();
+				?><span id="<?php echo("$name-$orientation-num-$x-$y"); ?>"><?php
+				echo($number);
+				?></span><?php
+				echo(' ');
 				if (!$this->m_edit) {
+					?><span class="quickClue" id="<?php echo("$name-$orientation-cluetext0-$x-$y"); ?>"><?php
 					echo(xml_escape($clue->clue()));
+					?></span><?php
+					?><span class="crypticClue" id="<?php echo("$name-$orientation-cluetext1-$x-$y"); ?>"><?php
+					echo('No cryptic clues');
+					?></span><?php
 				}
 				?></span><?php
 
@@ -592,7 +600,8 @@ class CrosswordView
 				?><span onclick="crosswordSelectLight(<?php
 					echo("'$name', $x, $y, $orientation, event");
 					?>)"><?php
-				?> (<?php echo(join(',', $lengths)); ?>)<br /><?php
+				$lengths = $clue->wordLengths();
+				?> (<span id="<?php echo("$name-$orientation-wordlen-$x-$y"); ?>"><?php echo(join(',', $lengths)); ?></span>)<br /><?php
 				?></span><?php
 
 				if (true || $this->m_edit) {

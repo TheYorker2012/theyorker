@@ -143,6 +143,12 @@ div.crosswordCluesBox div.hideValues table.crossword {
 	display: none;
 }
 
+/* Quick or cryptic clues */
+div.crosswordCluesBox div.hideQuick span.quickClue,
+div.crosswordCluesBox div.hideCryptic span.crypticClue {
+	display: none;
+}
+
 /* Remove the wrong spaces */
 div.crosswordCluesBox div.vertical td.hsp {
 	border-left: 1px solid #FF6A00;
