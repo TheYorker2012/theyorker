@@ -605,12 +605,14 @@ function Crossword(name, width, height)
 		else {
 			this.changeCell(x, y);
 		}
+		this.m_xyModified = true;
 	}
 
 	this.clueClick = function(x, y, o, e)
 	{
 		this.m_inGrid = false;
 		this.changeCell(x, y, o);
+		this.m_xyModified = true;
 	}
 
 	this.keyDown = function(x, y, e)
