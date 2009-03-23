@@ -85,16 +85,28 @@ function crossword(name)
 }
 
 // Data per cell
-function CrosswordCell()
+function CrosswordCell(name, x, y)
 {
-	this.m_letter = null;
+	var mainEl = document.getElementById(name+"-"+x+"-"+y);
+	var mainEd = document.getElementById(name+"-edit-"+x+"-"+y);
+
+	this.m_letter = ((null != mainEd) ? mainEd.value : null);
 	this.m_solution = null;
-	this.m_spacers = [false, false];
+	this.m_spacers = ((null != mainEl) ? [CssCheck(mainEl, "hsp"), CssCheck(mainEl, "vsp")] : [false,false]);
 	this.m_lights = [null, null];
-	this.m_els = new Array();
-	this.m_eds = new Array();
-	this.m_selected = false;
-	this.m_focused = false;
+	this.m_els = [	mainEl,
+					document.getElementById(name+"-"+0+"-"+x+"-"+y),
+					document.getElementById(name+"-"+1+"-"+x+"-"+y) ];
+	this.m_eds = [	mainEd,
+					document.getElementById(name+"-"+0+"-edit-"+x+"-"+y),
+					document.getElementById(name+"-"+1+"-edit-"+x+"-"+y) ];
+	this.m_selected	= ((null != mainEl) ? CssCheck(mainEl, "selected") : false);
+	this.m_focused	= ((null != mainEl) ? CssCheck(mainEl, "focus") : false);
+
+	this.editBox = function()
+	{
+		return this.m_eds[0];
+	}
 
 	this.addEl = function(el)
 	{
@@ -126,7 +138,16 @@ function CrosswordCell()
 				}
 			}
 			// Change internally
+			var oldLetter = this.m_letter;
 			this.m_letter = letter;
+			// Knowness
+			if ((oldLetter != "") != (letter != "")) {
+				for (var i = 0; i < 2; ++i) {
+					if (this.m_lights[i] != null) {
+						this.m_lights[i].updateCompleteness();
+					}
+				}
+			}
 		}
 	}
 	this.letter = function()
@@ -139,7 +160,7 @@ function CrosswordCell()
 	}
 	this.isKnown = function()
 	{
-		return (this.m_letter != " ");
+		return (this.m_letter != "");
 	}
 	this.setSolution = function(letter)
 	{
@@ -191,7 +212,9 @@ function CrosswordCell()
 			// Change selected class
 			var op = (selected ? CssAdd : CssRemove);
 			for (var i = 0; i < this.m_els.length; ++i) {
-				op(this.m_els[i], "selected");
+				if (null != this.m_els[i]) {
+					op(this.m_els[i], "selected");
+				}
 			}
 			// Change internally
 			this.m_selected = selected;
@@ -210,32 +233,52 @@ function CrosswordCell()
 			// Change focus class
 			var op = (focused ? CssAdd : CssRemove);
 			for (var i = 0; i < this.m_els.length; ++i) {
-				op(this.m_els[i], "focus");
+				if (null != this.m_els[i]) {
+					op(this.m_els[i], "focus");
+				}
 			}
 			// Change internally
 			this.m_focused = focused;
 		}
 	}
+
+	this.setLight = function(orientation, light)
+	{
+		this.m_lights[orientation] = light;
+	}
+	this.light = function(orientation)
+	{
+		return this.m_lights[orientation];
+	}
 }
 
-function CrosswordLight(x, y, orientation)
+function CrosswordLight(name, x, y, orientation, cells)
 {
 	this.m_x = x;
 	this.m_y = y;
 	this.m_orientation = orientation;
-	this.m_number = 0;
-	this.m_numberEls = [null, null];
-	this.m_cells = new Array();
+	this.m_numberEls = [document.getElementById(name+"-num-"+x+"-"+y),
+						document.getElementById(name+"-0-num-"+x+"-"+y),
+						document.getElementById(name+"-1-num-"+x+"-"+y)];
+	this.m_number = parseInt(this.m_numberEls[0].textContent, 10);
+	this.m_cells = cells;
 	this.m_clues = [null, null];
+	this.m_clueDiv = document.getElementById(name+"-"+orientation+"-clue-"+x+"-"+y);
 	this.m_clueEls = [null, null];
 	this.m_wordlenEl = null;
 	this.m_cluetextEl = null;
+	this.m_complete = null;
 
-	this.select = function(selected)
+	for (var i = 0; i < this.m_cells.length; ++i) {
+		this.m_cells[i].setLight(orientation, this);
+	}
+
+	this.select = function(selected, x, y)
 	{
 		for (var i = 0; i < this.m_cells.length; ++i) {
 			this.m_cells[i].select(selected);
 		}
+		(selected ? CssAdd : CssRemove)(this.m_clueDiv, "selected");
 	}
 
 	/// Find the current value of this light
@@ -266,6 +309,22 @@ function CrosswordLight(x, y, orientation)
 			}
 		}
 		return val;
+	}
+
+	/// Find whether the light is completely filled in
+	this.updateCompleteness = function()
+	{
+		var complete = true;
+		for (var i = 0; i < this.m_cells.length; ++i) {
+			if (!this.m_cells[i].isKnown()) {
+				complete = false;
+				break;
+			}
+		}
+		if (this.m_complete != complete) {
+			this.m_complete = complete;
+			(complete ? CssAdd : CssRemove)(this.m_clueDiv, "complete")
+		}
 	}
 
 	/// Write solution into grid
@@ -331,6 +390,8 @@ function CrosswordLight(x, y, orientation)
 			this.m_number = num;
 		}
 	}
+
+	this.updateCompleteness();
 }
 
 function Crossword(name, width, height)
@@ -355,13 +416,40 @@ function Crossword(name, width, height)
 	for (var x = 0; x < width; ++x) {
 		this.m_grid[x] = new Array();
 		for (var y = 0; y < height; ++y) {
-			this.m_grid[x][y] = new CrosswordCell();
-			this.m_grid[x][y].addEl(document.getElementById(this.m_name+"-"+x+"-"+y));
-			this.m_grid[x][y].addEl(document.getElementById(this.m_name+"-0-"+x+"-"+y));
-			this.m_grid[x][y].addEl(document.getElementById(this.m_name+"-1-"+x+"-"+y));
-			this.m_grid[x][y].addEd(document.getElementById(this.m_name+"-edit-"+x+"-"+y));
-			this.m_grid[x][y].addEd(document.getElementById(this.m_name+"-0-edit-"+x+"-"+y));
-			this.m_grid[x][y].addEd(document.getElementById(this.m_name+"-1-edit-"+x+"-"+y));
+			// Cell information
+			this.m_grid[x][y] = new CrosswordCell(this.m_name, x, y);
+		}
+	}
+	for (var x = 0; x < width; ++x) {
+		this.m_lights[x] = new Array();
+		for (var y = 0; y < height; ++y) {
+			this.m_lights[x][y] = [null, null];
+			for (var dir = 0; dir < 2; ++dir) {
+				// Light information
+				var clue = document.getElementById(this.m_name+"-"+dir+"-clue-"+x+"-"+y);
+				if (clue != null) {
+					var cells = [];
+					var cx = x;
+					var cy = y;
+					while (cx < width && cy < height) {
+						cell = this.m_grid[cx][cy];
+						if (cell.isBlank()) {
+							break;
+						}
+						else {
+							cells[cells.length] = cell;
+						}
+
+						if (dir == 1) {
+							++cy;
+						}
+						else {
+							++cx;
+						}
+					}
+					this.m_lights[x][y][dir] = new CrosswordLight(this.m_name, x, y, dir, cells);
+				}
+			}
 		}
 	}
 
@@ -387,160 +475,26 @@ function Crossword(name, width, height)
 		return this.m_orientation;
 	}
 
-	this.editBox = function(x, y)
+	this.cell = function(x,y)
 	{
-		return document.getElementById(this.m_name+"-edit-"+x+"-"+y);
-	}
-
-	this.clue = function(x, y, o)
-	{
-		return document.getElementById(this.m_name+"-"+o.val()+"-clue-"+x+"-"+y);
-	}
-
-	this.clueOf = function(x, y, o)
-	{
-		var dx = o.dx();
-		var dy = o.dy();
-		while (true) {
-			x -= dx;
-			y -= dy;
-			if (this.isCellBlank(x,y)) {
-				x += dx;
-				y += dy;
-				break;
-			}
+		if (x >= 0 && x < this.m_width &&
+			y >= 0 && y < this.m_height) {
+			return this.m_grid[x][y];
 		}
-		return this.clue(x, y, o);
-	}
-
-	this.cell = function(x, y)
-	{
-		return document.getElementById(this.m_name+"-"+x+"-"+y);
-	}
-
-	// Get a list of cells in a light, the first being the one specified
-	this.light = function(x, y, orientation, editBox)
-	{
-		var result = new Array()
-		var cell = (editBox ? this.editBox(x, y) : this.cell(x, y));
-		var blank = this.isCellBlank(x, y);
-		if (null != cell) {
-			result.push(cell);
-			// First go backwards
-			var cx = x;
-			var cy = y;
-			var dx = orientation.dx();
-			var dy = orientation.dy();
-			while (true) {
-				cx -= dx;
-				cy -= dy;
-				if (this.isCellBlank(cx,cy)) {
-					break;
-				}
-				cell = (editBox ? this.editBox(cx, cy) : this.cell(cx, cy));
-				if (null != cell) {
-					result.push(cell);
-				}
-				else {
-					break;
-				}
-			};
-			if (!blank) {
-				// Now go forwards
-				cx = x;
-				cy = y;
-				while (true) {
-					cx += dx;
-					cy += dy;
-					if (this.isCellBlank(cx,cy)) {
-						break;
-					}
-					cell = (editBox ? this.editBox(cx, cy) : this.cell(cx, cy));
-					if (null != cell) {
-						result.push(cell);
-					}
-					else {
-						break;
-					}
-				}
-			}
-			else {
-				// Only go forwards one
-				cx = x + dx;
-				cy = y + dy;
-				cell = (editBox ? this.editBox(cx, cy) : this.cell(cx, cy));
-				if (null != cell) {
-					result.push(cell);
-				}
-			}
-		}
-		return result;
-	}
-
-	this.setClueComplete = function(x, y, o, completed)
-	{
-		var clue = this.clueOf(x, y, o);
-		if (null != clue) {
-			if (completed) {
-				CssAdd(clue, "complete");
-			}
-			else {
-				CssRemove(clue, "complete");
-			}
+		else {
+			return null;
 		}
 	}
 
-	this.isClueComplete = function(x, y, o)
-	{
-		var boxes = this.light(x, y, o, this.value, true);
-		for (var i = 0; i < boxes.length; ++i) {
-			if (boxes[i].value == "") {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	this.updateClueComplete = function(x, y, o)
-	{
-		this.setClueComplete(x, y, o, this.isClueComplete(x, y, o));
-	}
-
-	this.updateCellFilled = function(x, y)
-	{
-		this.updateClueComplete(x, y, newVertical()); 
-		this.updateClueComplete(x, y, newHorizontal()); 
-	}
-
-	this.selectLight = function(light)
-	{
-		if (null != light[0]) {
-			CssAdd(light[0], "focus");
-		}
-		for (var i = 0; i < light.length; ++i) {
-			CssAdd(light[i], "selected");
-		}
-	}
-	this.deselectLight = function(light)
-	{
-		if (null != light[0]) {
-			CssRemove(light[0], "focus");
-		}
-		for (var i = 0; i < light.length; ++i) {
-			CssRemove(light[i], "selected");
-		}
-	}
-
-	this.isCellBlank = function(x, y)
+	this.editBox = function(x,y)
 	{
 		var cell = this.cell(x,y);
-		return null == cell || CssCheck(cell,'blank');
-	}
-
-	this.value = function(x, y)
-	{
-		var edit = this.editBox(x, y);
-		return edit.value;
+		if (null != cell) {
+			return cell.editBox();
+		}
+		else {
+			return null;
+		}
 	}
 
 	this.modifyValue = function(x, y, v)
@@ -548,13 +502,15 @@ function Crossword(name, width, height)
 		var edit = this.editBox(x, y);
 		var statusChanged = ((v == "") != (edit.value == ""));
 		var cell = this.m_grid[x][y];
-		//edit.value = v;
 		cell.setLetter(v);
 		if (statusChanged) {
-			this.updateCellFilled(x, y);
-			this.deselectLight(this.m_light);
-			this.m_light = this.light(this.m_x, this.m_y, this.m_orientation, false);
-			this.selectLight(this.m_light);
+			if (null != this.m_light) {
+				this.m_light.select(false);
+			}
+			this.m_light = this.m_grid[this.m_x][this.m_y].light(this.m_orientation.val());
+			if (null != this.m_light) {
+				this.m_light.select(true);
+			}
 		}
 		if (x == this.m_x && y == this.m_y) {
 			this.m_xyModified = (v != "");
@@ -569,10 +525,8 @@ function Crossword(name, width, height)
 		this.m_xySpaced = false;
 
 		// Deselect previous light
-		this.deselectLight(this.m_light);
-		var clue = this.clueOf(this.m_x, this.m_y, this.m_orientation);
-		if (null != clue) {
-			CssRemove(clue, "selected");
+		if (null != this.m_light) {
+			this.m_light.select(false);
 		}
 		
 		// Switch orientation only if it's sensible
@@ -584,32 +538,32 @@ function Crossword(name, width, height)
 		}
 
 		// Select new light
-		this.m_light = this.light(this.m_x, this.m_y, this.m_orientation, false);
-		this.selectLight(this.m_light);
-		clue = this.clueOf(this.m_x, this.m_y, this.m_orientation);
-		if (null != clue) {
-			CssAdd(clue, "selected");
+		this.m_light = this.m_grid[this.m_x][this.m_y].light(this.m_orientation.val());
+		if (null != this.m_light) {
+			this.m_light.select(true);
 		}
 	}
 
 	this.changeCell = function(x, y, o)
 	{
-		var edit = this.editBox(x, y);
 		if (x != this.m_x || y != this.m_y) {
 			this.m_xyModified = false;
 			this.m_xySpaced = false;
 		}
 		// Deselect previous light
-		this.deselectLight(this.m_light);
-		var clue = this.clueOf(this.m_x, this.m_y, this.m_orientation);
-		if (null != clue) {
-			CssRemove(clue, "selected");
+		if (null != this.m_light) {
+			this.m_light.select(false);
+		}
+
+		var cell = this.cell(this.m_x, this.m_y);
+		if (null != cell) {
+			cell.focus(false);
 		}
 
 		// Change cell
 		this.m_x = x;
 		this.m_y = y;
-		if (null != edit) {
+		if (this.editBox(x,y) != null) {
 			// Switch orientation if it isn't sensible or if requested
 			if ((o != null && o != this.m_orientation.val()) ||
 				(null == this.editBox(x-this.m_orientation.dx(), y-this.m_orientation.dy()) &&
@@ -621,11 +575,9 @@ function Crossword(name, width, height)
 			this.m_grid[x][y].focus(true, this.m_inGrid ? 0 : 1+this.m_orientation.val());
 
 			// Select new light
-			this.m_light = this.light(x, y, this.m_orientation, false);
-			this.selectLight(this.m_light);
-			clue = this.clueOf(x, y, this.m_orientation);
-			if (null != clue) {
-				CssAdd(clue, "selected");
+			this.m_light = this.m_grid[x][y].light(this.m_orientation.val());
+			if (null != this.m_light) {
+				this.m_light.select(true);
 			}
 		}
 	}
@@ -667,10 +619,9 @@ function Crossword(name, width, height)
 		// Control keys
 		if (keyCode != 0) {
 			if (keyCode == 8 /* backspace */) {
-				// If the cell not modified, go backwards first
-				var modified = this.m_xyModified;
-				this.changeCellRelative(x, y, -this.orientation().dx(), -this.orientation().dy(), false);
-				if (!modified) {
+				// Only move backwards if it was already blank
+				if (!this.m_xyModified || !this.cell(x,y).isKnown()) {
+					this.changeCellRelative(x, y, -this.orientation().dx(), -this.orientation().dy(), false);
 					x = this.x();
 					y = this.y();
 				}
@@ -679,9 +630,8 @@ function Crossword(name, width, height)
 			}
 			else if (keyCode == 46  /* delete (others)*/ ||
 			         keyCode == 127 /* delete (konqueror) */) {
-				var val = this.value(x, y);
 				// Only move backwards if it was already blank
-				if (val == "") {
+				if (!this.cell(x,y).isKnown()) {
 					this.changeCellRelative(x, y, -this.orientation().dx(), -this.orientation().dy(), false);
 					x = this.x();
 					y = this.y();
