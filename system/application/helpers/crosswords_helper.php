@@ -554,8 +554,8 @@ class CrosswordView
 					CrosswordGrid::$VERTICAL	=> 0);
 		$dy = array(CrosswordGrid::$HORIZONTAL	=> 0,
 					CrosswordGrid::$VERTICAL	=> 1);
-		?><div class="crosswordCluesBox"><?php
 		foreach ($clues as $orientation => &$oclues) {
+			?><div class="crosswordCluesBox"><?php
 			?><div class="<?php echo($orClasses[$orientation]); ?>"><?php
 			?><h2><?php
 			echo(xml_escape($titles[$orientation]));
@@ -634,8 +634,8 @@ class CrosswordView
 				echo("\n");
 			}
 			?></div><?php
+			?></div><?php
 		}
-		?></div><?php
 	}
 }
 

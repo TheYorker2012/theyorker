@@ -100,22 +100,20 @@ table.crossword td.focus input {
 
 div.crosswordBox {
 	float: left;
-	width: 60%;
+	width: 40%;
 	padding: 0px;
 	margin: 0px;
 }
 
 div.crosswordCluesBox {
 	float: left;
-	width: 40%;
+	width: 30%;
 	padding: 0px;
 	margin: 0px;
 }
 
 div.crosswordCluesBox div.horizontal,
 div.crosswordCluesBox div.vertical {
-	border: 2px solid #FF6A00;
-	padding: 0.5em;
 	margin: 0px 0px 0.5em 0.5em;
 }
 
@@ -126,6 +124,7 @@ div.crosswordCluesBox h2 {
 div.crosswordCluesBox div.horizontal div,
 div.crosswordCluesBox div.vertical   div {
 	margin: 0px;
+	padding: 0.2em;
 	cursor: pointer;
 }
 
