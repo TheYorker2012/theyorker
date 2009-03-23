@@ -139,6 +139,10 @@ div.crosswordCluesBox div.vertical   div.selected {
 	border: 1px solid #FFAA88
 }
 
+div.crosswordCluesBox div.hideValues table.crossword {
+	display: none;
+}
+
 /* Remove the wrong spaces */
 div.crosswordCluesBox div.vertical td.hsp {
 	border-left: 1px solid #FF6A00;

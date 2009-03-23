@@ -33,6 +33,11 @@ function CssCheck(o,c1)
 {
 	return new RegExp('\\b'+c1+'\\b').test(o.className);
 }
+/// Toggle the style c1 in o
+function CssToggle(o,c1)
+{
+	(CssCheck(o,c1) ? CssRemove : CssAdd)(o,c1);
+}
 
 function Orientation(orientation)
 {
@@ -326,6 +331,7 @@ function Crossword(name, width, height)
 	this.m_light = new Array();
 
 	this.m_grid = new Array();
+	this.m_lights = new Array();
 
 	for (var x = 0; x < width; ++x) {
 		this.m_grid[x] = new Array();
@@ -748,6 +754,14 @@ function crosswordKeyDown(name, x, y, e)
 function crosswordKeyPress(name, x, y, e)
 {
 	return crossword(name).keyPress(x, y, e);
+}
+
+function crosswordToggleInlineAnswers()
+{
+	items = document.getElementsByName("crosswordClues");
+	for (var i = 0; i < items.length; ++i) {
+		CssToggle(items[i], "hideValues");
+	}
 }
 
 onLoadFunctions.push(function() {
