@@ -62,4 +62,6 @@ function CrosswordEdit(name, width, height)
 	return thisCrossword;
 }
 
-grid = CrosswordEdit("xw", 13, 13);
+onLoadFunctions.push(function() {
+	grid = CrosswordEdit("xw", 13, 13);
+});

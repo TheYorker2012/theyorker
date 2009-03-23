@@ -58,6 +58,7 @@ function Orientation(orientation)
 	{
 		return this.isVertical() ? 1 : 0;
 	}
+	this.val = this.dy;
 }
 
 function newHorizontal()
@@ -78,6 +79,236 @@ function crossword(name)
 	return crosswords[name];
 }
 
+// Data per cell
+function CrosswordCell()
+{
+	this.m_letter = null;
+	this.m_solution = null;
+	this.m_spacers = [false, false];
+	this.m_lights = [null, null];
+	this.m_els = new Array();
+	this.m_eds = new Array();
+	this.m_selected = false;
+	this.m_focused = false;
+
+	this.addEl = function(el)
+	{
+		if (el != null) {
+			this.m_els.push(el);
+		}
+	}
+	this.addEd = function(ed)
+	{
+		this.m_eds.push(ed);
+	}
+
+	this.setLetter = function(letter)
+	{
+		if (this.m_letter != letter) {
+			// Change edit texts
+			var strLetter = ((letter == null) ? "" : letter);
+			for (var i = 0; i < this.m_eds.length; ++i) {
+				var ed = this.m_eds[i];
+				if (null != ed) {
+					ed.value = strLetter;
+				}
+			}
+			// Change blankness
+			var op = ((letter == null) ? CssAdd : CssRemove);
+			if ((this.m_letter == null) != (letter == null)) {
+				for (var i = 0; i < this.m_els.length; ++i) {
+					op(this.m_els[i], "blank");
+				}
+			}
+			// Change internally
+			this.m_letter = letter;
+		}
+	}
+	this.letter = function()
+	{
+		return this.m_letter;
+	}
+	this.isBlank = function()
+	{
+		return (this.m_letter == null);
+	}
+	this.isKnown = function()
+	{
+		return (this.m_letter != " ");
+	}
+	this.setSolution = function(letter)
+	{
+		m_solution = letter;
+	}
+	this.solution = function()
+	{
+		return m_solution;
+	}
+	this.solve = function()
+	{
+		if (this.m_solution != null) {
+			this.setLetter(this.m_solution);
+		}
+	}
+	this.extract = function()
+	{
+		this.m_solution = this.m_letter;
+	}
+	this.check = function()
+	{
+		if (this.m_solution == null) {
+			return null;
+		}
+		return (this.m_solution == this.m_letter);
+	}
+
+	this.space = function(orientation, enable)
+	{
+		if (this.m_spacers[orientation.val()] != enable) {
+			// Change spacer class
+			var op = (enable ? CssAdd : CssRemove);
+			var cl = (orientation.isHorizontal() ? "hsp" : "vsp");
+			for (var i = 0; i < this.m_els.length; ++i) {
+				op(this.m_els[i], cl);
+			}
+			// Change internally
+			this.m_spacers[orientation.val()] = enable;
+		}
+	}
+	this.isSpaced = function(orientation)
+	{
+		return this.m_spacers[orientation.val()];
+	}
+
+	this.select = function(selected)
+	{
+		if (this.m_selected != selected) {
+			// Change selected class
+			var op = (selected ? CssAdd : CssRemove);
+			for (var i = 0; i < this.m_els.length; ++i) {
+				op(this.m_els[i], "selected");
+			}
+			// Change internally
+			this.m_selected = selected;
+		}
+	}
+
+	this.focus = function(focused, index)
+	{
+		if (focused) {
+			var ed = this.m_eds[index];
+			if (null != ed) {
+				ed.focus();
+			}
+		}
+		if (this.m_focused != focused) {
+			// Change focus class
+			var op = (focused ? CssAdd : CssRemove);
+			for (var i = 0; i < this.m_els.length; ++i) {
+				op(this.m_els[i], "focus");
+			}
+			// Change internally
+			this.m_focused = focused;
+		}
+	}
+}
+
+function CrosswordLight(x, y, orientation)
+{
+	this.m_x = x;
+	this.m_y = y;
+	this.m_orientation = orientation;
+	this.m_cells = new Array();
+	this.m_clues = new Array();
+
+	this.select = function(selected)
+	{
+		for (var i = 0; i < this.m_cells.length; ++i) {
+			this.m_cells[i].select(selected);
+		}
+	}
+
+	/// Find the current value of this light
+	this.value = function()
+	{
+		var val = "";
+		for (var i = 0; i < this.m_cells.length; ++i) {
+			var cell = this.m_cells[i];
+			if (cell.isSpaced(this.m_orientation)) {
+				val += " ";
+			}
+			if (!cell.isBlank()) {
+				val += cell.letter();
+			}
+		}
+		return val;
+	}
+	this.solution = function()
+	{
+		var val = "";
+		for (var i = 0; i < this.m_cells.length; ++i) {
+			var cell = this.m_cells[i];
+			if (cell.isSpaced(this.m_orientation)) {
+				val += " ";
+			}
+			if (!cell.isBlank()) {
+				val += cell.solution();
+			}
+		}
+		return val;
+	}
+
+	/// Write solution into grid
+	this.solve = function()
+	{
+		for (var i = 0; i < this.m_cells.length; ++i) {
+			this.m_cells[i].solve();
+		}
+	}
+	/// Read solution from grid
+	this.extract = function()
+	{
+		for (var i = 0; i < this.m_cells.length; ++i) {
+			this.m_cells[i].extract();
+		}
+	}
+	/// Check whether the value matches the solution
+	this.check = function()
+	{
+		for (var i = 0; i < this.m_cells.length; ++i) {
+			if (!m_cells[i].check()) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/// Get length of light
+	this.length = function()
+	{
+		return this.m_clues.length;
+	}
+
+	/// Get list of lengths for each word
+	this.wordLengths = function()
+	{
+		var lens = new Array();
+		var count = 0;
+		for (var i = 0; i < this.m_cells.length; ++i) {
+			// Assume first letter isn't spaced
+			if (this.m_cells[i].isSpaced(this.m_orientation)) {
+				lens.push(count);
+				count = 0;
+			}
+			else {
+				++count;
+			}
+		}
+		lens.push(count);
+		return lens;
+	}
+}
+
 function Crossword(name, width, height)
 {
 	crosswords[name] = this;
@@ -89,9 +320,25 @@ function Crossword(name, width, height)
 	this.m_x = -1;
 	this.m_y = -1;
 	this.m_orientation = newHorizontal();
+	this.m_inGrid = true;
 	this.m_xyModified = false;
 	this.m_xySpaced = false;
-	this.m_light = [];
+	this.m_light = new Array();
+
+	this.m_grid = new Array();
+
+	for (var x = 0; x < width; ++x) {
+		this.m_grid[x] = new Array();
+		for (var y = 0; y < height; ++y) {
+			this.m_grid[x][y] = new CrosswordCell();
+			this.m_grid[x][y].addEl(document.getElementById(this.m_name+"-"+x+"-"+y));
+			this.m_grid[x][y].addEl(document.getElementById(this.m_name+"-0-"+x+"-"+y));
+			this.m_grid[x][y].addEl(document.getElementById(this.m_name+"-1-"+x+"-"+y));
+			this.m_grid[x][y].addEd(document.getElementById(this.m_name+"-edit-"+x+"-"+y));
+			this.m_grid[x][y].addEd(document.getElementById(this.m_name+"-0-edit-"+x+"-"+y));
+			this.m_grid[x][y].addEd(document.getElementById(this.m_name+"-1-edit-"+x+"-"+y));
+		}
+	}
 
 	this.width = function()
 	{
@@ -149,7 +396,7 @@ function Crossword(name, width, height)
 	// Get a list of cells in a light, the first being the one specified
 	this.light = function(x, y, orientation, editBox)
 	{
-		var result = []
+		var result = new Array()
 		var cell = (editBox ? this.editBox(x, y) : this.cell(x, y));
 		var blank = this.isCellBlank(x, y);
 		if (null != cell) {
@@ -275,7 +522,9 @@ function Crossword(name, width, height)
 	{
 		var edit = this.editBox(x, y);
 		var statusChanged = ((v == "") != (edit.value == ""));
-		edit.value = v;
+		var cell = this.m_grid[x][y];
+		//edit.value = v;
+		cell.setLetter(v);
 		if (statusChanged) {
 			this.updateCellFilled(x, y);
 			this.deselectLight(this.m_light);
@@ -318,7 +567,7 @@ function Crossword(name, width, height)
 		}
 	}
 
-	this.changeCell = function(x, y)
+	this.changeCell = function(x, y, o)
 	{
 		var edit = this.editBox(x, y);
 		if (x != this.m_x || y != this.m_y) {
@@ -336,14 +585,15 @@ function Crossword(name, width, height)
 		this.m_x = x;
 		this.m_y = y;
 		if (null != edit) {
-			edit.focus();
-
-			// Switch orientation if it isn't sensible
-			if (null == this.editBox(x-this.m_orientation.dx(), y-this.m_orientation.dy()) &&
-				null == this.editBox(x+this.m_orientation.dx(), y+this.m_orientation.dy()))
+			// Switch orientation if it isn't sensible or if requested
+			if ((o != null && o != this.m_orientation.val()) ||
+				(null == this.editBox(x-this.m_orientation.dx(), y-this.m_orientation.dy()) &&
+				 null == this.editBox(x+this.m_orientation.dx(), y+this.m_orientation.dy())))
 			{
 				this.m_orientation.toggle();
 			}
+
+			this.m_grid[x][y].focus(true, this.m_inGrid ? 0 : 1+this.m_orientation.val());
 
 			// Select new light
 			this.m_light = this.light(x, y, this.m_orientation, false);
@@ -371,12 +621,19 @@ function Crossword(name, width, height)
 
 	this.click = function(x, y, e)
 	{
+		this.m_inGrid = true;
 		if (this.m_x == x && this.m_y == y) {
 			this.toggleOrientation();
 		}
 		else {
 			this.changeCell(x, y);
 		}
+	}
+
+	this.clueClick = function(x, y, o, e)
+	{
+		this.m_inGrid = false;
+		this.changeCell(x, y, o);
 	}
 
 	this.keyDown = function(x, y, e)
@@ -412,18 +669,20 @@ function Crossword(name, width, height)
 				var dx = 0;
 				var dy = 0;
 				if (keyCode == 37 /* left arrow */) {
-					dx = -1;
+					dx = (this.m_inGrid ? -1 : -this.m_orientation.dx());
+					dy = (this.m_inGrid ?  0 : -this.m_orientation.dy());
 				}
 				else if (keyCode == 38 /* up arrow */) {
-					dy = -1;
+					dy = (this.m_inGrid ? -1 : 0);
 				}
 				else if (keyCode == 39 /* right arrow */) {
-					dx = 1;
+					dx = (this.m_inGrid ? 1 : this.m_orientation.dx());
+					dy = (this.m_inGrid ? 0 : this.m_orientation.dy());
 				}
 				else if (keyCode == 40 /* down arrow */) {
-					dy = 1;
+					dy = (this.m_inGrid ? 1 : 0);
 				}
-				this.changeCellRelative(x, y, dx, dy, true);
+				this.changeCellRelative(x, y, dx, dy, this.m_inGrid);
 				this.m_xyModified = true;
 			}
 		}
@@ -467,6 +726,11 @@ function crosswordClick(name, x, y, e)
 	return crossword(name).click(x, y, e);
 }
 
+function crosswordClueClick(name, x, y, o, e)
+{
+	return crossword(name).clueClick(x, y, o, e);
+}
+
 function crosswordSelectLight(name, x, y, o, e)
 {
 	var xw = crossword(name);
@@ -486,5 +750,7 @@ function crosswordKeyPress(name, x, y, e)
 	return crossword(name).keyPress(x, y, e);
 }
 
-new Crossword("xw", 13, 13);
+onLoadFunctions.push(function() {
+	new Crossword("xw", 13, 13);
+});
 

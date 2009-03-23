@@ -422,8 +422,43 @@ class CrosswordPuzzle
 	private $m_grid;
 }
 
+class CrosswordViewXml
+{
+	private $m_crossword;
+	private $m_edit;
+
+	function __construct(&$crossword, $edit = false)
+	{
+		$this->m_crossword = $crossword;
+		$this->m_edit = $edit;
+	}
+
+	function Load()
+	{
+		$grid = &$this->m_crossword->grid();
+		$height = $grid->height();
+		$width = $grid->width();
+		$clueNumber = 0;
+		$clues = array();
+
+		echo('<'.'?xml version="1.0" encoding="utf-8">'."\n");
+		?><crossword><?php
+		?><grid width="<?php echo($width); ?>" height="<?php echo($height); ?>"><?php
+
+
+		//for ($y = 0; $y < $height; ++$y) {
+		//	for ($x = 0; $x < $width; ++$x) {
+
+		?></grid><?php
+		?></crossword><?php
+	}
+}
+
 class CrosswordView
 {
+	private $m_crossword;
+	private $m_edit;
+
 	function __construct(&$crossword, $edit = false)
 	{
 		$this->m_crossword = $crossword;
@@ -513,9 +548,15 @@ class CrosswordView
 		// List of clues
 		$titles = array(CrosswordGrid::$HORIZONTAL => "Across",
 		                CrosswordGrid::$VERTICAL   => "Down");
+		$orClasses = array(CrosswordGrid::$HORIZONTAL => "horizontal",
+		                   CrosswordGrid::$VERTICAL   => "vertical");
+		$dx = array(CrosswordGrid::$HORIZONTAL	=> 1,
+					CrosswordGrid::$VERTICAL	=> 0);
+		$dy = array(CrosswordGrid::$HORIZONTAL	=> 0,
+					CrosswordGrid::$VERTICAL	=> 1);
 		?><div class="crosswordCluesBox"><?php
 		foreach ($clues as $orientation => &$oclues) {
-			?><div class="crosswordClues"><?php
+			?><div class="<?php echo($orClasses[$orientation]); ?>"><?php
 			?><h2><?php
 			echo(xml_escape($titles[$orientation]));
 			?></h2><?php
@@ -524,36 +565,78 @@ class CrosswordView
 				$clue = &$clueInfo[0];
 				$x = $clueInfo[1];
 				$y = $clueInfo[2];
-				?><p id="<?php echo("$name-clue-$x-$y-$orientation"); ?>" <?php
-					?>onclick="crosswordSelectLight(<?php echo("'$name', $x, $y, $orientation, event"); ?>)"><?php
+				?><div id="<?php echo("$name-clue-$x-$y-$orientation"); ?>" <?php
+					if (false) {
+					?>onclick="crosswordSelectLight(<?php echo("'$name', $x, $y, $orientation, event"); ?>)"<?php
+					}
+					?>><?php
 				echo($number.' ');
 				$lengths = $clue->wordLengths();
-				echo(xml_escape($clue->clue()));
-				?> (<?php echo(join(',', $lengths)); ?>)<?php
-				?></p><?php
+				if (!$this->m_edit) {
+					echo(xml_escape($clue->clue()));
+				}
 
-				if (false) {
+				if ($this->m_edit) {
+					?><input type="text" width="40" value="<?php echo(xml_escape($clue->clue())); ?>" /><?php
+					if (false) {
+						?><input type="text" width="40" value="<?php echo(xml_escape($clue->clue())); ?>" /><?php
+					}
+				}
+
+				?> (<?php echo(join(',', $lengths)); ?>)<br /><?php
+
+				if (true || $this->m_edit) {
 					$solution = $clue->solution();
 					$length = strlen($solution);
 					?><table class="crossword"><?php
 					?><tr class="small"><?php
 					for ($i = 0; $i < $length; ++$i) {
-						?><td><?php
-						echo(xml_escape(substr($solution, $i, 1)));
-						?></td><?php
+						$cx = $x + $dx[$orientation]*$i;
+						$cy = $y + $dy[$orientation]*$i;
+						$state = $grid->cellState($cx, $cy);
+						$used = is_string($state);
+						if ($used || $this->m_edit) {
+							$classes = array();
+							if (!$used) {
+								$classes[] = 'blank';
+							}
+							// Spacers on this cell?
+							$spacers = $grid->cellSpacers($cx, $cy);
+							if ($spacers[CrosswordGrid::$HORIZONTAL]) {
+								$classes[] = 'hsp';
+							}
+							if ($spacers[CrosswordGrid::$VERTICAL]) {
+								$classes[] = 'vsp';
+							}
+							?><td <?php
+								if (!empty($classes)) {
+									echo('class="'.implode(' ',$classes).'" ');
+								}
+							?>id="<?php echo("$name-$orientation-$cx-$cy"); ?>" <?php
+								?>onclick="return crosswordClueClick(<?php echo("'$name', $cx, $cy, $orientation, event") ?>)"><div><?php
+							?><input type="text" cols="1" maxlength="2" <?php
+								   ?>id="<?php echo("$name-$orientation-edit-$cx-$cy"); ?>" <?php
+								   ?>onkeydown="return crosswordKeyDown(<?php echo("'$name',$cx,$cy,event") ?>)" <?php
+								   ?>onkeypress="return crosswordKeyPress(<?php echo("'$name',$cx,$cy,event") ?>)" <?php
+								   ?>value="<?php
+							if ($this->m_edit) {
+									echo(xml_escape(substr($solution, $i, 1)));
+							}
+							?>" /><?php
+							?></td><?php
+						}
 					}
 					?></tr><?php
 					?></table><?php
 				}
+
+				?></div><?php
 				echo("\n");
 			}
 			?></div><?php
 		}
 		?></div><?php
 	}
-
-	private $m_crossword;
-	private $m_edit;
 }
 
 ?>
