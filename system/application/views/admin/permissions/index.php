@@ -18,12 +18,12 @@
 
 ?>
 
-<div class="RightToolbar">
+<div id="RightColumn">
 	<?php
 	echo($xml_whats_this);
 	?>
 	
-	<h4>Save</h4>
+	<h2>Save</h2>
 	<form class="form">
 		<fieldset>
 			<input	class="button" type="button" value="Save"
@@ -33,6 +33,8 @@
 		</fieldset>
 	</form>
 </div>
+
+<div id="MainColumn">
 
 <script type="text/javascript">
 // <![CDATA[
@@ -48,13 +50,14 @@
 </script>
 
 <noscript>
-	<div class="blue_box">
+	<div class="BlueBox">
 		<h2>Javascript Disabled</h2>
 		<p>Please enable Javascript in your browser to be able to use this interface.</p>
 	</div>
 </noscript>
 
-<div id="permissionsBox" class="grey_box">
+<div id="permissionsBox" class="BlueBox">
+<div>
 	<?php
 	echo($xml_info_permissions);
 	?>
@@ -106,8 +109,10 @@
 	?>
 	<hr />
 </div>
+</div>
 
-<div id="rolesBox" class="grey_box">
+<div id="rolesBox" class="BlueBox">
+<div>
 	<?php
 	echo($xml_info_roles);
 	?>
@@ -153,8 +158,10 @@
 		</fieldset>
 	</form>
 </div>
+</div>
 
-<div id="usersBox" class="grey_box">
+<div id="usersBox" class="BlueBox">
+<div>
 	<?php
 	echo($xml_info_users);
 	?>
@@ -185,4 +192,7 @@
 	</div>
 	<hr />
 	<?php } ?>
+</div>
+</div>
+
 </div>

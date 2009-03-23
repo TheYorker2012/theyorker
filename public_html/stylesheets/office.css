@@ -1,3 +1,12 @@
+/* Common */
+.clear { clear: both; }
+.clear_right { clear: right; }
+.center { text-align: center; }
+.right { text-align: right; }
+.bold { font-weight: bold; }
+.hide { display: none; }
+.show { display: block; }
+
 /* Formatting for the navigation on the left */
 div#NavigationMenu ul {
 	display: block;

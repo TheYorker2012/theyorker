@@ -136,26 +136,25 @@ class Home extends Controller {
 		$data['articles'] = array(
 			'uninews' => array(),
 			'sport' => array(),
-			'features' => array(),
+//			'features' => array(),
 			'arts' => array(),
-			'videocasts' => array(),
+//			'videocasts' => array(),
 			'lifestyle' => array(),
-			'blogs' => array()
+//			'blogs' => array()
 		);
 
 		// Get the article ids of all articles to be displayed
 		$article_all_ids = $this->Home_Hack_Model->getLatestArticleIds(
 			array(
-				'uninews' => 3,
-				'sport' => 3,
-				'features' => 1,
-				'arts' => 1,
-				'videocasts' => 1,
-				'lifestyle' => 1,
-				'blogs' => 1,
+				'uninews' => 4,
+				'sport' => 4,
+//				'features' => 1,
+				'arts' => 4,
+//				'videocasts' => 1,
+				'lifestyle' => 4,
+//				'blogs' => 1,
 			)
 		);
-		//$this->messages->AddDumpMessage('ids',$article_all_ids);
 
 		// Create an array to map an article id to an article type
 		$article_base_types = array();
@@ -164,38 +163,16 @@ class Home extends Controller {
 				$article_base_types[$id] = $type;
 		}
 
-		// Get the ids of articles which require summaries
-		$article_summary_ids = array();
-		if (count($article_all_ids['uninews']) > 0)
-			$article_summary_ids[] = $article_all_ids['uninews'][0];
-		if (count($article_all_ids['sport']) > 0)
-			$article_summary_ids[] = $article_all_ids['sport'][0];
-		if (count($article_all_ids['features']) > 0)
-			$article_summary_ids[] = $article_all_ids['features'][0];
-		if (count($article_all_ids['arts']) > 0)
-			$article_summary_ids[] = $article_all_ids['arts'][0];
-		if (count($article_all_ids['videocasts']) > 0)
-			$article_summary_ids[] = $article_all_ids['videocasts'][0];
-
-		// Get the article summaries, create html for image tags
-		$article_summaries = $this->Home_Hack_Model->getArticleSummaries($article_summary_ids, '%W, %D %M %Y');
-		foreach($article_summaries as $summary) {
-			$type = $article_base_types[$summary['id']];
-			$summary['photo_xhtml'] = $this->image->getThumb($summary['photo_id'], 'medium', false, array('class' => 'left'));
-			$data['articles'][$type][] = $summary;
-		}
-
 		// Get the ids of articles which require titles
 		$article_title_ids = array();
 		foreach($article_all_ids as $type => $ids) {
 			foreach($ids as $id) {
-				if (!in_array($id, $article_summary_ids))
-					$article_title_ids[] = $id;
+				$article_title_ids[] = $id;
 			}
 		}
 
 		// Get the article titles
-		$article_titles = $this->Home_Hack_Model->getArticleTitles($article_title_ids);
+		$article_titles = $this->Home_Hack_Model->getArticleTitles($article_title_ids, '%W, %D %M %Y');
 		foreach($article_titles as $title) {
 			$type = $article_base_types[$title['id']];
 			$title['photo_xhtml'] = $this->image->getThumb($title['photo_id'], 'small', false, array('class' => 'left'));
@@ -206,53 +183,12 @@ class Home extends Controller {
 		$this->load->library('comment_views');
 		$data['latest_comments'] = $this->comment_views->GetLatestComments();
 
-		//Obtain Links
-		if ($this->user_auth->isLoggedIn) {
-			$data['link'] = $this->Links_Model->GetUserLinks($this->user_auth->entityId);
-		} else {
-			$data['link'] = $this->Links_Model->GetUserLinks(0);
-		}
-
 		//Obtain weather
-		$data['weather_forecast'] = $this->Home_Model->GetWeather();
-
-		//Obtain quote
-		$data['quote'] = $this->Home_Model->GetQuote();
+		//$data['weather_forecast'] = $this->Home_Model->GetWeather();
 
 		//Obtain banner
-		$data['banner'] = $this->Home_Model->GetBannerImageForHomepage();
+		//$data['banner'] = $this->Home_Model->GetBannerImageForHomepage();
 		
-		//Obtain specials
-		//list here the specials to get, along with their title
-		$specials = array(
-			array('lifestyle','Latest Lifestyle'),
-			array('blogs','Latest Blog'),
-			);
-		//foreach type given setup the data, assumes [0] is has a small image and heading
-		foreach ($specials as $special) {
-			$data['special'][$special[0]]['title'] = $special[1];
-			if (isset($data['articles'][$special[0]][0])) {
-				$data['special'][$special[0]]['show'] = true;
-				$data['special'][$special[0]]['data'] = $data['articles'][$special[0]][0];
-			}
-			else {
-				$data['special'][$special[0]]['show'] = false;
-			}
-		}
-		/* this is the old method, getting articles set using specials
-		$specials_types = $this->Article_Model->getMainArticleTypes();
-		foreach ($specials_types as $special){
-			$special_id = $this->News_model->GetLatestFeaturedId($special['codename']);
-			$data['special'][$special['codename']]['title'] = $special['name'];
-			if(!empty($special_id)) {
-				$data['special'][$special['codename']]['show'] = true;
-				$data['special'][$special['codename']]['data'] = $this->News_model->GetSummaryArticle($special_id);
-			}
-			else {
-				$data['special'][$special['codename']]['show'] = false;
-			}
-		}*/
-
 		// Minifeeds
 		list($data['events'], $data['todo']) = $this->_GetMiniCalendars();
 		
@@ -271,14 +207,9 @@ class Home extends Controller {
 			$data['poll_vote_box'] = null;
 		}
 
-		// Set up the public frame
+		$this->main_frame->SetData('menu_tab', 'home');
 		$this->main_frame->SetContentSimple('general/home', $data);
-
 		$this->main_frame->IncludeCss('stylesheets/home.css');
-		$this->main_frame->IncludeJs('javascript/prototype.js');
-		$this->main_frame->IncludeJs('javascript/scriptaculous.js?load=effects,dragdrop');
-
-		// Load the public frame view (which will load the content view)
 		$this->main_frame->Load();
 	}
 

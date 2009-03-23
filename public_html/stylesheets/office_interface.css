@@ -1,0 +1,186 @@
+/**
+ *	Office home page interface
+ */
+
+div#office_container {
+	float: left;
+	width: 100%;
+	background-image: url('/images/version2/office/fake_bg.png');
+	background-position: right;
+	background-repeat: repeat-y;
+}
+
+/* Page Content */
+div#office_canvas {
+	margin-right: 140px;
+	border: 1px #999 solid;
+	background-color: #fff;
+	border-right: 0;
+}
+
+div#office_pages {
+	float: left;
+	display: block;
+	width: 100%;
+}
+
+div.office_page {
+	display: none;
+	margin: 5px;
+}
+
+div.office_page h2 {
+	margin-top: 0;
+	line-height: 32px;
+	color: #999;
+}
+
+div.office_page img.title {
+	float: left;
+	margin-right: 10px;
+}
+
+/* Sidebar */
+div#office_sidebar {
+	float: right;
+	width: 140px;
+}
+
+div#office_sidebar ul {
+	margin: 10px 0;
+	display: block;
+	border-top: 1px #999 solid;
+}
+
+div#office_sidebar ul li {
+	padding: 0.2em 0 0.2em 5px;
+	border: 1px #999 solid;
+	border-top: 0;
+	background-color: #fff;
+}
+
+div#office_sidebar ul li.current {
+	background-color: #999;
+}
+
+div#office_sidebar ul li.current a {
+	color: #fff;
+	font-weight: bold;
+}
+
+div#office_sidebar ul li.disabled {
+	background-color: #ddd;
+	border-color: #999;
+}
+
+/*div#office_container div#office_sidebar ul li#nav_announcements { list-style-image: url('/images/icons/page_white_stack.png'); }*/
+div#office_container div#office_sidebar ul li#nav_announcements { list-style-image: url('/images/icons/comments.png'); }
+div#office_container div#office_sidebar ul li#nav_article { list-style-image: url('/images/icons/report.png'); }
+div#office_container div#office_sidebar ul li#nav_photos { list-style-image: url('/images/icons/picture.png'); }
+div#office_container div#office_sidebar ul li#nav_bylines { list-style-image: url('/images/icons/vcard.png'); }
+div#office_container div#office_sidebar ul li#nav_related { list-style-image: url('/images/icons/arrow_switch.png'); }
+div#office_container div#office_sidebar ul li#nav_comments { list-style-image: url('/images/icons/comment.png'); }
+div#office_container div#office_sidebar ul li#nav_publish { list-style-image: url('/images/icons/package.png'); }
+
+
+/**
+ *	Forms
+ */
+
+div#office_container label {
+	width: 20%;
+}
+
+div#office_container textarea {
+	width: 70%;
+}
+
+
+
+
+/**
+ *	Specific Page Content
+ */
+
+div.office_page div.actions {
+	float: right;
+}
+
+div.item {
+	margin-bottom: 5px;
+}
+
+div.header {
+	border: 1px #999 solid;
+	background-color: #999;
+	color: #fff;
+	font-size: medium;
+	font-weight: bold;
+	padding: 2px;
+}
+
+div.header a {
+	color: #fff;
+}
+
+div.header.read {
+	background-color: #fff;
+	color: #000;
+}
+
+div.header.read a {
+	color: #000;
+}
+
+div.header img {
+	float: left;
+	margin: 0 5px;
+}
+
+div.header div.date {
+	float: right;
+}
+
+
+
+div.content {
+	display: none;
+	padding: 5px;
+	background-color: #f2f2f2;
+	border: #999 solid;
+	border-width: 0 1px 1px 1px;
+}
+
+div.content p,
+div.content h3 {
+	margin-top: 0;
+}
+
+div.content div.author {
+	float: right;
+	width: 25%;
+	text-align: right;
+	font-style: italic;
+}
+
+div.content div.author img {
+	float: right;
+	margin: 0 0 5px 5px;
+}
+
+
+
+
+div.office_page table {
+	width: 100%;
+}
+
+div.office_page table tr th {
+	border: #000 solid;
+	border-width: 0 0 2px 0;
+}
+
+div.office_page table tr td {
+	border: #000 solid;
+	border-width: 0 0 1px 0;
+}

@@ -12,7 +12,7 @@ class Links_Model extends Model {
 	/*
 	 * Constructor, calls default model constructor
 	 */
-	function Home_Model() {
+	function Links_Model() {
 		parent::Model();
 	}
 	/*
@@ -177,6 +177,22 @@ class Links_Model extends Model {
 			WHERE user_link_user_entity_id = ?
 			ORDER BY user_link_order ASC';
 		return $this->db->query($sql, array($user));
+	}
+
+	function GetFormattedLinks ($user) {
+		$this->load->library('image');
+		$sql = 'SELECT link_id, link_url, link_name, link_image_id
+			FROM links
+			INNER JOIN user_links
+			ON user_link_link_id = links.link_id
+			WHERE user_link_user_entity_id = ?
+			ORDER BY user_link_order ASC';
+		$query = $this->db->query($sql, array($user));
+		$links = array();
+		foreach ($query->result() as $link) {
+			$links[] = '<a href="' . xml_escape($link->link_url) . '" target="_blank">' . $this->image->getImage($link->link_image_id, 'link', array('title' => $link->link_name, 'alt' => $link->link_name)) . '</a>';
+		}
+		return $links;
 	}
 
 	function GetLink($link_id) {

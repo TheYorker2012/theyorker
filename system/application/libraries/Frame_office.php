@@ -9,6 +9,7 @@
 // Load the Frames library
 $CI = &get_instance();
 $CI->load->library('frame_public');
+$CI->load->model('permissions_model');
 
 /// Main office frame library class.
 class Frame_office extends Frame_public

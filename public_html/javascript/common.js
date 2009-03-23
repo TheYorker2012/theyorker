@@ -56,6 +56,73 @@ onLoadFunctions.push(hideFeedback);
 // ** END feedback form code **
 
 
+// ** BEGIN Time Update Code
+var weekDays = new Array(7);
+weekDays[0] = "Sunday";
+weekDays[1] = "Monday";
+weekDays[2] = "Tuesday";
+weekDays[3] = "Wednesday";
+weekDays[4] = "Thursday";
+weekDays[5] = "Friday";
+weekDays[6] = "Saturday";
+
+var months = new Array(12);
+months[0] = "January";
+months[1] = "February";
+months[2] = "March";
+months[3] = "April";
+months[4] = "May";
+months[5] = "June";
+months[6] = "July";
+months[7] = "August";
+months[8] = "September";
+months[9] = "October";
+months[10] = "November";
+months[11] = "December";
+
+function formatTime (i) {
+	if (i < 10) return "0" + i;
+	return i;
+}
+
+function dateSuffix (date) {
+	switch (date) {
+		case 1:		return "st";
+		case 2:		return "nd";
+		case 3:		return "rd";
+		case 21:	return "st";
+		case 22:	return "nd";
+		case 23:	return "rd";
+		case 31:	return "st";
+		default:	return "th";
+	}
+}
+
+function updateTime () {
+	var time_container = document.getElementById('HeaderTime');
+	// Check if this frame displays the current date and time
+	if (time_container == null || time_container == undefined) return;
+
+	var today = new Date();
+	var h = today.getHours();
+	var m = today.getMinutes();
+	time_container.innerHTML = formatTime(h) + ':' + formatTime(m);
+
+	// Has a day change just occurred?
+	if (h == 0) {
+		var day = today.getDay();
+		var date = today.getDate();
+		var month = today.getMonth();
+		document.getElementById('HeaderDay').innerHTML = weekDays[day];
+		document.getElementById('BarDate').innerHTML = date + dateSuffix(date) + ' ' + months[month];
+	}
+
+	setTimeout('updateTime()', 1000);
+}
+
+onLoadFunctions.push(updateTime);
+// ** END Time Update Code
+
 
 // Flash Player Version Detection - Rev 1.5
 // Detect Client Browser type

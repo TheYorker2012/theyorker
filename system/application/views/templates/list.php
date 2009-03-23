@@ -39,7 +39,7 @@ if (is_int($MaxPerPage) && $MaxPerPage > 0) {
 		$is_last_page  = ($current_page == $max_page);
 		$links = array();
 		if (!$is_first_page) {
-			$links[] = '<span><a href="'.
+			$links[] = '<span class="direction"><a href="'.
 				$PageUrlPrefix.(1+($current_page-1)*$MaxPerPage).$PageUrlPostfix.
 				'">&lt;</a></span>';
 		}
@@ -71,7 +71,7 @@ if (is_int($MaxPerPage) && $MaxPerPage > 0) {
 				'">'.($max_page+1).'</a></span>';
 		}
 		if (!$is_last_page) {
-			$links[] = '<span><a href="'.
+			$links[] = '<span class="direction"><a href="'.
 				$PageUrlPrefix.(1+($current_page+1)*$MaxPerPage).$PageUrlPostfix.
 				'">&gt;</a></span>';
 		}

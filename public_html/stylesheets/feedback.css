@@ -1,0 +1,26 @@
+/* Feedback */
+div.feedback {
+	font-size: small;
+	border: 1px #999 solid;
+	margin-bottom: 5px;
+}
+
+div.feedback div.top {
+	background-color: #eee;
+	border-bottom: 1px #999 solid;
+	padding: 5px;
+}
+
+div.feedback div.main {
+	padding: 5px;
+	text-align: justify;
+}
+
+div.feedback div.top span.bold {
+	font-weight: bold;
+}
+
+div.feedback div.top span.right, div#revision_container div.revision span.right {
+	float: right;
+	text-align: right;
+}

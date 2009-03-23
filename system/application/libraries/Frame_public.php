@@ -67,7 +67,7 @@ class Frame_public extends FrameNavbar
 		$this->mDataArray['description'] = '';
 		$this->mDataArray['keywords'] = '';
 		$this->mTitleSet = FALSE;
-		
+
 		$this->mDataArray['login'] = array(
 				'logged_in' => FALSE,
 			);
@@ -77,6 +77,27 @@ class Frame_public extends FrameNavbar
 			$this->mDataArray['login']['username'] = $entity_id = $CI->user_auth->username;
 		}
 		$this->mDataArray['uri'] = $CI->uri->uri_string();
+
+		$CI->load->library('academic_calendar');
+		$academic_time = new Academic_time(mktime());
+		$this->mDataArray['date'] = array(
+			'time'	=> date('H:i'),
+			'day'	=> date('l'),
+			'week'	=> $academic_time->AcademicWeek(),
+			'date'	=> date('dS'),
+			'month'	=> date('F')
+		);
+		
+		$CI->load->model('ticker_model');
+		$this->mDataArray['ticker'] = $CI->ticker_model->getNews();
+		
+		// Get user's Links
+		$CI->load->model('links_model');
+		if ($CI->user_auth->isLoggedIn) {
+			$this->mDataArray['links'] = $CI->links_model->GetFormattedLinks($CI->user_auth->entityId);
+		} else {
+			$this->mDataArray['links'] = $CI->links_model->GetFormattedLinks(0);
+		}
 	}
 	
 	/// Add keywords to the page.

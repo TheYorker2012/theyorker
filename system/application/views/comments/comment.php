@@ -51,45 +51,45 @@ if (!function_exists('star_rating')) {
 
 $show_as_deleted = $Comment['deleted'] && (!isset($Mode) || ($Mode != 'mod' && $Mode != 'debug'));
 $anonymous = ($Comment['author'] == 'Anonymous');
+$author_xml = '<b>' . xml_escape($Comment['author']) . '</b>';
 
-$author_xml = xml_escape($Comment['author']);
-
-if ($show_as_deleted) {
-	$author_xml = '<em>comment removed</em>';
-	$Comment['xhtml'] = '';
-	$Comment['edits'] = array();
-} else {
-	$author_xml = '<b>'.$author_xml.'</b>';
-}
-if ($Comment['deleted']) {
-	$Comment['edits'][] = array(
-		'action' => 'del',
-		'edit_time' => $Comment['deleted_time'],
-		'by_author' => $Comment['deleted_by_owner'],
-		'name'      => $Comment['deleted_name'],
-	);
+// Only show 'report abuse' link if 'no_report' index isn't set
+// Don't provide a working 'report abuse' link if only showing a comment preview
+if (!$Comment['owned'] && !isset($Comment['preview']) && (!array_key_exists('no_report', $Comment) || !$Comment['no_report'])) {
+	$report_link = ' href="'.$ReportUrlPrefix.$Comment['thread_id'].'/'.$Comment['comment_id'].$ReportUrlPostfix.'"';
 }
 
 ?>
 
-<div id="CommentItem<?php echo($Comment['comment_id']); ?>" class="BlueBox"<?php if ($anonymous) { echo(' style="border-color:#999;"'); } ?>>
-	<div style="float:right;margin:0.2em 0.5em;text-align:right">
-		<?php
-		if (!$show_as_deleted) {
-			if ($anonymous) {
-				?><img src="/images/prototype/directory/members/anon.png" alt="Anonymous" title="Anonymous Comment" /><?php
-			} else {
-				?><img src="/images/prototype/directory/members/no_image.png" alt="User Comment" title="User Comment" /><?php
-			}
-		}
-		?>
-		<?php if (!$show_as_deleted && NULL !== $Comment['rating']) {
-			echo('<br />' . star_rating($Comment['rating']));
-		} ?>
+<?php if ($show_as_deleted) { ?>
+	<div id="CommentItem<?php echo($Comment['comment_id']); ?>" class="CommentBox CommentDeleted">
+		<img src="/images/icons/delete.png" alt="Comment Deleted" title="Comment Deleted" />
+		comment deleted by <?php echo($Comment['deleted_by_owner'] ? 'the author' : 'a moderator'); ?>
 	</div>
-	<div style="background-color:<?php echo ($anonymous) ? '#999' : '#20c1f0' ; ?>;color:#fff;padding:0.2em;margin:0">
-		#<?php echo((isset($Comment['comment_order_num']) ? $Comment['comment_order_num'] : '') . ' ' . $author_xml); ?> - <?php echo($Comment['post_time']); ?>
+<?php } else { ?>
+
+<div id="CommentItem<?php echo($Comment['comment_id']); ?>" class="CommentBox<?php if ($anonymous) echo(' CommentAnonymous'); ?>">
+	<div class="CommentInfo">
+		#<?php echo((isset($Comment['comment_order_num']) ? $Comment['comment_order_num'] : '') . ' ' . $author_xml); ?>
+		<div class="CommentInfoSmall">
+			<?php echo($Comment['post_time']); ?>
+		</div>
+		<?php if (!empty($report_link)) { ?>
+			<div class="CommentInfoSmall">
+				<a <?php echo($report_link); ?>>
+					<img src="/images/icons/comments_delete.png" alt="Report Abuse" title="Report Abuse" /> Report
+				</a>
+			</div>
+		<?php } ?>
 	</div>
+
+	<div class="CommentBody">
+		<?php if (!$show_as_deleted && NULL !== $Comment['rating']) { ?>
+			<div class="CommentRating">
+				<?php echo(star_rating($Comment['rating'])); ?>
+			</div>
+		<?php } ?>
+
 <?php
 	if (!empty($Comment['edits'])) {
 		// Only show the full list of edits when link is clicked
@@ -172,19 +172,10 @@ if ($Comment['deleted']) {
 	} else if (!$show_as_deleted) {
 		$links = array();
 		if ($Comment['owned']) {
-			$links[] = '<a href="'.$EditUrlPrefix.$Comment['comment_id'].$EditUrlPostfix.'"><img src="/images/icons/note_edit.png" alt="" title="Delete Comment" /> Edit Comment</a>';
-			$links[] = '<a href="'.$DeleteUrlPrefix.$Comment['comment_id'].$DeleteUrlPostfix.'"><img src="/images/icons/note_delete.png" alt="" title="Delete Comment" /> Delete Comment</a>';
+			$links[] = '<a href="'.$EditUrlPrefix.$Comment['comment_id'].$EditUrlPostfix.'"><img src="/images/icons/note_edit.png" alt="Edit Comment" title="Edit Comment" /> Edit Comment</a>';
+			$links[] = '<a href="'.$DeleteUrlPrefix.$Comment['comment_id'].$DeleteUrlPostfix.'"><img src="/images/icons/note_delete.png" alt="Delete Comment" title="Delete Comment" /> Delete Comment</a>';
 		}
-		// Only show 'report abuse' link if 'no_report' index isn't set
-		elseif (!array_key_exists('no_report', $Comment) || !$Comment['no_report']) {
-			// Don't provide a working 'report abuse' link if only showing a comment preview
-			if (!isset($Comment['preview'])) {
-				$report_link = ' href="'.$ReportUrlPrefix.$Comment['thread_id'].'/'.$Comment['comment_id'].$ReportUrlPostfix.'"';
-			} else {
-				$report_link = '';
-			}
-			$links[] = '<a'.$report_link.'><img src="/images/icons/comments_delete.png" alt="" title="Report Abuse" /> Report Abuse</a>';
-		}
+
 		if (!empty($links) && !isset($Comment['no_links'])) {
 			echo('<p style="font-size:x-small;">');
 			echo(implode('&nbsp;&nbsp;&nbsp;&nbsp;', $links));
@@ -195,4 +186,8 @@ if ($Comment['deleted']) {
 		?><div style="clear:both"></div><?php
 	}
 	?>
+
+	</div>
 </div>
+
+<?php } ?>

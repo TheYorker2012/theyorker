@@ -79,7 +79,7 @@ class Wikiparser {
 
 		$this->reference_wiki = 'local';
 		$this->external_wikis = PresetWikis();
-		$this->image_uri = '/images/';
+		$this->image_uri = '/';
 		$this->image_overrides = array();
 		$this->ignore_images = FALSE;
 		$this->emphasis[1] = FALSE;
@@ -308,7 +308,7 @@ class Wikiparser {
 	}
 
 	function handle_image($href,$title,$options) {
-		if ($this->ignore_images) return "";
+		if ($this->ignore_images) return '';
 		if (!$this->image_uri) return $title;
 
 		$imagetag = '';

@@ -9,6 +9,7 @@ class Index extends Controller
 	function __construct()
 	{
 		parent::Controller();
+		$this->load->model('notifications_model');
 		/// Load requests office model
 		$this->load->model('requests_model');
 		/// Load photos office model
@@ -18,6 +19,11 @@ class Index extends Controller
 	function index()
 	{
 		if (!CheckPermissions('office')) return;
+
+		// AJAX
+		$this->load->library('xajax');
+        $this->xajax->registerFunction(array('_readAnnouncement', &$this, '_readAnnouncement'));
+        $this->xajax->processRequests();
 
 		$this->pages_model->SetPageCode('office_index');
 
@@ -33,17 +39,23 @@ class Index extends Controller
 			}
 		}
 
-		//from the editor message
-		$data['main_text'] = $this->pages_model->GetPropertyWikitext('main_text');
-		
-		//requests table data
+		$data['announcements'] = $this->notifications_model->getAnnouncements();
 		$data['my_requests'] = $all_requests;
 
 		// Set up the content
+		$this->main_frame->SetExtraHead($this->xajax->getJavascript(null, '/javascript/xajax.js'));
+		$this->main_frame->IncludeCss('/stylesheets/office_interface.css');
+		$this->main_frame->IncludeJs('/javascript/office_interface.js');
 		$this->main_frame->SetContentSimple('office/index', $data);
-		
-		// Load the main frame
 		$this->main_frame->Load();
+	}
+	
+	function _readAnnouncement ($notification_id = NULL) {
+		$xajax_response = new xajaxResponse();
+		if (!empty($notification_id)) {
+			$this->notifications_model->markAsRead($notification_id, $this->user_auth->entityId);
+		}
+		return $xajax_response;
 	}
 }
 

@@ -39,6 +39,7 @@ class Feedback extends Controller {
 		$data['editable'] = true;
 
 		$this->main_frame->SetExtraHead($this->xajax->getJavascript(null, '/javascript/xajax.js'));
+		$this->main_frame->IncludeCss('/stylesheets/feedback.css');
 		$this->main_frame->SetContentSimple('admin/feedback', $data);
 		$this->main_frame->Load();
 	}

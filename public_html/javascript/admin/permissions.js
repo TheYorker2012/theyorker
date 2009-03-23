@@ -205,21 +205,21 @@ function saveAllPermissions()
 	var changes = false;
 	var post = {};
 	for (var role in roles) {
-		for (var i in roles[role][0]) {
+		for (var i = 0; i < roles[role][0].length; ++i) {
 			post['roles[0]['+role+']['+i+']'] = roles[role][0][i];
 			changes = true;
 		}
-		for (var i in roles[role][1]) {
+		for (var i = 0; i < roles[role][1].length; ++i) {
 			post['roles[1]['+role+']['+i+']'] = roles[role][1][i];
 			changes = true;
 		}
 	}
 	for (var user in users) {
-		for (var i in users[user][0]) {
+		for (var i = 0; i < users[user][0].length; ++i) {
 			post['users[0]['+user+']['+i+']'] = users[user][0][i];
 			changes = true;
 		}
-		for (var i in users[user][1]) {
+		for (var i = 0; i < users[user][1].length; ++i) {
 			post['users[1]['+user+']['+i+']'] = users[user][1][i];
 			changes = true;
 		}
@@ -252,10 +252,10 @@ function viewPermissionChanges()
 	message += "Role permissions:\n";
 	for (var role in roles) {
 		message += "\t"+role + ':';
-		for (var i in roles[role][0]) {
+		for (var i = 0; i < roles[role][0].length; ++i) {
 			message += "\t+"+roles[role][0][i];
 		}
-		for (var i in roles[role][1]) {
+		for (var i = 0; i < roles[role][1].length; ++i) {
 			message += "\t-"+roles[role][1][i];
 		}
 		message += "\n";
@@ -263,10 +263,10 @@ function viewPermissionChanges()
 	message += "User roles:\n"
 	for (var user in users) {
 		message += "\t"+user + ':';
-		for (var i in users[user][0]) {
+		for (var i = 0; i < users[user][0].length; ++i) {
 			message += "\t+"+users[user][0][i];
 		}
-		for (var i in users[user][1]) {
+		for (var i = 0; i < users[user][1].length; ++i) {
 			message += "\t-"+users[user][1][i];
 		}
 		message += "\n";
