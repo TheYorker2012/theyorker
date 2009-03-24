@@ -605,7 +605,7 @@ class CrosswordView
 					$solution = $clue->solution();
 					$length = strlen($solution);
 					?><table class="crossword"><?php
-					?><tr class="small"><?php
+					?><tr id="<?php echo("$name-$orientation-inline-$x-$y"); ?>" class="small"><?php
 					for ($i = 0; $i < $length; ++$i) {
 						$cx = $x + $dx[$orientation]*$i;
 						$cy = $y + $dy[$orientation]*$i;

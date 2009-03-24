@@ -96,12 +96,9 @@ function CrosswordCell(name, x, y)
 	this.m_solution = null;
 	this.m_spacers = ((null != mainEl) ? [CssCheck(mainEl, "hsp"), CssCheck(mainEl, "vsp")] : [false,false]);
 	this.m_lights = [null, null];
-	this.m_els = [	mainEl,
-					document.getElementById(name+"-"+0+"-"+x+"-"+y),
-					document.getElementById(name+"-"+1+"-"+x+"-"+y) ];
-	this.m_eds = [	mainEd,
-					document.getElementById(name+"-"+0+"-edit-"+x+"-"+y),
-					document.getElementById(name+"-"+1+"-edit-"+x+"-"+y) ];
+	this.m_els = [ mainEl, null, null ];
+	this.m_eds = [ mainEd, null, null ];
+	this.m_sup = document.getElementById(name+"-num-"+x+"-"+y);
 	this.m_selected	= ((null != mainEl) ? CssCheck(mainEl, "selected") : false);
 	this.m_focused	= ((null != mainEl) ? CssCheck(mainEl, "focus") : false);
 
@@ -205,11 +202,14 @@ function CrosswordCell(name, x, y)
 			}
 			// Change internally
 			this.m_spacers[orientation.val()] = enable;
+			if (null != this.m_lights[orientation.val()]) {
+				this.m_lights[orientation.val()].updateWordLengths();
+			}
 		}
 	}
 	this.isSpaced = function(orientation)
 	{
-		return this.m_spacers[orientation.val()];
+		return this.m_spacers[orientation];
 	}
 
 	this.select = function(selected)
@@ -258,25 +258,49 @@ function CrosswordCell(name, x, y)
 	}
 }
 
-function CrosswordLight(name, x, y, orientation, cells)
+function CrosswordLight(name, x, y, orientation, cells, els, eds)
 {
-	this.m_x = x;
-	this.m_y = y;
+	this.m_x = 0;
+	this.m_y = 0;
 	this.m_orientation = orientation;
-	this.m_numberEls = [document.getElementById(name+"-num-"+x+"-"+y),
+	this.m_numberEls = [cells[0].m_sup,
 						document.getElementById(name+"-0-num-"+x+"-"+y),
 						document.getElementById(name+"-1-num-"+x+"-"+y)];
-	this.m_number = parseInt(this.m_numberEls[0].textContent, 10);
-	this.m_cells = cells;
+	this.m_number = 0;
+	this.m_cells = [];
 	this.m_clues = [null, null];
 	this.m_clueDiv = document.getElementById(name+"-"+orientation+"-clue-"+x+"-"+y);
 	this.m_clueEls = [null, null];
-	this.m_wordlenEl = null;
+	this.m_wordlenEl = document.getElementById(name+"-"+orientation+"-wordlen-"+x+"-"+y);
 	this.m_cluetextEl = null;
+	this.m_inlineEl = document.getElementById(name+"-"+orientation+"-inline-"+x+"-"+y);
 	this.m_complete = null;
 
-	for (var i = 0; i < this.m_cells.length; ++i) {
-		this.m_cells[i].setLight(orientation, this);
+	this.setCells = function(x, y, cells, els, eds)
+	{
+		for (var i = 0; i < this.m_cells.length; ++i) {
+			this.m_cells[i].setLight(this.m_orientation, null);
+			this.m_cells[i].m_els[1+this.m_orientation] = null;
+			this.m_cells[i].m_eds[1+this.m_orientation] = null;
+		}
+		this.m_cells = cells;
+		if (this.m_x != x || this.m_y != y) {
+			this.m_numberEls[0] = cells[0].m_sup;
+			this.m_number = parseInt(this.m_numberEls[0].textContent, 10);
+		}
+		this.m_x = x;
+		this.m_y = y;
+		for (var i = 0; i < this.m_cells.length; ++i) {
+			this.m_cells[i].setLight(this.m_orientation, this);
+			this.m_cells[i].m_els[1+this.m_orientation] = els[i];
+			this.m_cells[i].m_eds[1+this.m_orientation] = eds[i];
+		}
+		this.updateWordLengths();
+	}
+
+	this.clean = function()
+	{
+		this.setCells([], [], []);
 	}
 
 	this.select = function(selected, x, y)
@@ -361,19 +385,18 @@ function CrosswordLight(name, x, y, orientation, cells)
 	/// Get length of light
 	this.length = function()
 	{
-		return this.m_clues.length;
+		return this.m_cells.length;
 	}
 
 	/// Get list of lengths for each word
 	this.wordLengths = function()
 	{
 		var lens = new Array();
-		var count = 0;
-		for (var i = 0; i < this.m_cells.length; ++i) {
-			// Assume first letter isn't spaced
+		var count = 1;
+		for (var i = 1; i < this.m_cells.length; ++i) {
 			if (this.m_cells[i].isSpaced(this.m_orientation)) {
 				lens.push(count);
-				count = 0;
+				count = 1;
 			}
 			else {
 				++count;
@@ -381,6 +404,12 @@ function CrosswordLight(name, x, y, orientation, cells)
 		}
 		lens.push(count);
 		return lens;
+	}
+	this.updateWordLengths = function()
+	{
+		var lens = this.wordLengths();
+		var lensStr = lens.join(",");
+		this.m_wordlenEl.textContent = lensStr;
 	}
 
 	/// Set the number
@@ -390,13 +419,14 @@ function CrosswordLight(name, x, y, orientation, cells)
 		{
 			for (var i = 0; i < this.m_numberEls.length; ++i) {
 				if (null != this.m_numberEls[i]) {
-					this.m_numberEls[i].nodeValue = num;
+					this.m_numberEls[i].textContent = num;
 				}
 			}
 			this.m_number = num;
 		}
 	}
 
+	this.setCells(x, y, cells, els, eds);
 	this.updateCompleteness();
 }
 
@@ -435,6 +465,8 @@ function Crossword(name, width, height)
 				var clue = document.getElementById(this.m_name+"-"+dir+"-clue-"+x+"-"+y);
 				if (clue != null) {
 					var cells = [];
+					var els = [];
+					var eds = [];
 					var cx = x;
 					var cy = y;
 					while (cx < width && cy < height) {
@@ -442,10 +474,9 @@ function Crossword(name, width, height)
 						if (cell.isBlank()) {
 							break;
 						}
-						else {
-							cells[cells.length] = cell;
-						}
-
+						cells[cells.length] = cell;
+						els[els.length] = document.getElementById(this.m_name+"-"+dir+"-"+cx+"-"+cy);
+						eds[eds.length] = document.getElementById(this.m_name+"-"+dir+"-edit-"+cx+"-"+cy);
 						if (dir == 1) {
 							++cy;
 						}
@@ -453,7 +484,7 @@ function Crossword(name, width, height)
 							++cx;
 						}
 					}
-					this.m_lights[x][y][dir] = new CrosswordLight(this.m_name, x, y, dir, cells);
+					this.m_lights[x][y][dir] = new CrosswordLight(this.m_name, x, y, dir, cells, els, eds);
 				}
 			}
 		}
@@ -623,6 +654,12 @@ function Crossword(name, width, height)
 
 	this.deleteValue = function(x, y)
 	{
+		// Only move backwards if it was already blank
+		if (!this.cell(x,y).isKnown()) {
+			this.changeCellRelative(x, y, -this.orientation().dx(), -this.orientation().dy(), false);
+			x = this.x();
+			y = this.y();
+		}
 		this.modifyValue(x, y, "");
 	}
 
@@ -643,12 +680,6 @@ function Crossword(name, width, height)
 			}
 			else if (keyCode == 46  /* delete (others)*/ ||
 			         keyCode == 127 /* delete (konqueror) */) {
-				// Only move backwards if it was already blank
-				if (!this.cell(x,y).isKnown()) {
-					this.changeCellRelative(x, y, -this.orientation().dx(), -this.orientation().dy(), false);
-					x = this.x();
-					y = this.y();
-				}
 				this.deleteValue(x,y);
 				return false;
 			}
