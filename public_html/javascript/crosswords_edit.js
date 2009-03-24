@@ -248,15 +248,38 @@ function CrosswordEdit(name, width, height)
 
 			clueDiv.appendChild(document.createTextNode(" "));
 
-			var cluetext1 = document.createElement("span");
-			cluetext1.id = this.m_name+"-"+o+"-cluetext0-"+x+"-"+y;
-			CssAdd(cluetext1, "quickClue");
-			clueDiv.appendChild(cluetext1);
+			if (false) {
+				var cluetext1 = document.createElement("span");
+				cluetext1.id = this.m_name+"-"+o+"-cluetext0-"+x+"-"+y;
+				CssAdd(cluetext1, "quickClue");
+				clueDiv.appendChild(cluetext1);
 
-			var cluetext2 = document.createElement("span");
-			cluetext2.id = this.m_name+"-"+o+"-cluetext1-"+x+"-"+y;
-			CssAdd(cluetext2, "crypticClue");
-			clueDiv.appendChild(cluetext2);
+				var cluetext2 = document.createElement("span");
+				cluetext2.id = this.m_name+"-"+o+"-cluetext1-"+x+"-"+y;
+				CssAdd(cluetext2, "crypticClue");
+				clueDiv.appendChild(cluetext2);
+			}
+			else {
+				var xwName = this.m_name;
+
+				var clueinput1 = document.createElement("input");
+				clueinput1.id = this.m_name+"-"+o+"-clueinput0-"+x+"-"+y;
+				clueinput1.type = "text";
+				clueinput1.onchange=function(event) {
+					return crosswordClueChanged(xwName, x, y, o, 0);
+				}
+				CssAdd(clueinput1, "quickClue");
+				clueDiv.appendChild(clueinput1);
+
+				var clueinput2 = document.createElement("input");
+				clueinput2.id = this.m_name+"-"+o+"-clueinput1-"+x+"-"+y;
+				clueinput2.type = "text";
+				clueinput2.onchange=function(event) {
+					return crosswordClueChanged(xwName, x, y, o, 1);
+				}
+				CssAdd(clueinput2, "crypticClue");
+				clueDiv.appendChild(clueinput2);
+			}
 
 			clueDiv.appendChild(document.createTextNode(" ("));
 
@@ -355,7 +378,18 @@ function CrosswordEdit(name, width, height)
 		}
 	}
 
+	thisCrossword.clueChanged = function(x, y, o, c)
+	{
+		this.m_lights[x][y][o].extractClue(c);
+		return true;
+	}
+
 	return thisCrossword;
+}
+
+function crosswordClueChanged(name, x, y, o, c)
+{
+	return crossword(name).clueChanged(x, y, o, c);
 }
 
 onLoadFunctions.push(function() {

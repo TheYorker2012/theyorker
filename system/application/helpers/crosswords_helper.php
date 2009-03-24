@@ -580,7 +580,7 @@ class CrosswordView
 				echo($number);
 				?></span><?php
 				echo(' ');
-				if (true || !$this->m_edit) {
+				if (!$this->m_edit) {
 					?><span class="quickClue" id="<?php echo("$name-$orientation-cluetext0-$x-$y"); ?>"><?php
 					echo(xml_escape($clue->clue()));
 					?></span><?php
@@ -590,10 +590,18 @@ class CrosswordView
 				}
 				?></span><?php
 
-				if (false && $this->m_edit) {
+				if ($this->m_edit) {
 					?><div style=""><?php
-					?><input class="quickClue" type="text" value="<?php echo(xml_escape($clue->clue())); ?>" /><?php
-					?><input class="crypticClue" type="text" value="<?php echo(""); ?>" /><?php
+					?><input	id="<?php echo("$name-$orientation-clueinput0-$x-$y"); ?>"
+								class="quickClue" type="text"
+								value="<?php echo(xml_escape($clue->clue())); ?>"
+								onchange="return crosswordClueChanged(<?php echo("'$name', $x, $y, $orientation, 0"); ?>);"
+								/><?php
+					?><input	id="<?php echo("$name-$orientation-clueinput1-$x-$y"); ?>"
+								class="crypticClue" type="text"
+								value="<?php echo(""); ?>"
+								onchange="return crosswordClueChanged(<?php echo("'$name', $x, $y, $orientation, 1"); ?>);"
+								/><?php
 					?></div><?php
 				}
 

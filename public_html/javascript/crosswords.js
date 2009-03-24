@@ -269,15 +269,11 @@ function CrosswordLight(name, x, y, orientation, cells, els, eds)
 	this.m_number = 0;
 	this.m_cells = [];
 	this.m_clueDiv = document.getElementById(name+"-"+orientation+"-clue-"+x+"-"+y);
+	this.m_clueInEls = [document.getElementById(name+"-"+orientation+"-clueinput0-"+x+"-"+y),
+						document.getElementById(name+"-"+orientation+"-clueinput1-"+x+"-"+y)];
 	this.m_clueEls = [	document.getElementById(name+"-"+orientation+"-cluetext0-"+x+"-"+y),
 						document.getElementById(name+"-"+orientation+"-cluetext1-"+x+"-"+y)];
 	this.m_clues = [null, null];
-	for (var i = 0; i < this.m_clueEls.length; ++i) {
-		var clue = this.m_clueEls[i].textContent;
-		if (clue != "") {
-			this.m_clues[i] = clue;
-		}
-	}
 	this.m_wordlenEl = document.getElementById(name+"-"+orientation+"-wordlen-"+x+"-"+y);
 	this.m_cluetextEl = null;
 	this.m_inlineEl = document.getElementById(name+"-"+orientation+"-inline-"+x+"-"+y);
@@ -446,6 +442,23 @@ function CrosswordLight(name, x, y, orientation, cells, els, eds)
 		this.m_clues = clues;
 		this.updateClues();
 	}
+	// Extract a clue from the DOM
+	this.extractClue = function(id)
+	{
+		var clue = "";
+		if (null != this.m_clueEls[id]) {
+			clue = this.m_clueEls[id].textContent;
+		}
+		else if (null != this.m_clueInEls[id]) {
+			clue = this.m_clueInEls[id].value;
+		}
+		if (clue != "") {
+			this.m_clues[id] = clue;
+		}
+		else {
+			this.m_clues[id] = null;
+		}
+	}
 	// Split clues and return the second half
 	this.splitClues = function()
 	{
@@ -496,9 +509,21 @@ function CrosswordLight(name, x, y, orientation, cells, els, eds)
 					this.m_clueEls[i].textContent = this.m_clues[i];
 				}
 			}
+			if (null != this.m_clueInEls[i]) {
+				if (null == this.m_clues[i]) {
+					this.m_clueInEls[i].value = "";
+				}
+				else
+				{
+					this.m_clueInEls[i].value = this.m_clues[i];
+				}
+			}
 		}
 	}
 
+	for (var i = 0; i < this.m_clues.length; ++i) {
+		this.extractClue(i);
+	}
 	this.setCells(x, y, cells, els, eds);
 	this.updateCompleteness();
 }
