@@ -20,10 +20,36 @@ function CrosswordEdit(name, width, height)
 		this.modifyValue(x,y,((!cell.isBlank && cell.isKnown()) ? "" : null));
 	}
 
+	thisCrossword.Crossword_toggleOrientation = thisCrossword.toggleOrientation;
+	thisCrossword.toggleOrientation = function()
+	{
+		var next = this.cell(this.m_x+this.m_orientation.dx(), this.m_y+this.m_orientation.dy());
+		if (null != next) {
+			next.select(false);
+		}
+
+		this.Crossword_toggleOrientation();
+
+		next = this.cell(this.m_x+this.m_orientation.dx(), this.m_y+this.m_orientation.dy());
+		if (null != next) {
+			next.select(true);
+		}
+	}
+
 	thisCrossword.Crossword_changeCell = thisCrossword.changeCell;
 	thisCrossword.changeCell = function(x, y)
 	{
+		var next = this.cell(this.m_x+this.m_orientation.dx(), this.m_y+this.m_orientation.dy());
+		if (null != next) {
+			next.select(false);
+		}
+
 		this.Crossword_changeCell(x,y);
+
+		next = this.cell(x+this.m_orientation.dx(), y+this.m_orientation.dy());
+		if (null != next) {
+			next.select(true);
+		}
 	}
 
 	thisCrossword.Crossword_modifyValue = thisCrossword.modifyValue;
@@ -45,18 +71,21 @@ function CrosswordEdit(name, width, height)
 					var dx = 1-o;
 					var dy = o;
 					var len = light.length();
-					if (len <= 2) {
+					var len1 = ((o == 0) ? x - light.m_x : y - light.m_y);
+					var len2 = len-len1-1;
+					if (len1 < 2 && len2 < 2) {
 						this.removeLight(light);
 					}
-					else if (x == light.m_x && y == light.m_y) {
-						this.moveLight(light, x+dx, y+dy, len-1);
+					else if (len1 < 2) {
+						this.moveLight(light, light.m_x+(1+len1)*dx, light.m_y+(1+len1)*dy, len2);
 					}
-					else if (x == light.m_x+dx*(len-1) && y == light.m_y+dy*(len-1)) {
-						this.moveLight(light, light.m_x, light.m_y, len-1);
+					else if (len2 < 2) {
+						this.moveLight(light, light.m_x, light.m_y, len1);
 					}
 					// if in middle, split, trying to split clues if possible
 					else {
-						
+						this.moveLight(light, light.m_x, light.m_y, len1);
+						this.cloneLight(light, light.m_x+(1+len1)*dx, light.m_y+(1+len1)*dy, len2);
 					}
 				}
 			}
@@ -66,25 +95,42 @@ function CrosswordEdit(name, width, height)
 			for (var o = 0; o < 2; ++o) {
 				var dx = 1-o;
 				var dy = o;
-				var prev = this.cell(x-dx,y-dy);
-				var next = this.cell(x+dx,y+dy);
+				var prevCell = this.cell(x-dx,y-dy);
+				var nextCell = this.cell(x+dx,y+dy);
+				var prev = ((null != prevCell) ? prevCell.light(o) : null);
+				var next = ((null != nextCell) ? nextCell.light(o) : null);
+				var len1 = 0;
+				var len2 = 0;
 				if (null != prev) {
-					prev = prev.light(o);
+					len1 = prev.length();
+				}
+				else if (null != prevCell && !prevCell.isBlank()) {
+					len1 = 1;
 				}
 				if (null != next) {
-					next = next.light(o);
+					len2 = next.length();
 				}
+				else if (null != nextCell && !nextCell.isBlank()) {
+					len2 = 1;
+				}
+				var len = len1+len2+1;
+				var sx = x - dx*len1;
+				var sy = y - dy*len1;
 				// if between, merge, trying to merge clues if possible
 				if (null != prev && null != next) {
+					this.mergeLights(prev, next, sx, sy, len);
 				}
 				// if before or after, increase size
 				else if (null != prev) {
-					this.moveLight(prev, prev.m_x, prev.m_y, prev.length()+1);
+					this.moveLight(prev, sx, sy, len);
 				}
 				else if (null != next) {
-					this.moveLight(next, x, y, next.length()+1);
+					this.moveLight(next, sx, sy, len);
 				}
 				// if alone, check if can create a new light
+				else if (len > 1) {
+					this.spawnLight(sx, sy, o, len);
+				}
 			}
 		}
 		// Lights may have moved
@@ -95,7 +141,15 @@ function CrosswordEdit(name, width, height)
 	{
 		light.select(false);
 		light.clean();
+		// Remove clue object
+		var box = document.getElementById(this.m_name+"-"+light.m_orientation+"-clues");
+		box.removeChild(light.m_clueDiv);
+		light.m_clueDiv = null;
+		// Clear global references
 		this.m_lights[light.m_x][light.m_y][light.m_orientation] = null;
+		if (null == this.m_lights[light.m_x][light.m_y][1-light.m_orientation]) {
+			this.m_grid[light.m_x][light.m_y].m_sup.textContent = "";
+		}
 		if (this.m_light == light) {
 			this.m_light = null;
 		}
@@ -174,17 +228,93 @@ function CrosswordEdit(name, width, height)
 		light.setCells(x, y, cells, els, eds);
 	}
 
+	thisCrossword.cloneLight = function(light, x, y, len)
+	{
+		this.spawnLight(x, y, light.m_orientation, len);
+	}
+
+	thisCrossword.spawnLight = function(x, y, o, len)
+	{
+		// Create dom structures
+		var clueDiv = document.createElement("div");
+		clueDiv.id = this.m_name+"-"+o+"-clue-"+x+"-"+y;
+		// TODO completeness?
+		{
+			var num = document.createElement("span");
+			num.id = this.m_name+"-"+o+"-num-"+x+"-"+y;
+			clueDiv.appendChild(num);
+
+			var cluetext1 = document.createElement("span");
+			cluetext1.id = this.m_name+"-"+o+"-cluetext0-"+x+"-"+y;
+			clueDiv.appendChild(cluetext1);
+
+			var cluetext2 = document.createElement("span");
+			cluetext2.id = this.m_name+"-"+o+"-cluetext1-"+x+"-"+y;
+			clueDiv.appendChild(cluetext2);
+
+			clueDiv.appendChild(document.createTextNode(" ("));
+
+			var wordlen = document.createElement("span");
+			wordlen.id = this.m_name+"-"+o+"-wordlen-"+x+"-"+y;
+			clueDiv.appendChild(wordlen);
+
+			clueDiv.appendChild(document.createTextNode(")"));
+			clueDiv.appendChild(document.createElement("br"));
+
+			var previewTab = document.createElement("table");
+			CssAdd(previewTab, "crossword");
+			{
+				var tr = document.createElement("tr");
+				tr.id = this.m_name+"-"+o+"-inline-"+x+"-"+y;
+				CssAdd(tr, "small");
+				previewTab.appendChild(tr);
+			}
+			clueDiv.appendChild(previewTab);
+		}
+		var box = document.getElementById(this.m_name+"-"+o+"-clues");
+		box.appendChild(clueDiv);
+
+		// Create internal structures
+		var cells = [];
+		var els = [];
+		var eds = [];
+		var dx = 1-o;
+		var dy = o;
+		for (var i = 0; i < len; ++i) {
+			var cx = x + i*dx;
+			var cy = y + i*dy;
+			cells[cells.length] = this.m_grid[cx][cy];
+			els[els.length] = null;
+			eds[eds.length] = null;
+		}
+		var light = new CrosswordLight(this.m_name, x, y, o, cells, els, eds);
+		this.m_lights[x][y][o] = light
+		this.moveLight(light, x, y, len);
+		// This new light will need moving into place, this will trigger reordering
+		light.m_number = 0;
+		this.m_needRenumbering = true;
+	}
+
+	thisCrossword.mergeLights = function(light1, light2, x, y, len)
+	{
+		this.removeLight(light2);
+		this.moveLight(light1, light1.m_x, light1.m_y, len);
+	}
+
 	thisCrossword.renumber = function()
 	{
 		if (this.m_needRenumbering) {
 			var count = 1;
+			var changed = false;
 			for (var y = 0; y < this.m_height; ++y) {
 				for (var x = 0; x < this.m_width; ++x) {
 					var lights = this.m_lights[x][y];
 					var inc = false;
 					for (var o = 0; o < 2; ++o) {
 						if (lights[o] != null) {
-							lights[o].setNumber(count);
+							if (lights[o].setNumber(count)) {
+								changed = true;
+							}
 							inc = true;
 						}
 					}
@@ -194,6 +324,26 @@ function CrosswordEdit(name, width, height)
 				}
 			}
 			this.m_needRenumbering = false;
+			// May also need reordering
+			if (changed) {
+				this.reorder();
+			}
+		}
+	}
+
+	thisCrossword.reorder = function()
+	{
+		for (var o = 0; o < 2; ++o) {
+			var box = document.getElementById(this.m_name+"-"+o+"-clues");
+			for (var y = 0; y < this.m_height; ++y) {
+				for (var x = 0; x < this.m_width; ++x) {
+					var light = this.m_lights[x][y][o];
+					if (null != light) {
+						box.removeChild(light.m_clueDiv);
+						box.appendChild(light.m_clueDiv);
+					}
+				}
+			}
 		}
 	}
 

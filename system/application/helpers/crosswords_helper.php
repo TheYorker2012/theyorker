@@ -472,7 +472,10 @@ class CrosswordView
 		$height = $grid->height();
 		$width = $grid->width();
 		$clueNumber = 0;
-		$clues = array();
+		$clues = array(
+			CrosswordGrid::$HORIZONTAL	=> array(),
+			CrosswordGrid::$VERTICAL	=> array(),
+		);
 
 		if ($this->m_edit) {
 			?><div class="crosswordEdit"><?php
@@ -555,7 +558,7 @@ class CrosswordView
 					CrosswordGrid::$VERTICAL	=> 1);
 		foreach ($clues as $orientation => &$oclues) {
 			?><div class="crosswordCluesBox"><?php
-			?><div name="crosswordClues" class="<?php echo($orClasses[$orientation]); ?> hideValues hideCryptic"><?php
+			?><div id="<?php echo("$name-$orientation-clues"); ?>" name="crosswordClues" class="<?php echo($orClasses[$orientation]); ?> hideValues hideCryptic"><?php
 			?><h2><?php
 			echo(xml_escape($titles[$orientation]));
 			?></h2><?php
@@ -577,7 +580,7 @@ class CrosswordView
 				echo($number);
 				?></span><?php
 				echo(' ');
-				if (!$this->m_edit) {
+				if (true || !$this->m_edit) {
 					?><span class="quickClue" id="<?php echo("$name-$orientation-cluetext0-$x-$y"); ?>"><?php
 					echo(xml_escape($clue->clue()));
 					?></span><?php
@@ -587,11 +590,11 @@ class CrosswordView
 				}
 				?></span><?php
 
-				if ($this->m_edit) {
-					?><input type="text" width="40" value="<?php echo(xml_escape($clue->clue())); ?>" /><?php
-					if (false) {
-						?><input type="text" width="40" value="<?php echo(xml_escape($clue->clue())); ?>" /><?php
-					}
+				if (false && $this->m_edit) {
+					?><div style=""><?php
+					?><input class="quickClue" type="text" value="<?php echo(xml_escape($clue->clue())); ?>" /><?php
+					?><input class="crypticClue" type="text" value="<?php echo(""); ?>" /><?php
+					?></div><?php
 				}
 
 				?><span onclick="crosswordSelectLight(<?php

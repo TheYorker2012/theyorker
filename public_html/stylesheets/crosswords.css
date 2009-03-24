@@ -146,9 +146,12 @@ div.crosswordCluesBox div.hideValues table.crossword {
 }
 
 /* Quick or cryptic clues */
-div.crosswordCluesBox div.hideQuick span.quickClue,
-div.crosswordCluesBox div.hideCryptic span.crypticClue {
+div.crosswordCluesBox div.hideQuick .quickClue,
+div.crosswordCluesBox div.hideCryptic .crypticClue {
 	display: none;
+}
+div.crosswordCluesBox input {
+	width: 50%;
 }
 
 /* Remove the wrong spaces */

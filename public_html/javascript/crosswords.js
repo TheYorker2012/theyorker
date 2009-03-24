@@ -284,7 +284,7 @@ function CrosswordLight(name, x, y, orientation, cells, els, eds)
 			this.m_cells[i].m_eds[1+this.m_orientation] = null;
 		}
 		this.m_cells = cells;
-		if (this.m_x != x || this.m_y != y) {
+		if (cells.length > 0 && (this.m_x != x || this.m_y != y)) {
 			this.m_numberEls[0] = cells[0].m_sup;
 			this.m_number = parseInt(this.m_numberEls[0].textContent, 10);
 		}
@@ -300,7 +300,7 @@ function CrosswordLight(name, x, y, orientation, cells, els, eds)
 
 	this.clean = function()
 	{
-		this.setCells([], [], []);
+		this.setCells(this.m_x, this.m_y, [], [], []);
 	}
 
 	this.select = function(selected, x, y)
@@ -412,7 +412,7 @@ function CrosswordLight(name, x, y, orientation, cells, els, eds)
 		this.m_wordlenEl.textContent = lensStr;
 	}
 
-	/// Set the number
+	/// Set the number, return whether changed
 	this.setNumber = function(num)
 	{
 		if (this.m_number != num)
@@ -423,7 +423,9 @@ function CrosswordLight(name, x, y, orientation, cells, els, eds)
 				}
 			}
 			this.m_number = num;
+			return true;
 		}
+		return false;
 	}
 
 	this.setCells(x, y, cells, els, eds);
