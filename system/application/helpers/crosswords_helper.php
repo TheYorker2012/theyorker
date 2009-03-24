@@ -567,50 +567,44 @@ class CrosswordView
 				$clue = &$clueInfo[0];
 				$x = $clueInfo[1];
 				$y = $clueInfo[2];
-				?><div id="<?php echo("$name-$orientation-clue-$x-$y"); ?>" <?php
-					if (false) {
-					?>onclick="crosswordSelectLight(<?php echo("'$name', $x, $y, $orientation, event"); ?>)"<?php
-					}
+				?><div	class="clueBox"
+						id="<?php echo("$name-$orientation-clue-$x-$y"); ?>" <?php
 					?>><?php
 
-				?><span onclick="crosswordSelectLight(<?php
-					echo("'$name', $x, $y, $orientation, event");
-					?>)"><?php
-				?><span id="<?php echo("$name-$orientation-num-$x-$y"); ?>"><?php
-				echo($number);
-				?></span><?php
-				echo(' ');
-				if (!$this->m_edit) {
+				?><div	class="clueHeader"
+						onclick="crosswordSelectLight(<?php echo("'$name', $x, $y, $orientation, true"); ?>)"><?php
+					?><span id="<?php echo("$name-$orientation-num-$x-$y"); ?>"><?php
+					echo($number);
+					?></span><?php
+					echo(' ');
+
 					?><span class="quickClue" id="<?php echo("$name-$orientation-cluetext0-$x-$y"); ?>"><?php
 					echo(xml_escape($clue->clue()));
 					?></span><?php
 					?><span class="crypticClue" id="<?php echo("$name-$orientation-cluetext1-$x-$y"); ?>"><?php
-					echo('No cryptic clues');
+					echo('');
 					?></span><?php
-				}
-				?></span><?php
+
+					$lengths = $clue->wordLengths();
+					?> (<span id="<?php echo("$name-$orientation-wordlen-$x-$y"); ?>"><?php echo(join(',', $lengths)); ?></span>)<?php
+				?></div><?php
 
 				if ($this->m_edit) {
-					?><div style=""><?php
+					?><fieldset class="clueInputs"><?php
 					?><input	id="<?php echo("$name-$orientation-clueinput0-$x-$y"); ?>"
 								class="quickClue" type="text"
 								value="<?php echo(xml_escape($clue->clue())); ?>"
+								onfocus="return crosswordSelectLight(<?php echo("'$name', $x, $y, $orientation, false"); ?>);"
 								onchange="return crosswordClueChanged(<?php echo("'$name', $x, $y, $orientation, 0"); ?>);"
 								/><?php
 					?><input	id="<?php echo("$name-$orientation-clueinput1-$x-$y"); ?>"
 								class="crypticClue" type="text"
 								value="<?php echo(""); ?>"
+								onfocus="return crosswordSelectLight(<?php echo("'$name', $x, $y, $orientation, false"); ?>);"
 								onchange="return crosswordClueChanged(<?php echo("'$name', $x, $y, $orientation, 1"); ?>);"
 								/><?php
-					?></div><?php
+					?></fieldset><?php
 				}
-
-				?><span onclick="crosswordSelectLight(<?php
-					echo("'$name', $x, $y, $orientation, event");
-					?>)"><?php
-				$lengths = $clue->wordLengths();
-				?> (<span id="<?php echo("$name-$orientation-wordlen-$x-$y"); ?>"><?php echo(join(',', $lengths)); ?></span>)<br /><?php
-				?></span><?php
 
 				if (true || $this->m_edit) {
 					$solution = $clue->solution();

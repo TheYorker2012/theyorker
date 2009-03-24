@@ -446,17 +446,22 @@ function CrosswordLight(name, x, y, orientation, cells, els, eds)
 	this.extractClue = function(id)
 	{
 		var clue = "";
-		if (null != this.m_clueEls[id]) {
-			clue = this.m_clueEls[id].textContent;
-		}
-		else if (null != this.m_clueInEls[id]) {
+		var fromTextBox = false;
+		if (null != this.m_clueInEls[id]) {
 			clue = this.m_clueInEls[id].value;
+			fromTextBox = true;
+		}
+		else if (null != this.m_clueEls[id]) {
+			clue = this.m_clueEls[id].textContent;
 		}
 		if (clue != "") {
 			this.m_clues[id] = clue;
 		}
 		else {
 			this.m_clues[id] = null;
+		}
+		if (fromTextBox) {
+			this.updateClues();
 		}
 	}
 	// Split clues and return the second half
@@ -679,7 +684,7 @@ function Crossword(name, width, height)
 		}
 	}
 
-	this.changeCell = function(x, y, o)
+	this.changeCell = function(x, y, o, f)
 	{
 		if (x != this.m_x || y != this.m_y) {
 			this.m_xyModified = false;
@@ -707,7 +712,9 @@ function Crossword(name, width, height)
 				this.m_orientation.toggle();
 			}
 
-			this.m_grid[x][y].focus(true, this.m_inGrid ? 0 : 1+this.m_orientation.val());
+			if (f) {
+				this.m_grid[x][y].focus(true, this.m_inGrid ? 0 : 1+this.m_orientation.val());
+			}
 
 			// Select new light
 			this.m_light = this.m_grid[x][y].light(this.m_orientation.val());
@@ -727,7 +734,7 @@ function Crossword(name, width, height)
 			edit = this.editBox(x, y);
 		} while (ghost && null == edit && x >= 0 && y >= 0 && x < this.m_width && y < this.m_height);
 		if (null != edit) {
-			this.changeCell(x, y);
+			this.changeCell(x, y, null, true);
 		}
 	}
 
@@ -738,7 +745,7 @@ function Crossword(name, width, height)
 			this.toggleOrientation();
 		}
 		else {
-			this.changeCell(x, y);
+			this.changeCell(x, y, null, true);
 		}
 		this.m_xyModified = true;
 	}
@@ -746,7 +753,7 @@ function Crossword(name, width, height)
 	this.clueClick = function(x, y, o, e)
 	{
 		this.m_inGrid = false;
-		this.changeCell(x, y, o);
+		this.changeCell(x, y, o, true);
 		this.m_xyModified = true;
 	}
 
@@ -835,7 +842,7 @@ function Crossword(name, width, height)
 
 function crosswordDeselect(name, e)
 {
-	return crossword(name).changeCell(-1, -1);
+	return crossword(name).changeCell(-1, -1, null, false);
 }
 
 function crosswordClick(name, x, y, e)
@@ -848,10 +855,10 @@ function crosswordClueClick(name, x, y, o, e)
 	return crossword(name).clueClick(x, y, o, e);
 }
 
-function crosswordSelectLight(name, x, y, o, e)
+function crosswordSelectLight(name, x, y, o, f)
 {
 	var xw = crossword(name);
-	xw.changeCell(x, y);
+	xw.changeCell(x, y, o, f);
 	if (xw.orientation().isVertical() != (o == 1)) {
 		xw.toggleOrientation();
 	}

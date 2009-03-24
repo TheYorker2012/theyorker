@@ -115,16 +115,21 @@ div.crosswordCluesBox {
 div.crosswordCluesBox div.horizontal,
 div.crosswordCluesBox div.vertical {
 	margin: 0px 0px 0.5em 0.5em;
+	padding: 0.2em;
+	background-color: #FFFFFF;
+	border: 1px solid #FF8A00;
 }
 
 div.crosswordCluesBox h2 {
 	margin: 0.2em;
 }
 
-div.crosswordCluesBox div.horizontal div,
-div.crosswordCluesBox div.vertical   div {
+div.crosswordCluesBox div.clueBox {
 	margin: 0px;
 	padding: 0.2em;
+	border-top: 1px solid #FF8A00;
+}
+div.crosswordCluesBox div.clueBox div.clueHeader {
 	cursor: pointer;
 }
 
@@ -150,8 +155,24 @@ div.crosswordCluesBox div.hideQuick .quickClue,
 div.crosswordCluesBox div.hideCryptic .crypticClue {
 	display: none;
 }
-div.crosswordCluesBox input {
-	width: 50%;
+div.crosswordCluesBox div.clueBox fieldset.clueInputs {
+	border: 0px solid #FFFFFF;
+	width: 99%;
+	margin: 0px;
+	margin-top: 0.2em;
+	margin-bottom: 0.2em;
+	padding: 0px;
+	display: none;
+}
+div.crosswordCluesBox div.selected fieldset.clueInputs {
+	border: 1px solid #FFAA88;
+	display: block;
+}
+div.crosswordCluesBox div.clueBox fieldset.clueInputs input {
+	margin: 0px;
+	border: 0px;
+	width: 100%;
+	height: 100%;
 }
 
 /* Remove the wrong spaces */
