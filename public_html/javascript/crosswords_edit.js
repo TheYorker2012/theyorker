@@ -12,6 +12,8 @@ function CrosswordEdit(name, width, height)
 {
 	thisCrossword = new Crossword(name, width, height);
 
+	thisCrossword.m_needRenumbering = false;
+
 	thisCrossword.deleteValue = function(x,y)
 	{
 		var cell = this.m_grid[x][y];
@@ -85,6 +87,8 @@ function CrosswordEdit(name, width, height)
 				// if alone, check if can create a new light
 			}
 		}
+		// Lights may have moved
+		this.renumber();
 	}
 
 	thisCrossword.removeLight = function(light)
@@ -95,6 +99,7 @@ function CrosswordEdit(name, width, height)
 		if (this.m_light == light) {
 			this.m_light = null;
 		}
+		this.m_needRenumbering = true;
 	}
 	
 	thisCrossword.addEventsToPreview = function(name, cx,cy, o, td,tdEd)
@@ -156,6 +161,7 @@ function CrosswordEdit(name, width, height)
 		// If the first cell has moved more stuff needs changing
 		var baseMoved = (x != light.m_x || y != light.m_y);
 		if (baseMoved) {
+			this.m_needRenumbering = true;
 			this.m_lights[light.m_x][light.m_y][light.m_orientation] = null;
 			if (null == this.m_lights[light.m_x][light.m_y][1-light.m_orientation]) {
 				this.m_grid[light.m_x][light.m_y].m_sup.textContent = "";
@@ -166,30 +172,28 @@ function CrosswordEdit(name, width, height)
 
 		light.select(false);
 		light.setCells(x, y, cells, els, eds);
-
-		if (baseMoved) {
-			// Update numbering
-			this.renumber();
-		}
 	}
 
 	thisCrossword.renumber = function()
 	{
-		var count = 1;
-		for (var y = 0; y < this.m_height; ++y) {
-			for (var x = 0; x < this.m_width; ++x) {
-				var lights = this.m_lights[x][y];
-				var inc = false;
-				for (var o = 0; o < 2; ++o) {
-					if (lights[o] != null) {
-						lights[o].setNumber(count);
-						inc = true;
+		if (this.m_needRenumbering) {
+			var count = 1;
+			for (var y = 0; y < this.m_height; ++y) {
+				for (var x = 0; x < this.m_width; ++x) {
+					var lights = this.m_lights[x][y];
+					var inc = false;
+					for (var o = 0; o < 2; ++o) {
+						if (lights[o] != null) {
+							lights[o].setNumber(count);
+							inc = true;
+						}
+					}
+					if (inc) {
+						++count;
 					}
 				}
-				if (inc) {
-					++count;
-				}
 			}
+			this.m_needRenumbering = false;
 		}
 	}
 
