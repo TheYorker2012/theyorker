@@ -474,10 +474,10 @@ class CrosswordView
 		$clueNumber = 0;
 		$clues = array();
 
-		?><div class="crosswordBox"><?php
 		if ($this->m_edit) {
 			?><div class="crosswordEdit"><?php
 		}
+		?><div class="crosswordBox"><?php
 		// Render main crossword grid
 		?><table class="crossword"><?php
 		echo("\n");
@@ -540,9 +540,6 @@ class CrosswordView
 			echo("\n");
 		}
 		?></table><?php
-		if ($this->m_edit) {
-			?></div><?php
-		}
 		?><a id="toggleInlineAnswers" onclick="crosswordToggleInlineAnswers();">Show inline answers</a><br /><?php
 		?><a id="toggleCrypticClues" onclick="crosswordToggleCrypticClues();">Show cryptic clues</a><br /><?php
 		?></div><?php
@@ -653,6 +650,9 @@ class CrosswordView
 				echo("\n");
 			}
 			?></div><?php
+			?></div><?php
+		}
+		if ($this->m_edit) {
 			?></div><?php
 		}
 	}

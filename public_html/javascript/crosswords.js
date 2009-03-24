@@ -90,7 +90,9 @@ function CrosswordCell(name, x, y)
 	var mainEl = document.getElementById(name+"-"+x+"-"+y);
 	var mainEd = document.getElementById(name+"-edit-"+x+"-"+y);
 
-	this.m_letter = ((null != mainEd) ? mainEd.value : null);
+	this.m_letter = ((null != mainEd && null != mainEl && !CssCheck(mainEl, "blank"))
+						? mainEd.value
+						: null);
 	this.m_solution = null;
 	this.m_spacers = ((null != mainEl) ? [CssCheck(mainEl, "hsp"), CssCheck(mainEl, "vsp")] : [false,false]);
 	this.m_lights = [null, null];
@@ -134,7 +136,9 @@ function CrosswordCell(name, x, y)
 			var op = ((letter == null) ? CssAdd : CssRemove);
 			if ((this.m_letter == null) != (letter == null)) {
 				for (var i = 0; i < this.m_els.length; ++i) {
-					op(this.m_els[i], "blank");
+					if (null != this.m_els[i]) {
+						op(this.m_els[i], "blank");
+					}
 				}
 			}
 			// Change internally
@@ -195,7 +199,9 @@ function CrosswordCell(name, x, y)
 			var op = (enable ? CssAdd : CssRemove);
 			var cl = (orientation.isHorizontal() ? "hsp" : "vsp");
 			for (var i = 0; i < this.m_els.length; ++i) {
-				op(this.m_els[i], cl);
+				if (null != this.m_els[i]) {
+					op(this.m_els[i], cl);
+				}
 			}
 			// Change internally
 			this.m_spacers[orientation.val()] = enable;
@@ -615,6 +621,11 @@ function Crossword(name, width, height)
 		this.m_xyModified = true;
 	}
 
+	this.deleteValue = function(x, y)
+	{
+		this.modifyValue(x, y, "");
+	}
+
 	this.keyDown = function(x, y, e)
 	{
 		var keyCode = e.keyCode;
@@ -638,7 +649,7 @@ function Crossword(name, width, height)
 					x = this.x();
 					y = this.y();
 				}
-				this.modifyValue(x, y, "");
+				this.deleteValue(x,y);
 				return false;
 			}
 			// arrow keys

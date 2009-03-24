@@ -128,9 +128,11 @@ div.crosswordCluesBox div.vertical   div {
 	cursor: pointer;
 }
 
-div.crosswordCluesBox div.horizontal div.complete,
-div.crosswordCluesBox div.vertical   div.complete {
+div.crosswordCluesBox div.complete {
 	text-decoration: line-through;
+}
+div.crosswordEdit div.crosswordCluesBox div.complete {
+	text-decoration: none;
 }
 
 div.crosswordCluesBox div.horizontal div.selected,
