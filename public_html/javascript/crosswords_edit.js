@@ -230,7 +230,9 @@ function CrosswordEdit(name, width, height)
 
 	thisCrossword.cloneLight = function(light, x, y, len)
 	{
-		this.spawnLight(x, y, light.m_orientation, len);
+		var newLight = this.spawnLight(x, y, light.m_orientation, len);
+		newLight.setClues(light.splitClues());
+		return newLight;
 	}
 
 	thisCrossword.spawnLight = function(x, y, o, len)
@@ -244,12 +246,16 @@ function CrosswordEdit(name, width, height)
 			num.id = this.m_name+"-"+o+"-num-"+x+"-"+y;
 			clueDiv.appendChild(num);
 
+			clueDiv.appendChild(document.createTextNode(" "));
+
 			var cluetext1 = document.createElement("span");
 			cluetext1.id = this.m_name+"-"+o+"-cluetext0-"+x+"-"+y;
+			CssAdd(cluetext1, "quickClue");
 			clueDiv.appendChild(cluetext1);
 
 			var cluetext2 = document.createElement("span");
 			cluetext2.id = this.m_name+"-"+o+"-cluetext1-"+x+"-"+y;
+			CssAdd(cluetext2, "crypticClue");
 			clueDiv.appendChild(cluetext2);
 
 			clueDiv.appendChild(document.createTextNode(" ("));
@@ -293,10 +299,12 @@ function CrosswordEdit(name, width, height)
 		// This new light will need moving into place, this will trigger reordering
 		light.m_number = 0;
 		this.m_needRenumbering = true;
+		return light;
 	}
 
 	thisCrossword.mergeLights = function(light1, light2, x, y, len)
 	{
+		light1.mergeClues(light2.clues());
 		this.removeLight(light2);
 		this.moveLight(light1, light1.m_x, light1.m_y, len);
 	}

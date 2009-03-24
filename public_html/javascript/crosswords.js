@@ -268,9 +268,16 @@ function CrosswordLight(name, x, y, orientation, cells, els, eds)
 						document.getElementById(name+"-1-num-"+x+"-"+y)];
 	this.m_number = 0;
 	this.m_cells = [];
-	this.m_clues = [null, null];
 	this.m_clueDiv = document.getElementById(name+"-"+orientation+"-clue-"+x+"-"+y);
-	this.m_clueEls = [null, null];
+	this.m_clueEls = [	document.getElementById(name+"-"+orientation+"-cluetext0-"+x+"-"+y),
+						document.getElementById(name+"-"+orientation+"-cluetext1-"+x+"-"+y)];
+	this.m_clues = [null, null];
+	for (var i = 0; i < this.m_clueEls.length; ++i) {
+		var clue = this.m_clueEls[i].textContent;
+		if (clue != "") {
+			this.m_clues[i] = clue;
+		}
+	}
 	this.m_wordlenEl = document.getElementById(name+"-"+orientation+"-wordlen-"+x+"-"+y);
 	this.m_cluetextEl = null;
 	this.m_inlineEl = document.getElementById(name+"-"+orientation+"-inline-"+x+"-"+y);
@@ -426,6 +433,70 @@ function CrosswordLight(name, x, y, orientation, cells, els, eds)
 			return true;
 		}
 		return false;
+	}
+
+	// Get the clues
+	this.clues = function()
+	{
+		return this.m_clues;
+	}
+	// Set the clues
+	this.setClues = function(clues)
+	{
+		this.m_clues = clues;
+		this.updateClues();
+	}
+	// Split clues and return the second half
+	this.splitClues = function()
+	{
+		var results = [];
+		for (var i = 0; i < this.m_clues.length; ++i) {
+			if (null == this.m_clues[i]) {
+				results[i] = null;
+			}
+			else {
+				var pos = this.m_clues[i].search(/\|/);
+				if (-1 == pos) {
+					results[i] = this.m_clues[i];
+				}
+				else {
+					results[i] = this.m_clues[i].substr(pos+1);
+					this.m_clues[i] = this.m_clues[i].substr(0, pos);
+				}
+			}
+		}
+		this.updateClues();
+		return results;
+	}
+	// Merge some clues into this light
+	this.mergeClues = function(clues)
+	{
+		for (var i = 0; i < this.m_clues.length; ++i) {
+			if (null == this.m_clues[i]) {
+				this.m_clues[i] = clues[i];
+			}
+			else if (null != clues[i]) {
+				if (this.m_clues[i] != clues[i]) {
+					this.m_clues[i] = this.m_clues[i]+"|"+clues[i];
+				}
+			}
+		}
+		this.updateClues();
+	}
+	// Update clue elements
+	this.updateClues = function()
+	{
+		for (var i = 0; i < this.m_clues.length; ++i) {
+			if (null != this.m_clueEls[i]) {
+				if (null == this.m_clues[i]) {
+					this.m_clueEls[i].textContent = "";
+				}
+				else
+				{
+					this.m_clueEls[i].textContent = this.m_clues[i];
+				}
+			}
+		}
 	}
 
 	this.setCells(x, y, cells, els, eds);
