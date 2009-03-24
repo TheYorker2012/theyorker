@@ -127,7 +127,6 @@ div.crosswordCluesBox h2 {
 div.crosswordCluesBox div.clueBox {
 	margin: 0px;
 	padding: 0.2em;
-	border-top: 1px solid #FF8A00;
 }
 div.crosswordCluesBox div.clueBox div.clueHeader {
 	cursor: pointer;
@@ -143,7 +142,7 @@ div.crosswordEdit div.crosswordCluesBox div.complete {
 div.crosswordCluesBox div.horizontal div.selected,
 div.crosswordCluesBox div.vertical   div.selected {
 	background-color: #FFFF88;
-	border: 1px solid #FFAA88
+	border: 1px solid #FFAA00;
 }
 
 div.crosswordCluesBox div.hideValues table.crossword {
