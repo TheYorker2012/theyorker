@@ -4,20 +4,27 @@
 class CrosswordClue
 {
 	/// Construct a clue.
-	function __construct($clue, $solution)
+	function __construct($solution, $quickClue, $crypticClue)
 	{
-		$this->m_clue = $clue;
 		$this->m_solution = split(' ', strtoupper($solution));
+		$this->m_quickClue = $quickClue;
+		$this->m_crypticClue = $crypticClue;
 	}
 
 	/*
 	 * Accessors
 	 */
 
-	/// Get the clue.
-	function clue()
+	/// Get the quick clue.
+	function quickClue()
 	{
-		return $this->m_clue;
+		return $this->m_quickClue;
+	}
+
+	/// Get the cryptic clue.
+	function crypticClue()
+	{
+		return $this->m_crypticClue;
 	}
 
 	/// Get the solution.
@@ -47,11 +54,14 @@ class CrosswordClue
 	 * Private variables
 	 */
 
-	/// The clue.
-	private $m_clue;
-
 	/// The solution.
 	private $m_solution;
+
+	/// The quick clue.
+	private $m_quickClue;
+
+	/// The cryptic clue.
+	private $m_crypticClue;
 }
 
 /// A light in the grid.
@@ -198,6 +208,9 @@ class CrosswordGrid
 			if (null !== $state) {
 				if (is_string($state)) {
 					$state = "$state";
+					if ($state === '_') {
+						$state = '';
+					}
 					$len = strlen($state);
 					if ($len > 1) {
 						$state = substr($state, 0, 1);
@@ -392,6 +405,67 @@ class CrosswordPuzzle
 		$this->m_grid = new CrosswordGrid($width, $height);
 	}
 
+	/// Import from GET/POST data
+	function importData(&$data)
+	{
+		// Lights are the interesting things
+		if (isset($data['li'])) {
+			foreach ($data['li'] as $x => $ys) {
+				if (!is_numeric($x)) {
+					continue;
+				}
+				$x = (int)$x;
+				foreach ($ys as $y => $lights) {
+					if (!is_numeric($y)) {
+						continue;
+					}
+					$y = (int)$y;
+					foreach ($lights as $o => $light) {
+						if ($o !== 0 && $o !== 1) {
+							continue;
+						}
+						$o = (int)$o;
+						if (!isset($light['len']) || !is_numeric($light['len'])) {
+							continue;
+						}
+						$len = (int)$light['len'];
+						$dx = 1-$o;
+						$dy = $o;
+						$limit = $dx*($this->m_grid->width()-$x)
+						       + $dy*($this->m_grid->height()-$y);
+						if ($len > $limit) {
+							$len = $limit;
+						}
+						$word = '';
+						for ($i = 0; $i < $light['len']; ++$i) {
+							$cx = $x + $dx*$i;
+							$cy = $y + $dy*$i;
+							if ($word !== '' && isset($data['sp'][$cx][$cy][$o])) {
+								$word .= ' ';
+							}
+							$letter = (isset($data['gr'][$cx][$cy]) ? $data['gr'][$cx][$cy] : '');
+							if ($letter === '') {
+								$word .= '_';
+							}
+							else {
+								$word .= substr($letter, 0,1);
+							}
+						}
+						$quick = '';
+						$cryptic = '';
+						if (isset($light['clues'][0]) && is_string($light['clues'][0])) {
+							$quick = $light['clues'][0];
+						}
+						if (isset($light['clues'][1]) && is_string($light['clues'][1])) {
+							$cryptic = $light['clues'][1];
+						}
+						$this->addLight($x, $y, $o, new CrosswordClue($word, $quick, $cryptic));
+					}
+				}
+			}
+		}
+	}
+
 	/*
 	 * Modifiers
 	 */
@@ -579,10 +653,10 @@ class CrosswordView
 					echo(' ');
 
 					?><span class="quickClue" id="<?php echo("$name-$orientation-cluetext0-$x-$y"); ?>"><?php
-					echo(xml_escape($clue->clue()));
+					echo(xml_escape($clue->quickClue()));
 					?></span><?php
 					?><span class="crypticClue" id="<?php echo("$name-$orientation-cluetext1-$x-$y"); ?>"><?php
-					echo('');
+					echo(xml_escape($clue->crypticClue()));
 					?></span><?php
 
 					$lengths = $clue->wordLengths();
@@ -593,13 +667,13 @@ class CrosswordView
 					?><fieldset class="clueInputs"><?php
 					?><input	id="<?php echo("$name-$orientation-clueinput0-$x-$y"); ?>"
 								class="quickClue" type="text"
-								value="<?php echo(xml_escape($clue->clue())); ?>"
+								value="<?php echo(xml_escape($clue->quickClue())); ?>"
 								onfocus="return crosswordSelectLight(<?php echo("'$name', $x, $y, $orientation, false"); ?>);"
 								onchange="return crosswordClueChanged(<?php echo("'$name', $x, $y, $orientation, 0"); ?>);"
 								/><?php
 					?><input	id="<?php echo("$name-$orientation-clueinput1-$x-$y"); ?>"
 								class="crypticClue" type="text"
-								value="<?php echo(""); ?>"
+								value="<?php echo(xml_escape($clue->crypticClue())); ?>"
 								onfocus="return crosswordSelectLight(<?php echo("'$name', $x, $y, $orientation, false"); ?>);"
 								onchange="return crosswordClueChanged(<?php echo("'$name', $x, $y, $orientation, 1"); ?>);"
 								/><?php
@@ -641,7 +715,11 @@ class CrosswordView
 								   ?>onkeypress="return crosswordKeyPress(<?php echo("'$name',$cx,$cy,event") ?>)" <?php
 								   ?>value="<?php
 							if ($this->m_edit) {
-									echo(xml_escape(substr($solution, $i, 1)));
+								$letter = substr($solution, $i, 1);
+								if ($letter == '_') {
+									$letter = '';
+								}
+								echo(xml_escape($letter));
 							}
 							?>" /><?php
 							?></td><?php

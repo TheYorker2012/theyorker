@@ -398,5 +398,5 @@ function crosswordClueChanged(name, x, y, o, c)
 }
 
 onLoadFunctions.push(function() {
-	grid = CrosswordEdit("xw", 13, 13);
+	CrosswordEdit("xw", 13, 13);
 });
