@@ -27,7 +27,6 @@
 	<?php
 	if (!$LoggedIn) {
 		?><h2><?php echo($AlreadyExists?'Edit':'Add'); ?> Comment</h2><?php
-		echo('<h2>Add Comment</h2>');
 		echo('<p>You must <a href="'.$LoginUrl.'">log in</a> to submit a comment</p>.');
 	} else if (!$Thread['allow_comments']) {
 		?><h2><?php echo($AlreadyExists?'Edit':'Add'); ?> Comment</h2><?php
