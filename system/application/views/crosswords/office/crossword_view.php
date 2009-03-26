@@ -10,6 +10,7 @@
 ?>
 
 <div class="BlueBox">
+	<h2>crossword</h2>
 	<ul>
 <?php
 	if ($Permissions['modify']) {

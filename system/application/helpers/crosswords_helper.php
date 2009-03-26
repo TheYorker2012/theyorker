@@ -400,14 +400,41 @@ class CrosswordPuzzleLight extends CrosswordGridLight
 /// A crossword puzzle.
 class CrosswordPuzzle
 {
-	function __construct($width, $height)
+	function __construct($width = null, $height = null)
 	{
-		$this->m_grid = new CrosswordGrid($width, $height);
+		if ($width != null) {
+			$this->m_grid = new CrosswordGrid($width, $height);
+		}
+		else {
+			$this->m_grid = null;
+		}
 	}
 
 	/// Import from GET/POST data
 	function importData(&$data)
 	{
+		$width = -1;
+		$height = -1;
+		if (isset($data['width'])) {
+			$width = $data['width'];
+			if (is_numeric($width)) {
+				$width = (int)$width;
+			} else {
+				$width = -1;
+			}
+		}
+		if (isset($data['height'])) {
+			$height = $data['height'];
+			if (is_numeric($height)) {
+				$height = (int)$height;
+			} else {
+				$height = -1;
+			}
+		}
+		if ($width < 2 || $height < 2 || $width > 30 || $height > 30) {
+			return false;
+		}
+		$this->m_grid = new CrosswordGrid($width, $height);
 		// Lights are the interesting things
 		if (isset($data['li'])) {
 			foreach ($data['li'] as $x => $ys) {
@@ -464,6 +491,7 @@ class CrosswordPuzzle
 				}
 			}
 		}
+		return true;
 	}
 
 	/*
@@ -539,6 +567,11 @@ class CrosswordView
 		$this->m_edit = $edit;
 	}
 
+	function crossword()
+	{
+		return $this->m_crossword;
+	}
+
 	function Load()
 	{
 		$name = 'xw';
@@ -559,7 +592,7 @@ class CrosswordView
 		?><table class="crossword"><?php
 		echo("\n");
 		for ($y = 0; $y < $height; ++$y) {
-			?><tr><?php
+			?><tr id="<?php echo("$name-row-$y"); ?>"><?php
 			for ($x = 0; $x < $width; ++$x) {
 				$state = $grid->cellState($x, $y);
 				$used = is_string($state);
@@ -596,7 +629,7 @@ class CrosswordView
 						?><sup id="<?php echo("$name-num-$x-$y"); ?>"></sup><?php
 					}
 					// Text input box
-					?><input type="text" cols="1" maxlength="2" <?php
+					?><input type="text" maxlength="2" <?php
 					       ?>id="<?php echo("$name-edit-$x-$y"); ?>" <?php
 					       ?>onkeydown="return crosswordKeyDown(<?php echo("'$name',$x,$y,event") ?>)" <?php
 					       ?>onkeypress="return crosswordKeyPress(<?php echo("'$name',$x,$y,event") ?>)" <?php

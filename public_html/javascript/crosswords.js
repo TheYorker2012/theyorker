@@ -553,18 +553,22 @@ function Crossword(name, width, height)
 	this.m_xySpaced = false;
 	this.m_light = new Array();
 
-	this.m_grid = new Array();
-	this.m_lights = new Array();
+	this.m_grid = [];
+	this.m_gridRows = [];
+	this.m_lights = [];
 
 	for (var x = 0; x < width; ++x) {
-		this.m_grid[x] = new Array();
+		this.m_grid[x] = [];
 		for (var y = 0; y < height; ++y) {
 			// Cell information
 			this.m_grid[x][y] = new CrosswordCell(this.m_name, x, y);
 		}
 	}
+	for (var y = 0; y < height; ++y) {
+		this.m_gridRows[y] = document.getElementById(this.m_name+"-row-"+y);
+	}
 	for (var x = 0; x < width; ++x) {
-		this.m_lights[x] = new Array();
+		this.m_lights[x] = [];
 		for (var y = 0; y < height; ++y) {
 			this.m_lights[x][y] = [null, null];
 			for (var dir = 0; dir < 2; ++dir) {
@@ -623,6 +627,8 @@ function Crossword(name, width, height)
 	{
 		var post = {};
 		post[this.m_name+"[save]"]=1;
+		post[this.m_name+"[width]"]=this.m_width;
+		post[this.m_name+"[height]"]=this.m_height;
 
 		for (var y = 0; y < this.m_height; ++y) {
 			for (var x = 0; x < this.m_width; ++x) {
@@ -721,9 +727,11 @@ function Crossword(name, width, height)
 			if (null != this.m_light) {
 				this.m_light.select(false);
 			}
-			this.m_light = this.m_grid[this.m_x][this.m_y].light(this.m_orientation.val());
-			if (null != this.m_light) {
-				this.m_light.select(true);
+			if (this.m_x != -1 && this.m_y != -1) {
+				this.m_light = this.m_grid[this.m_x][this.m_y].light(this.m_orientation.val());
+				if (null != this.m_light) {
+					this.m_light.select(true);
+				}
 			}
 		}
 		if (x == this.m_x && y == this.m_y) {
@@ -970,8 +978,3 @@ function crosswordToggleCrypticClues()
 	var link = document.getElementById("toggleCrypticClues");
 	link.textContent = (hideCryptic ? "Show quick clues" : "Show cryptic clues");
 }
-
-onLoadFunctions.push(function() {
-	new Crossword("xw", 13, 13);
-});
-

@@ -516,10 +516,19 @@ class Crosswords extends Controller
 				$this->pages_model->SetPageCode('crosswords_office_xword_edit');
 
 				if (isset($_GET['xw']['save'])) {
-					$puzzle = new CrosswordPuzzle(13, 13);
-					$puzzle->importData($_GET['xw']);
-					$this->crosswords_model->SaveCrossword($crossword, $puzzle);
-					$status = 'success';
+					$puzzle = new CrosswordPuzzle();
+					$worked = $puzzle->importData($_GET['xw']);
+					if ($worked) {
+						$this->crosswords_model->SaveCrossword($crossword, $puzzle);
+						$status = 'success';
+					}
+					else {
+						$this->main_frame->Error(array(
+							'class' => 'error',
+							'text' => 'Invalid crossword data.',
+						));
+						$status = 'fail';
+					}
 				}
 				else {
 					$this->main_frame->Error(array(
@@ -553,6 +562,7 @@ class Crosswords extends Controller
 				$data = array();
 				$data['Grid'] = $crosswordView;
 				$data['Paths'] = array(
+					'view' => "/office/crosswords/crossword/$crossword",
 					'save' => "/office/crosswords/crossword/$crossword/save",
 				);
 

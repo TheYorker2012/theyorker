@@ -389,6 +389,95 @@ function CrosswordEdit(name, width, height)
 		return true;
 	}
 
+	thisCrossword.constructRow = function(y)
+	{
+		var name = this.m_name;
+		var tr = document.createElement("tr");
+		tr.id=name+"-row-"+y;
+		return tr;
+	}
+	thisCrossword.constructCell = function(x,y)
+	{
+		var name = this.m_name;
+		var td = document.createElement("td");
+		td.id = name+"-"+x+"-"+y;
+		CssAdd(td,"blank");
+		td.onclick = function(event)
+		{
+			return crosswordClick(name, x, y, event);
+		}
+		var div = document.createElement("div");
+		td.appendChild(div);
+		var sup = document.createElement("sup");
+		sup.id = name+"-num-"+x+"-"+y;
+		div.appendChild(sup);
+		var input = document.createElement("input");
+		input.id = name+"-edit-"+x+"-"+y;
+		input.type = "text";
+		input.onkeypress = function(event)
+		{
+			return crosswordKeyPress(name, x, y, event);
+		}
+		input.onkeydown = function(event)
+		{
+			return crosswordKeyDown(name, x, y, event);
+		}
+		input.maxlength=2;
+		div.appendChild(input);
+		return td;
+	}
+	thisCrossword.resize = function(w,h)
+	{
+		this.changeCell(-1,-1);
+		while (w < this.m_width) {
+			for (var i = 0; i < this.m_height; ++i) {
+				this.modifyValue(this.m_width-1, i, null);
+			}
+			--this.m_width;
+			for (var i = 0; i < this.m_height; ++i) {
+				this.m_gridRows[i].removeChild(this.m_grid[this.m_width][i].m_els[0]);
+			}
+			delete this.m_grid[this.m_width];
+			delete this.m_lights[this.m_width];
+		}
+		while (h < this.m_height) {
+			for (var i = 0; i < this.m_width; ++i) {
+				this.modifyValue(i, this.m_height-1, null);
+			}
+			--this.m_height;
+			for (var i = 0; i < this.m_width; ++i) {
+				this.m_gridRows[this.m_height].removeChild(this.m_grid[i][this.m_height].m_els[0]);
+				delete this.m_grid[i][this.m_height];
+				delete this.m_lights[i][this.m_height];
+			}
+			this.m_gridRows[this.m_height].parentNode.removeChild(this.m_gridRows[this.m_height]);
+			delete this.m_gridRows[this.m_height];
+		}
+		while (w > this.m_width) {
+			this.m_grid[this.m_width] = [];
+			this.m_lights[this.m_width] = [];
+			for (var i = 0; i < this.m_height; ++i) {
+				var td = this.constructCell(this.m_width, i);
+				this.m_gridRows[i].appendChild(td);
+				this.m_grid[this.m_width][i] = new CrosswordCell(this.m_name, this.m_width, i);
+				this.m_lights[this.m_width][i] = [null, null];
+			}
+			++this.m_width;
+		}
+		while (h > this.m_height) {
+			var tr = this.constructRow(this.m_height);
+			this.m_gridRows[this.m_height] = tr;
+			this.m_gridRows[this.m_height-1].parentNode.appendChild(tr);
+			for (var i = 0; i < this.m_width; ++i) {
+				var td = this.constructCell(i,this.m_height);
+				tr.appendChild(td);
+				this.m_grid[i][this.m_height] = new CrosswordCell(name, i, this.m_height);
+				this.m_lights[i][this.m_height] = [null, null];
+			}
+			++this.m_height;
+		}
+	}
+
 	return thisCrossword;
 }
 
@@ -397,6 +486,30 @@ function crosswordClueChanged(name, x, y, o, c)
 	return crossword(name).clueChanged(x, y, o, c);
 }
 
-onLoadFunctions.push(function() {
-	CrosswordEdit("xw", 13, 13);
-});
+function crosswordResize(name, wel,hel)
+{
+	var xw = crossword(name);
+	var w = parseInt(wel.value,10);
+	if (isNaN(w) || w != wel.value) {
+		w = xw.width();
+	}
+	else if (w < 2) {
+		w = 2;
+	}
+	else if (w > 30) {
+		w = 30;
+	}
+	wel.value = w;
+	var h = parseInt(hel.value,10);
+	if (isNaN(h) || h != hel.value) {
+		h = xw.height();
+	}
+	else if (h < 2) {
+		h = 2;
+	}
+	else if (h > 30) {
+		h = 30;
+	}
+	hel.value = h;
+	return xw.resize(w,h);
+}
