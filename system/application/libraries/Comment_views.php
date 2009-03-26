@@ -149,6 +149,7 @@ class CommentViewAdd extends FramesView
 		$this->mExistingComment = $Comment;
 		$this->SetData('DefaultContent', $Comment['wikitext']);
 		$this->SetData('AlreadyExists', true);
+		$this->SetData('DefaultAnonymous', $Comment['author'] === null);
 	}
 	
 	/// Set the thread data from the model.
@@ -182,10 +183,17 @@ class CommentViewAdd extends FramesView
 				'edit_time' => time(),
 				'by_author' => $this->mExistingComment['owned'],
 			);
+			$editing_allowed = $this->mThread['allow_comments'] &&
+				($this->mExistingComment['author'] != null || $this->mThread['allow_anonymous_comments']);
 		} else {
 			unset($preview);
+			$editing_allowed = $this->mThread['allow_comments'];
 		}
-		
+
+		if (!$editing_allowed) {
+			return false;
+		}
+
 		// Read comment post data for adder
 		$wikitext = $CI->input->post('CommentAddContent');
 		if ($wikitext !== FALSE) {

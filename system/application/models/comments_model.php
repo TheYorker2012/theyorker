@@ -465,8 +465,7 @@ class Comments_model extends model
 			comments.comment_good AS good,
 			comment_ratings.comment_rating_value AS rating,
 			comments.comment_author_entity_id AS author_id,
-			IF (comments.comment_anonymous = TRUE
-					AND thread.comment_thread_allow_anonymous_comments = TRUE,
+			IF (comments.comment_anonymous = TRUE,
 				NULL,
 				IF (users.user_entity_id IS NOT NULL,
 					CONCAT(users.user_firstname," ",users.user_surname),
@@ -590,19 +589,33 @@ class Comments_model extends model
 		/// @pre User is allowed to post a comment on this thread (logged in).
 		assert('$this->user_auth->isLoggedIn || array_key_exists(\'author_id\',$Comment)');
 		
-		$setters = array(
-			'comment_author_entity_id'  => 'comment_author_entity_id = '.$this->user_auth->entityId,
-			'comment_comment_thread_id' => 'comment_comment_thread_id = '.$ThreadId,
+		$xhtml = $this->ParseCommentWikitext($Comment['wikitext']);
+		$fields = array(
+			'comment_author_entity_id',
+			'comment_comment_thread_id',
+			'comment_content_xhtml',
+		);
+		$bind = array(
+			$this->user_auth->entityId,
+			$ThreadId,
+			$xhtml,
 		);
 		foreach ($Comment as $key => $value) {
-			if (array_key_exists($key, $translation)) {
-				$setters[$translation[$key]] = $translation[$key].' = '.$this->db->escape($value);
+			if (isset($translation[$key])) {
+				$fields[] = $translation[$key];
+				$bind[] = $value;
 			}
 		}
-		$xhtml = $this->ParseCommentWikitext($Comment['wikitext']);
-		$setters['xhtml'] = 'comment_content_xhtml = '.$this->db->escape($xhtml);
-		$sql = 'INSERT INTO comments SET '.implode(',', $setters);
-		$this->db->query($sql);
+		$sql =	'INSERT INTO comments ('.implode(',',$fields).') '.
+				'SELECT ?'.str_repeat(',?', count($fields)-1).' '.
+				'FROM comment_threads '.
+				'WHERE comment_thread_id=? '.
+				'AND comment_thread_allow_comments=TRUE';
+		$bind[] = $ThreadId;
+		if (isset($Comment['anonymous']) && $Comment['anonymous']) {
+			$sql .= ' AND comment_thread_allow_anonymous_comments=true';
+		}
+		$this->db->query($sql, $bind);
 		return $this->db->affected_rows();
 	}
 	

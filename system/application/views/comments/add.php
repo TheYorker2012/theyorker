@@ -5,6 +5,7 @@
  * @brief View for comment adder.
  *
  * @param $Thread array_thread Thread information with:
+ *	- 'allow_comments' bool Whether to allow comment to be anonymous.
  *	- 'allow_anonymous_comments' bool Whether to allow comment to be anonymous.
  * @param $LoggedIn bool Whether a user is logged in.
  * @param $SmileyTable
@@ -25,8 +26,15 @@
 <div class="BlueBox" id="SectionCommentAdd">
 	<?php
 	if (!$LoggedIn) {
+		?><h2><?php echo($AlreadyExists?'Edit':'Add'); ?> Comment</h2><?php
 		echo('<h2>Add Comment</h2>');
-		echo('<p>You must <a href="'.$LoginUrl.'">log in</a> to submit a comment</p>');
+		echo('<p>You must <a href="'.$LoginUrl.'">log in</a> to submit a comment</p>.');
+	} else if (!$Thread['allow_comments']) {
+		?><h2><?php echo($AlreadyExists?'Edit':'Add'); ?> Comment</h2><?php
+		echo('<p>Comments have been disabled in this thread.</p>');
+	} else if ($AlreadyExists && $DefaultAnonymous && !$Thread['allow_anonymous_comments']) {
+		?><h2><?php echo($AlreadyExists?'Edit':'Add'); ?> Comment</h2><?php
+		echo('<p>Anonymous comments have been disabled in this thread.</p>');
 	} else { ?>
 		<script type="text/javascript" src="/javascript/wikitoolbar.js"></script>
 		<script type="text/javascript">
@@ -124,11 +132,15 @@
 
 				<?php if ($Thread['allow_anonymous_comments']) { ?>
 					<label for="CommentAddAnonymous" style="width:35%;">Post Anonymously:</label>
-					<input type="checkbox" name="CommentAddAnonymous" id="CommentAddAnonymous"<?php if ($DefaultAnonymous) echo(' checked="checked"'); ?> />
+					<input type="checkbox" name="CommentAddAnonymous" id="CommentAddAnonymous"<?php
+						if ($DefaultAnonymous) {
+							echo(' checked="checked"');
+						}
+						?> />
 				<?php } ?>
 
 				<p>
-				<textarea name="CommentAddContent" id="CommentAddContent" cols="40" rows="4"><?php echo(xml_escape($DefaultContent)); ?></textarea>
+				<textarea name="CommentAddContent" id="CommentAddContent" cols="40" rows="4" style="width:100%"><?php echo(xml_escape($DefaultContent)); ?></textarea>
 				</p>
 			</fieldset>
 			

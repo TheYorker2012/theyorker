@@ -93,7 +93,7 @@ class Comments extends Controller
 	/**
 	 * This function allows an owner of a comment or a moderator to edit.
 	 */
-	function _DecideEditPrivilages($CommentId, $redirect_to, &$comment, $property_arguments)
+	function _DecideEditPrivilages($CommentId, $redirect_to, &$comment, &$thread, $property_arguments)
 	{
 		if (!is_numeric($CommentId)) {
 			show_404();
@@ -119,6 +119,7 @@ class Comments extends Controller
 		} else {
 			$has_permission = true;
 		}
+		$thread = $this->comments_model->GetThreadById((int)$comment['thread_id']);
 		
 		if (!$has_permission) {
 			// The user doesn't have permission, return to the previous page.
@@ -137,10 +138,11 @@ class Comments extends Controller
 			'verb' => 'edit',
 			'verbed' => 'edited',
 		);
-		if (!$this->_DecideEditPrivilages($CommentId, $redirect_to, $comment, $property_arguments)) return;
+		if (!$this->_DecideEditPrivilages($CommentId, $redirect_to, $comment, $thread, $property_arguments)) return;
 		
 		$this->load->library('comment_views');
 		$main_view = new CommentViewAdd($comment['thread_id']);
+		$main_view->SetThread($thread);
 		
 		// Do the main processing if any post data
 		$main_view->SetExistingComment($comment);
@@ -165,7 +167,7 @@ class Comments extends Controller
 			'verb' => 'delete',
 			'verbed' => 'deleted',
 		);
-		if (!$this->_DecideEditPrivilages($CommentId, $redirect_to, $comment, $property_arguments)) return;
+		if (!$this->_DecideEditPrivilages($CommentId, $redirect_to, $comment, $thread, $property_arguments)) return;
 		// Confirm with the user
 		$this->pages_model->SetPageCode('comment_delete');
 		if (!$this->_ConfirmCommentAction($CommentId, $redirect_to, $property_arguments)) return;
