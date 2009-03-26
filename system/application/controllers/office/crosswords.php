@@ -488,6 +488,9 @@ class Crosswords extends Controller
 	 */
 	function crossword($crossword = null, $operation = null)
 	{
+		if ('save' === $operation) {
+			OutputModes('ajax');
+		}
 		if (!CheckPermissions('office')) return;
 		if (null !== $crossword && is_numeric($crossword)) {
 			$crossword = (int)$crossword;
@@ -512,10 +515,27 @@ class Crosswords extends Controller
 				if (!CheckRolePermissions('CROSSWORD_VIEW', 'CROSSWORD_MODIFY')) return;
 				$this->pages_model->SetPageCode('crosswords_office_xword_edit');
 
-				$puzzle = new CrosswordPuzzle(13, 13);
-				$puzzle->importData($_GET['xw']);
-				$this->crosswords_model->SaveCrossword($crossword, $puzzle);
-				/// @todo OUTPUT something
+				if (isset($_GET['xw']['save'])) {
+					$puzzle = new CrosswordPuzzle(13, 13);
+					$puzzle->importData($_GET['xw']);
+					$this->crosswords_model->SaveCrossword($crossword, $puzzle);
+					$status = 'success';
+				}
+				else {
+					$this->main_frame->Error(array(
+						'class' => 'error',
+						'text' => 'Unable to edit crossword.',
+					));
+					$status = 'fail';
+				}
+
+				$root = array(
+					'_tag' => 'crossword',
+					'status' => $status,
+				);
+
+				$this->main_frame->SetXml($root);
+				$this->main_frame->Load();
 				return;
 			}
 			else if ('edit' === $operation) {

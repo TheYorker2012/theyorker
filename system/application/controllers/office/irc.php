@@ -147,7 +147,7 @@ class Irc extends Controller
 					header("Connection: close");
 					ignore_user_abort();
 					ob_start();
-					echo('<?xml version="1.0" encoding="UTF-8"?><irc></irc>'."\n");
+					echo('<?xml version="1.0" encoding="UTF-8"?'.'><irc></irc>'."\n");
 					$size = ob_get_length();
 					header('Content-Length: '.$size);
 					ob_end_flush();

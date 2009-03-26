@@ -215,6 +215,7 @@ function VipSegments($Set = NULL)
  * @param $Modes array[string],string,NULL = NULL Each element is a output mode identifier:
  *	- 'xhtml' - Standard XHTML
  *	- 'fbml' - Facebook markup language for facebook apps
+ *  - 'ajax' - The Yorker AJAX
  *
  * @param * string Alternatively a set of string can be provided as arguments directly.
  */
@@ -229,6 +230,13 @@ function OutputModes($Modes = NULL)
 		}
 	}
 	return $output_modes;
+}
+
+/// Get the default output mode
+function DefaultOutputMode()
+{
+	$modes = OutputModes();
+	return (count($modes) > 0) ? $modes[0] : null;
 }
 
 /// Specify or get the current output mode.
@@ -354,13 +362,15 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 	$CI->load->model('pages_model');
 	
 	// Decide on output format
-	if (array_key_exists('fb_sig', $_POST)) {
+	if (isset($_POST['fb_sig'])) {
 		/// @todo AUTHENTICATE FACEBOOK
 		OutputMode('fbml');
 		global $_SESSION;
 		$_SESSION = array();
+	} else if (isset($_GET['opmode'])) {
+		OutputMode($_GET['opmode']);
 	} else {
-		OutputMode('xhtml');
+		OutputMode(DefaultOutputMode());
 	}
 	// If the output mode is not supported, show a 404
 	if (!in_array(OutputMode(), OutputModes())) {
@@ -728,6 +738,9 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 	}
 	if ('fbml' === OutputMode()) {
 		$Permission = 'facebookapp';
+	}
+	elseif ('ajax' === OutputMode()) {
+		$Permission = 'ajax';
 	}
 	SetupMainFrame($Permission, FALSE);
 

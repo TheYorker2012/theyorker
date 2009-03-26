@@ -38,6 +38,7 @@ function SetupMainFrame($Frame='public', $Override=TRUE)
 		'editor'		=> 'frame_office',
 		'manage'		=> 'frame_office',
 		'admin'			=> 'frame_office',
+		'ajax'			=> 'frame_ajax',
 	);
 
 	assert('array_key_exists($Frame,$frames)');

@@ -622,6 +622,7 @@ function Crossword(name, width, height)
 	this.post = function(action)
 	{
 		var post = {};
+		post[this.m_name+"[save]"]=1;
 
 		for (var y = 0; y < this.m_height; ++y) {
 			for (var x = 0; x < this.m_width; ++x) {
@@ -657,8 +658,35 @@ function Crossword(name, width, height)
 	this.postCallback = function(responseXML)
 	{
 		if (responseXML) {
-			alert("callback");
+			var root = responseXML.documentElement;
+			// Get errors node
+			var mainEls = root.childNodes;
+			var anyErrors = false;
+			for (var i = 0; i < mainEls.length; ++i) {
+				var el = mainEls[i];
+				if (el.tagName == "errors") {
+					var errors = el.getElementsByTagName("error");
+					if (errors.length > 0) {
+						anyErrors = true;
+					}
+				}
+			}
+			if (!anyErrors) {
+				alert("Save successful");
+			}
+			else {
+				alert("Save failed");
+			}
 		}
+		else {
+			alert("Save failed. Please ensure you are logged in.");
+		}
+	}
+
+	// Handle a response from the web server
+	this.postCallbackFail = function(status, text)
+	{
+		alert("Save failed: ".text);
 	}
 
 	this.cell = function(x,y)
