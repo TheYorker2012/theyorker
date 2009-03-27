@@ -173,6 +173,7 @@ function CrosswordEdit(name, width, height)
 	}
 	thisCrossword.moveLight = function(light, x, y, len)
 	{
+		var o = light.m_orientation;
 		// Letters need changing
 		var inlineTr = light.m_inlineEl;
 		while (inlineTr.firstChild != null) {
@@ -183,27 +184,27 @@ function CrosswordEdit(name, width, height)
 		var eds = [];
 		var xwName = this.m_name;
 		for (var i = 0; i < len; ++i) {
-			var cx = x+i*(1-light.m_orientation);
-			var cy = y+i*light.m_orientation;
+			var cx = x+i*(1-o);
+			var cy = y+i*o;
 			var cell = this.m_grid[cx][cy];
 			cells[cells.length] = cell;
 
 			// Cell in inline preview
 			var td = document.createElement("td");
-			td.id = xwName+"-"+light.m_orientation+"-"+cx+"-"+cy;
-			for (var o = 0; o < 2; ++o) {
-				if (cell.isSpaced(o)) {
-					CssAdd(td, (o == 0 ? "hsp" : "vsp"));
+			td.id = xwName+"-"+o+"-"+cx+"-"+cy;
+			for (var or = 0; or < 2; ++or) {
+				if (cell.isSpaced(or)) {
+					CssAdd(td, (or == 0 ? "hsp" : "vsp"));
 				}
 			}
 			var tdDiv = document.createElement("div");
 			var tdEd = document.createElement("input");
-			tdEd.id = xwName+"-"+light.m_orientation+"-edit-"+cx+"-"+cy;
+			tdEd.id = xwName+"-"+o+"-edit-"+cx+"-"+cy;
 			tdEd.type = "text";
 			tdEd.value = cell.letter();
 			tdEd.maxlength = 2;
 			tdEd.cols=1;
-			this.addEventsToPreview(xwName, cx,cy,light.m_orientation, td,tdEd);
+			this.addEventsToPreview(xwName, cx,cy,o, td,tdEd);
 			tdDiv.appendChild(tdEd);
 			td.appendChild(tdDiv);
 			inlineTr.appendChild(td);
@@ -216,12 +217,18 @@ function CrosswordEdit(name, width, height)
 		var baseMoved = (x != light.m_x || y != light.m_y);
 		if (baseMoved) {
 			this.m_needRenumbering = true;
-			this.m_lights[light.m_x][light.m_y][light.m_orientation] = null;
-			if (null == this.m_lights[light.m_x][light.m_y][1-light.m_orientation]) {
+			this.m_lights[light.m_x][light.m_y][o] = null;
+			if (null == this.m_lights[light.m_x][light.m_y][1-o]) {
 				this.m_grid[light.m_x][light.m_y].m_sup.textContent = "";
 			}
-			this.m_lights[x][y][light.m_orientation] = light;
-			// Rename clue stuff
+			this.m_lights[x][y][o] = light;
+
+			// Update events dependent on beginning of light
+			light.m_clueHead.onclick = function(event) { crosswordSelectLight(xwName, x, y, o, true); }
+			light.m_clueInEls[0].onfocus = function(event) { return crosswordSelectLight(xwName, x, y, o, false); }
+			light.m_clueInEls[0].onchange = function(event) { return crosswordClueChanged(xwName, x, y, o, 0); }
+			light.m_clueInEls[1].onfocus = function(event) { return crosswordSelectLight(xwName, x, y, o, false); }
+			light.m_clueInEls[1].onchange = function(event) { return crosswordClueChanged(xwName, x, y, o, 1); }
 		}
 
 		light.select(false);
@@ -241,33 +248,34 @@ function CrosswordEdit(name, width, height)
 
 		// Create dom structures
 		var clueDiv = document.createElement("div");
-		clueDiv.id = this.m_name+"-"+o+"-clue-"+x+"-"+y;
+		clueDiv.id = xwName+"-"+o+"-clue-"+x+"-"+y;
 		CssAdd(clueDiv, "clueBox");
 		{
 			var clueHeader = document.createElement("div");
+			clueHeader.id = xwName+"-"+o+"-head-"+x+"-"+y;
 			CssAdd(clueHeader, "clueHeader");
 			clueHeader.onclick = function(event) { crosswordSelectLight(xwName, x, y, o, true); }
 			{
 				var num = document.createElement("span");
-				num.id = this.m_name+"-"+o+"-num-"+x+"-"+y;
+				num.id = xwName+"-"+o+"-num-"+x+"-"+y;
 				clueHeader.appendChild(num);
 
 				clueHeader.appendChild(document.createTextNode(" "));
 
 				var cluetext1 = document.createElement("span");
-				cluetext1.id = this.m_name+"-"+o+"-cluetext0-"+x+"-"+y;
+				cluetext1.id = xwName+"-"+o+"-cluetext0-"+x+"-"+y;
 				CssAdd(cluetext1, "quickClue");
 				clueHeader.appendChild(cluetext1);
 
 				var cluetext2 = document.createElement("span");
-				cluetext2.id = this.m_name+"-"+o+"-cluetext1-"+x+"-"+y;
+				cluetext2.id = xwName+"-"+o+"-cluetext1-"+x+"-"+y;
 				CssAdd(cluetext2, "crypticClue");
 				clueHeader.appendChild(cluetext2);
 
 				clueHeader.appendChild(document.createTextNode(" ("));
 
 				var wordlen = document.createElement("span");
-				wordlen.id = this.m_name+"-"+o+"-wordlen-"+x+"-"+y;
+				wordlen.id = xwName+"-"+o+"-wordlen-"+x+"-"+y;
 				clueHeader.appendChild(wordlen);
 
 				clueHeader.appendChild(document.createTextNode(")"));
@@ -278,7 +286,7 @@ function CrosswordEdit(name, width, height)
 			CssAdd(clueInputs, "clueInputs");
 			{
 				var clueinput1 = document.createElement("input");
-				clueinput1.id = this.m_name+"-"+o+"-clueinput0-"+x+"-"+y;
+				clueinput1.id = xwName+"-"+o+"-clueinput0-"+x+"-"+y;
 				clueinput1.type = "text";
 				clueinput1.onfocus = function(event) { return crosswordSelectLight(xwName, x, y, o, false); }
 				clueinput1.onchange = function(event) { return crosswordClueChanged(xwName, x, y, o, 0); }
@@ -286,7 +294,7 @@ function CrosswordEdit(name, width, height)
 				clueInputs.appendChild(clueinput1);
 
 				var clueinput2 = document.createElement("input");
-				clueinput2.id = this.m_name+"-"+o+"-clueinput1-"+x+"-"+y;
+				clueinput2.id = xwName+"-"+o+"-clueinput1-"+x+"-"+y;
 				clueinput2.type = "text";
 				clueinput2.onfocus = function(event) { return crosswordSelectLight(xwName, x, y, o, false); }
 				clueinput2.onchange = function(event) { return crosswordClueChanged(xwName, x, y, o, 1); }
@@ -299,13 +307,13 @@ function CrosswordEdit(name, width, height)
 			CssAdd(previewTab, "crossword");
 			{
 				var tr = document.createElement("tr");
-				tr.id = this.m_name+"-"+o+"-inline-"+x+"-"+y;
+				tr.id = xwName+"-"+o+"-inline-"+x+"-"+y;
 				CssAdd(tr, "small");
 				previewTab.appendChild(tr);
 			}
 			clueDiv.appendChild(previewTab);
 		}
-		var box = document.getElementById(this.m_name+"-"+o+"-clues");
+		var box = document.getElementById(xwName+"-"+o+"-clues");
 		box.appendChild(clueDiv);
 
 		// Create internal structures
@@ -321,7 +329,7 @@ function CrosswordEdit(name, width, height)
 			els[els.length] = null;
 			eds[eds.length] = null;
 		}
-		var light = new CrosswordLight(this.m_name, x, y, o, cells, els, eds);
+		var light = new CrosswordLight(xwName, x, y, o, cells, els, eds);
 		this.m_lights[x][y][o] = light
 		this.moveLight(light, x, y, len);
 		// This new light will need moving into place, this will trigger reordering
@@ -429,6 +437,21 @@ function CrosswordEdit(name, width, height)
 	thisCrossword.resize = function(w,h)
 	{
 		this.changeCell(-1,-1);
+		// Delete all lights which will be removed anyway
+		// This will reduce time spent reducing size of lights
+		for (var x = 0; x < this.m_width; ++x) {
+			for (var y = 0; y < this.m_height; ++y) {
+				if (x >= w || y >= h) {
+					for (var o = 0; o < 2; ++o) {
+						var light = this.m_lights[x][y][o];
+						if (light != null) {
+							this.removeLight(light);
+						}
+					}
+				}
+			}
+		}
+		// Shrink horizontally
 		while (w < this.m_width) {
 			for (var i = 0; i < this.m_height; ++i) {
 				this.modifyValue(this.m_width-1, i, null);
@@ -440,8 +463,13 @@ function CrosswordEdit(name, width, height)
 			delete this.m_grid[this.m_width];
 			delete this.m_lights[this.m_width];
 		}
+		// Shrink vertically
 		while (h < this.m_height) {
 			for (var i = 0; i < this.m_width; ++i) {
+				var light = this.m_lights[i][this.m_height-1][0];
+				if (light != null) {
+					this.removeLight(light);
+				}
 				this.modifyValue(i, this.m_height-1, null);
 			}
 			--this.m_height;
@@ -453,6 +481,7 @@ function CrosswordEdit(name, width, height)
 			this.m_gridRows[this.m_height].parentNode.removeChild(this.m_gridRows[this.m_height]);
 			delete this.m_gridRows[this.m_height];
 		}
+		// Grow horizontally
 		while (w > this.m_width) {
 			this.m_grid[this.m_width] = [];
 			this.m_lights[this.m_width] = [];
@@ -464,6 +493,7 @@ function CrosswordEdit(name, width, height)
 			}
 			++this.m_width;
 		}
+		// Shrink vertically
 		while (h > this.m_height) {
 			var tr = this.constructRow(this.m_height);
 			this.m_gridRows[this.m_height] = tr;

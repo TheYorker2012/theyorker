@@ -678,7 +678,7 @@ class CrosswordView
 						id="<?php echo("$name-$orientation-clue-$x-$y"); ?>" <?php
 					?>><?php
 
-				?><div	class="clueHeader"
+				?><div	class="clueHeader" id="<?php echo("$name-$orientation-head-$x-$y"); ?>"
 						onclick="crosswordSelectLight(<?php echo("'$name', $x, $y, $orientation, true"); ?>)"><?php
 					?><span id="<?php echo("$name-$orientation-num-$x-$y"); ?>"><?php
 					echo($number);

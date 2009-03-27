@@ -269,6 +269,7 @@ function CrosswordLight(name, x, y, orientation, cells, els, eds)
 	this.m_number = 0;
 	this.m_cells = [];
 	this.m_clueDiv = document.getElementById(name+"-"+orientation+"-clue-"+x+"-"+y);
+	this.m_clueHead = document.getElementById(name+"-"+orientation+"-head-"+x+"-"+y);
 	this.m_clueInEls = [document.getElementById(name+"-"+orientation+"-clueinput0-"+x+"-"+y),
 						document.getElementById(name+"-"+orientation+"-clueinput1-"+x+"-"+y)];
 	this.m_clueEls = [	document.getElementById(name+"-"+orientation+"-cluetext0-"+x+"-"+y),
