@@ -43,8 +43,51 @@
 		<?php
 	}
 	?></ul><?php
+	?><div class="crossword_items"><?php
 	foreach ($Crosswords as $id => $crossword) {
-		?><hr /><?php
+		// Set up styles
+		$classes = array('crossword_item');
+		$classes[] = 'complete'.(10*((int)($crossword['completeness']/10)));
+		if (null != $crossword['overdue'] && $crossword['overdue']) {
+			$classes[] = 'overdue';
+		}
+		if (null != $crossword['published'] && $crossword['published']) {
+			$classes[] = 'published';
+		}
+		if (null != $crossword['expired'] && $crossword['expired']) {
+			$classes[] = 'expired';
+		}
+		if ((int)$crossword['winners_so_far'] >= (int)$crossword['winners']) {
+			$classes[] = 'no_winners_left';
+		}
+
+		?><div class="<?php echo(join(' ',$classes)); ?>"><?php
+			// Publishing date
+			?><div class="publish_date"><?php
+				if (null === $crossword['publication']) {
+					?><a>schedule</a><?php
+				}
+				else {
+					echo(date("DD MM YYYY", $crossword['publication']));
+				}
+			?></div><?php
+			// Authors
+			?><div class="authors"><?php
+				echo(xml_escape(join(', ', $crossword['authors'])));
+			?></div><?php
+			// Progress bar
+			?><div class="completeness"><?php
+				?><div class="bar" style="width: <?php echo((int)$crossword['completeness'].'%'); ?>"><?php
+					echo((int)$crossword['completeness']."%");
+				?></div><?php
+			?></div><?php
+			// Links
+			?><ul><?php
+				?><li><a href="<?php echo(site_url('office/crosswords/crossword/'.(int)$crossword['id'])); ?>">view</a></li><?php
+				?><li><a href="<?php echo(site_url('office/crosswords/crossword/'.(int)$crossword['id'].'/edit')); ?>">edit</a></li><?php
+			?></ul><?php
+		?></div><?php
 	}
+	?></div><?php
 ?>
 </div>

@@ -1,0 +1,85 @@
+/**************************************
+ * Office crosswords interface styles *
+ **************************************/
+
+div.crossword_items {
+	margin: 0.5em;
+}
+
+div.crossword_item {
+	clear: both;
+	margin: 0px;
+	margin-bottom: -1px;
+	border: 1px solid black;
+	height: 1.5em;
+}
+
+/* Background colours */
+div.crossword_item {
+	background: #CCCCCC;
+}
+div.crossword_item.overdue {
+	background: red;
+}
+div.crossword_item.complete100 {
+	background: #80FF80;
+}
+div.crossword_item.complete100.published {
+	background: yellow;
+}
+div.crossword_item.complete100.published.expired,
+div.crossword_item.complete100.published.no_winners_left {
+	background: #8080FF;
+}
+
+/* Columns */
+div.crossword_item div.publish_date,
+div.crossword_item div.authors {
+	float: left;
+	width: 25%;
+	border-right: 1px solid black;
+	height: 1.5em;
+}
+
+/* Progress bar */
+div.crossword_item div.completeness {
+	float: right;
+	margin: 0.1em;
+	border: 1px solid black;
+	width: 5em;
+	height: 1.1em;
+	background: white;
+	padding: 0px;
+}
+div.crossword_item.complete100 div.completeness {
+	display: none;
+}
+div.crossword_item div.completeness div.bar {
+	margin: -1px;
+	border: 1px solid black;
+	height: 100%;
+	background: black;
+	padding: 0px;
+	padding-left: 0.1em;
+}
+div.crossword_item.complete0   div.completeness div.bar { background: #F00; }
+div.crossword_item.complete10  div.completeness div.bar { background: #F30; }
+div.crossword_item.complete20  div.completeness div.bar { background: #F60; }
+div.crossword_item.complete30  div.completeness div.bar { background: #F90; }
+div.crossword_item.complete40  div.completeness div.bar { background: #FC0; }
+div.crossword_item.complete50  div.completeness div.bar { background: #FF0; }
+div.crossword_item.complete60  div.completeness div.bar { background: #CF0; }
+div.crossword_item.complete70  div.completeness div.bar { background: #9F0; }
+div.crossword_item.complete80  div.completeness div.bar { background: #6F0; }
+div.crossword_item.complete90  div.completeness div.bar { background: #3F0; }
+div.crossword_item.complete100 div.completeness div.bar { background: #0F0; }
+
+/* Lists of links */
+div.crossword_item ul {
+	margin: 0px;
+	margin-right: 0.2em;
+	float: right;
+}
+div.crossword_item ul li {
+	float: right;
+}

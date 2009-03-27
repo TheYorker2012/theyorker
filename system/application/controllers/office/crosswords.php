@@ -473,7 +473,10 @@ class Crosswords extends Controller
 							$this->messages->AddMessage('error', 'Could not add a new crossword to this category.');
 						}
 					}
-					$data['Crosswords'] = array();
+
+					// Get the crosswords in this category
+					$crosswords = $this->crosswords_model->GetCrosswords(null, $category);
+					$data['Crosswords'] = $crosswords;
 					$this->main_frame->SetContentSimple('crosswords/office/category_view', $data);
 				}
 			}
@@ -481,6 +484,7 @@ class Crosswords extends Controller
 				show_404();
 			}
 		}
+		$this->main_frame->includeCss('stylesheets/crosswords_office.css');
 		$this->main_frame->Load();
 	}
 
@@ -495,18 +499,21 @@ class Crosswords extends Controller
 		if (null !== $crossword && is_numeric($crossword)) {
 			$crossword = (int)$crossword;
 
+			$crosswords = $this->crosswords_model->GetCrosswords($crossword);
+			if (count($crosswords) === 0) {
+				show_404();
+			}
+
 			$this->load->model('permissions_model');
 			$data = array(
 				'Permissions' => array(
 					'modify' => $this->permissions_model->hasUserPermission('CROSSWORD_MODIFY'),
 					'stats_basic' => $this->permissions_model->hasUserPermission('CROSSWORD_STATS_BASIC'),
 				),
-				'Crossword' => array(
-					'id' => $crossword,
-				),
+				'Crossword' => $crosswords[0],
 			);
 
-			if (null == $operation) {
+			if (null === $operation) {
 				if (!CheckRolePermissions('CROSSWORD_VIEW')) return;
 				$this->pages_model->SetPageCode('crosswords_office_xword_view');
 				$this->main_frame->SetContentSimple('crosswords/office/crossword_view', $data);

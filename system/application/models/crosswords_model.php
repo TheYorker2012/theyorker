@@ -321,6 +321,70 @@ class Crosswords_model extends model
 		}
 	}
 
+	/** Get crosswords.
+	 * @param $crossword_id int,null Crossword id.
+	 * @param $category_id int,null Category id.
+	 * @param $published bool,null Published or not.
+	 */
+	function GetCrosswords($crossword_id = null, $category_id = null, $overdue = null, $published = null, $expired = null)
+	{
+		$overdue_sql	= '`crossword_deadline`    <= NOW()';
+		$published_sql	= '`crossword_publication` <= NOW()';
+		$expired_sql	= '`crossword_expiry`      <= NOW()';
+		$winner_count_sql =	'(SELECT COUNT(*) '.
+							'FROM `crossword_winners` '.
+							'WHERE `crossword_winner_crossword_id` = `crossword_id`)';
+		$sql = 	'SELECT '.
+				'`crossword_id`					AS id, '.
+				'`crossword_width`				AS width, '.
+				'`crossword_height`				AS height, '.
+				'`crossword_has_normal_clues`	AS has_quick_clues, '.
+				'`crossword_has_cryptic_clues`	AS has_cryptic_clues, '.
+				'`crossword_completeness`		AS completeness, '.
+				'`crossword_category_id`		AS category_id, '.
+				'`crossword_layout_id`			AS layout_id, '.
+				'UNIX_TIMESTAMP(`crossword_deadline`)		AS deadline, '.
+				'UNIX_TIMESTAMP(`crossword_publication`)	AS publication, '.
+				'UNIX_TIMESTAMP(`crossword_expiry`)			AS expiry, '.
+				'UNIX_TIMESTAMP(`crossword_winners`)		AS winners, '.
+				$overdue_sql.	' AS overdue, '.
+				$published_sql.	' AS published, '.
+				$expired_sql.	' AS expired, '.
+				$winner_count_sql.	' AS winners_so_far '.
+				'FROM crosswords ';
+
+		$bind = array();
+		$conditions = array();
+		if (null !== $crossword_id) {
+			$conditions[] = '`crossword_id`=?';
+			$bind[] = $crossword_id;
+		}
+		if (null !== $category_id) {
+			$conditions[] = '`crossword_category_id`=?';
+			$bind[] = $category_id;
+		}
+		if (null !== $overdue) {
+			$conditions[] = ($overdue ? $overdue_sql : "NOT ($overdue_sql)");
+		}
+		if (null !== $published) {
+			$conditions[] = ($published ? $published_sql : "NOT ($published_sql)");
+		}
+		if (null !== $expired) {
+			$conditions[] = ($expired ? $expired_sql : "NOT ($expired_sql)");
+		}
+		if (count($conditions) > 0) {
+			$sql .= 'WHERE ('.join(') AND (', $conditions).') ';
+		}
+
+		$sql .= 'ORDER BY `crossword_publication` ASC'.
+
+		$results = $this->db->query($sql, $bind)->result_array();
+		foreach ($results as &$result) {
+			$result['authors'] = array();
+		}
+		return $results;
+	}
+
 	/** Save over a crossword.
 	 * @param $crossword_id int Id of crossword.
 	 * @param $puzzle CrosswordPuzzle Puzzle with lights to save.
