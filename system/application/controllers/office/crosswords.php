@@ -570,15 +570,29 @@ class Crosswords extends Controller
 
 				$data = array();
 				$config = new InputInterfaces;
+
 				$config->Add('Quick clues', new InputCheckboxInterface('quickclues', true));
+
 				$config->Add('Cryptic Clues', new InputCheckboxInterface('crypticclues', true));
+
+				$category_interface = new InputSelectInterface('category');
+				$config->Add('Category', $category_interface);
+
+				$layout_interface = new InputSelectInterface('layout');
+				$config->Add('Layout', $layout_interface);
+
 				$config->Add('Deadline', new InputDateInterface('deadline', time(), false));
+
 				$config->Add('Publication', new InputDateInterface('publication', time(), false));
+
 				$config->Add('Expiry', new InputDateInterface('expiry', time(), false));
+
 				$num_winners = new InputIntInterface('winners', 3, true);
 				$num_winners->SetRange(1,100);
 				$config->Add('Winners', $num_winners);
+
 				$config->Add('Progress', new InputProgressInterface('progress', 85));
+
 				$config->Validate();
 				$data['Configuration'] = &$config;
 				$data['Grid'] = $crosswordView;

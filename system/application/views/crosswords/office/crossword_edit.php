@@ -24,10 +24,6 @@ onLoadFunctions.push(function() {
 		<fieldset>
 			<?php $Configuration->Load(); ?>
 
-			<label>Category</label>
-
-			<label>Layout</label>
-
 			<input	class="button" type="submit" value="Save Configuration" />
 			<input	class="button" type="button" value="Return"
 					onclick="<?php echo(xml_escape('parent.location="'.$Paths['view'].'"')); ?>" />

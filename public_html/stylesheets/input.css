@@ -12,6 +12,7 @@ div.input_error.mover label {
 	font-weight: bold;
 }
 
-div.input_error.mover input {
+div.input_error.mover input,
+div.input_error.mover select {
 	border: 3px solid red;
 }

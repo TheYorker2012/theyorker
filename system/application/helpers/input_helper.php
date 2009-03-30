@@ -234,6 +234,88 @@ class InputTextInterface extends InputInterface
 	}
 }
 
+/// Select input interface
+class InputSelectInterface extends InputInterface
+{
+	protected $options = null;
+	protected $events = array();
+	protected $values = array();
+
+	public function __construct($name, $default = null, $enabled = null, $auto = true)
+	{
+		parent::__construct($name, $default, $enabled, $auto);
+	}
+
+	public function SetOptions($options)
+	{
+		$this->values = array();
+		$this->options = $options;
+		foreach ($options as $key => $value) {
+			if (is_array($value)) {
+				foreach ($value as $key1 => $value1) {
+					$this->values[$key1] = true;
+				}
+			}
+			else {
+				$this->values[$key] = true;
+			}
+		}
+	}
+
+	public function SetEvent($event, $javascript)
+	{
+		$this->events[$event] = $javascript;
+	}
+
+	public function LoadOptGroup($options, $nested = true)
+	{
+		foreach ($options as $value => $label) {
+			if (is_array($label)) {
+				if ($nested) {
+					?><optgroup	label="<?php echo(xml_escape($value)); ?>" ><?php
+						$this->LoadOptGroup($label, false);
+					?></optgroup><?php
+				}
+			}
+			else {
+				?><option	value="<?php echo(xml_escape($value)); ?>"<?php
+						if ($this->value === $value) {
+							?>	selected="selected"<?php
+						}
+						?>><?php
+					echo(xml_escape($label));
+				?></option><?php
+			}
+		}
+	}
+
+	public function _Load()
+	{
+		?><select	name="<?php echo("$this->name"); ?>"<?php
+				?>	id="<?php echo("$this->name"); ?>"<?php
+			foreach ($this->events as $event => $javascript) {
+				?>	<?php echo($event); ?>="<?php echo(xml_escape($javascript)); ?>"<?php
+			}
+				?>	><?php
+			$this->LoadOptGroup($this->options);
+		?></select><?php
+	}
+
+	public function _Import(&$arr)
+	{
+		$this->value = $arr;
+		return array();
+	}
+
+	public function _Validate()
+	{
+		if (null !== $this->value && !isset($this->values[$this->value])) {
+			return array("\"$this->value\" is not a valid value");
+		}
+		return array();
+	}
+}
+
 /// Integer number input interface
 class InputIntInterface extends InputTextInterface
 {
