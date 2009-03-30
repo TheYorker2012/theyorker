@@ -44,6 +44,10 @@
 	}
 	?></ul><?php
 	?><div class="crossword_items"><?php
+		?><div class="crossword_item header"><?php
+			?><div class="publish_date">Publish date</div><?php
+			?><div class="authors">Authors</div><?php
+		?></div><?php
 	foreach ($Crosswords as $id => $crossword) {
 		// Set up styles
 		$classes = array('crossword_item');

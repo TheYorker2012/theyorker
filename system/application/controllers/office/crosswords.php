@@ -557,6 +557,7 @@ class Crosswords extends Controller
 			else if ('edit' === $operation) {
 				if (!CheckRolePermissions('CROSSWORD_VIEW', 'CROSSWORD_MODIFY')) return;
 				$this->pages_model->SetPageCode('crosswords_office_xword_edit');
+				$this->load->helper('input_date');
 
 				$puzzle = 0;
 				$worked = $this->crosswords_model->LoadCrossword($crossword, $puzzle);
@@ -567,6 +568,17 @@ class Crosswords extends Controller
 				$crosswordView = new CrosswordView($puzzle, true);
 
 				$data = array();
+				$config = new InputInterfaces;
+				$config->Add('Quick clues', new InputCheckboxInterface('quickclues', true));
+				$config->Add('Cryptic Clues', new InputCheckboxInterface('crypticclues', true));
+				$config->Add('Deadline', new InputDateInterface('deadline', time(), false));
+				$config->Add('Publication', new InputDateInterface('publication', time(), false));
+				$config->Add('Expiry', new InputDateInterface('expiry', time(), false));
+				$num_winners = new InputIntInterface('winners', 3, true);
+				$num_winners->SetRange(1,100);
+				$config->Add('Winners', $num_winners);
+				$config->Validate();
+				$data['Configuration'] = &$config;
 				$data['Grid'] = $crosswordView;
 				$data['Paths'] = array(
 					'view' => "/office/crosswords/crossword/$crossword",

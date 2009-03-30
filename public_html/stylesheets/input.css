@@ -1,0 +1,17 @@
+/****************************************************************
+ * Javascript for inputs                                        *
+ * Author: James Hogan (james_hogan at theyorker dot co dot uk) *
+ * Copyright (C) 2009 The Yorker                                *
+ ****************************************************************/
+
+div.input_error label {
+	color: red;
+}
+
+div.input_error.mover label {
+	font-weight: bold;
+}
+
+div.input_error.mover input {
+	border: 3px solid red;
+}

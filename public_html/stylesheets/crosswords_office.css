@@ -18,6 +18,10 @@ div.crossword_item {
 div.crossword_item {
 	background: #CCCCCC;
 }
+div.crossword_item.header {
+	background: white;
+	font-weight: bold;
+}
 div.crossword_item.overdue {
 	background: red;
 }

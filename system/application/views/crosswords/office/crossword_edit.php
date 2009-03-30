@@ -18,6 +18,41 @@ onLoadFunctions.push(function() {
 </script>
 <div class="BlueBox">
 
+	<h2>crossword configuration</h2>
+
+	<form class="form" method="post" action="<?php echo(site_url($this->uri->uri_string())); ?>">
+		<fieldset>
+			<?php $Configuration->Load(); ?>
+
+			<label>Progress</label>
+			<input	type="hidden" />
+
+			<label>Category</label>
+
+			<label>Layout</label>
+
+			<input	class="button" type="submit" value="Save Configuration" />
+			<input	class="button" type="button" value="Return"
+					onclick="<?php echo(xml_escape('parent.location="'.$Paths['view'].'"')); ?>" />
+		</fieldset>
+	</form>
+
+</div>
+
+<div class="BlueBox">
+
+	<h2>tips</h2>
+
+	<form class="form">
+		tip category
+		wikitext
+		preview
+	</form>
+
+</div>
+
+<div class="BlueBox">
+
 	<h2>edit crossword</h2>
 
 	<form class="form">

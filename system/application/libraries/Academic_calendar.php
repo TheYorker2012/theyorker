@@ -151,6 +151,24 @@ class Academic_time
 	{
 		return $this->StartOfWeek(1);
 	}
+
+	/**
+	 * @brief Start of term.
+	 * @return academic_time Start of current term.
+	 */
+	function StartOfTerm()
+	{
+		return new Academic_time(self::StartOfAcademicTerm($this->AcademicYear(), $this->AcademicTerm()));
+	}
+
+	/**
+	 * @brief Monday week 1 of term.
+	 * @return academic_time Monday week 1 of current term.
+	 */
+	function MondayWeek1OfTerm()
+	{
+		return new Academic_time(self::MondayWeek1OfAcademicTerm($this->AcademicYear(), $this->AcademicTerm()));
+	}
 	
 	/**
 	 * @brief Format the timestamp using the php date function.
@@ -368,6 +386,16 @@ class Academic_time
 		} else {
 			return $this->mDayOfWeek;
 		}
+	}
+
+	/**
+	 * @brief Get the number of term weeks.
+	 * @return The number of weeks in the current academic term.
+	 */
+	function AcademicTermWeeks()
+	{
+		$days = self::LengthOfAcademicTerm($this->AcademicYear(), $this->AcademicTerm());
+		return ($days+6) / 7;
 	}
 	
 	// TIME

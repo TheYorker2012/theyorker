@@ -1,0 +1,12 @@
+/****************************************************************
+ * Javascript for input selectors                               *
+ * Author: James Hogan (james_hogan at theyorker dot co dot uk) *
+ * Copyright (C) 2009 The Yorker                                *
+ ****************************************************************/
+
+div.selector_absolute {
+	position: absolute;
+}
+div.selector_invisible {
+	display: none;
+}
