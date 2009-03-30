@@ -558,6 +558,7 @@ class Crosswords extends Controller
 				if (!CheckRolePermissions('CROSSWORD_VIEW', 'CROSSWORD_MODIFY')) return;
 				$this->pages_model->SetPageCode('crosswords_office_xword_edit');
 				$this->load->helper('input_date');
+				$this->load->helper('input_progress');
 
 				$puzzle = 0;
 				$worked = $this->crosswords_model->LoadCrossword($crossword, $puzzle);
@@ -577,6 +578,7 @@ class Crosswords extends Controller
 				$num_winners = new InputIntInterface('winners', 3, true);
 				$num_winners->SetRange(1,100);
 				$config->Add('Winners', $num_winners);
+				$config->Add('Progress', new InputProgressInterface('progress', 85));
 				$config->Validate();
 				$data['Configuration'] = &$config;
 				$data['Grid'] = $crosswordView;

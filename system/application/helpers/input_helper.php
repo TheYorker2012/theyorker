@@ -184,6 +184,7 @@ class InputCheckboxInterface extends InputInterface
 class InputTextInterface extends InputInterface
 {
 	protected $max_length = null;
+	protected $events = array();
 
 	public function __construct($name, $default = null, $enabled = null, $auto = true)
 	{
@@ -195,6 +196,11 @@ class InputTextInterface extends InputInterface
 		$this->max_length = (int)$max_length;
 	}
 
+	public function SetEvent($event, $javascript)
+	{
+		$this->events[$event] = $javascript;
+	}
+
 	public function _Load()
 	{
 		?><input	type="text"<?php
@@ -203,6 +209,9 @@ class InputTextInterface extends InputInterface
 				?>	value="<?php echo(xml_escape($this->value)); ?>"<?php
 			if ($this->max_length !== null) {
 				?>	maxlength="<?php echo($this->max_length); ?>"<?php
+			}
+			foreach ($this->events as $event => $javascript) {
+				?>	<?php echo($event); ?>="<?php echo(xml_escape($javascript)); ?>"<?php
 			}
 				?>	/><?php
 	}

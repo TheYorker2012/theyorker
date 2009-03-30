@@ -24,9 +24,6 @@ onLoadFunctions.push(function() {
 		<fieldset>
 			<?php $Configuration->Load(); ?>
 
-			<label>Progress</label>
-			<input	type="hidden" />
-
 			<label>Category</label>
 
 			<label>Layout</label>
