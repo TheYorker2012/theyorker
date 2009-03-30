@@ -503,6 +503,7 @@ class Crosswords extends Controller
 			if (count($crosswords) === 0) {
 				show_404();
 			}
+			$crossword_info = $crosswords[0];
 
 			$this->load->model('permissions_model');
 			$data = array(
@@ -510,7 +511,7 @@ class Crosswords extends Controller
 					'modify' => $this->permissions_model->hasUserPermission('CROSSWORD_MODIFY'),
 					'stats_basic' => $this->permissions_model->hasUserPermission('CROSSWORD_STATS_BASIC'),
 				),
-				'Crossword' => $crosswords[0],
+				'Crossword' => &$crossword_info,
 			);
 
 			if (null === $operation) {
@@ -571,29 +572,87 @@ class Crosswords extends Controller
 				$data = array();
 				$config = new InputInterfaces;
 
-				$config->Add('Quick clues', new InputCheckboxInterface('quickclues', true));
+				$quick_clues_interface = new InputCheckboxInterface('has_quick_clues', $crossword_info['has_quick_clues']);
+				$config->Add('Quick clues', $quick_clues_interface);
 
-				$config->Add('Cryptic Clues', new InputCheckboxInterface('crypticclues', true));
+				$cryptic_clues_interface = new InputCheckboxInterface('has_cryptic_clues', $crossword_info['has_cryptic_clues']);
+				$config->Add('Cryptic Clues', $cryptic_clues_interface);
 
-				$category_interface = new InputSelectInterface('category');
+				$categories = $this->crosswords_model->GetAllCategories();
+				$category_names = array();
+				foreach ($categories as $id => $category) {
+					$category_names[$id] = $category['name'];
+				}
+				$category_interface = new InputSelectInterface('category_id', $crossword_info['category_id']);
+				$category_interface->SetOptions($category_names);
 				$config->Add('Category', $category_interface);
 
-				$layout_interface = new InputSelectInterface('layout');
+				$layouts = $this->crosswords_model->GetAllLayouts();
+				$layout_names = array();
+				foreach ($layouts as $id => $layout) {
+					$layout_names[$id] = $layout['name'];
+				}
+				$layout_interface = new InputSelectInterface('layout_id', $crossword_info['layout_id']);
+				$layout_interface->SetOptions($layout_names);
 				$config->Add('Layout', $layout_interface);
 
-				$config->Add('Deadline', new InputDateInterface('deadline', time(), false));
+				$deadline_interface = new InputDateInterface('deadline', $crossword_info['deadline'], true);
+				$config->Add('Deadline', $deadline_interface);
 
-				$config->Add('Publication', new InputDateInterface('publication', time(), false));
+				$publication_interface = new InputDateInterface('publication', $crossword_info['publication'], true);
+				$config->Add('Publication', $publication_interface);
 
-				$config->Add('Expiry', new InputDateInterface('expiry', time(), false));
+				$expiry_interface = new InputDateInterface('expiry', $crossword_info['expiry'], true);
+				$config->Add('Expiry', $expiry_interface);
 
-				$num_winners = new InputIntInterface('winners', 3, true);
-				$num_winners->SetRange(1,100);
-				$config->Add('Winners', $num_winners);
+				$winners_value = $crossword_info['winners'];
+				$winners_interface = new InputIntInterface('winners', $winners_value, $winners_value > 0);
+				$winners_interface->SetRange(1,100);
+				$config->Add('Winners', $winners_interface);
 
-				$config->Add('Progress', new InputProgressInterface('progress', 85));
+				$completeness_interface = new InputProgressInterface('completeness', $crossword_info['completeness']);
+				$config->Add('Progress', $completeness_interface);
 
-				$config->Validate();
+				$num_errors = $config->Validate();
+				if (0 == $num_errors && $config->Updated()) {
+					$values = $config->ChangedValues();
+					$error = false;
+					if (count($values) == 0) {
+						$this->messages->AddMessage('information', "You did not make any changes");
+						$error = true;
+					}
+					// Apply rules to changes here
+					$integrated_values = $crossword_info;
+					foreach ($values as $id => $value) {
+						$integrated_values[$id] = $value;
+					}
+					// can't have deadline after publishing
+					if ($integrated_values['deadline'] !== null && $integrated_values['publication'] !== null
+							&& $integrated_values['deadline'] > $integrated_values['publication']) {
+						$this->messages->AddMessage('error', 'Deadline should not be set after publication');
+						$error = true;
+					}
+					// can't have expiry before publishing
+					if ($integrated_values['publication'] !== null && $integrated_values['expiry'] !== null
+							&& $integrated_values['publication'] > $integrated_values['expiry']) {
+						$this->messages->AddMessage('error', 'Expiry should not be set before publication');
+						$error = true;
+					}
+
+					if (!$error) {
+						$values['id'] = $crossword_info['id'];
+						if (!$this->crosswords_model->UpdateCrossword($values)) {
+							$this->messages->AddMessage('error', 'Changes could not be saved');
+						}
+						else {
+							$this->messages->AddMessage('success', 'Changes have been saved successfully');
+							foreach ($values as $id => $value) {
+								$crossword_info[$id] = $value;
+							}
+						}
+					}
+				}
+
 				$data['Configuration'] = &$config;
 				$data['Grid'] = $crosswordView;
 				$data['Paths'] = array(

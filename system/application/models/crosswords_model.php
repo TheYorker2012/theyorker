@@ -346,7 +346,7 @@ class Crosswords_model extends model
 				'UNIX_TIMESTAMP(`crossword_deadline`)		AS deadline, '.
 				'UNIX_TIMESTAMP(`crossword_publication`)	AS publication, '.
 				'UNIX_TIMESTAMP(`crossword_expiry`)			AS expiry, '.
-				'UNIX_TIMESTAMP(`crossword_winners`)		AS winners, '.
+				'`crossword_winners`			AS winners, '.
 				$overdue_sql.	' AS overdue, '.
 				$published_sql.	' AS published, '.
 				$expired_sql.	' AS expired, '.
@@ -383,6 +383,57 @@ class Crosswords_model extends model
 			$result['authors'] = array();
 		}
 		return $results;
+	}
+
+	/** Update a crossword as obtained by GetCrosswords.
+	 * @param $crossword array as returned as an element from @a GetCrosswords.
+	 * @return bool true on success
+	 */
+	function UpdateCrossword($crossword)
+	{
+		if (!isset($crossword['id'])) {
+			return false;
+		}
+		static $field_mapping = array(
+			'has_quick_clues'	=> 'crossword_has_normal_clues',
+			'has_cryptic_clues'	=> 'crossword_has_cryptic_clues',
+			'completeness'		=> 'crossword_completeness',
+			'category_id'		=> 'crossword_category_id',
+			'layout_id'			=> 'crossword_layout_id',
+			'deadline'			=> 'crossword_deadline',
+			'publication'		=> 'crossword_publication',
+			'expiry'			=> 'crossword_expiry',
+			'winners'			=> 'crossword_winners',
+		);
+		static $sql_mappings = array(
+			'deadline'		=> 'FROM_UNIXTIME',
+			'publication'	=> 'FROM_UNIXTIME',
+			'expiry'		=> 'FROM_UNIXTIME',
+		);
+		$settings = array();
+		$bind = array();
+		foreach ($field_mapping as $field => $col) {
+			if (array_key_exists($field, $crossword)) {
+				if (isset($sql_mappings[$field])) {
+					$settings[] = "`$col`=".$sql_mappings[$field].'(?)';
+				}
+				else {
+					$settings[] = "`$col`=?";
+				}
+				$bind[] = $crossword[$field];
+			}
+		}
+		if (count($settings) > 0) {
+			$sql =	'UPDATE	`crosswords` '.
+					'SET	'.join(',',$settings).' '.
+					'WHERE	`crossword_id`=?';
+			$bind[] = $crossword['id'];
+			$this->db->query($sql, $bind);
+			return ($this->db->affected_rows() > 0);
+		}
+		else {
+			return false;
+		}
 	}
 
 	/** Save over a crossword.

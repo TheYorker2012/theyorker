@@ -59,7 +59,7 @@ function input_progress_rgb(progress)
 function input_progress_mousemove(name, event)
 {
 	if (name == input_progress_mouse_down) {
-		var input = document.getElementById(name);
+		var input = document.getElementById(name+'__val');
 		var progress = document.getElementById(name+'__progress');
 		var mouse = findMouse(event);
 		var progress_pos = findPos(progress);
@@ -86,7 +86,7 @@ function input_progress_mouseup(name, event)
 
 function input_progress_changed(name)
 {
-	var input = document.getElementById(name);
+	var input = document.getElementById(name+'__val');
 	var bar = document.getElementById(name+'__bar');
 	var percent = parseInt(input.value);
 	if (isNaN(percent) || percent != input.value) {

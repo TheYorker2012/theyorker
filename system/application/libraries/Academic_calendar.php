@@ -312,8 +312,8 @@ class Academic_time
 			if (FALSE === $academic_year_data) {
 				// No records about the specified academic year exist!
 				$error_message = 'Unknown academic year: ' .
-						$AcademicYear .
-						'provided to Academic_time::AcademicTerm';
+						$this->AcademicYear() .
+						' provided to Academic_time::AcademicTerm';
 				throw new Exception($error_message);
 				
 			} else {

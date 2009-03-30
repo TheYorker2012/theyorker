@@ -13,44 +13,88 @@ class InputInterfaces
 
 	public function Add($label, &$interface)
 	{
-		$this->interfaces[$label] = &$interface;
+		$this->interfaces[$interface->Name()] = array($label, &$interface);
+	}
+
+	public function Updated()
+	{
+		foreach ($this->interfaces as $id => &$interface) {
+			if ($interface[1]->Changed() !== null) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public function Changed()
+	{
+		foreach ($this->interfaces as $id => &$interface) {
+			if ($interface[1]->Changed === true) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public function UpdatedValues()
+	{
+		$values = array();
+		foreach ($this->interfaces as $id => &$interface) {
+			if ($interfaces[1]->Changed() !== null) {
+				$values[$id] = $interface[1]->Value();
+			}
+		}
+		return $values;
+	}
+
+	public function ChangedValues()
+	{
+		$values = array();
+		foreach ($this->interfaces as $id => &$interface) {
+			if ($interface[1]->Changed() === true) {
+				$values[$id] = $interface[1]->Value();
+			}
+		}
+		return $values;
 	}
 
 	public function Validate()
 	{
 		$ci = &get_instance();
-		foreach ($this->interfaces as $label => &$interface) {
-			if ($interface->Enabled()) {
-				$interface->Validate();
-				$errors = $interface->Errors();
+		$error_count = 0;
+		foreach ($this->interfaces as $name => &$interface) {
+			$error_count += $interface[1]->Validate();
+			if ($interface[1]->Enabled()) {
+				$errors = $interface[1]->Errors();
 				if (count($errors) > 0) {
-					$enter_js = 'input_error_mouse('.js_literalise($interface->Name()).', true);';
-					$exit_js = 'input_error_mouse('.js_literalise($interface->Name()).', false);';
+					$enter_js = 'input_error_mouse('.js_literalise($name).', true);';
+					$exit_js = 'input_error_mouse('.js_literalise($name).', false);';
 					$ci->messages->AddMessage('error',
-						'<a href="#'.$interface->Name().'"'.
+						'<a href="#'.$name.'"'.
 							' onmouseover="'.xml_escape($enter_js).'"'.
 							' onmouseout="'.xml_escape($exit_js).'"'.
 							'>'.
-							'Errors were found in "'.xml_escape($label).'"'.
+							'Errors were found in "'.xml_escape($interface[0]).'"'.
 						'</a>'.
 						xml_escape(': '.join(', ', $errors).'.')
 					);
 				}
 			}
 		}
+		return $error_count;
 	}
 
 	public function Load()
 	{
-		foreach ($this->interfaces as $label => &$interface) {
-			$error = (count($interface->Errors()) > 0);
+		foreach ($this->interfaces as $name => &$interface) {
+			$error = (count($interface[1]->Errors()) > 0);
 			if ($error) {
-				?><div id="<?php echo($interface->Name().'__error'); ?>" class="input_error"><?php
+				?><div id="<?php echo($name.'__error'); ?>" class="input_error"><?php
 			}
-			?><label for="<?php echo($interface->Name()); ?>"><?php
-				echo(xml_escape($label));
+			?><label for="<?php echo($name); ?>"><?php
+				echo(xml_escape($interface[0]));
 			?></label><?php
-			$interface->Load();
+			$interface[1]->Load();
 			if ($error) {
 				?></div><?php
 			}
@@ -62,9 +106,12 @@ class InputInterfaces
 abstract class InputInterface
 {
 	protected $name;
+	protected $default;
 	protected $value;
 	protected $enabled;
+	protected $changed = null;
 	protected $errors = array();
+	protected $div_classes = null;
 
 	/// Construct and initialise.
 	public function __construct($name, $default = null, $enabled = null, $auto = true)
@@ -72,6 +119,10 @@ abstract class InputInterface
 		$this->name = $name;
 		$this->value = $default;
 		$this->enabled = $enabled;
+		if ($this->enabled !== null && $this->enabled && $default === null) {
+			$this->enabled = false;
+		}
+		$this->default = $this->Value();
 		if (null !== $enabled) {
 			get_instance()->main_frame->includeJs('javascript/input.js');
 		}
@@ -100,36 +151,59 @@ abstract class InputInterface
 				}
 					?>	><?php
 		}
-		$this->_Load();
+		?><div	id="<?php echo($this->name); ?>"<?php
+		if (null != $this->div_classes) {
+			?>	class="<?php echo(xml_escape(join(' ',$this->div_classes))); ?>"<?php
+		}
+			?>	><?php
+			$this->_Load();
+		?></div><?php
 	}
 
 	/** Import from POST/GET array.
 	 * @return array Any error messages.
 	 */
-	public abstract function _Import(&$arr);
+	protected abstract function _Import(&$arr);
+
+	protected function _Equal($v1, $v2)
+	{
+		//var_dump(array($this->name, $v1, $v2));
+		return $v1 === $v2;
+	}
 
 	/// Import from entire POST/GET array.
 	public function Import(&$arr)
 	{
 		if (isset($_POST[$this->name])) {
+			$this->changed = false;
 			if (null !== $this->enabled) {
-				$this->enabled = isset($_POST[$this->name]['_enabled']);
+				$this->enabled = isset($arr[$this->name]['_enabled']);
 			}
-			$this->errors = $this->_Import($_POST[$this->name]);
+			$this->errors = $this->_Import($arr[$this->name]);
 		}
 	}
 
-	public function _Validate()
+	protected function _Validate()
 	{
 		return array();
 	}
 
 	public function Validate()
 	{
-		$errors = $this->_Validate();
-		foreach ($errors as &$error) {
-			$this->errors[] = $error;
+		$count = 0;
+		if (null === $this->enabled || $this->enabled) {
+			$errors = $this->_Validate();
+			foreach ($errors as &$error) {
+				$this->errors[] = $error;
+			}
+			$count = count($errors);
 		}
+		if (null !== $this->changed) {
+			if (!$this->_Equal($this->Value(), $this->default)) {
+				$this->changed = true;
+			}
+		}
+		return $count;
 	}
 
 	public function Name()
@@ -145,7 +219,17 @@ abstract class InputInterface
 	/// Get the value.
 	public function Value()
 	{
-		return $this->value;
+		if (null === $this->enabled || $this->enabled) {
+			return $this->value;
+		}
+		else {
+			return null;
+		}
+	}
+
+	public function Changed()
+	{
+		return $this->changed;
 	}
 
 	/// Get any error messages.
@@ -160,20 +244,23 @@ class InputCheckboxInterface extends InputInterface
 {
 	public function __construct($name, $default = null, $auto = true)
 	{
+		if ($default !== null) {
+			$default = (bool)$default;
+		}
 		parent::__construct($name, $default, null, $auto);
 	}
 
-	public function _Load()
+	protected function _Load()
 	{
 		?><input	type="hidden" name="<?php echo("$this->name[a]"); ?>"<?php
 		?><input	type="checkbox" name="<?php echo("$this->name[val]"); ?>"<?php
-			if ($this->value === true) {
+			if ($this->value !== null && $this->value) {
 				?>	checked="checked"<?php
 			}
 				?>	/><?php
 	}
 
-	public function _Import(&$arr)
+	protected function _Import(&$arr)
 	{
 		$this->value = isset($arr['val']);
 		return array();
@@ -201,11 +288,11 @@ class InputTextInterface extends InputInterface
 		$this->events[$event] = $javascript;
 	}
 
-	public function _Load()
+	protected function _Load()
 	{
 		?><input	type="text"<?php
-				?>	name="<?php echo("$this->name"); ?>"<?php
-				?>	id="<?php echo("$this->name"); ?>"<?php
+				?>	name="<?php echo("$this->name[val]"); ?>"<?php
+				?>	id="<?php echo($this->name.'__val'); ?>"<?php
 				?>	value="<?php echo(xml_escape($this->value)); ?>"<?php
 			if ($this->max_length !== null) {
 				?>	maxlength="<?php echo($this->max_length); ?>"<?php
@@ -216,13 +303,13 @@ class InputTextInterface extends InputInterface
 				?>	/><?php
 	}
 
-	public function _Import(&$arr)
+	protected function _Import(&$arr)
 	{
-		$this->value = $arr;
+		$this->value = $arr['val'];
 		return array();
 	}
 
-	public function _Validate()
+	protected function _Validate()
 	{
 		if ($this->max_length !== null) {
 			$len = strlen($this->value);
@@ -279,7 +366,7 @@ class InputSelectInterface extends InputInterface
 			}
 			else {
 				?><option	value="<?php echo(xml_escape($value)); ?>"<?php
-						if ($this->value === $value) {
+						if ($this->value == $value) {
 							?>	selected="selected"<?php
 						}
 						?>><?php
@@ -289,10 +376,10 @@ class InputSelectInterface extends InputInterface
 		}
 	}
 
-	public function _Load()
+	protected function _Load()
 	{
-		?><select	name="<?php echo("$this->name"); ?>"<?php
-				?>	id="<?php echo("$this->name"); ?>"<?php
+		?><select	name="<?php echo("$this->name[val]"); ?>"<?php
+				?>	id="<?php echo($this->name.'__val'); ?>"<?php
 			foreach ($this->events as $event => $javascript) {
 				?>	<?php echo($event); ?>="<?php echo(xml_escape($javascript)); ?>"<?php
 			}
@@ -301,13 +388,13 @@ class InputSelectInterface extends InputInterface
 		?></select><?php
 	}
 
-	public function _Import(&$arr)
+	protected function _Import(&$arr)
 	{
-		$this->value = $arr;
+		$this->value = $arr['val'];
 		return array();
 	}
 
-	public function _Validate()
+	protected function _Validate()
 	{
 		if (null !== $this->value && !isset($this->values[$this->value])) {
 			return array("\"$this->value\" is not a valid value");
@@ -324,6 +411,9 @@ class InputIntInterface extends InputTextInterface
 
 	public function __construct($name, $default = null, $enabled = null, $auto = true)
 	{
+		if (null !== $default && is_numeric($default) && (int)$default == $default) {
+			$default = (int)$default;
+		}
 		parent::__construct($name, $default, $enabled, $auto);
 	}
 
@@ -333,7 +423,7 @@ class InputIntInterface extends InputTextInterface
 		$this->max = (int)$max;
 	}
 
-	public function _Validate()
+	protected function _Validate()
 	{
 		$errors = parent::_Validate();
 		if (!is_numeric($this->value)) {
