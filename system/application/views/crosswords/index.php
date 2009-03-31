@@ -44,12 +44,12 @@
 				}
 				$max_winners = $crossword['winners'];
 				if ($max_winners > 0) {
-					$winners_so_far = $crossword['winners_so_far'];
+					$winners_so_far = (int)$crossword['winners_so_far'];
 					if ($crossword['expired']) {
-						?><em><?php echo((int)$winners_so_far) ?> medals awarded</em><?php
+						?><em><?php echo(($winners_so_far==0) ? 'no' : $winners_so_far) ?> medals awarded</em><?php
 					}
 					else {
-						?><em><?php echo((int)$winners_so_far) ?> of <?php echo((int)$max_winners); ?> medals awarded</em><?php
+						?><em><?php echo($winners_so_far) ?> of <?php echo((int)$max_winners); ?> medals awarded</em><?php
 					}
 				}
 			}
