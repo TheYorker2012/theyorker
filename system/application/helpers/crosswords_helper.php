@@ -560,6 +560,7 @@ class CrosswordView
 {
 	private $m_crossword;
 	private $m_edit;
+	private $m_readonly;
 
 	function __construct(&$crossword, $edit = false)
 	{
@@ -570,6 +571,11 @@ class CrosswordView
 	function crossword()
 	{
 		return $this->m_crossword;
+	}
+
+	function setReadOnly($readonly)
+	{
+		$this->m_readonly = $readonly;
 	}
 
 	function Load()
@@ -587,6 +593,7 @@ class CrosswordView
 		if ($this->m_edit) {
 			?><div class="crosswordEdit"><?php
 		}
+		?><div id="<?php echo("$name-notify"); ?>" class="crosswordAjaxNotify hidden"></div><?php
 		?><div class="crosswordBox"><?php
 		// Render main crossword grid
 		?><table class="crossword"><?php
@@ -630,14 +637,20 @@ class CrosswordView
 					}
 					// Text input box
 					?><input type="text" maxlength="2" <?php
-					       ?>id="<?php echo("$name-edit-$x-$y"); ?>" <?php
-					       ?>onkeydown="return crosswordKeyDown(<?php echo("'$name',$x,$y,event") ?>)" <?php
-					       ?>onkeypress="return crosswordKeyPress(<?php echo("'$name',$x,$y,event") ?>)" <?php
-					       ?>value="<?php
+						   ?>id="<?php echo("$name-edit-$x-$y"); ?>" <?php
+					if (!$this->m_readonly) {
+						   ?>onkeydown="return crosswordKeyDown(<?php echo("'$name',$x,$y,event") ?>)" <?php
+						   ?>onkeypress="return crosswordKeyPress(<?php echo("'$name',$x,$y,event") ?>)" <?php
+					}
+						   ?>value="<?php
 					if ($this->m_edit) {
 							echo(xml_escape($state));
 					}
-						   ?>" /><?php
+						   ?>" <?php
+					if ($this->m_readonly) {
+						?>readonly="readonly"<?php
+					}
+						   ?> /><?php
 					?></div></td><?php
 				}
 				else {
@@ -650,7 +663,10 @@ class CrosswordView
 			echo("\n");
 		}
 		?></table><?php
-		?><a id="toggleInlineAnswers" onclick="crosswordToggleInlineAnswers();">Show inline answers</a><br /><?php
+
+		if (!$this->m_readonly) {
+			?><a id="toggleInlineAnswers" onclick="crosswordToggleInlineAnswers();">Show inline answers</a><br /><?php
+		}
 		?><a id="toggleCrypticClues" onclick="crosswordToggleCrypticClues();">Show cryptic clues</a><br /><?php
 		?></div><?php
 
@@ -713,7 +729,7 @@ class CrosswordView
 					?></fieldset><?php
 				}
 
-				if (true || $this->m_edit) {
+				if (!$this->m_readonly) {
 					$solution = $clue->solution();
 					$length = strlen($solution);
 					?><table class="crossword"><?php

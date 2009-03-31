@@ -558,6 +558,13 @@ function Crossword(name, width, height)
 	this.m_gridRows = [];
 	this.m_lights = [];
 
+	this.m_changed = false;
+	this.m_notify = document.getElementById(this.m_name+"-notify");
+	this.m_notifyTimer = null;
+	this.m_autosaveAction = null;
+	this.m_autosaveInterval = null;
+	this.m_autosaveTimer = null;
+
 	for (var x = 0; x < width; ++x) {
 		this.m_grid[x] = [];
 		for (var y = 0; y < height; ++y) {
@@ -624,7 +631,83 @@ function Crossword(name, width, height)
 		return this.m_orientation;
 	}
 
-	this.post = function(action)
+	this.autosaveTimeout = function()
+	{
+		if (this.m_autosaveInterval != null) {
+			if (this.m_changed) {
+				this.autosave();
+			}
+			else {
+				this.resetAutosaveTimer();
+			}
+		}
+	}
+
+	this.resetAutosaveTimer = function()
+	{
+		if (this.m_autosaveInterval != null) {
+			this.m_autosaveTimer = setTimeout("crossword('"+this.m_name+"').autosaveTimeout()", this.m_autosaveInterval);
+		}
+	}
+
+	this.setAutosaveInterval = function(action, interval)
+	{
+		if (null != this.m_autosaveTimer) {
+			this.m_autosaveTimer = null;
+			this.m_autosaveAction = null;
+			this.m_autosaveInterval = null;
+			clearTimeout(this.m_autosaveTimer);
+		}
+		if (interval != null) {
+			interval = interval*1000;
+			this.m_autosaveAction = action;
+			this.m_autosaveInterval = interval;
+			this.resetAutosaveTimer();
+		}
+	}
+
+	this.updateNotification = function(cls, message, timeout)
+	{
+		if (null !== this.m_notify) {
+			this.m_notify.className="crosswordAjaxNotify "+cls;
+			this.m_notify.textContent = message;
+			if (this.m_notifyTimer != null) {
+				clearTimout(this.m_notifyTimer);
+				this.m_notifyTimer = null;
+			}
+			if (null !== timeout) {
+				this.m_notifyTime = setTimeout("crossword('"+this.m_name+"').updateNotification('hidden','',null);", timeout);
+			}
+		}
+	}
+
+	this.autosave = function()
+	{
+		this.m_changed = false;
+		this.updateNotification("pending", "autosaving", null);
+		var self = this;
+		this.post(this.m_autosaveAction, "autosave", 1000,
+				function() {
+					self.resetAutosaveTimer();
+				},
+				function() {
+					self.m_changed = true;
+					self.resetAutosaveTimer();
+				});
+	}
+	this.save = function(action)
+	{
+		this.m_changed = false;
+		this.updateNotification('pending', 'saving', null);
+		var self = this;
+		this.post(action, "save", 10000,
+				null,
+				function() {
+					self.m_changed = true;
+				});
+	}
+
+	this.post = function(action, opname, success_timeout, success_event, fail_event)
 	{
 		var post = {};
 		post[this.m_name+"[save]"]=1;
@@ -657,43 +740,57 @@ function Crossword(name, width, height)
 			}
 		}
 
-		var ajax = new AJAXInteraction(action, post, this.postCallback);
-		ajax.doGet();
-	}
+		var self = this;
 
-	// Handle a response from the web server
-	this.postCallback = function(responseXML)
-	{
-		if (responseXML) {
-			var root = responseXML.documentElement;
-			// Get errors node
-			var mainEls = root.childNodes;
-			var anyErrors = false;
-			for (var i = 0; i < mainEls.length; ++i) {
-				var el = mainEls[i];
-				if (el.tagName == "errors") {
-					var errors = el.getElementsByTagName("error");
-					if (errors.length > 0) {
-						anyErrors = true;
+		// Handle a response from the web server
+		var postCallback = function(responseXML)
+		{
+			if (responseXML) {
+				var root = responseXML.documentElement;
+				// Get errors node
+				var mainEls = root.childNodes;
+				var anyErrors = false;
+				for (var i = 0; i < mainEls.length; ++i) {
+					var el = mainEls[i];
+					if (el.tagName == "errors") {
+						var errors = el.getElementsByTagName("error");
+						if (errors.length > 0) {
+							anyErrors = true;
+						}
+					}
+				}
+				if (!anyErrors) {
+					self.updateNotification("success", opname+"d", success_timeout);
+					if (null != success_event) {
+						success_event();
+					}
+				}
+				else {
+					self.updateNotification("error", opname+" failed", null);
+					if (null != fail_event) {
+						fail_event();
 					}
 				}
 			}
-			if (!anyErrors) {
-				alert("Save successful");
-			}
 			else {
-				alert("Save failed");
+				self.updateNotification("error", opname+" failed: you aren't logged in", null);
+				if (null != fail_event) {
+					fail_event();
+				}
 			}
 		}
-		else {
-			alert("Save failed. Please ensure you are logged in.");
-		}
-	}
 
-	// Handle a response from the web server
-	this.postCallbackFail = function(status, text)
-	{
-		alert("Save failed: ".text);
+		// Handle a response from the web server
+		var postCallbackFail = function(status, text)
+		{
+			self.updateNotification("error", opname+" failed: "+text, null);
+			if (null != fail_event) {
+				fail_event();
+			}
+		}
+
+		var ajax = new AJAXInteraction(action, post, postCallback, postCallbackFail);
+		ajax.doGet();
 	}
 
 	this.cell = function(x,y)
@@ -725,6 +822,7 @@ function Crossword(name, width, height)
 		var cell = this.m_grid[x][y];
 		cell.setLetter(v);
 		if (statusChanged) {
+			this.m_changed = true;
 			if (null != this.m_light) {
 				this.m_light.select(false);
 			}

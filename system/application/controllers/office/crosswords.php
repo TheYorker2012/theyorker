@@ -656,8 +656,8 @@ class Crosswords extends Controller
 				$data['Configuration'] = &$config;
 				$data['Grid'] = &$crosswordView;
 				$data['Paths'] = array(
-					'view' => "/office/crosswords/crossword/$crossword",
-					'save' => "/office/crosswords/crossword/$crossword/save",
+					'view' => site_url("office/crosswords/crossword/$crossword"),
+					'save' => site_url("office/crosswords/crossword/$crossword/save"),
 				);
 
 				$this->main_frame->includeCss('stylesheets/crosswords.css');

@@ -1,6 +1,38 @@
 /* Styles for crosswords */
 /* Author: James Hogan */
 
+div.crosswordAjaxNotify {
+	margin: 0.5em;
+	margin-left: 30%;
+	margin-right: 30%;
+	height: 32px;
+	padding-left: 34px;
+
+	text-align: center;
+	font-size: 14pt;
+}
+div.crosswordAjaxNotify.hidden {
+	display: none;
+}
+div.crosswordAjaxNotify.success {
+	border: 1px solid #008800;
+	background: #88FF88;
+	background-image: url("/images/prototype/homepage/success.png");
+	background-repeat: no-repeat;
+}
+div.crosswordAjaxNotify.pending {
+	border: 1px solid #FF8800;
+	background: #FFFF88;
+	background-image: url("/images/crosswords/ajax.gif");
+	background-repeat: no-repeat;
+}
+div.crosswordAjaxNotify.error {
+	border: 1px solid #FF0000;
+	background: #FF8844;
+	background-image: url("/images/prototype/homepage/error.png");
+	background-repeat: no-repeat;
+}
+
 table.crossword {
 	border: 1px solid #FF6A00;
 	border-spacing: 0px;

@@ -111,11 +111,20 @@ class Crosswords extends Controller
 		if (!$worked) {
 			show_404();
 		}
+
+		$loggedIn = $this->user_auth->isLoggedIn;
 		$crosswordView = new CrosswordView($puzzle);
+		if (!$loggedIn) {
+			$crosswordView->setReadOnly(true);
+		}
 
 		$data = array();
 		$data['Crossword'] = &$crossword;
 		$data['Grid'] = &$crosswordView;
+		$data['LoggedIn'] = $loggedIn;
+		$data['Paths'] = array(
+			'save' => site_url("/crosswords/$crossword/save"),
+		);
 
 		$this->main_frame->includeCss('stylesheets/crosswords.css');
 		$this->main_frame->includeJs('javascript/simple_ajax.js');

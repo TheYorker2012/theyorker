@@ -69,7 +69,7 @@ echo(xml_escape(
 		<div style="clear:both" >
 			<fieldset>
 				<input	class="button" type="button" value="Save"
-						onclick="<?php echo(xml_escape('crossword("xw").post("'.$Paths['save'].'");')); ?>" />
+						onclick="<?php echo(xml_escape('crossword("xw").save("'.$Paths['save'].'");')); ?>" />
 				<input	class="button" type="button" value="Return"
 						onclick="<?php echo(xml_escape('parent.location="'.$Paths['view'].'"')); ?>" />
 			</fieldset>
