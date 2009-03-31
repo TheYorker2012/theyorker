@@ -40,7 +40,7 @@ div.crossword_item.complete100.published.no_winners_left {
 div.crossword_item div.publish_date,
 div.crossword_item div.authors {
 	float: left;
-	width: 25%;
+	width: 30%;
 	border-right: 1px solid black;
 	height: 1.5em;
 }

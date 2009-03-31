@@ -376,7 +376,7 @@ class Crosswords_model extends model
 			$sql .= 'WHERE ('.join(') AND (', $conditions).') ';
 		}
 
-		$sql .= 'ORDER BY `crossword_publication` ASC'.
+		$sql .= 'ORDER BY `crossword_publication` ASC';
 
 		$results = $this->db->query($sql, $bind)->result_array();
 		foreach ($results as &$result) {

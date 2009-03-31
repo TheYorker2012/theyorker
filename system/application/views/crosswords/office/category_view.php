@@ -72,7 +72,9 @@
 					?><a>schedule</a><?php
 				}
 				else {
-					echo(date("DD MM YYYY", $crossword['publication']));
+					$pub = new Academic_time($crossword['publication']);
+					echo($pub->Format('D').' '.$pub->AcademicTermNameUnique().' '.$pub->AcademicWeek().
+						$pub->Format(' (jS M Y)').' at '.$pub->Format('h:i'));
 				}
 			?></div><?php
 			// Authors
