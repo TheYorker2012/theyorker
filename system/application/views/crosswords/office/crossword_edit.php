@@ -10,12 +10,13 @@
 
 $width = $Grid->crossword()->grid()->width();
 $height = $Grid->crossword()->grid()->height();
-?>
-<script type="text/javascript">
-onLoadFunctions.push(function() {
-	CrosswordEdit("xw", <?php echo($width); ?>, <?php echo($height); ?>);
-});
-</script>
+?><script type="text/javascript"><?php
+echo(xml_escape(
+	'onLoadFunctions.push(function() {'.
+		'CrosswordEdit("xw", '.js_literalise($width).', '.js_literalise($height).');'.
+	'})'
+	,false));
+?></script>
 <div class="BlueBox">
 
 	<h2>crossword configuration</h2>

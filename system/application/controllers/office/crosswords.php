@@ -654,7 +654,7 @@ class Crosswords extends Controller
 				}
 
 				$data['Configuration'] = &$config;
-				$data['Grid'] = $crosswordView;
+				$data['Grid'] = &$crosswordView;
 				$data['Paths'] = array(
 					'view' => "/office/crosswords/crossword/$crossword",
 					'save' => "/office/crosswords/crossword/$crossword/save",

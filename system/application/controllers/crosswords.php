@@ -74,6 +74,33 @@ class Crosswords extends Controller
 	function crossword_by_id($id = null)
 	{
 		if (!CheckPermissions('public')) return;
+
+		if (null === $id || !is_numeric($id)) {
+			show_404();
+		}
+		$id = (int)$id;
+
+		$crossword = $this->crosswords_model->GetCrosswords($id,null, null,true,null);
+		if (count($crossword) == 0) {
+			show_404();
+		}
+		$crossword = $crossword[0];
+
+		$puzzle = 0;
+		$worked = $this->crosswords_model->LoadCrossword($crossword['id'], $puzzle);
+		if (!$worked) {
+			show_404();
+		}
+		$crosswordView = new CrosswordView($puzzle);
+
+		$data = array();
+		$data['Crossword'] = &$crossword;
+		$data['Grid'] = &$crosswordView;
+
+		$this->main_frame->includeCss('stylesheets/crosswords.css');
+		$this->main_frame->includeJs('javascript/simple_ajax.js');
+		$this->main_frame->includeJs('javascript/crosswords.js');
+		$this->main_frame->SetContentSimple('crosswords/crossword', $data);
 		$this->main_frame->Load();
 	}
 
