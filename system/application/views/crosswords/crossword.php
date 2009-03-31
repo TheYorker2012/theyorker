@@ -42,6 +42,7 @@ echo(xml_escape(
 	<form class="form">
 		<?php
 		$Grid->Load();
+		if ($LoggedIn) {
 		?>
 		<div style="clear:both" >
 			<fieldset>
@@ -49,6 +50,7 @@ echo(xml_escape(
 						onclick="<?php echo(xml_escape('crossword("xw").save("'.$Paths['save'].'");')); ?>" />
 			</fieldset>
 		</div>
+		<?php } ?>
 	</form>
 
 </div>
