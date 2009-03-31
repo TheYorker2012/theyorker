@@ -521,7 +521,6 @@ class Crosswords extends Controller
 			}
 			else if ('save' === $operation) {
 				if (!CheckRolePermissions('CROSSWORD_VIEW', 'CROSSWORD_MODIFY')) return;
-				$this->pages_model->SetPageCode('crosswords_office_xword_edit');
 
 				if (isset($_GET['xw']['save'])) {
 					$puzzle = new CrosswordPuzzle();

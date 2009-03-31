@@ -479,6 +479,17 @@ class Crosswords_model extends model
 		}
 	}
 
+	/** Save a version of a crossword for a user.
+	 * @param $crossword_id int Id of crossword.
+	 * @param $user_id int User entity id.
+	 * @param $puzzle CrosswordPuzzle Puzzle with lights to save.
+	 * @return bool true of successful.
+	 */
+	function SaveCrosswordVersion($crossword_id, $user_id, &$puzzle)
+	{
+		return false;
+	}
+
 	/** Save over a crossword.
 	 * @param $crossword_id int Id of crossword.
 	 * @param $puzzle CrosswordPuzzle Puzzle with lights to save.
@@ -537,6 +548,7 @@ class Crosswords_model extends model
 					join(',',$qs);
 			$this->db->query($sql, $bind);
 		}
+		return true;
 	}
 
 	/** Load a crossword.

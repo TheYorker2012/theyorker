@@ -14,6 +14,34 @@ function CrosswordEdit(name, width, height)
 
 	thisCrossword.m_needRenumbering = false;
 
+	thisCrossword.Crossword_exportPost = thisCrossword.exportPost;
+	thisCrossword.exportPost = function(post)
+	{
+		this.Crossword_exportPost(post);
+		for (var y = 0; y < this.m_height; ++y) {
+			for (var x = 0; x < this.m_width; ++x) {
+				var cell = this.m_grid[x][y];
+				if (!cell.isBlank()) {
+					for (var o = 0; o < 2; ++o) {
+						if (cell.isSpaced(o)) {
+							post[this.m_name+"[sp]["+x+"]["+y+"]["+o+"]"] = 1;
+						}
+						var light = this.m_lights[x][y][o];
+						if (null != light) {
+							post[this.m_name+"[li]["+x+"]["+y+"]["+o+"][len]"] = light.length();
+							var clues = light.clues();
+							for (var c = 0; c < clues.length; ++c) {
+								if (null != clues[c] && clues[c] != "") {
+									post[this.m_name+"[li]["+x+"]["+y+"]["+o+"][clues]["+c+"]"] = clues[c];
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
 	thisCrossword.deleteValue = function(x,y)
 	{
 		var cell = this.m_grid[x][y];

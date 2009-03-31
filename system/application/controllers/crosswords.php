@@ -91,9 +91,13 @@ class Crosswords extends Controller
 		$this->main_frame->Load();
 	}
 
-	function crossword_by_id($id = null)
+	function crossword_by_id($id = null, $operation = null)
 	{
+		if ('save' === $operation) {
+			OutputModes('ajax');
+		}
 		if (!CheckPermissions('public')) return;
+		$loggedIn = $this->user_auth->isLoggedIn;
 
 		if (null === $id || !is_numeric($id)) {
 			show_404();
@@ -112,24 +116,73 @@ class Crosswords extends Controller
 			show_404();
 		}
 
-		$loggedIn = $this->user_auth->isLoggedIn;
-		$crosswordView = new CrosswordView($puzzle);
-		if (!$loggedIn) {
-			$crosswordView->setReadOnly(true);
+		if (null === $operation) {
+			$crosswordView = new CrosswordView($puzzle);
+			if (!$loggedIn) {
+				$crosswordView->setReadOnly(true);
+			}
+
+			$data = array();
+			$data['Crossword'] = &$crossword;
+			$data['Grid'] = &$crosswordView;
+			$data['LoggedIn'] = $loggedIn;
+			$data['Paths'] = array(
+				'save' => site_url('/crosswords/'.$crossword['id'].'/save'),
+			);
+
+			$this->main_frame->includeCss('stylesheets/crosswords.css');
+			$this->main_frame->includeJs('javascript/simple_ajax.js');
+			$this->main_frame->includeJs('javascript/crosswords.js');
+			$this->main_frame->SetContentSimple('crosswords/crossword', $data);
+		}
+		elseif ('save' === $operation) {
+			if (!$loggedIn) {
+				$this->main_frame->Error(array(
+					'class' => 'error',
+					'text' => 'Not logged in.',
+				));
+				$status = 'fail';
+			}
+			elseif (isset($_GET['xw']['save'])) {
+				$puzzle = new CrosswordPuzzle();
+				$worked = $puzzle->importData($_GET['xw']);
+				if ($worked) {
+					$success = $this->crosswords_model->SaveCrosswordVersion($crossword, $this->user_auth->entityId, $puzzle);
+					$status = $success ? 'success' : 'fail';
+					if (!$success) {
+						$this->main_frame->Error(array(
+							'class' => 'error',
+							'text' => 'Unable to save crossword.',
+						));
+					}
+				}
+				else {
+					$this->main_frame->Error(array(
+						'class' => 'error',
+						'text' => 'Invalid crossword data.',
+					));
+					$status = 'fail';
+				}
+			}
+			else {
+				$this->main_frame->Error(array(
+					'class' => 'error',
+					'text' => 'Unable to edit crossword.',
+				));
+				$status = 'fail';
+			}
+
+			$root = array(
+				'_tag' => 'crossword',
+				'status' => $status,
+			);
+
+			$this->main_frame->SetXml($root);
+		}
+		else {
+			show_404();
 		}
 
-		$data = array();
-		$data['Crossword'] = &$crossword;
-		$data['Grid'] = &$crosswordView;
-		$data['LoggedIn'] = $loggedIn;
-		$data['Paths'] = array(
-			'save' => site_url("/crosswords/$crossword/save"),
-		);
-
-		$this->main_frame->includeCss('stylesheets/crosswords.css');
-		$this->main_frame->includeJs('javascript/simple_ajax.js');
-		$this->main_frame->includeJs('javascript/crosswords.js');
-		$this->main_frame->SetContentSimple('crosswords/crossword', $data);
 		$this->main_frame->Load();
 	}
 

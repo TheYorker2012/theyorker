@@ -683,6 +683,7 @@ function Crossword(name, width, height)
 
 	this.autosave = function()
 	{
+		var wasChanged = this.m_changed;
 		this.m_changed = false;
 		this.updateNotification("pending", "autosaving", null);
 		var self = this;
@@ -691,26 +692,29 @@ function Crossword(name, width, height)
 					self.resetAutosaveTimer();
 				},
 				function() {
-					self.m_changed = true;
+					if (wasChanged) {
+						self.m_changed = true;
+					}
 					self.resetAutosaveTimer();
 				});
 	}
 	this.save = function(action)
 	{
+		var wasChanged = this.m_changed;
 		this.m_changed = false;
 		this.updateNotification('pending', 'saving', null);
 		var self = this;
 		this.post(action, "save", 10000,
 				null,
 				function() {
-					self.m_changed = true;
+					if (wasChanged) {
+						self.m_changed = true;
+					}
 				});
 	}
 
-	this.post = function(action, opname, success_timeout, success_event, fail_event)
+	this.exportPost = function(post)
 	{
-		var post = {};
-		post[this.m_name+"[save]"]=1;
 		post[this.m_name+"[width]"]=this.m_width;
 		post[this.m_name+"[height]"]=this.m_height;
 
@@ -718,27 +722,19 @@ function Crossword(name, width, height)
 			for (var x = 0; x < this.m_width; ++x) {
 				var cell = this.m_grid[x][y];
 				if (!cell.isBlank()) {
-					if (cell.isKnown) {
+					if (cell.isKnown()) {
 						post[this.m_name+"[gr]["+x+"]["+y+"]"] = cell.letter();
-					}
-					for (var o = 0; o < 2; ++o) {
-						if (cell.isSpaced(o)) {
-							post[this.m_name+"[sp]["+x+"]["+y+"]["+o+"]"] = 1;
-						}
-						var light = this.m_lights[x][y][o];
-						if (null != light) {
-							post[this.m_name+"[li]["+x+"]["+y+"]["+o+"][len]"] = light.length();
-							var clues = light.clues();
-							for (var c = 0; c < clues.length; ++c) {
-								if (null != clues[c] && clues[c] != "") {
-									post[this.m_name+"[li]["+x+"]["+y+"]["+o+"][clues]["+c+"]"] = clues[c];
-								}
-							}
-						}
 					}
 				}
 			}
 		}
+	}
+
+	this.post = function(action, opname, success_timeout, success_event, fail_event)
+	{
+		var post = {};
+		post[this.m_name+"[save]"]=1;
+		this.exportPost(post);
 
 		var self = this;
 
