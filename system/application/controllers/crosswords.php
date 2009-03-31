@@ -44,30 +44,50 @@ class Crosswords extends Controller
 		$categories = $this->crosswords_model->GetAllCategories();
 		foreach ($categories as &$category) {
 			// And information about the latest few crosswords
-			$category['latest'] = $this->crosswords_model->GetCrosswords(null,$category['id'], null,true,null, 3,'DESC');
-			$category['next'] = $this->crosswords_model->GetCrosswords(null,$category['id'], null,false,null, 1,'ASC');
+			$category['latest']	= $this->crosswords_model->GetCrosswords(null,$category['id'], null,true,null, 3,'DESC');
+			$category['next']	= $this->crosswords_model->GetCrosswords(null,$category['id'], null,false,null, 1,'ASC');
 		}
 		$data = array(
 			'Categories' => &$categories,
 		);
-		$this->main_frame->SetContentSimple('crosswords/index', $data);
 		$this->main_frame->IncludeCss('stylesheets/crosswords_index.css');
+		$this->main_frame->SetContentSimple('crosswords/index', $data);
 		$this->main_frame->Load();
 	}
 
-	function category($cat = null)
+	function category($cat = null, $arg2 = null)
 	{
-		$cat = $this->crosswords_model->GetCategoryByShortName($cat);
-		if (null === $cat) {
+		$category = $this->crosswords_model->GetCategoryByShortName($cat);
+		if (null === $category) {
 			show_404();
 		}
 
 		if (!CheckPermissions('public')) return;
 
-		$data = array(
-			'cat' => &$cat,
-		);
-		$this->main_frame->SetContentSimple('crosswords/category', $data);
+		if (null === $arg2) {
+			$category['latest']	= $this->crosswords_model->GetCrosswords(null,$category['id'], null,true,null, 5,'DESC');
+			$category['next']	= $this->crosswords_model->GetCrosswords(null,$category['id'], null,false,null, 1,'ASC');
+
+			$data = array(
+				'Category' => &$category,
+			);
+			$this->main_frame->IncludeCss('stylesheets/crosswords_index.css');
+			$this->main_frame->SetContentSimple('crosswords/category', $data);
+		}
+		elseif ($arg2 == 'archive') {
+			$category['latest']	= $this->crosswords_model->GetCrosswords(null,$category['id'], null,true,null, null,'DESC');
+			$category['next']	= $this->crosswords_model->GetCrosswords(null,$category['id'], null,false,null, 1,'ASC');
+
+			$data = array(
+				'Category' => &$category,
+			);
+			$this->main_frame->IncludeCss('stylesheets/crosswords_index.css');
+			$this->main_frame->SetContentSimple('crosswords/category', $data);
+		}
+		else {
+			show_404();
+		}
+
 		$this->main_frame->Load();
 	}
 
