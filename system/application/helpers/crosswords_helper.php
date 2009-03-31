@@ -157,7 +157,6 @@ class CrosswordGrid
 				}
 			}
 		}
-		$this->m_spacers = array();
 	}
 
 	/** Add a light to the grid.
@@ -255,6 +254,9 @@ class CrosswordGrid
 		$spaces = 0;
 		for ($i = 0; $i < $len; ++$i) {
 			$char = substr($text, $i, 1);
+			if ($char === '_') {
+				$char = '';
+			}
 			if ($char === ' ') {
 				$this->setCellSpacer($light->orientation(), $light->x()+(($i-$spaces)*$dx),
 				                                            $light->y()+(($i-$spaces)*$dy));
@@ -266,6 +268,30 @@ class CrosswordGrid
 			}
 		}
 		return $len;
+	}
+
+	/** Get the text of multiple adjacent cells (ignoring spacing).
+	 * @param $light Light Light description object.
+	 */
+	function lightText($light)
+	{
+		$len = $light->length();
+		$dx = $light->dx();
+		$dy = $light->dy();
+		$result = '';
+		for ($i = 0; $i < $len; ++$i) {
+			$state = $this->cellState($light->x()+($i*$dx),
+			                          $light->y()+($i*$dy));
+			if (is_string($state)) {
+				if ($state == '') {
+					$result .= '_';
+				}
+				else {
+					$result .= $state;
+				}
+			}
+		}
+		return $result;
 	}
 
 	/*
@@ -408,6 +434,36 @@ class CrosswordPuzzle
 		else {
 			$this->m_grid = null;
 		}
+	}
+
+	/// Import from GET/POST data on top of existing data.
+	function importGrid(&$data)
+	{
+		if (null === $this->m_grid) {
+			return false;
+		}
+
+		// First clear the grid
+		$this->m_grid->clearSolutions();
+
+		if (isset($data['gr'])) {
+			foreach ($data['gr'] as $x => $ys) {
+				if (!is_numeric($x)) {
+					continue;
+				}
+				$x = (int)$x;
+				foreach ($ys as $y => $val) {
+					if (!is_numeric($y)) {
+						continue;
+					}
+					$y = (int)$y;
+					if (strlen($val) > 0) {
+						$this->m_grid->setCellState($x, $y, strtoupper(substr($val, 0, 1)));
+					}
+				}
+			}
+		}
+		return true;
 	}
 
 	/// Import from GET/POST data
@@ -642,11 +698,7 @@ class CrosswordView
 						   ?>onkeydown="return crosswordKeyDown(<?php echo("'$name',$x,$y,event") ?>)" <?php
 						   ?>onkeypress="return crosswordKeyPress(<?php echo("'$name',$x,$y,event") ?>)" <?php
 					}
-						   ?>value="<?php
-					if ($this->m_edit) {
-							echo(xml_escape($state));
-					}
-						   ?>" <?php
+						   ?>value="<?php echo(xml_escape($state)); ?>" <?php
 					if ($this->m_readonly) {
 						?>readonly="readonly"<?php
 					}
@@ -762,15 +814,7 @@ class CrosswordView
 								   ?>id="<?php echo("$name-$orientation-edit-$cx-$cy"); ?>" <?php
 								   ?>onkeydown="return crosswordKeyDown(<?php echo("'$name',$cx,$cy,event") ?>)" <?php
 								   ?>onkeypress="return crosswordKeyPress(<?php echo("'$name',$cx,$cy,event") ?>)" <?php
-								   ?>value="<?php
-							if ($this->m_edit) {
-								$letter = substr($solution, $i, 1);
-								if ($letter == '_') {
-									$letter = '';
-								}
-								echo(xml_escape($letter));
-							}
-							?>" /><?php
+								   ?>value="<?php echo(xml_escape($state)); ?>" /><?php
 							?></td><?php
 						}
 					}

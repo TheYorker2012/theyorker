@@ -487,7 +487,120 @@ class Crosswords_model extends model
 	 */
 	function SaveCrosswordVersion($crossword_id, $user_id, &$puzzle)
 	{
-		return false;
+		// Create new save row
+		$sql =	'INSERT INTO `crossword_saves` '.
+				'SET	`crossword_save_crossword_id` = ?, '.
+				'		`crossword_save_user_entity_id` = ?, '.
+				'		`crossword_save_time` = NOW()';
+		$bind = array($crossword_id, $user_id);
+		$this->db->query($sql, $bind);
+		$save_id = $this->db->insert_id();
+
+		// Go through lights extracting texts
+		$grid = &$puzzle->grid();
+		$height = $grid->height();
+		$width = $grid->width();
+		$bind = array();
+		$qs = array();
+		for ($y = 0; $y < $height; ++$y) {
+			for ($x = 0; $x < $width; ++$x) {
+				$lights = $grid->lightsAt($x, $y, true);
+				foreach ($lights as &$light) {
+					$answer = $grid->lightText($light);
+					if (str_replace('_','',$answer) == '') {
+						continue;
+					}
+					$qs[] =	'(?,?,?,?,?)';
+					$bind[] = $save_id;
+					$bind[] = $light->x();
+					$bind[] = $light->y();
+					$bind[] = (($light->orientation() == CrosswordGrid::$HORIZONTAL)
+								? 'horizontal'
+								: 'vertical');
+					$bind[] = $answer;
+				}
+			}
+		}
+		if (count($qs) > 0) {
+			$sql =	'INSERT INTO `crossword_light_saves` ('.
+					'	`crossword_light_save_save_id`, '.
+					'	`crossword_light_save_posx`, '.
+					'	`crossword_light_save_posy`, '.
+					'	`crossword_light_save_orientation`, '.
+					'	`crossword_light_save_answer` '.
+					') '.
+					'VALUES '.
+					join(',',$qs);
+			$this->db->query($sql, $bind);
+			if ($this->db->affected_rows() < count($qs)) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	/** Load a version of a crossword for a user.
+	 * @param $crossword_id int Id of crossword.
+	 * @param $user_id int User entity id.
+	 * @param $puzzle CrosswordPuzzle Puzzle with lights to save.
+	 * @param $save_id int,null Save id or null for latest.
+	 * @return bool true of successful.
+	 */
+	function LoadCrosswordVersion($crossword_id, $user_id, &$puzzle, $save_id = null)
+	{
+		if (null === $save_id) {
+			// Get the latest save
+			$sql =	'SELECT	`crossword_save_id` AS id, `crossword_save_time` AS time '.
+					'FROM	`crossword_saves` '.
+					'WHERE	`crossword_save_crossword_id` = ? '.
+					'	AND	`crossword_save_user_entity_id` = ? '.
+					'ORDER BY	`crossword_save_time` DESC '.
+					'LIMIT 0,1';
+			$bind = array($crossword_id, $user_id);
+			$saves = $this->db->query($sql, $bind)->result_array();
+			if (count($saves) < 1) {
+				return false;
+			}
+			$save_id = $saves[0]['id'];
+		}
+
+		// Get the light values
+		$sql =	'SELECT	`crossword_save_id`					AS id, '.
+				'		`crossword_light_save_posx`			AS posx, '.
+				'		`crossword_light_save_posy`			AS posy, '.
+				'		`crossword_light_save_orientation`	AS orientation, '.
+				'		`crossword_light_save_answer`		AS answer '.
+				'FROM	`crossword_saves` '.
+				'LEFT JOIN	`crossword_light_saves` '.
+				'		ON	`crossword_save_id`=`crossword_light_save_save_id` '.
+				'WHERE	`crossword_save_id` = ? '.
+				'	AND	`crossword_save_crossword_id` = ? '.
+				'	AND	`crossword_save_user_entity_id` = ? ';
+		$bind = array($save_id, $crossword_id, $user_id);
+		$results = $this->db->query($sql, $bind)->result_array();
+		// No results mean there isn't even a save with this id, crossword, user
+		if (count($results) == 0) {
+			return false;
+		}
+		$grid = &$puzzle->grid();
+		foreach ($results as &$result) {
+			// If they're null, then skip (no light_saves, just the one save)
+			if ($result['posx'] === null) {
+				continue;
+			}
+			
+			$light = new CrosswordGridLight(
+				(int)$result['posx'],
+				(int)$result['posy'],
+				(($result['orientation'] == 'horizontal')
+					? CrosswordGrid::$HORIZONTAL
+					: CrosswordGrid::$VERTICAL),
+				strlen($result['answer'])
+			);
+			$grid->setLightText($light, $result['answer']);
+		}
+		return true;
 	}
 
 	/** Save over a crossword.

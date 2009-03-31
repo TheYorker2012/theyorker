@@ -115,11 +115,15 @@ class Crosswords extends Controller
 		if (!$worked) {
 			show_404();
 		}
+		$puzzle->grid()->clearSolutions();
 
 		if (null === $operation) {
 			$crosswordView = new CrosswordView($puzzle);
 			if (!$loggedIn) {
 				$crosswordView->setReadOnly(true);
+			}
+			else {
+				$success = $this->crosswords_model->LoadCrosswordVersion($crossword['id'], $this->user_auth->entityId, $puzzle);
 			}
 
 			$data = array();
@@ -144,10 +148,9 @@ class Crosswords extends Controller
 				$status = 'fail';
 			}
 			elseif (isset($_GET['xw']['save'])) {
-				$puzzle = new CrosswordPuzzle();
-				$worked = $puzzle->importData($_GET['xw']);
+				$worked = $puzzle->importGrid($_GET['xw']);
 				if ($worked) {
-					$success = $this->crosswords_model->SaveCrosswordVersion($crossword, $this->user_auth->entityId, $puzzle);
+					$success = $this->crosswords_model->SaveCrosswordVersion($crossword['id'], $this->user_auth->entityId, $puzzle);
 					$status = $success ? 'success' : 'fail';
 					if (!$success) {
 						$this->main_frame->Error(array(
