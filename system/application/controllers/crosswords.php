@@ -9,59 +9,85 @@ class Crosswords extends Controller
 		parent::Controller();
 
 		$this->load->helper('crosswords');
+		$this->load->model('crosswords_model');
+	}
+
+	function _remap($arg = null)
+	{
+		if (null === $arg) {
+			return $this->index();
+		}
+		$args = func_get_args();
+
+		// First argument is one of:
+		// "tips"
+		if ('tips' === $arg) {
+			return call_user_func_array(array(&$this, 'tips'), $args);
+		}
+		// crossword id
+		if (is_numeric($arg)) {
+			return call_user_func_array(array(&$this, 'crossword_by_id'), $args);
+		}
+		// date
+		if (false) {
+			return call_user_func_array(array(&$this, 'crossword_by_date'), $args);
+		}
+		// category short name
+		return call_user_func_array(array(&$this, 'category'), $args);
 	}
 
 	function index()
 	{
-		if (!CheckPermissions('admin')) return;
-		redirect('crosswords/prototype');
-	}
-
-	function prototype()
-	{
 		if (!CheckPermissions('public')) return;
 
-		$crossword = new CrosswordPuzzle(13, 13);
-		// Across
-		$crossword->addLight(1, 0, CrosswordGrid::$HORIZONTAL, new CrosswordClue("stack", "Ordered pile", ''));
-		$crossword->addLight(7, 0, CrosswordGrid::$HORIZONTAL, new CrosswordClue("chasm", "Abyss", ''));
-		$crossword->addLight(0, 2, CrosswordGrid::$HORIZONTAL, new CrosswordClue("cheer", "Applaud with shouts", ''));
-		$crossword->addLight(6, 2, CrosswordGrid::$HORIZONTAL, new CrosswordClue("wipe out", "Destroy completely", ''));
-		$crossword->addLight(0, 4, CrosswordGrid::$HORIZONTAL, new CrosswordClue("ice cubes", "Small frozen blocks", ''));
-		$crossword->addLight(9, 4, CrosswordGrid::$HORIZONTAL, new CrosswordClue("spat", "Slight quarrel", ''));
-		$crossword->addLight(0, 6, CrosswordGrid::$HORIZONTAL, new CrosswordClue("vandal", "One who damages property", ''));
-		$crossword->addLight(7, 6, CrosswordGrid::$HORIZONTAL, new CrosswordClue("kimono", "Japanese garment", ''));
-		$crossword->addLight(0, 8, CrosswordGrid::$HORIZONTAL, new CrosswordClue("mugs", "Drinking vessels", ''));
-		$crossword->addLight(5, 8, CrosswordGrid::$HORIZONTAL, new CrosswordClue("pathetic", "Moving to pity", ''));
-		$crossword->addLight(0, 10, CrosswordGrid::$HORIZONTAL, new CrosswordClue("needles", "Knitting rods", ''));
-		$crossword->addLight(8, 10, CrosswordGrid::$HORIZONTAL, new CrosswordClue("recap", "Summarise", ''));
-		$crossword->addLight(1, 12, CrosswordGrid::$HORIZONTAL, new CrosswordClue("atlas", "Book of maps", ''));
-		$crossword->addLight(7, 12, CrosswordGrid::$HORIZONTAL, new CrosswordClue("twist", "Coil, spin", ''));
-		// Down
-		$crossword->addLight(2, 0, CrosswordGrid::$VERTICAL, new CrosswordClue("theme", "Topic", ''));
-		$crossword->addLight(4, 0, CrosswordGrid::$VERTICAL, new CrosswordClue("circular", "Widely distributed notice", ''));
-		$crossword->addLight(8, 0, CrosswordGrid::$VERTICAL, new CrosswordClue("hops", "Beer incredient", ''));
-		$crossword->addLight(10, 0, CrosswordGrid::$VERTICAL, new CrosswordClue("scorpio", "Star sign", ''));
-		$crossword->addLight(0, 1, CrosswordGrid::$VERTICAL, new CrosswordClue("achievement", "Accomplishment", ''));
-		$crossword->addLight(6, 1, CrosswordGrid::$VERTICAL, new CrosswordClue("sweet", "Sugary", ''));
-		$crossword->addLight(12, 1, CrosswordGrid::$VERTICAL, new CrosswordClue("stethoscope", "Medical instrument", ''));
-		$crossword->addLight(8, 5, CrosswordGrid::$VERTICAL, new CrosswordClue("withdraw", "Remove or take away", ''));
-		$crossword->addLight(2, 6, CrosswordGrid::$VERTICAL, new CrosswordClue("neglect", "Negligence", ''));
-		$crossword->addLight(6, 7, CrosswordGrid::$VERTICAL, new CrosswordClue("balsa", "Light wood", ''));
-		$crossword->addLight(10, 8, CrosswordGrid::$VERTICAL, new CrosswordClue("tacks", "Carpet nails", ''));
-		$crossword->addLight(4, 9, CrosswordGrid::$VERTICAL, new CrosswordClue("flea", "Jumping insect", ''));
-
-		$crosswordView = new CrosswordView($crossword);
-
-		$data = array();
-		$data['crossword'] = $crosswordView;
-
+		// Load categories
+		$categories = $this->crosswords_model->GetAllCategories();
+		foreach ($categories as &$category) {
+			// And information about the latest few crosswords
+			$category['latest'] = $this->crosswords_model->GetCrosswords(null,$category['id'], null,true,null, 3,'DESC');
+			$category['next'] = $this->crosswords_model->GetCrosswords(null,$category['id'], null,false,null, 1,'ASC');
+		}
+		$data = array(
+			'Categories' => &$categories,
+		);
 		$this->main_frame->SetContentSimple('crosswords/index', $data);
-		$this->main_frame->includeCss('stylesheets/crosswords.css');
-		$this->main_frame->includeJs('javascript/crosswords.js');
+		$this->main_frame->IncludeCss('stylesheets/crosswords_index.css');
 		$this->main_frame->Load();
 	}
 
+	function category($cat = null)
+	{
+		$cat = $this->crosswords_model->GetCategoryByShortName($cat);
+		if (null === $cat) {
+			show_404();
+		}
+
+		if (!CheckPermissions('public')) return;
+
+		$data = array(
+			'cat' => &$cat,
+		);
+		$this->main_frame->SetContentSimple('crosswords/category', $data);
+		$this->main_frame->Load();
+	}
+
+	function crossword_by_id($id = null)
+	{
+		if (!CheckPermissions('public')) return;
+		$this->main_frame->Load();
+	}
+
+	function crossword_by_date($date = null)
+	{
+		if (!CheckPermissions('public')) return;
+		$this->main_frame->Load();
+	}
+
+	function tips()
+	{
+		if (!CheckPermissions('public')) return;
+		$this->main_frame->Load();
+	}
 }
 
 ?>

@@ -184,6 +184,40 @@ class Crosswords_model extends model
 		return $data[0];
 	}
 
+	/** Get information about a category.
+	 * @param $short_name Crossword category short name.
+	 * @return array Array representing the category or null.
+	 *  - 'id'
+	 *  - 'name'
+	 *  - 'short_name'
+	 *  - 'default_width'
+	 *  - 'default_height'
+	 *  - 'default_layout_id'
+	 *  - 'default_has_normal_clues'
+	 *  - 'default_has_cryptic_clues'
+	 *  - 'default_winners'
+	 */
+	function GetCategoryByShortName($short_name)
+	{
+		$sql =	'SELECT '.
+				'	`crossword_category_id`							AS id,'.
+				'	`crossword_category_name`						AS name,'.
+				'	`crossword_category_short_name`					AS short_name,'.
+				'	`crossword_category_default_width`				AS default_width,'.
+				'	`crossword_category_default_height`				AS default_height,'.
+				'	`crossword_category_default_layout_id`			AS default_layout_id,'.
+				'	`crossword_category_default_has_normal_clues`	AS default_has_normal_clues,'.
+				'	`crossword_category_default_has_cryptic_clues`	AS default_has_cryptic_clues,'.
+				'	`crossword_category_default_winners`			AS default_winners'.
+				' FROM `crossword_categories`'.
+				' WHERE `crossword_category_short_name` = ?';
+		$data = $this->db->query($sql, array($short_name))->result_array();
+		if (count($data) < 1) {
+			return null;
+		}
+		return $data[0];
+	}
+
 	/** Add a new crossword category to the database.
 	 * @param $Category array with:
 	 *  - 'name'
@@ -324,9 +358,15 @@ class Crosswords_model extends model
 	/** Get crosswords.
 	 * @param $crossword_id int,null Crossword id.
 	 * @param $category_id int,null Category id.
+	 * @param $overdue bool,null Overdue or not.
 	 * @param $published bool,null Published or not.
+	 * @param $expired bool,null Expired or not.
+	 * @param $count int,null Maximum crosswords to get.
+	 * @param $order 'ASC','DESC' Ordering.
 	 */
-	function GetCrosswords($crossword_id = null, $category_id = null, $overdue = null, $published = null, $expired = null)
+	function GetCrosswords($crossword_id = null, $category_id = null,
+				$overdue = null, $published = null, $expired = null,
+				$limit = null, $order = 'DESC')
 	{
 		$overdue_sql	= '`crossword_deadline`    <= NOW()';
 		$published_sql	= '`crossword_publication` <= NOW()';
@@ -376,7 +416,10 @@ class Crosswords_model extends model
 			$sql .= 'WHERE ('.join(') AND (', $conditions).') ';
 		}
 
-		$sql .= 'ORDER BY `crossword_publication` DESC';
+		$sql .= 'ORDER BY `crossword_publication` '.$order.' ';
+		if (null !== $limit) {
+			$sql .= 'LIMIT 0,'.(int)$limit;
+		}
 
 		$results = $this->db->query($sql, $bind)->result_array();
 		foreach ($results as &$result) {
