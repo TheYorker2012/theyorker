@@ -664,7 +664,9 @@ function Crossword(name, width, height)
 		if (this.m_complete != complete) {
 			this.m_complete = complete;
 			var completeBox = document.getElementById(this.m_name+'-complete');
-			completeBox.className="crosswordAjaxNotify "+(complete?"complete":"hidden");
+			if (null != completeBox) {
+				completeBox.className="crosswordAjaxNotify "+(complete?"complete":"hidden");
+			}
 		}
 	}
 
@@ -779,7 +781,17 @@ function Crossword(name, width, height)
 							self.updateNotification("error", "crossword is incorrect - please try again", 10000);
 						}
 						else {
-							self.updateNotification("success", "congratulations: crossword is correct", 10000);
+							var winners = root.getElementsByTagName('winner');
+							var winner = false;
+							if (winners.length > 0) {
+								winner = (winners[0].textContent == 'yes');
+							}
+							if (winner) {
+								self.updateNotification("success", "congratulations: you are a winner", null);
+							}
+							else {
+								self.updateNotification("success", "congratulations: crossword is correct", null);
+							}
 						}
 					}
 					self.m_complete = null;

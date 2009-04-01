@@ -168,8 +168,10 @@ class Crosswords extends Controller
 					// Submitting for marking`
 					elseif (isset($_GET['xw']['submit'])) {
 						$root['status'] = 'success';
-						$root['mark'] = ($puzzle->isCorrect() ? 'correct' : 'incorrect');
-						//$root['medal'] = 'none';
+						$correct = $puzzle->isCorrect();
+						$root['mark'] = ($correct ? 'correct' : 'incorrect');
+						$winner = $this->crosswords_model->AddWinner($crossword['id'], $this->user_auth->entityId);
+						$root['winner'] = ($winner ? 'yes' : 'no');
 					}
 					else {
 						$this->main_frame->Error(array(

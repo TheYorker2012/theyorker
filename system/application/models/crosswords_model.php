@@ -369,7 +369,7 @@ class Crosswords_model extends model
 				$limit = null, $order = 'DESC')
 	{
 		$overdue_sql	= '`crossword_deadline`    <= NOW()';
-		$published_sql	= '`crossword_publication` <= NOW()';
+		$published_sql	= '`crossword_publication` <= NOW() AND `crossword_completeness` = 100';
 		$expired_sql	= '`crossword_expiry`      <= NOW()';
 		$winner_count_sql =	'(SELECT COUNT(*) '.
 							'FROM `crossword_winners` '.
@@ -479,11 +479,50 @@ class Crosswords_model extends model
 		}
 	}
 
+	/** Add a specific user as a winner of a crossword.
+	 * @return bool true if successful.
+	 */
+	function AddWinner($crossword_id, $user_id)
+	{
+		$bind = array();
+		// Add to winners
+		$sql =	'INSERT INTO `crossword_winners` ('.
+				'	`crossword_winner_crossword_id`, '.
+				'	`crossword_winner_user_entity_id`, '.
+				'	`crossword_winner_time` '.
+				') '.
+				'SELECT	`crossword_id`, ?, NOW() ';
+		$bind[] = $user_id;
+		// Where the crossword exists
+		$sql .=	'FROM	`crosswords` '.
+				'WHERE `crossword_id` = ? ';
+		$bind[] = $crossword_id;
+		// And where the crossword is published
+		$sql .=	'	AND `crossword_publication` <= NOW() '.
+				'	AND `crossword_completeness` = 100 ';
+		// And where the crossword hasn't expired
+		$sql .=	'	AND `crossword_expiry` > NOW() ';
+		// And where there are some medals left to win
+		$sql .=	'	AND	(SELECT COUNT(*) '.
+				'		 FROM	`crossword_winners` '.
+				'		 WHERE	`crossword_winner_crossword_id`=`crossword_id`) '.
+				'			< `crossword_winners` ';
+		// And where this user hasn't already got a medal
+		$sql .=	'	AND (SELECT COUNT(*) '.
+				'		 FROM	`crossword_winners` '.
+				'		 WHERE	`crossword_winner_crossword_id`=`crossword_id` '.
+				'			AND	`crossword_winner_user_entity_id`=?) '.
+				'			= 0 ';
+		$bind[] = $user_id;
+		$this->db->query($sql, $bind);
+		return $this->db->affected_rows() > 0;
+	}
+
 	/** Save a version of a crossword for a user.
 	 * @param $crossword_id int Id of crossword.
 	 * @param $user_id int User entity id.
 	 * @param $puzzle CrosswordPuzzle Puzzle with lights to save.
-	 * @return bool true of successful.
+	 * @return bool true if successful.
 	 */
 	function SaveCrosswordVersion($crossword_id, $user_id, &$puzzle)
 	{
