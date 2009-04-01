@@ -1,6 +1,33 @@
 /* Styles for crosswords */
 /* Author: James Hogan */
 
+div.crosswordWinners {
+	float: right;
+	border: 1px solid gray;
+	padding: 0.3em;
+}
+div.crosswordWinners h2 {
+	margin: 0.1em;
+}
+div.crosswordWinners ol {
+	margin: 0px;
+}
+/* gold */
+div.crosswordWinners ol li.winner0 {
+	font-weight: bold;
+	color: #DD9F38;
+}
+/* silver */
+div.crosswordWinners ol li.winner1 {
+	font-weight: bold;
+	color: #A6A19B;
+}
+/* bronze */
+div.crosswordWinners ol li.winner2 {
+	font-weight: bold;
+	color: #995511;
+}
+
 div.crosswordAjaxNotify {
 	margin: 0.5em;
 	margin-left: 30%;

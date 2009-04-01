@@ -479,6 +479,28 @@ class Crosswords_model extends model
 		}
 	}
 
+	/** Get the list of winners for a crossword.
+	 * @return array[id,time,firstname,surname] winners.
+	 */
+	function GetWinners($crossword_id)
+	{
+		$sql =	'SELECT '.
+				'	`user_entity_id`		AS id, '.
+				'	UNIX_TIMESTAMP(`crossword_winner_time`)	AS time, '.
+				'	`user_firstname`		AS firstname, '.
+				'	`user_surname`			AS surname '.
+				'FROM	`crossword_winners` '.
+				'INNER JOIN	`crosswords` '.
+				'	ON	`crossword_id` = `crossword_winner_crossword_id` '.
+				'INNER JOIN `users` '.
+				'	ON	`user_entity_id` = `crossword_winner_user_entity_id` '.
+				'WHERE	`crossword_id` = ? '.
+				'ORDER BY	`crossword_winner_time` ASC';
+		$bind = array($crossword_id);
+		$winners = $this->db->query($sql, $bind)->result_array();
+		return $winners;
+	}
+
 	/** Add a specific user as a winner of a crossword.
 	 * @return bool true if successful.
 	 */

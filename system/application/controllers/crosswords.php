@@ -128,6 +128,7 @@ class Crosswords extends Controller
 
 			$data = array();
 			$data['Crossword'] = &$crossword;
+			$data['Winners'] = $this->crosswords_model->GetWinners($crossword['id']);
 			$data['Grid'] = &$crosswordView;
 			$data['LoggedIn'] = $loggedIn;
 			$data['Paths'] = array(

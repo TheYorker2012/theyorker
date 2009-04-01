@@ -3,6 +3,7 @@
  * @file views/crosswords/crossword.php
  * @param $Crossword array of crossword information:
  *	- 'id'
+ * @param $Winners array
  * @param $Grid
  * @param $LoggedIn
  * @param $Paths with 'ajax'
@@ -21,7 +22,41 @@ echo(xml_escape(
 
 <div class="BlueBox">
 
+<?php
+	// Only show list if winners are enabled
+	if ($Crossword['winners'] > 0) {
+		?><div class="crosswordWinners"><?php
+			?><h2>winners</h2><?php
+			// If it's expired and there aren't any winners then nothing interesting
+			if ($Crossword['expired'] && count($Winners) < 1) {
+				?><em>No winners</em><?php
+			}
+			else {
+				?><ol><?php
+				// Display all positions if not expired yet
+				$max = $Crossword['winners'];
+				// Otherwise just the ones taken
+				if ($Crossword['expired']) {
+					$max = count($Winners);
+				}
+				// Show positions
+				for ($id = 0; $id < $max; ++$id) {
+					?><li class="winner<?php echo($id); ?>"><?php
+					// with names in any taken positions
+					if (isset($Winners[$id])) {
+						$winner = $Winners[$id];
+						echo(xml_escape($winner['firstname'].' '.$winner['surname']));
+					}
+					?></li><?php
+				}
+				?></ol><?php
+			}
+		?></div><?php
+	}
+?>
+
 	<h2>crossword</h2>
+
 <?php
 	if (!$LoggedIn) {
 		$login_url = site_url('login/main'.$this->uri->uri_string());
