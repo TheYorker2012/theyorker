@@ -56,6 +56,32 @@ onLoadFunctions.push(hideFeedback);
 // ** END feedback form code **
 
 
+// ** BEGIN innerText/textContent decision **
+
+var hasInnerText = false;
+
+onLoadFunctions.push(function() {
+	hasInnerText = (document.getElementsByTagName("body")[0].innerText != undefined);
+});
+
+function setInnerText(obj,val)
+{
+	if (hasInnerText) {
+		obj.innerText = val;
+	}
+	else {
+		obj.textContent = val;
+	}
+}
+
+function innerText(obj)
+{
+	return (hasInnerText ? obj.innerText : obj.textContent);
+}
+
+// ** END innerText/textContent decision **
+
+
 // ** BEGIN Time Update Code
 var weekDays = new Array(7);
 weekDays[0] = "Sunday";

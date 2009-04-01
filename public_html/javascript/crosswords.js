@@ -290,7 +290,7 @@ function CrosswordLight(name, x, y, orientation, cells, els, eds)
 		this.m_cells = cells;
 		if (cells.length > 0 && (this.m_x != x || this.m_y != y)) {
 			this.m_numberEls[0] = cells[0].m_sup;
-			this.m_number = parseInt(this.m_numberEls[0].textContent, 10);
+			this.m_number = parseInt(innerText(this.m_numberEls[0]), 10);
 		}
 		this.m_x = x;
 		this.m_y = y;
@@ -414,7 +414,7 @@ function CrosswordLight(name, x, y, orientation, cells, els, eds)
 	{
 		var lens = this.wordLengths();
 		var lensStr = lens.join(",");
-		this.m_wordlenEl.textContent = lensStr;
+		setInnerText(this.m_wordlenEl, lensStr);
 	}
 
 	/// Set the number, return whether changed
@@ -424,7 +424,7 @@ function CrosswordLight(name, x, y, orientation, cells, els, eds)
 		{
 			for (var i = 0; i < this.m_numberEls.length; ++i) {
 				if (null != this.m_numberEls[i]) {
-					this.m_numberEls[i].textContent = num;
+					setInnerText(this.m_numberEls[i], num);
 				}
 			}
 			this.m_number = num;
@@ -454,7 +454,7 @@ function CrosswordLight(name, x, y, orientation, cells, els, eds)
 			fromTextBox = true;
 		}
 		else if (null != this.m_clueEls[id]) {
-			clue = this.m_clueEls[id].textContent;
+			clue = innerText(this.m_clueEls[id]);
 		}
 		if (clue != "") {
 			this.m_clues[id] = clue;
@@ -508,11 +508,11 @@ function CrosswordLight(name, x, y, orientation, cells, els, eds)
 	{
 		if (null != this.m_clueEls[id]) {
 			if (null == this.m_clues[id]) {
-				this.m_clueEls[id].textContent = "";
+				setInnerText(this.m_clueEls[id], "");
 			}
 			else
 			{
-				this.m_clueEls[id].textContent = this.m_clues[id];
+				setInnerText(this.m_clueEls[id], this.m_clues[id]);
 			}
 		}
 		if (null != this.m_clueInEls[id]) {
@@ -710,7 +710,7 @@ function Crossword(name, width, height)
 	{
 		if (null !== this.m_notify) {
 			this.m_notify.className="crosswordAjaxNotify "+cls;
-			this.m_notify.textContent = message;
+			setInnerText(this.m_notify, message);
 			if (this.m_notifyTimer != null) {
 				clearTimout(this.m_notifyTimer);
 				this.m_notifyTimer = null;
@@ -776,7 +776,7 @@ function Crossword(name, width, height)
 						self.updateNotification("error", "submit failed: no mark returned", 10000);
 					}
 					else {
-						var mark = (marks[0].textContent == 'correct');
+						var mark = (innerText(marks[0]) == 'correct');
 						if (!mark) {
 							self.updateNotification("error", "crossword is incorrect - please try again", 10000);
 						}
@@ -784,7 +784,7 @@ function Crossword(name, width, height)
 							var winners = root.getElementsByTagName('winner');
 							var winner = false;
 							if (winners.length > 0) {
-								winner = (winners[0].textContent == 'yes');
+								winner = (innerText(winners[0]) == 'yes');
 							}
 							if (winner) {
 								self.updateNotification("success", "congratulations: you are a winner", null);
@@ -1152,7 +1152,7 @@ function crosswordToggleInlineAnswers()
 		CssToggle(items[i], "hideValues");
 	}
 	var link = document.getElementById("toggleInlineAnswers");
-	link.textContent = (hideValues ? "Hide inline answers" : "Show inline answers");
+	setInnerText(link, (hideValues ? "Hide inline answers" : "Show inline answers"));
 }
 
 function crosswordToggleCrypticClues()
@@ -1164,5 +1164,5 @@ function crosswordToggleCrypticClues()
 		CssToggle(items[i], "hideQuick");
 	}
 	var link = document.getElementById("toggleCrypticClues");
-	link.textContent = (hideCryptic ? "Show quick clues" : "Show cryptic clues");
+	setInnerText(link, (hideCryptic ? "Show quick clues" : "Show cryptic clues"));
 }

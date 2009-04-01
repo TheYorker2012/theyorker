@@ -176,7 +176,7 @@ function CrosswordEdit(name, width, height)
 		// Clear global references
 		this.m_lights[light.m_x][light.m_y][light.m_orientation] = null;
 		if (null == this.m_lights[light.m_x][light.m_y][1-light.m_orientation]) {
-			this.m_grid[light.m_x][light.m_y].m_sup.textContent = "";
+			setInnerText(this.m_grid[light.m_x][light.m_y].m_sup, "");
 		}
 		if (this.m_light == light) {
 			this.m_light = null;
@@ -247,7 +247,7 @@ function CrosswordEdit(name, width, height)
 			this.m_needRenumbering = true;
 			this.m_lights[light.m_x][light.m_y][o] = null;
 			if (null == this.m_lights[light.m_x][light.m_y][1-o]) {
-				this.m_grid[light.m_x][light.m_y].m_sup.textContent = "";
+				setInnerText(this.m_grid[light.m_x][light.m_y].m_sup, "");
 			}
 			this.m_lights[x][y][o] = light;
 

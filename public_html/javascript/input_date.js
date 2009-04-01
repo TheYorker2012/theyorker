@@ -17,25 +17,25 @@ function input_date_update_text(name)
 	// Update day of week
 	span = document.getElementById(name+'__day');
 	select = document.getElementsByName(name+'[day]')[0];
-	var day = select.options[select.selectedIndex].textContent;
-	span.textContent = day;
+	var day = innerText(select.options[select.selectedIndex]);
+	setInnerText(span, day);
 	// Update week
 	span = document.getElementById(name+'__wk');
 	select = document.getElementsByName(name+'[wk]')[0];
-	var week = select.options[select.selectedIndex].textContent;
-	span.textContent = week;
+	var week = innerText(select.options[select.selectedIndex]);
+	setInnerText(span, week);
 	// Update term
 	span = document.getElementById(name+'__term');
 	select = document.getElementsByName(name+'[term]')[0];
-	span.textContent = select.options[select.selectedIndex].textContent;
+	setInnerText(span, innerText(select.options[select.selectedIndex]));
 	// Update hour
 	span = document.getElementById(name+'__hr');
 	select = document.getElementsByName(name+'[hr]')[0];
-	span.textContent = select.options[select.selectedIndex].textContent;
+	setInnerText(span, innerText(select.options[select.selectedIndex]));
 	// Update minute
 	span = document.getElementById(name+'__min');
 	select = document.getElementsByName(name+'[min]')[0];
-	span.textContent = select.options[select.selectedIndex].textContent;
+	setInnerText(span, innerText(select.options[select.selectedIndex]));
 
 	input_date_last_day_sel[name] = document.getElementById(name+"__"+week+"_"+day);
 }
