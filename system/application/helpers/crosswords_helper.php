@@ -670,6 +670,9 @@ class CrosswordView
 		if ($this->m_edit) {
 			?><div class="crosswordEdit"><?php
 		}
+		?><noscript><?php
+		?><div class="crosswordAjaxNotify error">please enable javascript in your browser</div><?php
+		?></noscript><?php
 		?><div id="<?php echo("$name-notify"); ?>" class="crosswordAjaxNotify hidden"></div><?php
 		if (!$this->m_edit) {
 			?><div id="<?php echo("$name-complete"); ?>" class="crosswordAjaxNotify hidden"><?php
