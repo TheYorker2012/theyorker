@@ -387,6 +387,7 @@ class Crosswords_model extends model
 				'UNIX_TIMESTAMP(`crossword_publication`)	AS publication, '.
 				'UNIX_TIMESTAMP(`crossword_expiry`)			AS expiry, '.
 				'`crossword_winners`			AS winners, '.
+				'`crossword_public_comment_thread_id`	AS public_thread_id, '.
 				$overdue_sql.	' AS overdue, '.
 				$published_sql.	' AS published, '.
 				$expired_sql.	' AS expired, '.

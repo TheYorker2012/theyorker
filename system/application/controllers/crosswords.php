@@ -91,7 +91,7 @@ class Crosswords extends Controller
 		$this->main_frame->Load();
 	}
 
-	function crossword_by_id($id = null, $operation = null)
+	function crossword_by_id($id = null, $operation = null, $comment_include = null)
 	{
 		if ($operation == 'ajax') {
 			OutputModes('ajax');
@@ -117,7 +117,7 @@ class Crosswords extends Controller
 		}
 		$puzzle->grid()->clearSolutions();
 
-		if (null === $operation) {
+		if (null === $operation || 'view' === $operation) {
 			$crosswordView = new CrosswordView($puzzle);
 			if (!$loggedIn) {
 				$crosswordView->setReadOnly(true);
@@ -125,6 +125,15 @@ class Crosswords extends Controller
 			else {
 				$success = $this->crosswords_model->LoadCrosswordVersion($crossword['id'], $this->user_auth->entityId, $puzzle);
 			}
+
+			// Comment thread
+			$comments_thread = null;
+			if ($crossword['expired'] && is_numeric($crossword['public_thread_id'])) {
+				$this->load->library('comment_views');
+				$this->comment_views->SetUri('/crosswords/'.$crossword['id'].'/view/');
+				$comments_thread = $this->comment_views->CreateStandard((int)$crossword['public_thread_id'], $comment_include);
+			}
+
 
 			$data = array();
 			$data['Crossword'] = &$crossword;
@@ -134,6 +143,7 @@ class Crosswords extends Controller
 			$data['Paths'] = array(
 				'ajax' => site_url('/crosswords/'.$crossword['id'].'/ajax'),
 			);
+			$data['Comments'] = $comments_thread;
 
 			$this->main_frame->includeCss('stylesheets/crosswords.css');
 			$this->main_frame->includeJs('javascript/simple_ajax.js');

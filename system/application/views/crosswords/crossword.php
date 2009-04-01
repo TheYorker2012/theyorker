@@ -7,6 +7,7 @@
  * @param $Grid
  * @param $LoggedIn
  * @param $Paths with 'ajax'
+ * @param $Comments
  */
 
 $width = $Grid->crossword()->grid()->width();
@@ -89,3 +90,8 @@ echo(xml_escape(
 	</form>
 
 </div>
+<?php
+if (null !== $Comments) {
+	$Comments->Load();
+}
+?>

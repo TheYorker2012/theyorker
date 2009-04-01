@@ -373,6 +373,18 @@ class Comments extends Controller
 						'anchor' => $standard_anchor,
 					),
 				),
+				// Public crossword threads.
+				array(
+					'table'  => 'crosswords',
+					'column' => 'crossword_public_comment_thread_id',
+					'uri'    => array(
+						'crosswords',
+						array('field'   => 'crossword_id'),
+						'view',
+						array('special' => 'page_id'),
+						'anchor' => $standard_anchor,
+					),
+				),
 			);
 			// Go through each thread type trying to match with this comment.
 			foreach ($thread_source_data as $data) {
