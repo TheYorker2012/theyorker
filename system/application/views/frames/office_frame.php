@@ -20,24 +20,27 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 	?> - The Yorker</title>
 
 	<link rel="shortcut icon" href="/images/favicon.png" />
-	<link rel="alternate" type="application/rss+xml" title="The Yorker - Campus News" href="/feeds/news" />
+	<link rel="alternate" type="application/rss+xml" title="The Yorker - News" href="/feeds/news" />
 
 	<link href="/stylesheets/v2.css" rel="stylesheet" type="text/css" />
 	<link href="/stylesheets/office.css" rel="stylesheet" type="text/css" />
 
-	<?php include('top_script.php'); ?>
+<?php include('top_script.php'); ?>
 
-	<!--[if IE]><link href="/stylesheets/v2-iefix.css" rel="stylesheet" type="text/css" /><![endif]-->
+	<!--[if lte IE 7]><link href="/stylesheets/v2-iefix.css" rel="stylesheet" type="text/css" /><![endif]-->
 	<!--[if lte IE 6]><link href="/stylesheets/v2-ie6fix.css" rel="stylesheet" type="text/css" /><![endif]-->
 
 	<script type="text/javascript">
 	tickerInit('BarNews');
-<?php if (!empty($ticker)) { ?>
-	<?php for ($x = 1; $x < count($ticker); $x++) { ?>
-	tickerAdd('<?php echo(xml_escape($ticker[$x]->headline)); ?>', '/<?php echo(xml_escape($ticker[$x]->section . '/' . $ticker[$x]->type . '/' . $ticker[$x]->id)); ?>');
-	<?php } ?>
-	tickerAdd('<?php echo(xml_escape($ticker[0]->headline)); ?>', '/<?php echo(xml_escape($ticker[0]->section . '/' . $ticker[0]->type . '/' . $ticker[0]->id)); ?>');
-<?php } ?>
+<?php
+if (!empty($ticker)) {
+	// The first article is displayed by PHP so start from second article
+	for ($x = 1; $x < count($ticker); $x++) {
+		echo('	tickerAdd("' . xml_escape($ticker[$x]->headline) . '", "/' . xml_escape($ticker[$x]->section . '/' . $ticker[$x]->type . '/' . $ticker[$x]->id) . '");' . "\n");
+	}
+	echo('	tickerAdd("' . xml_escape($ticker[0]->headline) . '", "/' . xml_escape($ticker[0]->section . '/' . $ticker[0]->type . '/' . $ticker[0]->id) . '");' . "\n");
+}
+?>
 	onLoadFunctions.push(tickerStart);
 	</script>
 
