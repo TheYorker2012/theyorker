@@ -5,7 +5,7 @@
  *	- 'id'
  * @param $Grid
  * @param $LoggedIn
- * @param $Paths with 'save'
+ * @param $Paths with 'ajax'
  */
 
 $width = $Grid->crossword()->grid()->width();
@@ -14,7 +14,7 @@ $height = $Grid->crossword()->grid()->height();
 echo(xml_escape(
 	'onLoadFunctions.push(function() {'.
 		'var xw =new Crossword("xw", '.js_literalise($width).', '.js_literalise($height).');'.
-		($LoggedIn ? 'xw.setAutosaveInterval('.js_literalise($Paths['save']).', 30);' : '').
+		($LoggedIn ? 'xw.setAutosaveInterval('.js_literalise($Paths['ajax']).', 30);' : '').
 	'})'
 	,false));
 ?></script>
@@ -47,7 +47,7 @@ echo(xml_escape(
 		<div style="clear:both" >
 			<fieldset>
 				<input	class="button" type="button" value="Save"
-						onclick="<?php echo(xml_escape('crossword("xw").save("'.$Paths['save'].'");')); ?>" />
+						onclick="<?php echo(xml_escape('crossword("xw").save("'.$Paths['ajax'].'");')); ?>" />
 			</fieldset>
 		</div>
 		<?php } ?>

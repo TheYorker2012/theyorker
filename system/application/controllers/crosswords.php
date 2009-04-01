@@ -93,7 +93,7 @@ class Crosswords extends Controller
 
 	function crossword_by_id($id = null, $operation = null)
 	{
-		if ('save' === $operation) {
+		if ($operation == 'ajax') {
 			OutputModes('ajax');
 		}
 		if (!CheckPermissions('public')) return;
@@ -131,7 +131,7 @@ class Crosswords extends Controller
 			$data['Grid'] = &$crosswordView;
 			$data['LoggedIn'] = $loggedIn;
 			$data['Paths'] = array(
-				'save' => site_url('/crosswords/'.$crossword['id'].'/save'),
+				'ajax' => site_url('/crosswords/'.$crossword['id'].'/ajax'),
 			);
 
 			$this->main_frame->includeCss('stylesheets/crosswords.css');
@@ -139,24 +139,44 @@ class Crosswords extends Controller
 			$this->main_frame->includeJs('javascript/crosswords.js');
 			$this->main_frame->SetContentSimple('crosswords/crossword', $data);
 		}
-		elseif ('save' === $operation) {
+		elseif ($operation == 'ajax') {
+			$root = array(
+				'_tag' => 'crossword',
+			);
+
 			if (!$loggedIn) {
 				$this->main_frame->Error(array(
 					'class' => 'error',
 					'text' => 'Not logged in.',
 				));
-				$status = 'fail';
+				$root['status'] = 'fail';
 			}
-			elseif (isset($_GET['xw']['save'])) {
+			else {
 				$worked = $puzzle->importGrid($_GET['xw']);
 				if ($worked) {
-					$success = $this->crosswords_model->SaveCrosswordVersion($crossword['id'], $this->user_auth->entityId, $puzzle);
-					$status = $success ? 'success' : 'fail';
-					if (!$success) {
+					// Saving (and autosaving)
+					if (isset($_GET['xw']['save']) || isset($_GET['xw']['autosave'])) {
+						$success = $this->crosswords_model->SaveCrosswordVersion($crossword['id'], $this->user_auth->entityId, $puzzle);
+						$root['status'] = $success ? 'success' : 'fail';
+						if (!$success) {
+							$this->main_frame->Error(array(
+								'class' => 'error',
+								'text' => 'Unable to save crossword.',
+							));
+						}
+					}
+					// Submitting for marking`
+					elseif (isset($_GET['xw']['submit'])) {
+						$root['status'] = 'success';
+						$root['mark'] = ($puzzle->isCorrect() ? 'correct' : 'incorrect');
+						//$root['medal'] = 'none';
+					}
+					else {
 						$this->main_frame->Error(array(
 							'class' => 'error',
-							'text' => 'Unable to save crossword.',
+							'text' => 'Unable to edit crossword.',
 						));
+						$root['status'] = 'fail';
 					}
 				}
 				else {
@@ -164,21 +184,9 @@ class Crosswords extends Controller
 						'class' => 'error',
 						'text' => 'Invalid crossword data.',
 					));
-					$status = 'fail';
+					$root['status'] = 'fail';
 				}
 			}
-			else {
-				$this->main_frame->Error(array(
-					'class' => 'error',
-					'text' => 'Unable to edit crossword.',
-				));
-				$status = 'fail';
-			}
-
-			$root = array(
-				'_tag' => 'crossword',
-				'status' => $status,
-			);
 
 			$this->main_frame->SetXml($root);
 		}

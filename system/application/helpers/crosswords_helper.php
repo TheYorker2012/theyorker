@@ -564,13 +564,34 @@ class CrosswordPuzzle
 	}
 
 	/*
-	 * Modifiers
+	 * Accessors
 	 */
 
 	/// Get the grid.
 	function grid()
 	{
 		return $this->m_grid;
+	}
+
+	/// Find whether the grid is correct.
+	function isCorrect()
+	{
+		// All lights must have correct values
+		$height = $this->m_grid->height();
+		$width = $this->m_grid->width();
+		for ($y = 0; $y < $height; ++$y) {
+			for ($x = 0; $x < $width; ++$x) {
+				$lights = $this->m_grid->lightsAt($x, $y, true);
+				foreach ($lights as &$light) {
+					$answer = $this->m_grid->lightText($light);
+					$solution = $light->clue()->solution();
+					if ($answer != $solution) {
+						return false;
+					}
+				}
+			}
+		}
+		return true;
 	}
 
 	/*
@@ -650,6 +671,13 @@ class CrosswordView
 			?><div class="crosswordEdit"><?php
 		}
 		?><div id="<?php echo("$name-notify"); ?>" class="crosswordAjaxNotify hidden"></div><?php
+		if (!$this->m_edit) {
+			?><div id="<?php echo("$name-complete"); ?>" class="crosswordAjaxNotify hidden"><?php
+				?><fieldset><input	class="button" type="button" value="submit for marking" <?php
+								?>	onclick="<?php echo(xml_escape('crossword("xw").submit()')); ?>"<?php
+								?>	/>crossword complete</fieldset><?php
+			?></div><?php
+		}
 		?><div class="crosswordBox"><?php
 		// Render main crossword grid
 		?><table class="crossword"><?php

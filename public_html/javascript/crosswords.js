@@ -358,6 +358,7 @@ function CrosswordLight(name, x, y, orientation, cells, els, eds)
 		if (this.m_complete != complete) {
 			this.m_complete = complete;
 			(complete ? CssAdd : CssRemove)(this.m_clueDiv, "complete")
+			crossword(name).updateCompleteness();
 		}
 	}
 
@@ -565,6 +566,10 @@ function Crossword(name, width, height)
 	this.m_autosaveInterval = null;
 	this.m_autosaveTimer = null;
 
+	this.m_complete = null;
+	// Dummy so lights can ping it as they get filled
+	this.updateCompleteness = function() {}
+
 	for (var x = 0; x < width; ++x) {
 		this.m_grid[x] = [];
 		for (var y = 0; y < height; ++y) {
@@ -631,6 +636,39 @@ function Crossword(name, width, height)
 		return this.m_orientation;
 	}
 
+
+	this.getCompleteness = function()
+	{
+		for (var y = 0; y < this.m_height; ++y) {
+			for (var x = 0; x < this.m_width; ++x) {
+				var cell = this.m_grid[x][y];
+				if (!cell.isBlank()) {
+					for (var o = 0; o < 2; ++o) {
+						var light = this.m_lights[x][y][o];
+						if (null != light) {
+							if (!light.m_complete) {
+								return false;
+							}
+						}
+					}
+				}
+			}
+		}
+		return true;
+	}
+
+	/// Find whether the crossword is completely filled in
+	this.updateCompleteness = function()
+	{
+		var complete = this.getCompleteness();
+		if (this.m_complete != complete) {
+			this.m_complete = complete;
+			var completeBox = document.getElementById(this.m_name+'-complete');
+			completeBox.className="crosswordAjaxNotify "+(complete?"complete":"hidden");
+		}
+	}
+
+
 	this.autosaveTimeout = function()
 	{
 		if (this.m_autosaveInterval != null) {
@@ -687,8 +725,9 @@ function Crossword(name, width, height)
 		this.m_changed = false;
 		this.updateNotification("pending", "autosaving", null);
 		var self = this;
-		this.post(this.m_autosaveAction, "autosave", 1000,
+		this.post(this.m_autosaveAction, "autosave",
 				function() {
+					self.updateNotification("success", "autosaved", 1000);
 					self.resetAutosaveTimer();
 				},
 				function() {
@@ -700,16 +739,57 @@ function Crossword(name, width, height)
 	}
 	this.save = function(action)
 	{
+		if (null != this.m_autosaveTimer) {
+			clearTimeout(this.m_autosaveTimer);
+		}
 		var wasChanged = this.m_changed;
 		this.m_changed = false;
 		this.updateNotification('pending', 'saving', null);
 		var self = this;
-		this.post(action, "save", 10000,
-				null,
+		this.post(action, "save",
+				function() {
+					self.updateNotification("success", "saved", 10000);
+					self.resetAutosaveTimer();
+				},
 				function() {
 					if (wasChanged) {
 						self.m_changed = true;
 					}
+					self.resetAutosaveTimer();
+				});
+	}
+	this.submit = function()
+	{
+		if (null != this.m_autosaveTimer) {
+			clearTimeout(this.m_autosaveTimer);
+		}
+		var completeBox = document.getElementById(this.m_name+'-complete');
+		completeBox.className="crosswordAjaxNotify hidden";
+		this.updateNotification('pending', 'submitting for marking', null);
+		var self = this;
+		this.post(this.m_autosaveAction, "submit",
+				function(root) {
+					var marks = root.getElementsByTagName('mark');
+					if (marks.length < 1) {
+						self.updateNotification("error", "submit failed: no mark returned", 10000);
+					}
+					else {
+						var mark = (marks[0].textContent == 'correct');
+						if (!mark) {
+							self.updateNotification("error", "crossword is incorrect - please try again", 10000);
+						}
+						else {
+							self.updateNotification("success", "congratulations: crossword is correct", 10000);
+						}
+					}
+					self.m_complete = null;
+					self.updateCompleteness();
+					self.resetAutosaveTimer();
+				},
+				function() {
+					self.m_complete = null;
+					self.updateCompleteness();
+					self.resetAutosaveTimer();
 				});
 	}
 
@@ -730,10 +810,10 @@ function Crossword(name, width, height)
 		}
 	}
 
-	this.post = function(action, opname, success_timeout, success_event, fail_event)
+	this.post = function(action, opname, success_event, fail_event)
 	{
 		var post = {};
-		post[this.m_name+"[save]"]=1;
+		post[this.m_name+"["+opname+"]"]=1;
 		this.exportPost(post);
 
 		var self = this;
@@ -756,15 +836,14 @@ function Crossword(name, width, height)
 					}
 				}
 				if (!anyErrors) {
-					self.updateNotification("success", opname+"d", success_timeout);
 					if (null != success_event) {
-						success_event();
+						success_event(root);
 					}
 				}
 				else {
 					self.updateNotification("error", opname+" failed", null);
 					if (null != fail_event) {
-						fail_event();
+						fail_event(root);
 					}
 				}
 			}
@@ -1015,6 +1094,8 @@ function Crossword(name, width, height)
 		}
 		return true;
 	}
+
+	this.updateCompleteness();
 }
 
 function crosswordDeselect(name, e)
