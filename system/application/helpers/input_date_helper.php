@@ -28,6 +28,11 @@ class InputDateInterface extends InputInterface
 		$this->div_classes = array('input_date');
 	}
 
+	public function setTimeEnabled($time)
+	{
+		$this->time = $time;
+	}
+
 	protected function _Load()
 	{
 		$value = $this->value;
@@ -74,7 +79,8 @@ class InputDateInterface extends InputInterface
 			?></script><?php
 			?><div><?php
 				// Day of the week
-				?><select	name="<?php echo($this->name.'[day]'); ?>"<?php
+				?><select	id="<?php echo($this->name.'__day_select'); ?>"<?php
+						?>	name="<?php echo($this->name.'[day]'); ?>"<?php
 						?>	onchange="<?php echo(xml_escape('return input_date_day_changed("'.$this->name.'");')); ?>"<?php
 						?>><?php
 					foreach ($days as $val => $day) {
@@ -89,7 +95,8 @@ class InputDateInterface extends InputInterface
 				?></select><?php
 				// Week of the term
 				?><span>week</span><?php
-				?><select	name="<?php echo($this->name.'[wk]'); ?>"<?php
+				?><select	id="<?php echo($this->name.'__wk_select'); ?>"<?php
+						?>	name="<?php echo($this->name.'[wk]'); ?>"<?php
 						?>	onchange="<?php echo(xml_escape('return input_date_day_changed("'.$this->name.'");'));?>"<?php
 						?>><?php
 					$weeks = $value->AcademicTermWeeks();
@@ -105,7 +112,8 @@ class InputDateInterface extends InputInterface
 				?></select><?php
 				// Term
 				?><span>of</span><?php
-				?><select name="<?php echo($this->name.'[term]'); ?>"<?php
+				?><select	id="<?php echo($this->name.'__term_select'); ?>"<?php
+						?>	name="<?php echo($this->name.'[term]'); ?>"<?php
 						?>	onchange="<?php echo(xml_escape('return input_date_term_changed("'.$this->name.'");'));?>"<?php
 						?>><?php
 					$cur = Academic_time::NewToday();
@@ -132,37 +140,41 @@ class InputDateInterface extends InputInterface
 					}
 				?></select><?php
 				// Time of day
-				?><span>at</span><?php
-				?><select name="<?php echo($this->name.'[hr]'); ?>"<?php
-						?>	onchange="<?php echo(xml_escape('return input_date_time_changed("'.$this->name.'");'));?>"<?php
-						?>><?php
-					for ($hr = 0; $hr < 24; ++$hr) {
-						?><option value="<?php echo($hr); ?>"<?php
-							if ($hr == $value->Hour()) {
-								?> selected="selected"<?php
-							}
+				if ($this->time) {
+					?><span>at</span><?php
+					?><select	id="<?php echo($this->name.'__hr_select'); ?>"<?php
+							?>	name="<?php echo($this->name.'[hr]'); ?>"<?php
+							?>	onchange="<?php echo(xml_escape('return input_date_time_changed("'.$this->name.'");'));?>"<?php
 							?>><?php
-						echo(sprintf('%02d', $hr));
-						?></option><?php
-					}
-				?></select><?php
-				?><span>:</span><?php
-				?><select name="<?php echo($this->name.'[min]'); ?>"<?php
-						?>	onchange="<?php echo(xml_escape('return input_date_time_changed("'.$this->name.'");'));?>"<?php
-						?>><?php
-					$minute = $value->Minute();
-					$minute_interval = 5;
-					for ($min = 0; $min < 60; $min += $minute_interval) {
-						?><option value="<?php echo($min); ?>"<?php
-							if ($min <= $minute &&
-								$min+$minute_interval > $minute) {
-								?> selected="selected"<?php
-							}
+						for ($hr = 0; $hr < 24; ++$hr) {
+							?><option value="<?php echo($hr); ?>"<?php
+								if ($hr == $value->Hour()) {
+									?> selected="selected"<?php
+								}
+								?>><?php
+							echo(sprintf('%02d', $hr));
+							?></option><?php
+						}
+					?></select><?php
+					?><span>:</span><?php
+					?><select	id="<?php echo($this->name.'__min_select'); ?>"<?php
+							?>	name="<?php echo($this->name.'[min]'); ?>"<?php
+							?>	onchange="<?php echo(xml_escape('return input_date_time_changed("'.$this->name.'");'));?>"<?php
 							?>><?php
-						echo(sprintf('%02d', $min));
-						?></option><?php
-					}
-				?></select><?php
+						$minute = $value->Minute();
+						$minute_interval = 5;
+						for ($min = 0; $min < 60; $min += $minute_interval) {
+							?><option value="<?php echo($min); ?>"<?php
+								if ($min <= $minute &&
+									$min+$minute_interval > $minute) {
+									?> selected="selected"<?php
+								}
+								?>><?php
+							echo(sprintf('%02d', $min));
+							?></option><?php
+						}
+					?></select><?php
+				}
 				// Close button
 				?><input	type="button" value="x"<?php
 						?>	onclick="<?php echo(xml_escape('return input_selector_click("'.$this->name.'__selector");')); ?>"<?php
