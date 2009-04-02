@@ -13,7 +13,7 @@ table.crossword td {
 /* Selected cells */
 
 table.crossword td.focus {
-	border: 2px solid #FF7A00;
+	border-color: #FF6A00;
 }
 
 /* Cells with a space before */

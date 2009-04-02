@@ -153,7 +153,7 @@ table.crossword td.selected {
 
 table.crossword td.focus {
 	background-color: #FFAA88;
-	border: 1px solid red;
+	border-color: red;
 }
 
 div.crosswordBox {
