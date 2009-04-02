@@ -43,10 +43,12 @@ class Announcements extends Controller
 
 		if (isset($_POST['preview']) || isset($_POST['post'])) {
 
-			foreach ($data['bylines'] as $byline) {
-				if ($byline->id == $_POST['sender']) {
-					$data['preview']['byline'] = $byline;
-					break;
+        	if (!empty($_POST['sender'])) {
+				foreach ($data['bylines'] as $byline) {
+					if ($byline->id == $_POST['sender']) {
+						$data['preview']['byline'] = $byline;
+						break;
+					}
 				}
 			}
 			if (empty($data['preview']['byline'])) {
