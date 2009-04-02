@@ -484,7 +484,7 @@ class Crosswords extends Controller
 				show_404();
 			}
 		}
-		$this->main_frame->includeCss('stylesheets/crosswords_office.css');
+		$this->main_frame->IncludeCss('stylesheets/crosswords_office.css');
 		$this->main_frame->Load();
 	}
 
@@ -659,10 +659,6 @@ class Crosswords extends Controller
 					'save' => site_url("office/crosswords/crossword/$crossword/save"),
 				);
 
-				$this->main_frame->includeCss('stylesheets/crosswords.css');
-				$this->main_frame->includeJs('javascript/simple_ajax.js');
-				$this->main_frame->includeJs('javascript/crosswords.js');
-				$this->main_frame->includeJs('javascript/crosswords_edit.js');
 				$this->main_frame->SetContentSimple('crosswords/office/crossword_edit', $data);
 			}
 			else if ('stats' === $operation) {

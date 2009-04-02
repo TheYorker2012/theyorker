@@ -66,6 +66,7 @@ onLoadFunctions.push(function() {
 
 function setInnerText(obj,val)
 {
+	// Assume not writing to DOM
 	if (hasInnerText) {
 		obj.innerText = val;
 	}
@@ -76,7 +77,17 @@ function setInnerText(obj,val)
 
 function innerText(obj)
 {
-	return (hasInnerText ? obj.innerText : obj.textContent);
+	// Even XML DOM is different in IE (uses text instead of innerText)
+	if (undefined != obj.innerText) {
+		return obj.innerText;
+	}
+	else if (undefined != obj.textContent) {
+		return obj.textContent;
+	}
+	else if (undefined != obj.text) {
+		return obj.text;
+	}
+	return undefined;
 }
 
 // ** END innerText/textContent decision **

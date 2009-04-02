@@ -643,6 +643,16 @@ class CrosswordView
 	{
 		$this->m_crossword = $crossword;
 		$this->m_edit = $edit;
+
+		// Set up stylesheets and javascript
+		$ci = &get_instance();
+		$ci->main_frame->IncludeCss('stylesheets/crosswords.css');
+		$ci->main_frame->IncludeCss('stylesheets/crosswords-iefix.css',null,null,'IE');
+		$ci->main_frame->IncludeJs('javascript/simple_ajax.js');
+		$ci->main_frame->IncludeJs('javascript/crosswords.js');
+		if ($edit) {
+			$ci->main_frame->IncludeJs('javascript/crosswords_edit.js');
+		}
 	}
 
 	function crossword()

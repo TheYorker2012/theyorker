@@ -145,9 +145,6 @@ class Crosswords extends Controller
 			);
 			$data['Comments'] = $comments_thread;
 
-			$this->main_frame->includeCss('stylesheets/crosswords.css');
-			$this->main_frame->includeJs('javascript/simple_ajax.js');
-			$this->main_frame->includeJs('javascript/crosswords.js');
 			$this->main_frame->SetContentSimple('crosswords/crossword', $data);
 		}
 		elseif ($operation == 'ajax') {
