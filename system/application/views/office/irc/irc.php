@@ -4,40 +4,30 @@
  * @param $Help
  * @param $IrcHelp
  * @param $Embed
+ * @param $Personal
  */
 
-$username = $this->user_auth->username;
-$fullname = $this->user_auth->firstname.' '.$this->user_auth->surname;
-$nick = str_replace(' ', '', $fullname);
-$url = 'http://trunk.dev.theyorker.co.uk/office/irc/free'.
-			'?username='	. urlencode($username).
-			'&fullname='	. urlencode($fullname).
-// 			'&nick='		. urlencode($nick).
-		'';
 ?>
 
 <div class="BlueBox">
 	<h2>interactive chat</h2>
 	<?php echo($Help); ?>
 	
-	<?php if ($Embed) { ?>
+	<?php if (null !== $Embed) {
+		$url = $Embed.'/office/irc/free'.
+					'?username='	. urlencode($EmbedData['Username']).
+					'&fullname='	. urlencode($EmbedData['Fullname']).
+		// 			'&nick='		. urlencode($EmbedData['Nick']).
+				'';
+	?>
 	<iframe src="<?php echo(xml_escape($url)); ?>"
 			height="420" width="620"
 			frameborder="0" scrolling="no">
 		Your browser needs to support iFrames to use this webchat.
 	</iframe>
-	<?php } else { ?>
-	<fieldset class="inline">
-		<input class="button" type="button" onclick="irc_disconnect()" value="Disconnect" />
-		<input class="button" type="button" onclick="irc_connect()" value="Connect" />
-	</fieldset>
-	<?php } ?>
-	<div style="display:block;">
-		<ul id="irc_channel_tabs" class="irc_channels">
-		</ul>
-	</div>
-	<div id="irc_channels">
-	</div>
+	<?php } else {
+		$this->load->view('office/irc/embedded', $EmbedData);
+	} ?>
 </div>
 <div class="BlueBox">
 	<?php echo($IrcHelp); ?>

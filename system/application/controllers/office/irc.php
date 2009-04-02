@@ -23,9 +23,9 @@ class Irc extends Controller
 	
 	function free()
 	{
+		show_404();
 		if (!CheckPermissions('public')) return;
 		
-		$RequiredReferer = 'http://trunk.yorker.albanarts.com/office/irc';
 		$RequiredReferer = NULL;
 		
 		if ($RequiredReferer != NULL &&
@@ -40,6 +40,7 @@ class Irc extends Controller
 		}
 		
 		$data = array(
+			'Framed' => false,
 			'Username' => $_GET['username'],
 			'Fullname' => $_GET['fullname'],
 		);
@@ -61,8 +62,14 @@ class Irc extends Controller
 		$data = array(
 			'Help' => $this->pages_model->GetPropertyWikitext("help_main"),
 			'IrcHelp' => $this->pages_model->GetPropertyWikitext("irc_help"),
-			'Embed' => true,
+			'Embed' => null,//'/office/irc/free',
+			'EmbedData' => array(
+				'Framed' => true,
+			),
 		);
+		$this->main_frame->IncludeJs('javascript/simple_ajax.js');
+		$this->main_frame->IncludeJs('javascript/irc.js');
+		$this->main_frame->IncludeCss('stylesheets/irc.css');
 		$this->main_frame->SetContentSimple('office/irc/irc', $data);
 		$this->main_frame->Load();
 	}
@@ -101,6 +108,7 @@ class Irc extends Controller
 	function ajax($variation = NULL)
 	{
 		if ('embeddedlive' === $variation) {
+			show_404();
 			if (!CheckPermissions('public', false)) return;
 			if (!isset($_GET['username']) || !isset($_GET['fullname'])) {
 				show_404();
