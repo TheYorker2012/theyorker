@@ -455,6 +455,7 @@ class Businesscards_model extends Model
 				LEFT JOIN	users
 					ON		users.user_entity_id = business_cards.business_card_user_entity_id
 				WHERE		business_cards.business_card_business_card_group_id = business_card_groups.business_card_group_id
+				AND			business_card_groups.business_card_group_organisation_entity_id IS NULL
 				AND			business_cards.business_card_deleted = 0
 				AND			business_cards.business_card_approved = 0';
 		$query = $this->db->query($sql);
