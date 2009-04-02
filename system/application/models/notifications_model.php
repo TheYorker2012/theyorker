@@ -13,6 +13,106 @@ class Notifications_model extends Model
 		parent::Model();
 	}
 
+	function checkAnnouncements ()
+	{
+		$implicitRoles = array();
+		switch (GetUserLevel()) {
+			case 'admin':
+				$implicitRoles[] = 'LEVEL_ADMIN';
+				// Fall-thru
+			case 'editor':
+				$implicitRoles[] = 'LEVEL_EDITOR';
+				// Fall-thru
+			case 'office':
+				$implicitRoles[] = 'LEVEL_OFFICER';
+		}
+		$sql = 'SELECT		COUNT(*) as rowcount
+				FROM		notifications
+				LEFT JOIN	notifications_recipients
+					ON	(	notifications_recipients.notification_id = notifications.notification_id
+						AND	notifications_recipients.notification_user_entity_id = ?
+						)
+				WHERE		notifications.notification_type = "announcement"
+				AND			notifications.notification_deleted = 0
+				AND	(		notifications_recipients.notification_read IS NULL
+					OR		notifications_recipients.notification_read = 0
+					)
+				AND	(		notifications.notification_role IN
+							(
+								SELECT user_role_role_name
+								FROM user_roles
+								WHERE user_role_user_entity_id = ?
+							)
+					OR		notifications.notification_role IN ("' . implode('","', $implicitRoles) . '")
+					OR		notifications_recipients.notification_user_entity_id IS NOT NULL
+					)';
+		$query = $this->db->query($sql, array($this->user_auth->entityId, $this->user_auth->entityId));
+		return $query->row()->rowcount;
+	}
+
+	function checkPendingBylines ()
+	{
+		$sql = 'SELECT		COUNT(*) AS rowcount
+				FROM		business_card_groups,
+							business_cards
+				WHERE		business_cards.business_card_business_card_group_id = business_card_groups.business_card_group_id
+				AND			business_card_groups.business_card_group_organisation_entity_id IS NULL
+				AND			business_cards.business_card_deleted = 0
+				AND			business_cards.business_card_approved = 0';
+		$query = $this->db->query($sql);
+		return $query->row()->rowcount;
+	}
+
+/*
+	function getAnnouncements ()
+	{
+		$implicitRoles = array();
+		switch (GetUserLevel()) {
+			case 'admin':
+				$implicitRoles[] = 'LEVEL_ADMIN';
+				// Fall-thru
+			case 'editor':
+				$implicitRoles[] = 'LEVEL_EDITOR';
+				// Fall-thru
+			case 'office':
+				$implicitRoles[] = 'LEVEL_OFFICER';
+		}
+		$sql = 'SELECT		notifications.notification_id AS id,
+							notifications.notification_subject AS subject,
+							notifications.notification_wikitext_cache AS content,
+							UNIX_TIMESTAMP(notifications.notification_date) AS time,
+							business_cards.business_card_name AS user_name,
+							business_cards.business_card_image_id AS user_image,
+							business_cards.business_card_title AS user_title,
+							notifications_read.notification_id AS opened
+				FROM		notifications
+				INNER JOIN	business_cards
+					ON		business_cards.business_card_id = notifications.notification_byline_business_card_id
+				LEFT JOIN	notifications_read
+					ON	(	notifications_read.notification_id = notifications.notification_id
+						AND	notifications_read.notification_user_entity_id = ?
+						)
+				WHERE		notifications.notification_type = "announcement"
+				AND			notifications.notification_deleted = 0
+				AND	(		notifications.notification_role IN
+							(
+								SELECT user_role_role_name
+								FROM user_roles
+								WHERE user_role_user_entity_id = ?
+							)
+					OR		notifications.notification_role IN ("' . implode('","', $implicitRoles) . '")
+					)
+				ORDER BY	notifications.notification_date DESC
+				LIMIT		0, 20';
+		$query = $this->db->query($sql, array($this->user_auth->entityId, $this->user_auth->entityId));
+		return $query->result();
+	}
+*/
+
+	/**
+	 *	ANNOUNCEMENTS
+	 */
+
 	function getUserBylines ()
 	{
 		$sql = 'SELECT		business_card_id AS id,
@@ -66,50 +166,6 @@ class Notifications_model extends Model
 		return $query->result();
 	}
 
-	function getAnnouncements ()
-	{
-		$implicitRoles = array();
-		switch (GetUserLevel()) {
-			case 'admin':
-				$implicitRoles[] = 'LEVEL_ADMIN';
-				// Fall-thru
-			case 'editor':
-				$implicitRoles[] = 'LEVEL_EDITOR';
-				// Fall-thru
-			case 'office':
-				$implicitRoles[] = 'LEVEL_OFFICER';
-		}
-		$sql = 'SELECT		notifications.notification_id AS id,
-							notifications.notification_subject AS subject,
-							notifications.notification_wikitext_cache AS content,
-							UNIX_TIMESTAMP(notifications.notification_date) AS time,
-							business_cards.business_card_name AS user_name,
-							business_cards.business_card_image_id AS user_image,
-							business_cards.business_card_title AS user_title,
-							notifications_read.notification_id AS opened
-				FROM		notifications
-				INNER JOIN	business_cards
-					ON		business_cards.business_card_id = notifications.notification_byline_business_card_id
-				LEFT JOIN	notifications_read
-					ON	(	notifications_read.notification_id = notifications.notification_id
-						AND	notifications_read.notification_user_entity_id = ?
-						)
-				WHERE		notifications.notification_type = "announcement"
-				AND			notifications.notification_deleted = 0
-				AND	(		notifications.notification_role IN
-							(
-								SELECT user_role_role_name
-								FROM user_roles
-								WHERE user_role_user_entity_id = ?
-							)
-					OR		notifications.notification_role IN ("' . implode('","', $implicitRoles) . '")
-					)
-				ORDER BY	notifications.notification_date DESC
-				LIMIT		0, 20';
-		$query = $this->db->query($sql, array($this->user_auth->entityId, $this->user_auth->entityId));
-		return $query->result();
-	}
-
 	function getAllAnnouncements ()
 	{
 		$sql = 'SELECT		notifications.notification_id AS id,
@@ -138,7 +194,7 @@ class Notifications_model extends Model
 		return $query->result();
 	}
 
-	function add ($subject, $wikitext, $cache, $role, $byline)
+	function postAnnouncement ($subject, $wikitext, $cache, $role, $byline)
 	{
 		$sql = 'INSERT INTO	notifications SET
 				notification_role = ?,
@@ -151,9 +207,10 @@ class Notifications_model extends Model
 	}
 
 	function markAsRead($notification_id, $user_id) {
-		$sql = 'REPLACE INTO notifications_read SET
+		$sql = 'REPLACE INTO notifications_recipients SET
 				notification_id = ?,
-				notification_user_entity_id = ?';
+				notification_user_entity_id = ?,
+				notification_read = 1';
 		$query = $this->db->query($sql, array($notification_id, $user_id));
 	}
 }
