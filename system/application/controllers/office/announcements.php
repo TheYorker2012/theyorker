@@ -56,7 +56,7 @@ class Announcements extends Controller
 			} else {
 				$this->load->library('wikiparser');
 				$data['preview']['content'] = $this->wikiparser->parse($_POST['content']);
-	
+
 				if (isset($_POST['post'])) {
 					if (empty($_POST['subject']) || empty($_POST['content'])) {
 						$this->main_frame->AddMessage('error','Please make sure you have provided a subject and message for this announcement.');
@@ -65,7 +65,7 @@ class Announcements extends Controller
 					} elseif (empty($_POST['sender'])) {
 						$this->main_frame->AddMessage('error','Please choose the byline you wish to post the announcement with.');
 					} else {
-						$this->notifications_model->postAnnouncement($_POST['subject'], $_POST['content'], $data['preview']['content'], $_POST['sendto'], $_POST['sender']);
+						$this->notifications_model->postAnnouncement($_POST['subject'], $_POST['content'], $_POST['sendto'], $_POST['sender']);
 						$this->main_frame->AddMessage('success','New announcement has been posted.');
 						redirect('/office/announcements');
 					}

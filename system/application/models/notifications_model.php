@@ -13,6 +13,10 @@ class Notifications_model extends Model
 		parent::Model();
 	}
 
+	/**
+	 *	NOTIFICATIONS
+	 */
+
 	function checkAnnouncements ()
 	{
 		$implicitRoles = array();
@@ -61,6 +65,55 @@ class Notifications_model extends Model
 				AND			business_cards.business_card_approved = 0';
 		$query = $this->db->query($sql);
 		return $query->row()->rowcount;
+	}
+
+	/**
+	 *	ACTIVITY
+	 */
+
+	function sendToUsers ($type, $subject, $wikitext, $users, $byline_id = NULL)
+	{
+		if (!is_array($users)) {
+			$users = array($users);
+		}
+		$this->send($type, $subject, $wikitext, '', $users, $byline_id);
+	}
+
+	function sendToRole ($type, $subject, $wikitext, $role, $byline_id = NULL)
+	{
+		$this->send($type, $subject, $wikitext, $role, array(), $byline_id);
+	}
+
+	function send ($type, $subject, $wikitext, $role = '', $users = array(), $byline_id = NULL)
+	{
+		$this->load->library('wikiparser');
+		$wikicache = $this->wikiparser->parse($wikitext);
+
+		$sql = 'INSERT INTO	notifications SET
+				notification_type = ?,
+				notification_role = ?,
+				notification_subject = ?,
+				notification_wikitext = ?,
+				notification_wikitext_cache = ?,
+				notification_user_entity_id = ?,
+				notification_byline_business_card_id = ?';
+		$query = $this->db->query($sql, array(
+			$type,
+			$role,
+			$subject,
+			$wikitext,
+			$wikicache,
+			$this->user_auth->entityId,
+			$byline_id
+		));
+		$new_id = $this->db->insert_id();
+
+		$sql = 'INSERT INTO notifications_recipients SET
+				notification_id = ?,
+				notification_user_entity_id = ?';
+		foreach ($users as $user) {
+			$this->db->query($sql, array($new_id, $user));
+		}
 	}
 
 /*
@@ -194,16 +247,9 @@ class Notifications_model extends Model
 		return $query->result();
 	}
 
-	function postAnnouncement ($subject, $wikitext, $cache, $role, $byline)
+	function postAnnouncement ($subject, $wikitext, $role, $byline)
 	{
-		$sql = 'INSERT INTO	notifications SET
-				notification_role = ?,
-				notification_subject = ?,
-				notification_wikitext = ?,
-				notification_wikitext_cache = ?,
-				notification_user_entity_id = ?,
-				notification_byline_business_card_id = ?';
-		$query = $this->db->query($sql, array($role, $subject, $wikitext, $cache, $this->user_auth->entityId, $byline));
+		$this->send('announcement', $subject, $wikitext, $role, array(), $byline);
 	}
 
 	function markAsRead($notification_id, $user_id) {
