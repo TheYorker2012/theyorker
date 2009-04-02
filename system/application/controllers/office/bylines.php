@@ -12,6 +12,7 @@ class Bylines extends Controller
 	{
 		parent::Controller();
 		$this->load->model('businesscards_model');
+		$this->load->model('notifications_model');
 	}
 
 	function _navbar ($selected = '')
@@ -154,6 +155,7 @@ class Bylines extends Controller
 			));
 			if ($add_op) {
 				$this->main_frame->AddMessage('success', 'The new byline team was successfully created.');
+				$this->notifications_model->sendToPermission('byline-teams', 'New Byline Team', 'created a new byline team called "[[office/bylines/view_team/' . $this->db->insert_id() . '|' . $_POST['team_name'] . ']]".', 'BYLINES_TEAMS');
 			} else {
 				$this->main_frame->AddMessage('error', 'There was an error adding the new byline team, please try again.');
 			}
@@ -198,6 +200,7 @@ class Bylines extends Controller
 						$delete = $this->businesscards_model->RemoveOrganisationCardGroupById($team_id);
 						if ($delete) {
 							$this->main_frame->AddMessage('success', 'The requested byline team has successfully been deleted.');
+							$this->notifications_model->sendToPermission('byline-teams', 'Deleted Byline Team', 'deleted the byline team called "' . $data['team_info']['business_card_group_name'] . '".', 'BYLINES_TEAMS');
 							redirect('/office/bylines/teams/');
 						} else {
 							$this->main_frame->AddMessage('error', 'There was an error deleting the requested byline team, please try again.');
@@ -238,6 +241,7 @@ class Bylines extends Controller
 					$edit_op = $this->businesscards_model->RenameOrganisationCardGroup($team_id, $_POST['team_name']);
 					if ($edit_op) {
 						$this->main_frame->AddMessage('success', 'The byline team\'s name was successfully renamed.');
+						$this->notifications_model->sendToPermission('byline-teams', 'Renamed Byline Team', 'renamed a byline team from "' . $data['team_info']['business_card_group_name'] . '" to "[[office/bylines/view_team/' . $team_id . '|' . $_POST['team_name'] . ']]".', 'BYLINES_TEAMS');
 					} else {
 						$this->main_frame->AddMessage('error', 'There was an error renaming the byline team\'s name, please try again.');
 					}
@@ -274,9 +278,13 @@ class Bylines extends Controller
 		if (!CheckRolePermissions('BYLINES_PENDING')) return;
 
 		if (($byline_id !== NULL) && (is_numeric($byline_id))) {
+			$byline_info = $this->businesscards_model->GetBylineInfo($byline_id);
 			$approve = $this->businesscards_model->ApproveBusinessCard($byline_id);
 			if ($approve) {
 				$this->main_frame->AddMessage('success', 'The byline was approved.');
+				if ($byline_info['business_card_user_entity_id'] != $this->user_auth->entityId) {
+					$this->notifications_model->sendToUsers('byline', 'Approved Byline', 'approved one of your [[office/bylines/view_byline/' . $byline_id . '|bylines]].', $byline_info['business_card_user_entity_id']);
+				}
 			} else {
 				$this->main_frame->AddMessage('error', 'There was an error trying to approve this byline, please try again.');
 			}
@@ -564,6 +572,9 @@ class Bylines extends Controller
 									$aboutus);
 						if ($update) {
 							$this->main_frame->AddMessage('success', 'The changes you have requested to the below byline have been sent to an editor for approval.');
+							if ($data['byline_info']['business_card_user_entity_id'] != $this->user_auth->entityId) {
+								$this->notifications_model->sendToUsers('byline', 'Edited Byline', 'has edited one of your [[office/bylines/view_byline/' . $byline_id . '|bylines]].', $data['byline_info']['business_card_user_entity_id']);
+							}
 						} else {
 							$this->main_frame->AddMessage('error', 'There was an error updating the byline\'s information, please try again.');
 						}
