@@ -67,9 +67,8 @@ div.crosswordAjaxNotify.error {
 }
 
 table.crossword {
-	border: 1px solid #FF6A00;
-	border-spacing: 0px;
-
+	border: 2px solid #FF6A00;
+	border-collapse: collapse;
 
 	text-align: center;
 	font-weight: bold;
@@ -97,8 +96,9 @@ table.crossword td input {
 	border: 0px solid white;
 	margin: 0px;
 	width: 100%;
-	height: 1.2em;
+	height: 1.5em;
 
+	background-color: transparent;
 	text-align: center;
 	font-weight: bold;
 	font-size: 14pt;
@@ -113,7 +113,7 @@ table.crossword td div {
 
 table.crossword td {
 	background-color: white;
-	border: 1px solid #FF6A00;
+	border: 2px solid #FF6A00;
 	padding: 0px;
 	margin: 0px;
 	vertical-align: bottom;
@@ -132,35 +132,28 @@ table.crossword td.vsp {
 
 /* Blank cells */
 
-table.crossword td.blank,
-table.crossword td.blank input {
+table.crossword td.blank {
 	background-color: #FF6A00;
 }
 
-table.crossword td.blank.selected,
-table.crossword td.blank.selected input {
+table.crossword td.blank.selected {
 	background-color: #FFAA00;
 }
 
-table.crossword td.blank.focus,
-table.crossword td.blank.focus input {
+table.crossword td.blank.focus {
 	background-color: #FFAA00;
-}
-
-table.crossword td.focus {
-	border: 2px solid red;
 }
 
 /* Selected cells */
 
-table.crossword td.selected,
-table.crossword td.selected input {
+table.crossword td.selected {
 	background-color: #FFFF88;
 }
 
-table.crossword td.focus,
-table.crossword td.focus input {
+table.crossword td.focus {
 	background-color: #FFAA88;
+	/* IE Sucks big time     */
+	/*border: 2px solid red; */
 }
 
 div.crosswordBox {

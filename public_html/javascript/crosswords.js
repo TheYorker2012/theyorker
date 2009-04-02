@@ -1144,9 +1144,12 @@ function crosswordKeyPress(name, x, y, e)
 	return crossword(name).keyPress(x, y, e);
 }
 
-function crosswordToggleInlineAnswers()
+function crosswordToggleInlineAnswers(name)
 {
-	var items = document.getElementsByName("crosswordClues");
+	var items = [
+		document.getElementById(name+"-0-clues"),
+		document.getElementById(name+"-1-clues")
+	];
 	var hideValues = CssCheck(items[0], "hideValues");
 	for (var i = 0; i < items.length; ++i) {
 		CssToggle(items[i], "hideValues");
@@ -1155,9 +1158,12 @@ function crosswordToggleInlineAnswers()
 	setInnerText(link, (hideValues ? "Hide inline answers" : "Show inline answers"));
 }
 
-function crosswordToggleCrypticClues()
+function crosswordToggleCrypticClues(name)
 {
-	var items = document.getElementsByName("crosswordClues");
+	var items = [
+		document.getElementById(name+"-0-clues"),
+		document.getElementById(name+"-1-clues")
+	];
 	var hideCryptic = CssCheck(items[0], "hideCryptic");
 	for (var i = 0; i < items.length; ++i) {
 		CssToggle(items[i], "hideCryptic");

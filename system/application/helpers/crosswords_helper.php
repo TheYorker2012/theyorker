@@ -748,9 +748,9 @@ class CrosswordView
 		?></table><?php
 
 		if (!$this->m_readonly) {
-			?><a id="toggleInlineAnswers" onclick="crosswordToggleInlineAnswers();">Show inline answers</a><br /><?php
+			?><a id="toggleInlineAnswers" onclick="<?php echo(xml_escape('crosswordToggleInlineAnswers("xw");')); ?>">Show inline answers</a><br /><?php
 		}
-		?><a id="toggleCrypticClues" onclick="crosswordToggleCrypticClues();">Show cryptic clues</a><br /><?php
+		?><a id="toggleCrypticClues" onclick="<?php echo(xml_escape('crosswordToggleCrypticClues("xw");')); ?>">Show cryptic clues</a><br /><?php
 		?></div><?php
 
 		// List of clues
@@ -764,7 +764,7 @@ class CrosswordView
 					CrosswordGrid::$VERTICAL	=> 1);
 		foreach ($clues as $orientation => &$oclues) {
 			?><div class="crosswordCluesBox"><?php
-			?><div id="<?php echo("$name-$orientation-clues"); ?>" name="crosswordClues" class="<?php echo($orClasses[$orientation]); ?> hideValues hideCryptic"><?php
+			?><div id="<?php echo("$name-$orientation-clues"); ?>" class="<?php echo($orClasses[$orientation]); ?> hideValues hideCryptic"><?php
 			?><h2><?php
 			echo(xml_escape($titles[$orientation]));
 			?></h2><?php
