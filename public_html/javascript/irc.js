@@ -119,9 +119,11 @@ function irc_new_screen(name)
 		var channel_table = document.createElement('table');
 		channel_table.border = "0";
 		channel_table.style.width = "100%";
+		var channel_table_tbody = document.createElement('tbody');
+		channel_table.appendChild(channel_table_tbody);
 		{
 			var channel_table_row = document.createElement('tr');
-			channel_table.appendChild(channel_table_row);
+			channel_table_tbody.appendChild(channel_table_row);
 			
 			var channel_table_topic_td = document.createElement('td');
 			channel_table_topic_td.colSpan = 2;
@@ -136,7 +138,7 @@ function irc_new_screen(name)
 		}
 		{
 			var channel_table_row = document.createElement('tr');
-			channel_table.appendChild(channel_table_row);
+			channel_table_tbody.appendChild(channel_table_row);
 			
 			var channel_table_messages_td = document.createElement('td');
 			{
@@ -167,7 +169,7 @@ function irc_new_screen(name)
 		var channel_form = document.createElement('form');
 		channel_form.className = 'form';
 		channel_form.onsubmit = function() {
-// 			irc_Send_msg(id);
+ 			irc_send_msg(id);
 			return false;
 		}
 		{
@@ -186,10 +188,6 @@ function irc_new_screen(name)
 				send_input.className='button';
 				send_input.type='submit';
 				send_input.value='Send';
-				send_input.onclick = function () {
-					irc_send_msg(id);
-					return false;
-				};
 				channel_fieldset.appendChild(send_input);
 			}
 			
