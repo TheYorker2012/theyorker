@@ -31,7 +31,7 @@ function recipientList (users) {
 				<div class="date">
 					<?php echo(date('d/m/y H:i')); ?>
 				</div>
-				<?php echo(xml_escape($_POST['subject'])); ?>
+				<?php echo(xml_escape($_POST['subject'])); ?>&nbsp;
 			</div>
 			<div class="content" style="display:block">
 				<div class="author">
