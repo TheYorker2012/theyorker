@@ -44,8 +44,8 @@ class Crosswords extends Controller
 		$categories = $this->crosswords_model->GetAllCategories();
 		foreach ($categories as &$category) {
 			// And information about the latest few crosswords
-			$category['latest']	= $this->crosswords_model->GetCrosswords(null,$category['id'], null,true,null, 3,'DESC');
-			$category['next']	= $this->crosswords_model->GetCrosswords(null,$category['id'], null,false,null, 1,'ASC');
+			$category['latest']	= $this->crosswords_model->GetCrosswords(null,$category['id'], null,null,true,null, 3,'DESC');
+			$category['next']	= $this->crosswords_model->GetCrosswords(null,$category['id'], null,true,null,null, 1,'ASC');
 		}
 		$data = array(
 			'Categories' => &$categories,
@@ -65,8 +65,8 @@ class Crosswords extends Controller
 		if (!CheckPermissions('public')) return;
 
 		if (null === $arg2) {
-			$category['latest']	= $this->crosswords_model->GetCrosswords(null,$category['id'], null,true,null, 5,'DESC');
-			$category['next']	= $this->crosswords_model->GetCrosswords(null,$category['id'], null,false,null, 1,'ASC');
+			$category['latest']	= $this->crosswords_model->GetCrosswords(null,$category['id'], null,null,true,null, 5,'DESC');
+			$category['next']	= $this->crosswords_model->GetCrosswords(null,$category['id'], null,true,null,null, 1,'ASC');
 
 			$data = array(
 				'Category' => &$category,
@@ -75,8 +75,8 @@ class Crosswords extends Controller
 			$this->main_frame->SetContentSimple('crosswords/category', $data);
 		}
 		elseif ($arg2 == 'archive') {
-			$category['latest']	= $this->crosswords_model->GetCrosswords(null,$category['id'], null,true,null, null,'DESC');
-			$category['next']	= $this->crosswords_model->GetCrosswords(null,$category['id'], null,false,null, 1,'ASC');
+			$category['latest']	= $this->crosswords_model->GetCrosswords(null,$category['id'], null,null,true,null, null,'DESC');
+			$category['next']	= $this->crosswords_model->GetCrosswords(null,$category['id'], null,true,null,null, 1,'ASC');
 
 			$data = array(
 				'Category' => &$category,
@@ -104,7 +104,7 @@ class Crosswords extends Controller
 		}
 		$id = (int)$id;
 
-		$crossword = $this->crosswords_model->GetCrosswords($id,null, null,true,null);
+		$crossword = $this->crosswords_model->GetCrosswords($id,null, null,null,true,null);
 		if (count($crossword) == 0) {
 			show_404();
 		}

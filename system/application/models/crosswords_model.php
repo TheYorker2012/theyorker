@@ -365,11 +365,12 @@ class Crosswords_model extends model
 	 * @param $order 'ASC','DESC' Ordering.
 	 */
 	function GetCrosswords($crossword_id = null, $category_id = null,
-				$overdue = null, $published = null, $expired = null,
+				$overdue = null, $scheduled = null, $published = null, $expired = null,
 				$limit = null, $order = 'DESC')
 	{
 		$overdue_sql	= '`crossword_deadline`    <= NOW()';
 		$published_sql	= '`crossword_publication` <= NOW() AND `crossword_completeness` = 100';
+		$scheduled_sql	= '`crossword_publication` IS NOT NULL AND NOT ('.$published_sql.')';
 		$expired_sql	= '`crossword_expiry`      <= NOW()';
 		$winner_count_sql =	'(SELECT COUNT(*) '.
 							'FROM `crossword_winners` '.
@@ -389,6 +390,7 @@ class Crosswords_model extends model
 				'`crossword_winners`			AS winners, '.
 				'`crossword_public_comment_thread_id`	AS public_thread_id, '.
 				$overdue_sql.	' AS overdue, '.
+				$scheduled_sql.	' AS scheduled, '.
 				$published_sql.	' AS published, '.
 				$expired_sql.	' AS expired, '.
 				$winner_count_sql.	' AS winners_so_far '.
@@ -406,6 +408,9 @@ class Crosswords_model extends model
 		}
 		if (null !== $overdue) {
 			$conditions[] = ($overdue ? $overdue_sql : "NOT ($overdue_sql)");
+		}
+		if (null !== $scheduled) {
+			$conditions[] = ($scheduled ? $scheduled_sql : "NOT ($scheduled_sql)");
 		}
 		if (null !== $published) {
 			$conditions[] = ($published ? $published_sql : "NOT ($published_sql)");
