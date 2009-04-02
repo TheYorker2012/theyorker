@@ -45,8 +45,11 @@ $config['permissions'] = array(
 	'BANNERS_UPLOAD'                   => '(unimplemented) Upload new banners',
 	'BANNERS_MODIFY'                   => '(unimplemented) Modify banners',
 
-	/// @todo Review and implement bylines permissions
-	'BYLINES_VIEW'                     => '(unimplemented) User can have a byline',
+	'BYLINES_VIEW'                     => 'User can have a byline',
+	'BYLINES_GLOBAL'                   => 'Manage global bylines',
+	'BYLINES_USERS'                    => 'Manage all user bylines',
+	'BYLINES_TEAMS'                    => 'Manage byline teams',
+	'BYLINES_PENDING'                  => 'User can approve changes to bylines',
 
 	/// @todo Review and implement campaign permissions
 	'CAMPAIGN_VIEW'                    => '(unimplemented) View campaigns',
