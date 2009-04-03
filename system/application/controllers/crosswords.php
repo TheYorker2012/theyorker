@@ -40,6 +40,16 @@ class Crosswords extends Controller
 	{
 		if (!CheckPermissions('public')) return;
 
+		$this->load->helper('input_date');
+		$search = new InputInterfaces;
+		$date_interface = new InputDateInterface('search_date', time());
+		$date_interface->setTimeEnabled(false);
+		$search->Add('Find by date', $date_interface);
+		$num_errors = $search->Validate();
+		if (0 == $num_errors && $search->Updated()) {
+			$values = $search->UpdatedValues();
+		}
+
 		// Load categories
 		$categories = $this->crosswords_model->GetAllCategories();
 		foreach ($categories as &$category) {
@@ -49,6 +59,7 @@ class Crosswords extends Controller
 		}
 		$data = array(
 			'Categories' => &$categories,
+			'Search' => &$search,
 		);
 		$this->main_frame->IncludeCss('stylesheets/crosswords_index.css');
 		$this->main_frame->SetContentSimple('crosswords/index', $data);

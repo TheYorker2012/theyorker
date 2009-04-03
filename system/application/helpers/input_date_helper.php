@@ -19,6 +19,8 @@ class InputDateInterface extends InputInterface
 			}
 		}
 		parent::__construct($name, $default, $enabled, $auto);
+		get_instance()->main_frame->includeJs('javascript/simple_ajax.js');
+		get_instance()->main_frame->includeJs('javascript/calendar_termdates.js');
 		get_instance()->main_frame->includeJs('javascript/input_selector.js');
 		get_instance()->main_frame->includeJs('javascript/input_date.js');
 		get_instance()->main_frame->includeCss('stylesheets/input_selector.css');
@@ -196,7 +198,7 @@ class InputDateInterface extends InputInterface
 				$last_month = 0;
 				$term = $cur->AcademicTerm();
 				for ($wk = 1; $cur->AcademicTerm() == $term; ++$wk) {
-					?><tr><?php
+					?><tr id="<?php echo($this->name.'__wk_'.$wk); ?>"><?php
 						?><th><?php
 							echo($wk);
 						?></th><?php
@@ -228,7 +230,7 @@ class InputDateInterface extends InputInterface
 										)); ?>"<?php
 								?>	><?php
 								if ($month != $last_month) {
-									echo(xml_escape($cur->Format('M ')));
+									echo(xml_escape($cur->Format('M')).'&nbsp;');
 									$last_month = $month;
 								}
 								echo(xml_escape($cur->Format('j')));

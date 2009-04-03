@@ -395,7 +395,7 @@ class Academic_time
 	function AcademicTermWeeks()
 	{
 		$days = self::LengthOfAcademicTerm($this->AcademicYear(), $this->AcademicTerm());
-		return ($days+6) / 7;
+		return (int)(($days+6) / 7);
 	}
 	
 	// TIME

@@ -3,10 +3,14 @@
  * @file views/crosswords/index.php
  * @author James Hogan <james_hogan@theyorker.co.uk>
  * @param $Categories array of categories.
+ * @param $Search array of categories.
  */
 ?>
 <div class="BlueBox">
 	<h2>welcome to The Yorker crosswords</h2>
+	<?php
+	$Search->Load();
+	?>
 </div>
 <div class="HalfColumns">
 <?php
