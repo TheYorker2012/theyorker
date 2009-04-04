@@ -124,6 +124,7 @@ class InputDateInterface extends InputInterface
 					$sel_term = $value->AcademicTerm();
 					$year = $cur->AcademicYear();
 					$term = $cur->AcademicTerm();
+					?><option value="earlier">(more)</option><?php
 					for ($i = 0; $i < 6; ++$i) {
 						$cur = new Academic_time(Academic_time::StartOfAcademicTerm($year, $term));
 
@@ -141,6 +142,7 @@ class InputDateInterface extends InputInterface
 							++$year;
 						}
 					}
+					?><option value="later">(more)</option><?php
 				?></select><?php
 				// Time of day
 				if ($this->time) {
