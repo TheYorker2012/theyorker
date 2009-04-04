@@ -790,7 +790,7 @@ function Crossword(name, width, height)
 								self.updateNotification("success", "congratulations: you are a winner", null);
 							}
 							else {
-								self.updateNotification("success", "congratulations: crossword is correct", null);
+								self.updateNotification("success", "well done: crossword is correct", null);
 							}
 						}
 					}

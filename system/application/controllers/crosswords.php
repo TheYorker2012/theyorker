@@ -189,7 +189,10 @@ class Crosswords extends Controller
 						$root['status'] = 'success';
 						$correct = $puzzle->isCorrect();
 						$root['mark'] = ($correct ? 'correct' : 'incorrect');
-						$winner = $this->crosswords_model->AddWinner($crossword['id'], $this->user_auth->entityId);
+						$winner = false;
+						if ($correct) {
+							$winner = $this->crosswords_model->AddWinner($crossword['id'], $this->user_auth->entityId);
+						}
 						$root['winner'] = ($winner ? 'yes' : 'no');
 					}
 					else {

@@ -3,10 +3,30 @@
 /// Crosswords data model
 class Crosswords_model extends model
 {
+	// Snippets of useful sql
+	private $overdue_sql;
+	private $published_sql;
+	private $scheduled_sql;
+	private $expired_sql;
+	private $winner_count_sql;
+
 	function __construct()
 	{
 		parent::model();
 		$this->load->helper('crosswords');
+
+		// Snippets of useful sql
+		$this->overdue_sql		= '(`crossword_deadline` IS NOT NULL '.
+									'AND `crossword_deadline`    <= NOW())';
+		$this->published_sql	= '(`crossword_publication` IS NOT NULL '.
+									'AND `crossword_publication` <= NOW() '.
+									'AND `crossword_completeness` = 100)';
+		$this->scheduled_sql	= '(`crossword_publication` IS NOT NULL '.
+									'AND NOT '.$this->published_sql.')';
+		$this->expired_sql		= '(`crossword_expiry` IS NOT NULL AND `crossword_expiry` <= NOW())';
+		$this->winner_count_sql	= '(SELECT COUNT(*) '.
+									'FROM `crossword_winners` '.
+									'WHERE `crossword_winner_crossword_id` = `crossword_id`)';
 	}
 
 	/*
@@ -368,13 +388,6 @@ class Crosswords_model extends model
 				$overdue = null, $scheduled = null, $published = null, $expired = null,
 				$limit = null, $order = 'DESC')
 	{
-		$overdue_sql	= '`crossword_deadline`    <= NOW()';
-		$published_sql	= '`crossword_publication` <= NOW() AND `crossword_completeness` = 100';
-		$scheduled_sql	= '`crossword_publication` IS NOT NULL AND NOT ('.$published_sql.')';
-		$expired_sql	= '`crossword_expiry`      <= NOW()';
-		$winner_count_sql =	'(SELECT COUNT(*) '.
-							'FROM `crossword_winners` '.
-							'WHERE `crossword_winner_crossword_id` = `crossword_id`)';
 		$sql = 	'SELECT '.
 				'`crossword_id`					AS id, '.
 				'`crossword_width`				AS width, '.
@@ -389,11 +402,11 @@ class Crosswords_model extends model
 				'UNIX_TIMESTAMP(`crossword_expiry`)			AS expiry, '.
 				'`crossword_winners`			AS winners, '.
 				'`crossword_public_comment_thread_id`	AS public_thread_id, '.
-				$overdue_sql.	' AS overdue, '.
-				$scheduled_sql.	' AS scheduled, '.
-				$published_sql.	' AS published, '.
-				$expired_sql.	' AS expired, '.
-				$winner_count_sql.	' AS winners_so_far '.
+				$this->overdue_sql.		' AS overdue, '.
+				$this->scheduled_sql.	' AS scheduled, '.
+				$this->published_sql.	' AS published, '.
+				$this->expired_sql.		' AS expired, '.
+				$this->winner_count_sql.' AS winners_so_far '.
 				'FROM crosswords ';
 
 		$bind = array();
@@ -407,16 +420,16 @@ class Crosswords_model extends model
 			$bind[] = $category_id;
 		}
 		if (null !== $overdue) {
-			$conditions[] = ($overdue ? $overdue_sql : "NOT ($overdue_sql)");
+			$conditions[] = ($overdue ? $this->overdue_sql : 'NOT '.$this->overdue_sql.'');
 		}
 		if (null !== $scheduled) {
-			$conditions[] = ($scheduled ? $scheduled_sql : "NOT ($scheduled_sql)");
+			$conditions[] = ($scheduled ? $this->scheduled_sql : 'NOT '.$this->scheduled_sql.'');
 		}
 		if (null !== $published) {
-			$conditions[] = ($published ? $published_sql : "NOT ($published_sql)");
+			$conditions[] = ($published ? $this->published_sql : 'NOT '.$this->published_sql.'');
 		}
 		if (null !== $expired) {
-			$conditions[] = ($expired ? $expired_sql : "NOT ($expired_sql)");
+			$conditions[] = ($expired ? $this->expired_sql : 'NOT '.$this->expired_sql.'');
 		}
 		if (count($conditions) > 0) {
 			$sql .= 'WHERE ('.join(') AND (', $conditions).') ';
@@ -526,15 +539,11 @@ class Crosswords_model extends model
 				'WHERE `crossword_id` = ? ';
 		$bind[] = $crossword_id;
 		// And where the crossword is published
-		$sql .=	'	AND `crossword_publication` <= NOW() '.
-				'	AND `crossword_completeness` = 100 ';
+		$sql .=	'	AND '.$this->published_sql.' ';
 		// And where the crossword hasn't expired
-		$sql .=	'	AND `crossword_expiry` > NOW() ';
+		$sql .=	'	AND NOT '.$this->expired_sql.' ';
 		// And where there are some medals left to win
-		$sql .=	'	AND	(SELECT COUNT(*) '.
-				'		 FROM	`crossword_winners` '.
-				'		 WHERE	`crossword_winner_crossword_id`=`crossword_id`) '.
-				'			< `crossword_winners` ';
+		$sql .=	'	AND	'.$this->winner_count_sql.' < `crossword_winners` ';
 		// And where this user hasn't already got a medal
 		$sql .=	'	AND (SELECT COUNT(*) '.
 				'		 FROM	`crossword_winners` '.
