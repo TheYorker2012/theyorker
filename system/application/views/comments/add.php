@@ -5,6 +5,7 @@
  * @brief View for comment adder.
  *
  * @param $Thread array_thread Thread information with:
+ *	- 'allow_comments' bool Whether to allow comment to be anonymous.
  *	- 'allow_anonymous_comments' bool Whether to allow comment to be anonymous.
  * @param $LoggedIn bool Whether a user is logged in.
  * @param $SmileyTable
@@ -25,8 +26,14 @@
 <div class="BlueBox" id="SectionCommentAdd">
 	<?php
 	if (!$LoggedIn) {
-		echo('<h2>add comment</h2>');
-		echo('<p>You must <a href="'.$LoginUrl.'">log in</a> to submit a comment</p>');
+		?><h2><?php echo($AlreadyExists?'Edit':'Add'); ?> Comment</h2><?php
+		echo('<p>You must <a href="'.$LoginUrl.'">log in</a> to submit a comment</p>.');
+	} else if (!$Thread['allow_comments']) {
+		?><h2><?php echo($AlreadyExists?'Edit':'Add'); ?> Comment</h2><?php
+		echo('<p>Comments have been disabled in this thread.</p>');
+	} else if ($AlreadyExists && $DefaultAnonymous && !$Thread['allow_anonymous_comments']) {
+		?><h2><?php echo($AlreadyExists?'Edit':'Add'); ?> Comment</h2><?php
+		echo('<p>Anonymous comments have been disabled in this thread.</p>');
 	} else { ?>
 		<script type="text/javascript" src="/javascript/wikitoolbar.js"></script>
 		<script type="text/javascript">
@@ -125,7 +132,11 @@
 				<div>
 					<?php if ($Thread['allow_anonymous_comments']) { ?>
 						<label for="CommentAddAnonymous">Post Anonymously:</label>
-						<input type="checkbox" name="CommentAddAnonymous" id="CommentAddAnonymous"<?php if ($DefaultAnonymous) echo(' checked="checked"'); ?> />
+						<input type="checkbox" name="CommentAddAnonymous" id="CommentAddAnonymous"<?php
+							if ($DefaultAnonymous) {
+								echo(' checked="checked"');
+							}
+							?> />
 						<br />
 					<?php } ?>
 					<p>

@@ -134,7 +134,7 @@
 			<?php } else { ?>
 				Changes have been made to this byline which need to be approved by an editor before it can be used.
 				<?php /// @todo FIXME this logic should be in the controller with a view parameter e.g. @a $allow_approve
-					if ($this->access == 'editor') { ?>
+					if ($this->permissions_model->hasUserPermission('BYLINES_PENDING')) { ?>
 					<form action="/office/bylines/approve/<?php echo($byline_info['business_card_id']); ?>/" method="post">
 						<input type="submit" name="approve" id="approve" value="Approve Byline" class="button" />
 					</form>

@@ -63,7 +63,7 @@ class Frame_public extends FrameNavbar
 	function __construct()
 	{
 		parent::__construct('frames/public_frame.php');
-		
+
 		$this->mDataArray['description'] = '';
 		$this->mDataArray['keywords'] = '';
 		$this->mTitleSet = FALSE;
@@ -84,7 +84,7 @@ class Frame_public extends FrameNavbar
 			'time'	=> date('H:i'),
 			'day'	=> date('l'),
 			'week'	=> $academic_time->AcademicWeek(),
-			'date'	=> date('dS'),
+			'date'	=> date('jS'),
 			'month'	=> date('F')
 		);
 		

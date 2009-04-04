@@ -85,7 +85,7 @@
 				<label for="aboutus">Show in About Us?</label>
 				<input type="checkbox" name="aboutus" id="aboutus" value="yes"<?php if ($this->validation->aboutus) { echo(' checked="checked"'); } ?> />
 				<br />
-<?php if ($this->access == 'editor') { ?>
+<?php if ($this->permissions_model->hasUserPermission('BYLINES_GLOBAL')) { ?>
 				<label for="global_setting">Global Byline?</label>
 				<input type="checkbox" name="global_setting" id="global_setting" value="yes"<?php if ($this->validation->global_setting) { echo(' checked="checked"'); } ?> />
 				<br />

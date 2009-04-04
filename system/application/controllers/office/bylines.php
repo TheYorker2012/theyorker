@@ -7,32 +7,26 @@
 class Bylines extends Controller
 {
 
-	// Variable declarations
-	var $access;
-	var $navbar;
-
 	/// Default constructor
 	function __construct()
 	{
 		parent::Controller();
-		// Load models
 		$this->load->model('businesscards_model');
+		$this->load->model('notifications_model');
+	}
 
-		// All functionality in this section requires office access or above
-		if (!CheckPermissions('office')) return;
-		// Retrieve access level
-		$this->access = GetUserLevel();
-		// Make it so that we only need to worry about two levels of access (admin == editor)
-		if ($this->access == 'admin') $this->access = 'editor';
-
-		// Create navigation menu
-		$this->navbar = $this->main_frame->GetNavbar();
-		$this->navbar->AddItem('user', 'User Bylines', '/office/bylines/user/');
-		$this->navbar->AddItem('new', 'New Byline', '/office/bylines/new_byline');
-		if ($this->access == 'editor') {
-			$this->navbar->AddItem('teams', 'Teams', '/office/bylines/teams');
-			$this->navbar->AddItem('pending', 'Pending', '/office/bylines/pending');
-		}
+	function _navbar ($selected = '')
+	{
+		$navbar = $this->main_frame->GetNavbar();
+		$navbar->AddItem('user', 'User Bylines', '/office/bylines/user/');
+		$navbar->AddItem('new', 'New Byline', '/office/bylines/new_byline');
+		if ($this->permissions_model->hasUserPermission('BYLINES_TEAMS'))
+			$navbar->AddItem('teams', 'Teams', '/office/bylines/teams');
+		if ($this->permissions_model->hasUserPermission('BYLINES_PENDING'))
+			$navbar->AddItem('pending', 'Pending', '/office/bylines/pending');
+		if (!empty($selected))
+			$navbar->SetSelected($selected);
+		return $navbar;
 	}
 
 	function index()
@@ -42,19 +36,25 @@ class Bylines extends Controller
 
 	function user ($user_id = NULL)
 	{
+		if (!CheckPermissions('office')) return;
+		if (!CheckRolePermissions('BYLINES_VIEW')) return;
+
 		if (!is_numeric($user_id))
 			$user_id = $this->user_auth->entityId;
-		// Special case so that editors can view all global bylines
-		if ($user_id == -1)
-			$user_id = NULL;
 
-		if (($user_id == $this->user_auth->entityId) || ($this->access == 'editor')) {
+		// Special case so that editors can view all global bylines
+		if ($user_id == -1) {
+			if (!CheckRolePermissions('BYLINES_GLOBAL')) return;
+			$user_id = NULL;
+		}
+
+		if (($user_id == $this->user_auth->entityId) || $this->permissions_model->hasUserPermission('BYLINES_USERS')) {
 			$data = array();
 			// Get user info
 			$this->load->model('prefs_model');
 			if ($user_id !== NULL) {
 				$data['user_info'] = $this->prefs_model->getUserInfo($user_id);
-				$data['default_byline'] = $this->businesscards_model->GetDefaultByline($this->user_auth->entityId);
+				$data['default_byline'] = $this->businesscards_model->GetDefaultByline($user_id);
 			} else {
 				$data['user_info'] = array(
 					'user_firstname'	=>	NULL,
@@ -82,7 +82,7 @@ class Bylines extends Controller
 				$data['whats_this_text'] = $this->pages_model->GetPropertyWikiText('whats_this_text');
 
 				// Load the page
-				$this->navbar->SetSelected('user');
+				$navbar = $this->_navbar('user');
 				$this->main_frame->SetContentSimple('office/bylines/index', $data);
 				$this->main_frame->Load();
 			 }
@@ -116,6 +116,9 @@ class Bylines extends Controller
 
 	function pending()
 	{
+		if (!CheckPermissions('office')) return;
+		if (!CheckRolePermissions('BYLINES_PENDING')) return;
+
 		$data = array();
 		$data['bylines'] = $this->businesscards_model->GetPendingBylines();
 		$this->load->library('image');
@@ -133,13 +136,16 @@ class Bylines extends Controller
 		$data['whats_this_text'] = $this->pages_model->GetPropertyWikiText('whats_this_text');
 
 		// Load the page
-		$this->navbar->SetSelected('pending');
+		$navbar = $this->_navbar('pending');
 		$this->main_frame->SetContentSimple('office/bylines/pending', $data);
 		$this->main_frame->Load();
 	}
 
 	function teams ()
 	{
+		if (!CheckPermissions('office')) return;
+		if (!CheckRolePermissions('BYLINES_TEAMS')) return;
+
 		// Process add new byline team request
 		if ((isset($_POST['team_name'])) && ($_POST['team_name'] != '')) {
 			$add_op = $this->businesscards_model->AddOrganisationCardGroup(array(
@@ -149,6 +155,7 @@ class Bylines extends Controller
 			));
 			if ($add_op) {
 				$this->main_frame->AddMessage('success', 'The new byline team was successfully created.');
+				$this->notifications_model->sendToPermission('byline-teams', 'New Byline Team', 'created a new byline team called "[[office/bylines/view_team/' . $this->db->insert_id() . '|' . $_POST['team_name'] . ']]".', 'BYLINES_TEAMS');
 			} else {
 				$this->main_frame->AddMessage('error', 'There was an error adding the new byline team, please try again.');
 			}
@@ -164,13 +171,16 @@ class Bylines extends Controller
 		$data['whats_this_text'] = $this->pages_model->GetPropertyWikiText('whats_this_text');
 
 		// Load the page
-		$this->navbar->SetSelected('teams');
+		$navbar = $this->_navbar('teams');
 		$this->main_frame->SetContentSimple('office/bylines/teams', $data);
 		$this->main_frame->Load();
 	}
 
 	function delete_team ($team_id = NULL)
 	{
+		if (!CheckPermissions('office')) return;
+		if (!CheckRolePermissions('BYLINES_TEAMS')) return;
+
 		if ($team_id === NULL) {
 			redirect('/office/bylines/teams/');
 		} else {
@@ -178,9 +188,6 @@ class Bylines extends Controller
 			$data['team_info'] = $this->businesscards_model->BylineTeamInfo($team_id);
 			if (count($data['team_info']) == 0) {
 				$this->main_frame->AddMessage('error', 'The byline team you were trying to delete does not exist, please try again.');
-				redirect('/office/bylines/teams/');
-			} elseif ($this->access != 'editor') {
-				$this->main_frame->AddMessage('error', 'You must have editor access to delete a byline team.');
 				redirect('/office/bylines/teams/');
 			} else {
 				$data['bylines'] = $this->businesscards_model->GetTeamBylines($team_id);
@@ -193,6 +200,7 @@ class Bylines extends Controller
 						$delete = $this->businesscards_model->RemoveOrganisationCardGroupById($team_id);
 						if ($delete) {
 							$this->main_frame->AddMessage('success', 'The requested byline team has successfully been deleted.');
+							$this->notifications_model->sendToPermission('byline-teams', 'Deleted Byline Team', 'deleted the byline team called "' . $data['team_info']['business_card_group_name'] . '".', 'BYLINES_TEAMS');
 							redirect('/office/bylines/teams/');
 						} else {
 							$this->main_frame->AddMessage('error', 'There was an error deleting the requested byline team, please try again.');
@@ -216,6 +224,9 @@ class Bylines extends Controller
 
 	function view_team ($team_id = NULL)
 	{
+		if (!CheckPermissions('office')) return;
+		if (!CheckRolePermissions('BYLINES_TEAMS')) return;
+
 		if ($team_id === NULL) {
 			redirect('/office/bylines/teams/');
 		} else {
@@ -230,6 +241,7 @@ class Bylines extends Controller
 					$edit_op = $this->businesscards_model->RenameOrganisationCardGroup($team_id, $_POST['team_name']);
 					if ($edit_op) {
 						$this->main_frame->AddMessage('success', 'The byline team\'s name was successfully renamed.');
+						$this->notifications_model->sendToPermission('byline-teams', 'Renamed Byline Team', 'renamed a byline team from "' . $data['team_info']['business_card_group_name'] . '" to "[[office/bylines/view_team/' . $team_id . '|' . $_POST['team_name'] . ']]".', 'BYLINES_TEAMS');
 					} else {
 						$this->main_frame->AddMessage('error', 'There was an error renaming the byline team\'s name, please try again.');
 					}
@@ -253,7 +265,7 @@ class Bylines extends Controller
 				$data['whats_this_text'] = $this->pages_model->GetPropertyWikiText('whats_this_text');
 
 				// Load the page
-				$this->navbar->SetSelected('teams');
+				$navbar = $this->_navbar('teams');
 				$this->main_frame->SetContentSimple('office/bylines/team_view', $data);
 				$this->main_frame->Load();
 			}
@@ -262,18 +274,21 @@ class Bylines extends Controller
 
 	function approve ($byline_id = NULL)
 	{
+		if (!CheckPermissions('office')) return;
+		if (!CheckRolePermissions('BYLINES_PENDING')) return;
+
 		if (($byline_id !== NULL) && (is_numeric($byline_id))) {
-			if ($this->access == 'editor') {
-				$approve = $this->businesscards_model->ApproveBusinessCard($byline_id);
-				if ($approve) {
-					$this->main_frame->AddMessage('success', 'The byline was approved.');
-				} else {
-					$this->main_frame->AddMessage('error', 'There was an error trying to approve this byline, please try again.');
+			$byline_info = $this->businesscards_model->GetBylineInfo($byline_id);
+			$approve = $this->businesscards_model->ApproveBusinessCard($byline_id);
+			if ($approve) {
+				$this->main_frame->AddMessage('success', 'The byline was approved.');
+				if ($byline_info['business_card_user_entity_id'] != $this->user_auth->entityId) {
+					$this->notifications_model->sendToUsers('byline', 'Approved Byline', 'approved one of your [[office/bylines/view_byline/' . $byline_id . '|bylines]].', $byline_info['business_card_user_entity_id']);
 				}
-				redirect('/office/bylines/view_byline/' . $byline_id . '/');
 			} else {
-				$this->main_frame->AddMessage('error', 'You must have editor access to be able to approve changes to bylines.');
-  			}
+				$this->main_frame->AddMessage('error', 'There was an error trying to approve this byline, please try again.');
+			}
+			redirect('/office/bylines/view_byline/' . $byline_id . '/');
 		} else {
 			$this->main_frame->AddMessage('error', 'Unknown byline, please try again.');
 		}
@@ -282,6 +297,9 @@ class Bylines extends Controller
 
 	function new_byline ()
 	{
+		if (!CheckPermissions('office')) return;
+		if (!CheckRolePermissions('BYLINES_VIEW')) return;
+
 		$data = array();
 		/// Get byline teams
 		$data['groups'] = $this->businesscards_model->GetBylineTeams();
@@ -339,7 +357,8 @@ class Bylines extends Controller
 			if (count($errors) == 0) {
 				$from_timestamp = date('Y-m-d', $from_timestamp);
 				$to_timestamp = date('Y-m-d', $to_timestamp);
-				if (($this->access == 'editor') && ($this->input->post('global_setting') == 'yes')) {
+				if ($this->input->post('global_setting') == 'yes') {
+					if (!CheckRolePermissions('BYLINES_GLOBAL')) return;
 					$insert_user_id = NULL;
 				} else {
 					$insert_user_id = $this->user_auth->entityId;
@@ -399,13 +418,15 @@ class Bylines extends Controller
 		$data['whats_this_text'] = $this->pages_model->GetPropertyWikiText('whats_this_text');
 
 		// Load the page
-		$this->navbar->SetSelected('new');
+		$navbar = $this->_navbar('new');
 		$this->main_frame->SetContentSimple('office/bylines/new', $data);
 		$this->main_frame->Load();
 	}
 
 	function delete_byline ($byline_id = NULL)
 	{
+		if (!CheckPermissions('office')) return;
+
 		if ($byline_id === NULL) {
 			$this->main_frame->AddMessage('error', 'You must specify the byline you want to delete, please try again.');
 			redirect('/office/bylines/');
@@ -415,7 +436,7 @@ class Bylines extends Controller
 			if (count($data['byline_info']) == 0) {
 				$this->main_frame->AddMessage('error', 'The byline you were trying to delete does not exist, please try again.');
 				redirect('/office/bylines/');
-			} elseif (($this->access != 'editor') && ($data['byline_info']['business_card_user_entity_id'] != $this->user_auth->entityId)) {
+			} elseif (!$this->permissions_model->hasUserPermission('BYLINES_USERS') && ($data['byline_info']['business_card_user_entity_id'] != $this->user_auth->entityId)) {
 				$this->main_frame->AddMessage('error', 'You do not have access to delete the requested byline, please try again.');
 				redirect('/office/bylines/');
 			} else {
@@ -454,6 +475,9 @@ class Bylines extends Controller
 
 	function view_byline ($byline_id = NULL)
 	{
+		if (!CheckPermissions('office')) return;
+		if (!CheckRolePermissions('BYLINES_VIEW')) return;
+
 		if ($byline_id === NULL) {
 			redirect('/office/bylines/');
 		} else {
@@ -462,7 +486,7 @@ class Bylines extends Controller
 			if (count($data['byline_info']) == 0) {
 				$this->main_frame->AddMessage('error', 'The byline you were trying to access does not exist, please try again.');
 				redirect('/office/bylines/');
-			} elseif (($this->access != 'editor') && ($data['byline_info']['business_card_user_entity_id'] != $this->user_auth->entityId)) {
+			} elseif (!$this->permissions_model->hasUserPermission('BYLINES_USERS') && ($data['byline_info']['business_card_user_entity_id'] != $this->user_auth->entityId)) {
 				$this->main_frame->AddMessage('error', 'You do not have access to view or edit the requested byline, please try again.');
 				redirect('/office/bylines/');
 			} else {
@@ -548,6 +572,9 @@ class Bylines extends Controller
 									$aboutus);
 						if ($update) {
 							$this->main_frame->AddMessage('success', 'The changes you have requested to the below byline have been sent to an editor for approval.');
+							if ($data['byline_info']['business_card_user_entity_id'] != $this->user_auth->entityId) {
+								$this->notifications_model->sendToUsers('byline', 'Edited Byline', 'has edited one of your [[office/bylines/view_byline/' . $byline_id . '|bylines]].', $data['byline_info']['business_card_user_entity_id']);
+							}
 						} else {
 							$this->main_frame->AddMessage('error', 'There was an error updating the byline\'s information, please try again.');
 						}
@@ -596,7 +623,7 @@ class Bylines extends Controller
 				$data['whats_this_text'] = $this->pages_model->GetPropertyWikiText('whats_this_text');
 
 				// Load the page
-				$this->navbar->SetSelected('user');
+				$navbar = $this->_navbar('user');
 				$this->main_frame->SetContentSimple('office/bylines/byline_view', $data);
 				$this->main_frame->Load();
 			}
@@ -614,7 +641,7 @@ class Bylines extends Controller
 			if (count($data['byline_info']) == 0) {
 				$this->main_frame->AddMessage('error', 'The byline you were trying to add a photo to does not exist, please try again.');
 				redirect('/office/bylines/');
-			} elseif (($this->access != 'editor') && ($data['byline_info']['business_card_user_entity_id'] != $this->user_auth->entityId)) {
+			} elseif (!$this->permissions_model->hasUserPermission('BYLINES_USERS') && ($data['byline_info']['business_card_user_entity_id'] != $this->user_auth->entityId)) {
 				$this->main_frame->AddMessage('error', 'You do not have access to add a photo to the requested byline, please try again.');
 				redirect('/office/bylines/');
 			} else {
@@ -635,7 +662,7 @@ class Bylines extends Controller
 			if (count($data['byline_info']) == 0) {
 				$this->main_frame->AddMessage('error', 'The byline you were trying to add a photo to does not exist, please try again.');
 				redirect('/office/bylines/');
-			} elseif (($this->access != 'editor') && ($data['byline_info']['business_card_user_entity_id'] != $this->user_auth->entityId)) {
+			} elseif (!$this->permissions_model->hasUserPermission('BYLINES_USERS') && ($data['byline_info']['business_card_user_entity_id'] != $this->user_auth->entityId)) {
 				$this->main_frame->AddMessage('error', 'You do not have access to add a photo to the requested byline, please try again.');
 				redirect('/office/bylines/');
 			} elseif (!isset($_SESSION['img'])) {
@@ -668,7 +695,7 @@ class Bylines extends Controller
 	{
 		if (($team_id === NULL) || (!is_numeric($team_id))) {
 			$this->main_frame->AddMessage('error', 'You must specify the byline team you wish to reorder, please try again.');
-		} elseif ($this->access != 'editor') {
+		} elseif (!$this->permissions_model->hasUserPermission('BYLINES_TEAMS')) {
 			$this->main_frame->AddMessage('error', 'You do not have the required access to reorder byline teams, please try again.');
 		} else {
 			$data = array();
@@ -699,7 +726,7 @@ class Bylines extends Controller
 		if (($byline_id === NULL) || (!is_numeric($byline_id))) {
 			$this->main_frame->AddMessage('error', 'You must specify the byline you wish to reorder, please try again.');
 			redirect('/office/bylines/teams/');
-		} elseif ($this->access != 'editor') {
+		} elseif (!$this->permissions_model->hasUserPermission('BYLINES_TEAMS')) {
 			$this->main_frame->AddMessage('error', 'You do not have the required access to reorder bylines, please try again.');
 			redirect('/office/bylines/teams/');
 		} else {
