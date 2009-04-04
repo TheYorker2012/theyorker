@@ -750,8 +750,8 @@ class Crosswords_model extends model
 		}
 
 		// Set up the result
-		$width = $results[0]['width'];
-		$height = $results[0]['height'];
+		$width = (int)$results[0]['width'];
+		$height = (int)$results[0]['height'];
 		$puzzle = new CrosswordPuzzle($width, $height);
 
 		// Get the lights
