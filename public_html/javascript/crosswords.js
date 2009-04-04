@@ -877,7 +877,7 @@ function Crossword(name, width, height)
 		}
 
 		var ajax = new AJAXInteraction(action, post, postCallback, postCallbackFail);
-		ajax.doGet();
+		ajax.doPost();
 	}
 
 	this.cell = function(x,y)

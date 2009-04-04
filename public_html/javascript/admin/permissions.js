@@ -234,7 +234,7 @@ function saveAllPermissions()
 				alert(statusText);
 			}
 		);
-		ajax.doGet();
+		ajax.doPost();
 	}
 	else {
 		alert('No changes have been made to the permissions.');

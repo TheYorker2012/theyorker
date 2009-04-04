@@ -295,7 +295,7 @@ function irc_query(id,query)
 	post['msg'] = query;
 	post['channel'] = irc_screen_list[id];
 	var ajax = new AJAXInteraction(irc_ajax_url, post, irc_ajax_callback);
-	ajax.doGet();
+	ajax.doPost();
 }
 
 // Send a message via the web server
@@ -324,7 +324,7 @@ function irc_join_channel(channel)
 	post['cmd'] = 'join';
 	post['channel'] = channel;
 	var ajax = new AJAXInteraction(irc_ajax_url, post, irc_ajax_callback);
-	ajax.doGet();
+	ajax.doPost();
 }
 
 // Clear a channel's peers
@@ -416,7 +416,7 @@ function irc_ping()
 	}
 	post['cmd'] = 'ping';
 	var ajax = new AJAXInteraction(irc_ajax_url, post, irc_ping_ajax_callback);
-	ajax.doGet();
+	ajax.doPost();
 }
 
 // Handle a ping response from web server, start up another ping
@@ -672,7 +672,7 @@ function irc_connect()
 			}
 		} );
 	irc_clear_error();
-	ajax.doGet();
+	ajax.doPost();
 }
 
 // Send disconnection request and remove all screens
@@ -695,7 +695,7 @@ function irc_disconnect()
 			irc_open_screens = 0;
 			irc_current_screen = null;
 		} );
-	ajax.doGet();
+	ajax.doPost();
 	irc_connected = false;
 }
 

@@ -258,7 +258,7 @@ function UpdateRecurCalPreviewLoad()
 	}
 	post['eved_recur_simple[range_method]'] = range_method;
 	var ajax = new AJAXInteraction(url, post, UpdateRecurCalPreviewCallback); 
-	ajax.doGet();
+	ajax.doPost();
 }
 
 /// Callback function for updating the calendar preview using xml from server.

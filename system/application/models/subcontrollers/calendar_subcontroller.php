@@ -1854,8 +1854,8 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 
 		$error = false;
 		$years = array();
-		if (isset($_POST['years'])) {
-			$year_ranges = split(',',$_POST['years']);
+		if (isset($_GET['years'])) {
+			$year_ranges = split(',',$_GET['years']);
 			foreach ($year_ranges as $year_range) {
 				if ($year_range === '') {
 					continue;
