@@ -438,9 +438,9 @@ function CrosswordEdit(name, width, height)
 		var td = document.createElement("td");
 		td.id = name+"-"+x+"-"+y;
 		CssAdd(td,"blank");
-		td.onclick = function(event)
+		td.onclick = function(ev)
 		{
-			return crosswordClick(name, x, y, event);
+			return crosswordClick(name, x, y, ev||event);
 		}
 		var div = document.createElement("div");
 		td.appendChild(div);
@@ -450,13 +450,13 @@ function CrosswordEdit(name, width, height)
 		var input = document.createElement("input");
 		input.id = name+"-edit-"+x+"-"+y;
 		input.type = "text";
-		input.onkeypress = function(event)
+		input.onkeypress = function(ev)
 		{
-			return crosswordKeyPress(name, x, y, event);
+			return crosswordKeyPress(name, x, y, ev||event);
 		}
-		input.onkeydown = function(event)
+		input.onkeydown = function(ev)
 		{
-			return crosswordKeyDown(name, x, y, event);
+			return crosswordKeyDown(name, x, y, ev||event);
 		}
 		input.maxlength=2;
 		div.appendChild(input);
