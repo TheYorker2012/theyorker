@@ -21,6 +21,12 @@
 
 	foreach ($Category['latest'] as $crossword) {
 		$pub = new Academic_time($crossword['publication']);
+		?><div style="clear: both"></div><?php
+		?><div class="crossword_preview"><?php
+			?><a href="<?php echo(site_url('crosswords/'.$crossword['id'])); ?>"><?php
+				?><img src="<?php echo(site_url('images/crosswords/xw.png')); ?>" /><?php
+			?></a><?php
+		?></div><?php
 		?><div class="crossword_title"><?php
 			?><a href="<?php echo(site_url('crosswords/'.$crossword['id'])); ?>"><?php
 			echo($pub->Format('D ').$pub->AcademicTermNameUnique().' week '.$pub->AcademicWeek());

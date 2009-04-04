@@ -9,9 +9,19 @@ div.HalfColumns div.Column {
 	float: left;
 	width: 50%; 
 }
+div.crossword_preview {
+	clear: both;
+	float: left;
+}
+div.crossword_preview img {
+	border: 1px solid #FF6A00;
+	width: 64px;
+	height: 64px;
+}
 div.crossword_title {
 	font-weight: bold;
 	font-size: large;
+	vertical-align: middle;
 }
 div.crossword_note {
 	margin-top: 0.1em;
