@@ -1842,7 +1842,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 	{
 		$this->load->library('calendar_view_edit_simple');
 		$validator = new CalendarViewEditSimpleValidate();
-		$validator->SetData($_GET);
+		$validator->SetData($_POST);
 		$validator->EchoXML();
 	}
 
@@ -1854,8 +1854,8 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 
 		$error = false;
 		$years = array();
-		if (isset($_GET['years'])) {
-			$year_ranges = split(',',$_GET['years']);
+		if (isset($_POST['years'])) {
+			$year_ranges = split(',',$_POST['years']);
 			foreach ($year_ranges as $year_range) {
 				if ($year_range === '') {
 					continue;

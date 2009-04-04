@@ -387,7 +387,7 @@ class Tools extends controller
 		if (null !== $mode) {
 			if ('text' == $mode || 'ajax' == $mode) {
 				$text = '';
-				$tests = $_GET['tests'];
+				$tests = $_POST['tests'];
 				if (false !== $tests) {
 					if (preg_match('/^\w+(,\w+)*$/', $tests)) {
 						$tests = explode(',', $tests);

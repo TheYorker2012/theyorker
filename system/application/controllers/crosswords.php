@@ -171,10 +171,10 @@ class Crosswords extends Controller
 				$root['status'] = 'fail';
 			}
 			else {
-				$worked = $puzzle->importGrid($_GET['xw']);
+				$worked = $puzzle->importGrid($_POST['xw']);
 				if ($worked) {
 					// Saving (and autosaving)
-					if (isset($_GET['xw']['save']) || isset($_GET['xw']['autosave'])) {
+					if (isset($_POST['xw']['save']) || isset($_POST['xw']['autosave'])) {
 						$success = $this->crosswords_model->SaveCrosswordVersion($crossword['id'], $this->user_auth->entityId, $puzzle);
 						$root['status'] = $success ? 'success' : 'fail';
 						if (!$success) {
@@ -185,7 +185,7 @@ class Crosswords extends Controller
 						}
 					}
 					// Submitting for marking`
-					elseif (isset($_GET['xw']['submit'])) {
+					elseif (isset($_POST['xw']['submit'])) {
 						$root['status'] = 'success';
 						$correct = $puzzle->isCorrect();
 						$root['mark'] = ($correct ? 'correct' : 'incorrect');

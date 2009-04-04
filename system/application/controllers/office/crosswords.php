@@ -522,9 +522,9 @@ class Crosswords extends Controller
 			else if ('save' === $operation) {
 				if (!CheckRolePermissions('CROSSWORD_VIEW', 'CROSSWORD_MODIFY')) return;
 
-				if (isset($_GET['xw']['save'])) {
+				if (isset($_POST['xw']['save'])) {
 					$puzzle = new CrosswordPuzzle();
-					$worked = $puzzle->importData($_GET['xw']);
+					$worked = $puzzle->importData($_POST['xw']);
 					if ($worked) {
 						$this->crosswords_model->SaveCrossword($crossword, $puzzle);
 						$status = 'success';

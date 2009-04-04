@@ -131,10 +131,10 @@ class Permissions extends Controller
 		// Allow admins to do this, in case somebody screws with permissions.
 		if (GetUserLevel() != 'admin') {
 			$requiredPermissions = array();
-			if (isset($_GET['roles'])) {
+			if (isset($_POST['roles'])) {
 				$requiredPermissions[] = 'PERMISSIONS_MODIFY_ROLES';
 			}
-			if (isset($_GET['users'])) {
+			if (isset($_POST['users'])) {
 				$requiredPermissions[] = 'PERMISSIONS_MODIFY_USERS';
 			}
 			if (!CheckRolePermissions($requiredPermissions)) return;
@@ -145,8 +145,8 @@ class Permissions extends Controller
 		
 		
 		// Confirm changes
-		if (isset($_GET['roles'])) {
-			$roleChanges = $_GET['roles'];
+		if (isset($_POST['roles'])) {
+			$roleChanges = $_POST['roles'];
 			if (isset($roleChanges[1])) {
 				$this->permissions_model->removeRolePermissions($roleChanges[1]);
 			}
@@ -154,8 +154,8 @@ class Permissions extends Controller
 				$this->permissions_model->addRolePermissions($roleChanges[0]);
 			}
 		}
-		if (isset($_GET['users'])) {
-			$userChanges = $_GET['users'];
+		if (isset($_POST['users'])) {
+			$userChanges = $_POST['users'];
 			if (isset($userChanges[1])) {
 				$this->permissions_model->removeUserRoles($userChanges[1]);
 			}
