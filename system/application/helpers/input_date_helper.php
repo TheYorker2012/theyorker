@@ -25,6 +25,7 @@ class InputDateInterface extends InputInterface
 		get_instance()->main_frame->includeJs('javascript/input_date.js');
 		get_instance()->main_frame->includeCss('stylesheets/input_selector.css');
 		get_instance()->main_frame->includeCss('stylesheets/input_date.css');
+		get_instance()->main_frame->includeCss('stylesheets/input_date-iefix.css',null,null,'IE');
 		get_instance()->main_frame->includeCss('stylesheets/calendar.css');
 
 		$this->div_classes = array('input_date');
@@ -182,64 +183,66 @@ class InputDateInterface extends InputInterface
 						?>	onclick="<?php echo(xml_escape('return input_selector_click("'.$this->name.'__selector");')); ?>"<?php
 						?>	><?php
 			?></div><?php
-			?><table class="recur-cal cal-text"><?php
-				// Days along the top
-				?><tr><?php
-					?><th /><?php
-					foreach ($days as $day) {
-						?><th><?php
-						echo(xml_escape($day));
-						?></th><?php
-					}
-				?></tr><?php
-				$cur = $value->MondayWeek1OfTerm();
-				$sel = $value->Midnight()->Timestamp();
-				$today = Academic_time::NewToday()->Timestamp();
-				$last_month = 0;
-				$term = $cur->AcademicTerm();
-				for ($wk = 1; $cur->AcademicTerm() == $term; ++$wk) {
-					?><tr id="<?php echo($this->name.'__wk_'.$wk); ?>"><?php
-						?><th><?php
-							echo($wk);
-						?></th><?php
-						for ($dy = 0; $dy < 7; ++$dy) {
-							$month = $cur->Month();
-							$ts = $cur->Timestamp();
-							$classes = array();
-							if ($ts < $today) {
-								$classes[] = "pa";
-							}
-							if ($month % 2 == 0) {
-								$classes[] = "ev";
-							}
-							if ($ts == $today) {
-								$classes[] = "tod";
-							}
-							if ($ts == $sel) {
-								$classes[] = "sel";
-							}
-							if ($dy >= 5) {
-								$classes[] = "we";
-							}
-							?><td	class="<?php echo(join(' ',$classes)); ?>"<?php
-								?>	id="<?php echo($this->name.'__'.$cur->AcademicWeek().'_'.$cur->Format('D')); ?>"<?php
-								?>	onclick="<?php echo(xml_escape(
-										'return input_date_change('.js_literalise($this->name).','.
-																	js_literalise($wk).','.
-																	js_literalise($dy).');'
-										)); ?>"<?php
-								?>	><?php
-								if ($month != $last_month) {
-									echo(xml_escape($cur->Format('M')).'&nbsp;');
-									$last_month = $month;
-								}
-								echo(xml_escape($cur->Format('j')));
-							?></td><?php
-							$cur = $cur->Adjust('+1day');
+			?><div><?php
+				?><table class="recur-cal cal-text"><?php
+					// Days along the top
+					?><tr><?php
+						?><th /><?php
+						foreach ($days as $day) {
+							?><th><?php
+							echo(xml_escape($day));
+							?></th><?php
 						}
 					?></tr><?php
-				}
-			?></table><?php
+					$cur = $value->MondayWeek1OfTerm();
+					$sel = $value->Midnight()->Timestamp();
+					$today = Academic_time::NewToday()->Timestamp();
+					$last_month = 0;
+					$term = $cur->AcademicTerm();
+					for ($wk = 1; $cur->AcademicTerm() == $term; ++$wk) {
+						?><tr id="<?php echo($this->name.'__wk_'.$wk); ?>"><?php
+							?><th><?php
+								echo($wk);
+							?></th><?php
+							for ($dy = 0; $dy < 7; ++$dy) {
+								$month = $cur->Month();
+								$ts = $cur->Timestamp();
+								$classes = array();
+								if ($ts < $today) {
+									$classes[] = "pa";
+								}
+								if ($month % 2 == 0) {
+									$classes[] = "ev";
+								}
+								if ($ts == $today) {
+									$classes[] = "tod";
+								}
+								if ($ts == $sel) {
+									$classes[] = "sel";
+								}
+								if ($dy >= 5) {
+									$classes[] = "we";
+								}
+								?><td	class="<?php echo(join(' ',$classes)); ?>"<?php
+									?>	id="<?php echo($this->name.'__'.$cur->AcademicWeek().'_'.$cur->Format('D')); ?>"<?php
+									?>	onclick="<?php echo(xml_escape(
+											'return input_date_change('.js_literalise($this->name).','.
+																		js_literalise($wk).','.
+																		js_literalise($dy).');'
+											)); ?>"<?php
+									?>	><?php
+									if ($month != $last_month) {
+										echo(xml_escape($cur->Format('M')).'&nbsp;');
+										$last_month = $month;
+									}
+									echo(xml_escape($cur->Format('j')));
+								?></td><?php
+								$cur = $cur->Adjust('+1day');
+							}
+						?></tr><?php
+					}
+				?></table><?php
+			?></div><?php
 		?></div><?php
 	}
 

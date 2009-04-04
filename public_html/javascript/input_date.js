@@ -104,11 +104,12 @@ function input_date_term_changed(name)
 		// put a dummy row to say we're waiting
 		var dummy = document.createElement('tr');
 		dummy.id=name+'__wk_1';
-		var dummy_td = document.createElement('td');
+		var dummy_td = document.createElement('th');
 		dummy_td.colSpan = 8;
-		// TODO add loading image
-		// TODO set style
-		setInnerText(dummy_td, "Loading term data");
+		var dummy_div = document.createElement('div');
+		dummy_div.className="loading";
+		setInnerText(dummy_div, "Loading term data");
+		dummy_td.appendChild(dummy_div);
 		dummy.appendChild(dummy_td);
 		tbody.appendChild(dummy);
 
@@ -126,7 +127,7 @@ function input_date_term_changed(name)
 				select.disabled = "";
 			}
 			else {
-				calendar_term_dates_prefetch(ac_year-1, ac_year+1, function(success) {
+				calendar_term_dates_prefetch(ac_year, ac_year, function(success) {
 					var term_info = calendar_term(ac_year, ac_term);
 					if (null != term_info) {
 						// Clear dummy
@@ -208,14 +209,13 @@ function input_date_term_changed(name)
 						setInnerText(dummy_td, "Term data could not be retrieved");
 					}
 					select.disabled = "";
+					input_date_day_changed(name);
 				});
 			}
 		}
 		else {
 			setInnerText(dummy_td, "Bad term id");
 		}
-
-		input_date_day_changed(name);
 	}
 }
 
