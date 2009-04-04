@@ -23,10 +23,11 @@ class Crosswords_model extends model
 									'AND `crossword_completeness` = 100)';
 		$this->scheduled_sql	= '(`crossword_publication` IS NOT NULL '.
 									'AND NOT '.$this->published_sql.')';
-		$this->expired_sql		= '(`crossword_expiry` IS NOT NULL AND `crossword_expiry` <= NOW())';
 		$this->winner_count_sql	= '(SELECT COUNT(*) '.
 									'FROM `crossword_winners` '.
 									'WHERE `crossword_winner_crossword_id` = `crossword_id`)';
+		$this->expired_sql		= '((`crossword_expiry` IS NOT NULL AND `crossword_expiry` <= NOW()) '.
+									'OR	'.$this->winner_count_sql.' >= `crossword_winners`)';
 	}
 
 	/*
@@ -542,14 +543,11 @@ class Crosswords_model extends model
 		$sql .=	'	AND '.$this->published_sql.' ';
 		// And where the crossword hasn't expired
 		$sql .=	'	AND NOT '.$this->expired_sql.' ';
-		// And where there are some medals left to win
-		$sql .=	'	AND	'.$this->winner_count_sql.' < `crossword_winners` ';
 		// And where this user hasn't already got a medal
-		$sql .=	'	AND (SELECT COUNT(*) '.
+		$sql .=	'	AND NOT EXISTS (SELECT * '.
 				'		 FROM	`crossword_winners` '.
 				'		 WHERE	`crossword_winner_crossword_id`=`crossword_id` '.
-				'			AND	`crossword_winner_user_entity_id`=?) '.
-				'			= 0 ';
+				'			AND	`crossword_winner_user_entity_id`=?)';
 		$bind[] = $user_id;
 		$this->db->query($sql, $bind);
 		return $this->db->affected_rows() > 0;

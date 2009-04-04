@@ -12,6 +12,9 @@ div.crosswordWinners h2 {
 div.crosswordWinners ol {
 	margin: 0px;
 }
+div.crosswordWinners ol li.new_winner {
+	border: 1px solid #999999;
+}
 /* gold */
 div.crosswordWinners ol li.winner0 {
 	font-weight: bold;

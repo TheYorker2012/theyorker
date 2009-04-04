@@ -10,13 +10,17 @@
  * @param $Comments
  */
 
+$autosave_interval = 30; // seconds
+$winners_update_interval = 60; // seconds
+
 $width = $Grid->crossword()->grid()->width();
 $height = $Grid->crossword()->grid()->height();
 ?><script type="text/javascript"><?php
 echo(xml_escape(
 	'onLoadFunctions.push(function() {'.
 		'var xw =new Crossword("xw", '.js_literalise($width).', '.js_literalise($height).');'.
-		($LoggedIn ? 'xw.setAutosaveInterval('.js_literalise($Paths['ajax']).', 30);' : '').
+		($LoggedIn ? 'xw.setAutosaveInterval('.js_literalise($Paths['ajax']).', '.js_literalise($autosave_interval).');' : '').
+		($Crossword['expired'] ? '' : 'xw.setWinnersUpdateInterval('.js_literalise($Paths['ajax'].'/winners').', '.js_literalise($winners_update_interval).');').
 	'})'
 	,false));
 ?></script>
@@ -33,7 +37,7 @@ echo(xml_escape(
 				?><em>No winners</em><?php
 			}
 			else {
-				?><ol><?php
+				?><ol id="xw-winners"><?php
 				// Display all positions if not expired yet
 				$max = $Crossword['winners'];
 				// Otherwise just the ones taken
@@ -47,6 +51,9 @@ echo(xml_escape(
 					if (isset($Winners[$id])) {
 						$winner = $Winners[$id];
 						echo(xml_escape($winner['firstname'].' '.$winner['surname']));
+					}
+					else {
+						echo('&nbsp;');
 					}
 					?></li><?php
 				}

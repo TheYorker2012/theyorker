@@ -159,11 +159,27 @@ class Crosswords extends Controller
 			$this->main_frame->SetContentSimple('crosswords/crossword', $data);
 		}
 		elseif ($operation == 'ajax') {
+			$op2 = $comment_include;
 			$root = array(
 				'_tag' => 'crossword',
 			);
 
-			if (!$loggedIn) {
+			if ($op2 == 'winners') {
+				$root['expired'] = ($crossword['expired'] ? "yes" : "no" );
+				$root['positions'] = $crossword['winners'];
+				$winners = $this->crosswords_model->GetWinners($crossword['id']);
+				$root['winners'] = array();
+				foreach ($winners as $position => &$winner) {
+					$root['winners'][] = array(
+						'_tag' => 'winner',
+						'_attr' => array(
+							'position' => $position,
+						),
+						'name' => $winner['firstname'].' '.$winner['surname'],
+					);
+				}
+			}
+			elseif (!$loggedIn) {
 				$this->main_frame->Error(array(
 					'class' => 'error',
 					'text' => 'Not logged in.',

@@ -562,6 +562,11 @@ function Crossword(name, width, height)
 	this.m_changed = false;
 	this.m_notify = document.getElementById(this.m_name+"-notify");
 	this.m_notifyTimer = null;
+
+	this.m_winnersAction = null;
+	this.m_winnersInterval = null;
+	this.m_winnersTimer = null;
+	this.m_winnersNextPosition = null;
 	this.m_autosaveAction = null;
 	this.m_autosaveInterval = null;
 	this.m_autosaveTimer = null;
@@ -670,6 +675,88 @@ function Crossword(name, width, height)
 		}
 	}
 
+	this.winnersTimeout = function()
+	{
+		if (this.m_winnersInterval != null) {
+			var self = this;
+			var ajax = new AJAXInteraction(this.m_winnersAction, {},
+				function (responseXML) {
+					var root = responseXML.documentElement;
+					var expired = (innerText(root.getElementsByTagName("expired")[0]) == "yes");
+					var positions = parseInt(innerText(root.getElementsByTagName("positions")[0]), 10);
+					if (positions > 256) {
+						positions = 256;
+					}
+					var winner_els = root.getElementsByTagName("winner");
+					var winners = {};
+					var next_position = 0;
+					for (var i = 0; i < winner_els.length; ++i) {
+						var winner_el = winner_els[i];
+						var position = parseInt(winner_el.getAttribute("position"));
+						winners[position] = innerText(winner_el);
+						if (position >= next_position) {
+							next_position = position + 1;
+						}
+					}
+					// Clear winners
+					var winners_ol = document.getElementById(self.m_name+"-winners");
+					while (winners_ol.lastChild != null) {
+						winners_ol.removeChild(winners_ol.lastChild);
+					}
+					var need_another_reload = false;
+					for (var i = 0; i < positions; ++i) {
+						if (expired && undefined == winners[i]) {
+							break;
+						}
+						var li = document.createElement("li");
+						li.className="winner"+i;
+						if (undefined != winners[i]) {
+							if (null != self.m_nextPosition && i >= self.m_nextPosition) {
+								li.className = li.className+" new_winner";
+								// need another reload to clear the new_winner class
+								need_another_reload = true;
+							}
+							setInnerText(li, winners[i]);
+						}
+						else {
+							li.appendChild(document.createTextNode('\u00A0')); // &nbsp;
+						}
+						winners_ol.appendChild(li);
+					}
+					self.m_nextPosition = next_position;
+					if (!expired || need_another_reload) {
+						self.resetWinnersTimer();
+					}
+				},
+				function (status, text) {
+					self.updateNotification("error", "reload of winners list failed: "+text, 2000);
+					self.resetWinnersTimer();
+				});
+			ajax.doGet();
+		}
+	}
+	this.resetWinnersTimer = function()
+	{
+		if (this.m_winnersInterval != null) {
+			this.m_winnersTimer = setTimeout("crossword('"+this.m_name+"').winnersTimeout()", this.m_winnersInterval);
+		}
+	}
+	this.setWinnersUpdateInterval = function(action, interval)
+	{
+		if (null != this.m_winnersTimer) {
+			this.m_winnersTimer = null;
+			this.m_winnersAction = null;
+			this.m_winnersInterval = null;
+			clearTimeout(this.m_winnersTimer);
+		}
+		if (interval != null) {
+			interval = interval*1000;
+			this.m_winnersAction = action;
+			this.m_winnersInterval = interval;
+			this.resetWinnersTimer();
+		}
+	}
+
 
 	this.autosaveTimeout = function()
 	{
@@ -682,14 +769,12 @@ function Crossword(name, width, height)
 			}
 		}
 	}
-
 	this.resetAutosaveTimer = function()
 	{
 		if (this.m_autosaveInterval != null) {
 			this.m_autosaveTimer = setTimeout("crossword('"+this.m_name+"').autosaveTimeout()", this.m_autosaveInterval);
 		}
 	}
-
 	this.setAutosaveInterval = function(action, interval)
 	{
 		if (null != this.m_autosaveTimer) {
@@ -787,6 +872,10 @@ function Crossword(name, width, height)
 								winner = (innerText(winners[0]) == 'yes');
 							}
 							if (winner) {
+								if (null != self.m_winnersTimer) {
+									clearTimeout(self.m_winnersTimer);
+									self.winnersTimeout();
+								}
 								self.updateNotification("success", "congratulations: you are a winner", null);
 							}
 							else {
