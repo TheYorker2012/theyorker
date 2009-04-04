@@ -764,8 +764,8 @@ class CrosswordView
 		?></div><?php
 
 		// List of clues
-		$titles = array(CrosswordGrid::$HORIZONTAL => "Across",
-		                CrosswordGrid::$VERTICAL   => "Down");
+		$titles = array(CrosswordGrid::$HORIZONTAL => "across",
+		                CrosswordGrid::$VERTICAL   => "down");
 		$orClasses = array(CrosswordGrid::$HORIZONTAL => "horizontal",
 		                   CrosswordGrid::$VERTICAL   => "vertical");
 		$dx = array(CrosswordGrid::$HORIZONTAL	=> 1,
