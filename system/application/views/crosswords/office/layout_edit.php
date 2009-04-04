@@ -21,11 +21,13 @@
 			<input	id="xword_layout_name" name="xword_layout_name" type="text"
 					maxlength="<?php echo((int)$MaxLengths['name']); ?>"
 					value="<?php echo(xml_escape($Layout['name'])); ?>" />
+			<br />
 
 			<label	for="xword_layout_description">Description</label>
 			<textarea id="xword_layout_description" name="xword_layout_description"
 					rows="10" cols="50"
 					><?php echo(xml_escape($Layout['description'])); ?></textarea>
+			<br />
 
 <?php
 		foreach ($Actions as $action => $name) {

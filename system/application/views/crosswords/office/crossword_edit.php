@@ -53,8 +53,10 @@ echo(xml_escape(
 		<fieldset>
 			<label for="xwed_width">Width</label>
 			<input	type="text" id="xwed_width" name="xwed_width" value="<?php echo($width); ?>" maxlength="2" />
+			<br />
 			<label for="xwed_height">Height</label>
 			<input	type="text" id="xwed_height" name="xwed_height" value="<?php echo($height); ?>" maxlength="2" />
+			<br />
 			<input	class="button" type="button" value="Update Size"
 					onclick="<?php echo(xml_escape('crosswordResize("xw", '.
 								'document.getElementById("xwed_width"), '.

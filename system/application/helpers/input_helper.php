@@ -98,6 +98,7 @@ class InputInterfaces
 			if ($error) {
 				?></div><?php
 			}
+			?><br /><?php
 		}
 	}
 }
@@ -252,12 +253,12 @@ class InputCheckboxInterface extends InputInterface
 
 	protected function _Load()
 	{
-		?><input	type="hidden" name="<?php echo("$this->name[a]"); ?>"<?php
 		?><input	type="checkbox" name="<?php echo("$this->name[val]"); ?>"<?php
 			if ($this->value !== null && $this->value) {
 				?>	checked="checked"<?php
 			}
 				?>	/><?php
+		?><input	type="hidden" name="<?php echo("$this->name[a]"); ?>"<?php
 	}
 
 	protected function _Import(&$arr)
