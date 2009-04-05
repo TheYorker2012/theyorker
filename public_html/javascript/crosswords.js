@@ -1195,7 +1195,42 @@ function Crossword(name, width, height)
 		}
 		return true;
 	}
+	
+	this.inlineAnswersUpdated = function()
+	{
+		var checkbox = document.getElementById(this.m_name+"-clues-inline");
+		if (null != checkbox) {
+			var show_inline = checkbox.checked;
+			var items = [
+				document.getElementById(this.m_name+"-0-clues"),
+				document.getElementById(this.m_name+"-1-clues")
+			];
+			for (var i = 0; i < items.length; ++i) {
+				(show_inline?CssRemove:CssAdd)(items[i], "hideValues");
+			}
+		}
+		return false;
+	}
 
+	this.clueTypeUpdated = function()
+	{
+		var cryptic_radio = document.getElementById(this.m_name+"-clues-show-cryptic");
+		if (null != cryptic_radio) {
+			var cryptic = cryptic_radio.checked;
+			var items = [
+				document.getElementById(this.m_name+"-0-clues"),
+				document.getElementById(this.m_name+"-1-clues")
+			];
+			for (var i = 0; i < items.length; ++i) {
+				(cryptic ? CssRemove : CssAdd)(items[i], "hideCryptic");
+				(cryptic ? CssAdd : CssRemove)(items[i], "hideQuick");
+			}
+		}
+		return false;
+	}
+
+	this.inlineAnswersUpdated();
+	this.clueTypeUpdated();
 	this.updateCompleteness();
 }
 
@@ -1238,31 +1273,12 @@ function xwkp(name, x, y, e)
 	return crossword(name).keyPress(x, y, e);
 }
 
-function crosswordToggleInlineAnswers(name)
+function crosswordInlineAnswersUpdated(name)
 {
-	var items = [
-		document.getElementById(name+"-0-clues"),
-		document.getElementById(name+"-1-clues")
-	];
-	var hideValues = CssCheck(items[0], "hideValues");
-	for (var i = 0; i < items.length; ++i) {
-		CssToggle(items[i], "hideValues");
-	}
-	var link = document.getElementById("toggleInlineAnswers");
-	setInnerText(link, (hideValues ? "Hide inline answers" : "Show inline answers"));
+	crossword(name).inlineAnswersUpdated();
 }
 
-function crosswordToggleCrypticClues(name)
+function crosswordClueTypeUpdated(name)
 {
-	var items = [
-		document.getElementById(name+"-0-clues"),
-		document.getElementById(name+"-1-clues")
-	];
-	var hideCryptic = CssCheck(items[0], "hideCryptic");
-	for (var i = 0; i < items.length; ++i) {
-		CssToggle(items[i], "hideCryptic");
-		CssToggle(items[i], "hideQuick");
-	}
-	var link = document.getElementById("toggleCrypticClues");
-	setInnerText(link, (hideCryptic ? "Show quick clues" : "Show cryptic clues"));
+	crossword(name).clueTypeUpdated();
 }

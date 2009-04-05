@@ -687,7 +687,7 @@ class CrosswordView
 		if (!$this->m_edit) {
 			?><div id="<?php echo("$name-complete"); ?>" class="crosswordAjaxNotify hidden"><?php
 				?><fieldset><input	class="button" type="button" value="submit for marking" <?php
-								?>	onclick="<?php echo(xml_escape('crossword("xw").submit()')); ?>"<?php
+								?>	onclick="<?php echo(xml_escape("crossword('$name').submit()")); ?>"<?php
 								?>	/>crossword complete</fieldset><?php
 			?></div><?php
 		}
@@ -756,11 +756,54 @@ class CrosswordView
 			echo("\n");
 		}
 		?></table><?php
+		?></div><?php
 
-		if (!$this->m_readonly) {
-			?><a id="toggleInlineAnswers" onclick="<?php echo(xml_escape('crosswordToggleInlineAnswers("xw");')); ?>">Show inline answers</a><br /><?php
-		}
-		?><a id="toggleCrypticClues" onclick="<?php echo(xml_escape('crosswordToggleCrypticClues("xw");')); ?>">Show cryptic clues</a><br /><?php
+		// Clues bar
+		?><div class="crosswordCluesHeader"><?php
+			?><div class="header"><?php
+				// Toggles inline display of grid cells for each clue
+				if (!$this->m_readonly) {
+					?><fieldset><?php
+						?><label	for="<?php echo("$name-clues-inline"); ?>"><?php
+						if ($this->m_edit) {
+							?>show solutions with clues<?php
+						}
+						else {
+							?>show your answers with the clues<?php
+						}
+						?></label><?php
+						?><input	id="<?php echo("$name-clues-inline"); ?>"<?php
+								?>	type="checkbox"<?php
+								?>	onchange="<?php echo(xml_escape("return crosswordInlineAnswersUpdated('$name');")); ?>"<?php
+								?>	/><?php
+					?></fieldset><?php
+				}
+				// Choice between quick and cryptic clues
+				if (true) {
+					?><fieldset><?php
+						?><label	for="<?php echo("$name-clues-show-quick"); ?>">show quick clues</label><?php
+						?><input	id="<?php echo("$name-clues-show-quick"); ?>"<?php
+								?>	name="<?php echo("$name[cluetype]"); ?>"<?php
+								?>	class="radio"<?php
+								?>	type="radio"<?php
+								?>	value="quick"<?php
+								?>	onchange="<?php echo(xml_escape("return crosswordClueTypeUpdated('$name');")); ?>"<?php
+								?>	checked="checked"<?php
+								?>	/><?php
+					?></fieldset><?php
+					?><fieldset><?php
+						?><label	for="<?php echo("$name-clues-show-cryptic"); ?>">show cryptic clues</label><?php
+						?><input	id="<?php echo("$name-clues-show-cryptic"); ?>"<?php
+								?>	name="<?php echo("$name[cluetype]"); ?>"<?php
+								?>	class="radio"<?php
+								?>	type="radio"<?php
+								?>	value="cryptic"<?php
+								?>	onchange="<?php echo(xml_escape("return crosswordClueTypeUpdated('$name');")); ?>"<?php
+								?>	/><?php
+					?></fieldset><?php
+				}
+				?><div style="clear:both"></div><?php
+			?></div><?php
 		?></div><?php
 
 		// List of clues

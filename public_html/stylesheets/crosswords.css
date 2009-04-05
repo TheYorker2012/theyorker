@@ -166,6 +166,25 @@ div.crosswordBox {
 	margin: 0px;
 }
 
+div.crosswordCluesHeader {
+	float: left;
+	width: 60%;
+	padding: 0px;
+	margin: 0px;
+}
+div.crosswordCluesHeader fieldset {
+	float: left;
+	width: 33%;
+}
+div.crosswordCluesHeader fieldset label {
+	float: right;
+	width: 75%;
+	text-align: left;
+}
+div.crosswordCluesHeader fieldset input {
+	float: right;
+}
+
 div.crosswordCluesBox {
 	float: left;
 	width: 30%;
@@ -173,6 +192,7 @@ div.crosswordCluesBox {
 	margin: 0px;
 }
 
+div.crosswordCluesHeader div.header,
 div.crosswordCluesBox div.horizontal,
 div.crosswordCluesBox div.vertical {
 	margin: 0px 0px 0.5em 0.5em;
