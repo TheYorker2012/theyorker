@@ -638,11 +638,21 @@ class CrosswordView
 	private $m_crossword;
 	private $m_edit;
 	private $m_readonly;
+	private $m_allowToggleClueType;
+	private $m_cluesQuick;
+	private $m_cluesCryptic;
+	private $m_defaultCryptic;
 
 	function __construct(&$crossword, $edit = false)
 	{
 		$this->m_crossword = $crossword;
 		$this->m_edit = $edit;
+		$this->m_readonly = false;
+		// so that the hidden clues aren't lost when saved
+		$this->m_allowToggleClueType = $edit;
+		$this->m_cluesQuick = true;
+		$this->m_cluesCryptic = false;
+		$this->m_defaultCryptic = false;
 
 		// Set up stylesheets and javascript
 		$ci = &get_instance();
@@ -663,6 +673,15 @@ class CrosswordView
 	function setReadOnly($readonly)
 	{
 		$this->m_readonly = $readonly;
+	}
+
+	function setClueTypes($quick, $cryptic)
+	{
+		// or edit so that the hidden clues aren't lost when saved
+		$this->m_allowToggleClueType = $this->m_edit || ($quick && $cryptic);
+		$this->m_cluesQuick = $quick;
+		$this->m_cluesCryptic = $cryptic;
+		$this->m_defaultCryptic = $cryptic;
 	}
 
 	function Load()
@@ -779,8 +798,12 @@ class CrosswordView
 					?></fieldset><?php
 				}
 				// Choice between quick and cryptic clues
-				if (true) {
-					?><fieldset><?php
+				if ($this->m_allowToggleClueType) {
+					?><fieldset<?php
+							if (!$this->m_cluesQuick) {
+								?> class="undesired"<?php
+							}
+							?>><?php
 						?><label	for="<?php echo("$name-clues-show-quick"); ?>">show quick clues</label><?php
 						?><input	id="<?php echo("$name-clues-show-quick"); ?>"<?php
 								?>	name="<?php echo("$name[cluetype]"); ?>"<?php
@@ -788,10 +811,16 @@ class CrosswordView
 								?>	type="radio"<?php
 								?>	value="quick"<?php
 								?>	onchange="<?php echo(xml_escape("return crosswordClueTypeUpdated('$name');")); ?>"<?php
+							if (!$this->m_defaultCryptic) {
 								?>	checked="checked"<?php
+							}
 								?>	/><?php
 					?></fieldset><?php
-					?><fieldset><?php
+					?><fieldset<?php
+							if (!$this->m_cluesCryptic) {
+								?> class="undesired"<?php
+							}
+							?>><?php
 						?><label	for="<?php echo("$name-clues-show-cryptic"); ?>">show cryptic clues</label><?php
 						?><input	id="<?php echo("$name-clues-show-cryptic"); ?>"<?php
 								?>	name="<?php echo("$name[cluetype]"); ?>"<?php
@@ -799,6 +828,9 @@ class CrosswordView
 								?>	type="radio"<?php
 								?>	value="cryptic"<?php
 								?>	onchange="<?php echo(xml_escape("return crosswordClueTypeUpdated('$name');")); ?>"<?php
+							if ($this->m_defaultCryptic) {
+								?>	checked="checked"<?php
+							}
 								?>	/><?php
 					?></fieldset><?php
 				}
@@ -811,13 +843,19 @@ class CrosswordView
 		                CrosswordGrid::$VERTICAL   => "down");
 		$orClasses = array(CrosswordGrid::$HORIZONTAL => "horizontal",
 		                   CrosswordGrid::$VERTICAL   => "vertical");
+		$commonClasses = 'hideValues';
+		if ($this->m_allowToggleClueType) {
+			$commonClasses .= ' '.($this->m_defaultCryptic ? 'hideQuick' : 'hideCryptic');
+		}
 		$dx = array(CrosswordGrid::$HORIZONTAL	=> 1,
 					CrosswordGrid::$VERTICAL	=> 0);
 		$dy = array(CrosswordGrid::$HORIZONTAL	=> 0,
 					CrosswordGrid::$VERTICAL	=> 1);
 		foreach ($clues as $orientation => &$oclues) {
-			?><div class="crosswordCluesBox"><?php
-			?><div id="<?php echo("$name-$orientation-clues"); ?>" class="<?php echo($orClasses[$orientation]); ?> hideValues hideCryptic"><?php
+			?><div	class="crosswordCluesBox"><?php
+			?><div	id="<?php echo("$name-$orientation-clues"); ?>"<?php
+				?>	class="<?php echo($orClasses[$orientation].' '.$commonClasses); ?>"<?php
+				?>><?php
 			?><h2><?php
 			echo(xml_escape($titles[$orientation]));
 			?></h2><?php
@@ -837,12 +875,16 @@ class CrosswordView
 					?></span><?php
 					echo(' ');
 
-					?><span class="quickClue" id="<?php echo("$name-$orientation-cluetext0-$x-$y"); ?>"><?php
-					echo(xml_escape($clue->quickClue()));
-					?></span><?php
-					?><span class="crypticClue" id="<?php echo("$name-$orientation-cluetext1-$x-$y"); ?>"><?php
-					echo(xml_escape($clue->crypticClue()));
-					?></span><?php
+					if ($this->m_allowToggleClueType || !$this->m_defaultCryptic) {
+						?><span class="quickClue" id="<?php echo("$name-$orientation-cluetext0-$x-$y"); ?>"><?php
+						echo(xml_escape($clue->quickClue()));
+						?></span><?php
+					}
+					if ($this->m_allowToggleClueType || $this->m_defaultCryptic) {
+						?><span class="crypticClue" id="<?php echo("$name-$orientation-cluetext1-$x-$y"); ?>"><?php
+						echo(xml_escape($clue->crypticClue()));
+						?></span><?php
+					}
 
 					$lengths = $clue->wordLengths();
 					?> (<span id="<?php echo("$name-$orientation-wordlen-$x-$y"); ?>"><?php echo(join(',', $lengths)); ?></span>)<?php

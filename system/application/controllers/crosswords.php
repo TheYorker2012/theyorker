@@ -130,6 +130,7 @@ class Crosswords extends Controller
 
 		if (null === $operation || 'view' === $operation) {
 			$crosswordView = new CrosswordView($puzzle);
+			$crosswordView->setClueTypes($crossword['has_quick_clues'], $crossword['has_cryptic_clues']);
 			if (!$loggedIn) {
 				$crosswordView->setReadOnly(true);
 			}

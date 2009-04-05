@@ -176,6 +176,10 @@ div.crosswordCluesHeader fieldset {
 	float: left;
 	width: 33%;
 }
+/* e.g. quick clues radio when quick clues disabled */
+div.crosswordCluesHeader fieldset.undesired {
+	color: #888888;
+}
 div.crosswordCluesHeader fieldset label {
 	float: right;
 	width: 75%;

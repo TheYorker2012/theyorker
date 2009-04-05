@@ -652,6 +652,9 @@ class Crosswords extends Controller
 					}
 				}
 
+				// Which clues are enabled may have just changed
+				$crosswordView->setClueTypes($crossword_info['has_quick_clues'], $crossword_info['has_cryptic_clues']);
+
 				$data['Configuration'] = &$config;
 				$data['Grid'] = &$crosswordView;
 				$data['Paths'] = array(
