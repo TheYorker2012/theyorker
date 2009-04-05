@@ -718,7 +718,7 @@ class CrosswordView
 							echo('class="'.implode(' ',$classes).'" ');
 						}
 						?>id="<?php echo("$name-$x-$y"); ?>" <?php
-						?>onclick="return crosswordClick(<?php echo("'$name', $x, $y, event") ?>)"><div><?php
+						?>onclick="<?php echo("xwc('$name',$x,$y,event);") ?>"><div><?php
 
 					// Clue number
 					$lights = $grid->lightsAt($x, $y, true);
@@ -733,23 +733,23 @@ class CrosswordView
 						?><sup id="<?php echo("$name-num-$x-$y"); ?>"></sup><?php
 					}
 					// Text input box
-					?><input type="text" maxlength="2" <?php
+					?><input type="text" <?php
 						   ?>id="<?php echo("$name-edit-$x-$y"); ?>" <?php
 					if (!$this->m_readonly) {
-						   ?>onkeydown="return crosswordKeyDown(<?php echo("'$name',$x,$y,event") ?>)" <?php
-						   ?>onkeypress="return crosswordKeyPress(<?php echo("'$name',$x,$y,event") ?>)" <?php
+						   ?>onkeydown="<?php echo("return xwkd('$name',$x,$y,event);"); ?>" <?php
+						   ?>onkeypress="<?php echo("return xwkp('$name',$x,$y,event);"); ?>" <?php
 					}
 						   ?>value="<?php echo(xml_escape($state)); ?>" <?php
 					if ($this->m_readonly) {
-						?>readonly="readonly"<?php
+						?>readonly="readonly" <?php
 					}
-						   ?> /><?php
+						   ?>/><?php
 					?></div></td><?php
 				}
 				else {
 					// Nothing but a blank placemarker
 					?><td class="blank" <?php
-						?>onclick="return crosswordDeselect(<?php echo("'$name', event") ?>)" /><?php
+						?>onclick="<?php echo("xwd('$name');"); ?>" /><?php
 				}
 			}
 			?></tr><?php
@@ -850,11 +850,11 @@ class CrosswordView
 									echo('class="'.implode(' ',$classes).'" ');
 								}
 							?>id="<?php echo("$name-$orientation-$cx-$cy"); ?>" <?php
-								?>onclick="return crosswordClueClick(<?php echo("'$name', $cx, $cy, $orientation, event") ?>)"><div><?php
-							?><input type="text" cols="1" maxlength="2" <?php
+								?>onclick="<?php echo("xwcc('$name',$cx,$cy,$orientation);") ?>"><?php
+							?><input type="text" <?php
 								   ?>id="<?php echo("$name-$orientation-edit-$cx-$cy"); ?>" <?php
-								   ?>onkeydown="return crosswordKeyDown(<?php echo("'$name',$cx,$cy,event") ?>)" <?php
-								   ?>onkeypress="return crosswordKeyPress(<?php echo("'$name',$cx,$cy,event") ?>)" <?php
+								   ?>onkeydown="<?php echo("return xwkd('$name',$cx,$cy,event);") ?>" <?php
+								   ?>onkeypress="<?php echo("return xwkp('$name',$cx,$cy,event);") ?>" <?php
 								   ?>value="<?php echo(xml_escape($state)); ?>" /><?php
 							?></td><?php
 						}

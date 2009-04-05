@@ -37,10 +37,12 @@ echo(xml_escape(
 
 	<h2>tips</h2>
 
-	<form class="form">
-		tip category
-		wikitext
-		preview
+	<form class="form" action="#">
+		<ul>
+			<li>tip category</li>
+			<li>wikitext</li>
+			<li>preview</li>
+		</ul>
 	</form>
 
 </div>
@@ -49,7 +51,7 @@ echo(xml_escape(
 
 	<h2>edit crossword</h2>
 
-	<form class="form">
+	<form class="form" action="#">
 		<fieldset>
 			<label for="xwed_width">Width</label>
 			<input	type="text" id="xwed_width" name="xwed_width" value="<?php echo($width); ?>" maxlength="2" />
@@ -64,7 +66,7 @@ echo(xml_escape(
 		</fieldset>
 	</form>
 
-	<form class="form">
+	<form class="form" action="#">
 		<?php
 		$Grid->Load();
 		?>

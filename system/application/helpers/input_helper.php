@@ -150,7 +150,7 @@ abstract class InputInterface
 				if ($this->enabled) {
 					?>	checked="checked"<?php
 				}
-					?>	><?php
+					?>	/><?php
 		}
 		?><div	id="<?php echo($this->name); ?>"<?php
 		if (null != $this->div_classes) {
@@ -259,6 +259,7 @@ class InputCheckboxInterface extends InputInterface
 			}
 				?>	/><?php
 		?><input	type="hidden" name="<?php echo("$this->name[a]"); ?>"<?php
+				?>	/><?php
 	}
 
 	protected function _Import(&$arr)

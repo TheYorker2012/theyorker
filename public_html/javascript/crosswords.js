@@ -1095,7 +1095,7 @@ function Crossword(name, width, height)
 		}
 	}
 
-	this.click = function(x, y, e)
+	this.click = function(x, y)
 	{
 		this.m_inGrid = true;
 		if (this.m_x == x && this.m_y == y) {
@@ -1107,7 +1107,7 @@ function Crossword(name, width, height)
 		this.m_xyModified = true;
 	}
 
-	this.clueClick = function(x, y, o, e)
+	this.clueClick = function(x, y, o)
 	{
 		this.m_inGrid = false;
 		this.changeCell(x, y, o, true);
@@ -1199,19 +1199,22 @@ function Crossword(name, width, height)
 	this.updateCompleteness();
 }
 
-function crosswordDeselect(name, e)
+// crosswordDeselect
+function xwd(name)
 {
 	return crossword(name).changeCell(-1, -1, null, false);
 }
 
-function crosswordClick(name, x, y, e)
+// crosswordClick
+function xwc(name, x, y)
 {
-	return crossword(name).click(x, y, e);
+	return crossword(name).click(x, y);
 }
 
-function crosswordClueClick(name, x, y, o, e)
+// crosswordClueClick
+function xwcc(name, x, y, o)
 {
-	return crossword(name).clueClick(x, y, o, e);
+	return crossword(name).clueClick(x, y, o);
 }
 
 function crosswordSelectLight(name, x, y, o, f)
@@ -1223,12 +1226,14 @@ function crosswordSelectLight(name, x, y, o, f)
 	}
 }
 
-function crosswordKeyDown(name, x, y, e)
+// crosswordKeyDown
+function xwkd(name, x, y, e)
 {
 	return crossword(name).keyDown(x, y, e);
 }
 
-function crosswordKeyPress(name, x, y, e)
+// crosswordKeyPress
+function xwkp(name, x, y, e)
 {
 	return crossword(name).keyPress(x, y, e);
 }

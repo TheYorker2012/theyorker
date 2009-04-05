@@ -182,7 +182,7 @@ class InputDateInterface extends InputInterface
 				// Close button
 				?><input	type="button" value="x"<?php
 						?>	onclick="<?php echo(xml_escape('return input_selector_click("'.$this->name.'__selector");')); ?>"<?php
-						?>	><?php
+						?>	/><?php
 			?></div><?php
 			?><div><?php
 				?><table class="recur-cal cal-text"><?php

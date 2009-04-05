@@ -93,9 +93,11 @@ if (isset($medium_type)) { ?>
 		</div>
 		<div id="BarSearch">
 			<form id="searchbox_003080001858553066416:dyddjbcpdlc" action="http://www.google.com/search">
-				<input type="hidden" name="cx" value="003080001858553066416:dyddjbcpdlc" />
-				<input type="hidden" name="cof" value="FORID:0" />
-				<input name="q" type="text" size="25" value="Search for..." onfocus="inputFocus(this);" onblur="inputBlur(this);" />
+				<fieldset>
+					<input type="hidden" name="cx" value="003080001858553066416:dyddjbcpdlc" />
+					<input type="hidden" name="cof" value="FORID:0" />
+					<input name="q" type="text" size="25" value="Search for..." onfocus="inputFocus(this);" onblur="inputBlur(this);" />
+				</fieldset>
 			</form>
 		</div>
 		<div id="BarTicker">

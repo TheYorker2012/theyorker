@@ -186,17 +186,17 @@ function CrosswordEdit(name, width, height)
 	
 	thisCrossword.addEventsToPreview = function(name, cx,cy, o, td,tdEd)
 	{
-		td.onclick = function(event)
+		td.onclick = function()
 		{
-			return crosswordClueClick(name, cx, cy, o, event);
+			xwcc(name, cx, cy, o);
 		}
 		tdEd.onkeypress = function(event)
 		{
-			return crosswordKeyPress(name, cx, cy, event);
+			return xwkp(name, cx, cy, event);
 		}
 		tdEd.onkeydown = function(event)
 		{
-			return crosswordKeyDown(name, cx, cy, event);
+			return xwkd(name, cx, cy, event);
 		}
 	}
 	thisCrossword.moveLight = function(light, x, y, len)
@@ -230,7 +230,6 @@ function CrosswordEdit(name, width, height)
 			tdEd.id = xwName+"-"+o+"-edit-"+cx+"-"+cy;
 			tdEd.type = "text";
 			tdEd.value = cell.letter();
-			tdEd.maxlength = 2;
 			tdEd.cols=1;
 			this.addEventsToPreview(xwName, cx,cy,o, td,tdEd);
 			tdDiv.appendChild(tdEd);
@@ -438,9 +437,9 @@ function CrosswordEdit(name, width, height)
 		var td = document.createElement("td");
 		td.id = name+"-"+x+"-"+y;
 		CssAdd(td,"blank");
-		td.onclick = function(ev)
+		td.onclick = function()
 		{
-			return crosswordClick(name, x, y, ev||event);
+			xwc(name, x, y);
 		}
 		var div = document.createElement("div");
 		td.appendChild(div);
@@ -452,13 +451,12 @@ function CrosswordEdit(name, width, height)
 		input.type = "text";
 		input.onkeypress = function(ev)
 		{
-			return crosswordKeyPress(name, x, y, ev||event);
+			return xwkp(name, x, y, ev||event);
 		}
 		input.onkeydown = function(ev)
 		{
-			return crosswordKeyDown(name, x, y, ev||event);
+			return xwkd(name, x, y, ev||event);
 		}
-		input.maxlength=2;
 		div.appendChild(input);
 		return td;
 	}

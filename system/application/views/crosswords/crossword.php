@@ -82,7 +82,7 @@ echo(xml_escape(
 	}
 ?>
 
-	<form class="form">
+	<form class="form" action="#">
 		<?php
 		$Grid->Load();
 		if ($LoggedIn) {
