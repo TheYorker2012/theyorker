@@ -1332,6 +1332,7 @@ function Crossword(name, width, height)
 		if (null == this.m_solutionsAvailable) {
 			// Lets find out if they're available
 			var self = this;
+			this.updateNotification("pending", "loading solution", null);
 			var ajax = new AJAXInteraction(this.m_solutionsAction, {},
 				function(responseXML)
 				{
@@ -1349,11 +1350,13 @@ function Crossword(name, width, height)
 						}
 					}
 					self.m_solutionsAvailable = available;
+					self.updateNotification("", "", null);
 					callback(self.m_solutionsAvailable);
 				},
 				function(status, text)
 				{
 					// Possibly try again later
+					self.updateNotification("", "", null);
 					callback(false);
 				}
 			);
