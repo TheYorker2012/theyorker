@@ -140,7 +140,16 @@ function CrosswordCell(name, x, y)
 			}
 			// Change internally
 			var oldLetter = this.m_letter;
-			this.m_letter = letter;
+			if (this.m_letter != letter) {
+				this.m_letter = letter;
+				for (var i = 0; i < 2; ++i) {
+					if (this.m_lights[i] != null) {
+						if (this.m_lights[i].m_checking) {
+							this.m_lights[i].showCheckResult(null);
+						}
+					}
+				}
+			}
 			// Knowness
 			if ((oldLetter != "") != (letter != "")) {
 				for (var i = 0; i < 2; ++i) {
@@ -165,11 +174,11 @@ function CrosswordCell(name, x, y)
 	}
 	this.setSolution = function(letter)
 	{
-		m_solution = letter;
+		this.m_solution = letter;
 	}
 	this.solution = function()
 	{
-		return m_solution;
+		return this.m_solution;
 	}
 	this.solve = function()
 	{
@@ -187,6 +196,35 @@ function CrosswordCell(name, x, y)
 			return null;
 		}
 		return (this.m_solution == this.m_letter);
+	}
+
+	this.updateCheckClass = function()
+	{
+		var bin_classes	= ["inc", "chk", "cor"];
+		var bins		= [false,       false,      false    ];
+		for (var o = 0; o < 2; ++o) {
+			var light = this.m_lights[o];
+			if (null != light) {
+				if (light.m_checking) {
+					if (null == light.m_checkResult) {
+						bins[1] = true;
+					}
+					else if (light.m_checkResult) {
+						bins[2] = true;
+					}
+					else {
+						bins[0] = true;
+					}
+				}
+			}
+		}
+		for (var i = 0; i < bins.length; ++i) {
+			for (var j = 0; j < this.m_els.length; ++j) {
+				if (null != this.m_els[j]) {
+					(bins[i]?CssAdd:CssRemove)(this.m_els[j], bin_classes[i]);
+				}
+			}
+		}
 	}
 
 	this.space = function(orientation, enable)
@@ -279,6 +317,9 @@ function CrosswordLight(name, x, y, orientation, cells, els, eds)
 	this.m_cluetextEl = null;
 	this.m_inlineEl = document.getElementById(name+"-"+orientation+"-inline-"+x+"-"+y);
 	this.m_complete = null;
+	this.m_checking = false;
+	this.m_checkResult = null;
+	this.m_checkTimer = null;
 
 	this.setCells = function(x, y, cells, els, eds)
 	{
@@ -379,12 +420,68 @@ function CrosswordLight(name, x, y, orientation, cells, els, eds)
 	/// Check whether the value matches the solution
 	this.check = function()
 	{
+		var overall = true;
 		for (var i = 0; i < this.m_cells.length; ++i) {
-			if (!m_cells[i].check()) {
-				return false;
+			var result = this.m_cells[i].check();
+			if (!result) {
+				return result;
+			}
+			else if (null == result) {
+				overall = null;
 			}
 		}
-		return true;
+		return overall;
+	}
+
+	/// Indicate that the light is being checked
+	this.startChecking = function()
+	{
+		if (this.m_checking && null == this.m_checkResult) {
+			return;
+		}
+		if (this.m_checkTimer != null) {
+			clearTimeout(this.m_checkTimer);
+			this.m_checkTimer = null;
+		}
+		this.m_checkResult = null;
+		this.m_checking = true;
+		for (var i = 0; i < this.m_cells.length; ++i) {
+			this.m_cells[i].updateCheckClass();
+		}
+	}
+	/// Indicate that checking was cancelled
+	this.cancelChecking = function()
+	{
+		if (!this.m_checking) {
+			return;
+		}
+		if (this.m_checkTimer != null) {
+			clearTimeout(this.m_checkTimer);
+			this.m_checkTimer = null;
+		}
+		this.m_checking = false;
+		for (var i = 0; i < this.m_cells.length; ++i) {
+			this.m_cells[i].updateCheckClass();
+		}
+	}
+	/// Provide the result of checking
+	this.showCheckResult = function(timeout)
+	{
+		var result = false;
+		if (this.m_checkTimer != null) {
+			clearTimeout(this.m_checkTimer);
+			this.m_checkTimer = null;
+		}
+		this.m_checkResult = this.check();
+		for (var i = 0; i < this.m_cells.length; ++i) {
+			this.m_cells[i].updateCheckClass();
+		}
+		if (null != timeout) {
+			this.m_checkTimer = setTimeout(
+				"crossword('"+name+"').lightCheckTimeout("+this.m_x+","+this.m_y+","+this.m_orientation+");",
+				timeout
+			);
+		}
 	}
 
 	/// Get length of light
@@ -553,7 +650,7 @@ function Crossword(name, width, height)
 	this.m_inGrid = true;
 	this.m_xyModified = false;
 	this.m_xySpaced = false;
-	this.m_light = new Array();
+	this.m_light = null;
 
 	this.m_grid = [];
 	this.m_gridRows = [];
@@ -570,6 +667,8 @@ function Crossword(name, width, height)
 	this.m_autosaveAction = null;
 	this.m_autosaveInterval = null;
 	this.m_autosaveTimer = null;
+	this.m_solutionsAction = null;
+	this.m_solutionsAvailable = false;
 
 	this.m_complete = null;
 	// Dummy so lights can ping it as they get filled
@@ -726,6 +825,13 @@ function Crossword(name, width, height)
 					self.m_nextPosition = next_position;
 					if (!expired || need_another_reload) {
 						self.resetWinnersTimer();
+					}
+					if (expired && null != self.m_solutionsAction) {
+						self.m_solutionsAvailable = null;
+						var checks_div = document.getElementById(self.m_name+"-checks");
+						if (null != checks_div) {
+							checks_div.style.display="";
+						}
 					}
 				},
 				function (status, text) {
@@ -1183,6 +1289,16 @@ function Crossword(name, width, height)
 				this.modifyValue(x, y, "");
 				this.m_xySpaced = true;
 			}
+			else if (charStr == "?") {
+				if (this.m_light != null) {
+					if (this.m_light.m_checking) {
+						this.m_light.cancelChecking();
+					}
+					else {
+						this.check("cur_light");
+					}
+				}
+			}
 			else {
 				var charcheck = /[a-zA-Z ]/;
 				var valid = charcheck.test(charStr);
@@ -1194,6 +1310,117 @@ function Crossword(name, width, height)
 			return false;
 		}
 		return true;
+	}
+
+	this.setSolutionsAction = function(action, available)
+	{
+		this.m_solutionsAction = action;
+		this.m_solutionsAvailable = available;
+		if (available == null || available) {
+			var checks_div = document.getElementById(this.m_name+"-checks");
+			if (null != checks_div) {
+				checks_div.style.display = "";
+			}
+		}
+	}
+	this.prefetchSolution = function(callback)
+	{
+		if (null == this.m_solutionsAvailable) {
+			// Lets find out if they're available
+			var self = this;
+			var ajax = new AJAXInteraction(this.m_solutionsAction, {},
+				function(responseXML)
+				{
+					var root = responseXML.documentElement;
+					var solution = root.getElementsByTagName("solution")[0];
+					var available = (solution.getAttribute("available") == "yes");
+					if (available) {
+						var letters = solution.getElementsByTagName("letter");
+						for (var i = 0; i < letters.length; ++i) {
+							var letter = letters[i];
+							var x = parseInt(letter.getAttribute("x"), 10);
+							var y = parseInt(letter.getAttribute("y"), 10);
+							var val = innerText(letter);
+							self.m_grid[x][y].setSolution(val);
+						}
+					}
+					self.m_solutionsAvailable = available;
+					callback(self.m_solutionsAvailable);
+				},
+				function(status, text)
+				{
+					// Possibly try again later
+					callback(false);
+				}
+			);
+			ajax.doGet();
+		}
+		else {
+			callback(this.m_solutionsAvailable);
+		}
+	}
+	this.stopCheck = function()
+	{
+		for (var x = 0; x < this.m_width; ++x) {
+			for (var y = 0; y < this.m_height; ++y) {
+				for (var o = 0; o < 2; ++o) {
+					var light = this.m_lights[x][y][o];
+					if (null != light) {
+						light.cancelChecking();
+					}
+				}
+			}
+		}
+	}
+	// type:{'all_lights','cur_light'}
+	this.check = function(type)
+	{
+		var self = this;
+		// Find the lights that need checking
+		var lights = new Array();
+		if (type == "cur_light") {
+			if (this.m_light != null) {
+				lights.push(this.m_light);
+			}
+		}
+		else if (type == "all_lights") {
+			for (var x = 0; x < this.m_width; ++x) {
+				for (var y = 0; y < this.m_height; ++y) {
+					for (var o = 0; o < 2; ++o) {
+						var light = this.m_lights[x][y][o];
+						if (null != light) {
+							lights.push(light);
+						}
+					}
+				}
+			}
+		}
+		else {
+			this.updateNotification("error", "check "+type+" not implemented", 10000);
+			return;
+		}
+		// Mark as checking
+		for (var i = 0; i < lights.length; ++i) {
+			lights[i].startChecking();
+		}
+		// Ensure the solution is available
+		this.prefetchSolution(function(worked) {
+			if (worked) {
+				for (var i = 0; i < lights.length; ++i) {
+					lights[i].showCheckResult(null);
+				}
+			}
+			else {
+				for (var i = 0; i < lights.length; ++i) {
+					lights[i].cancelChecking();
+				}
+				self.updateNotification("error", "crossword solutions not available", 5000);
+			}
+		});
+	}
+	this.lightCheckTimeout = function(x, y, o)
+	{
+		this.m_lights[x][y][o].cancelChecking();
 	}
 	
 	this.inlineAnswersUpdated = function()
@@ -1271,6 +1498,16 @@ function xwkd(name, x, y, e)
 function xwkp(name, x, y, e)
 {
 	return crossword(name).keyPress(x, y, e);
+}
+
+function crosswordStopCheck(name)
+{
+	return crossword(name).stopCheck();
+}
+
+function crosswordCheck(name, type)
+{
+	return crossword(name).check(type);
 }
 
 function crosswordInlineAnswersUpdated(name)

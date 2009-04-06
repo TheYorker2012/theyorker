@@ -21,6 +21,7 @@ echo(xml_escape(
 		'var xw =new Crossword("xw", '.js_literalise($width).', '.js_literalise($height).');'.
 		($LoggedIn ? 'xw.setAutosaveInterval('.js_literalise($Paths['ajax']).', '.js_literalise($autosave_interval).');' : '').
 		($Crossword['expired'] ? '' : 'xw.setWinnersUpdateInterval('.js_literalise($Paths['ajax'].'/winners').', '.js_literalise($winners_update_interval).');').
+		'xw.setSolutionsAction('.js_literalise($Paths['ajax'].'/solution').','.js_literalise($Crossword['expired']?null:false).');'.
 	'})'
 	,false));
 ?></script>

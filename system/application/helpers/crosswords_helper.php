@@ -775,6 +775,28 @@ class CrosswordView
 			echo("\n");
 		}
 		?></table><?php
+		/// @TODO only if not expired!
+		if (!$this->m_edit && !$this->m_readonly) {
+			?><div id="<?php echo("$name-checks"); ?>" style="display:none"><?php
+				// check buttons
+				?><fieldset><?php
+					$check_actions = array(
+						'stop' => 'crosswordStopCheck('.js_literalise($name).');',
+						'check current light' => 'crosswordCheck('.js_literalise($name).','.js_literalise('cur_light').');',
+						'check all lights' => 'crosswordCheck('.js_literalise($name).','.js_literalise('all_lights').');',
+					);
+					foreach ($check_actions as $action_name => $javascript) {
+						?><input	type="button"<?php
+								?>	class="button"<?php
+								?>	value="<?php echo(xml_escape($action_name)); ?>"<?php
+								?>	onclick="<?php echo(xml_escape(
+										$javascript
+									)); ?>"<?php
+								?>	/><?php
+					}
+				?></fieldset><?php
+			?></div><?php
+		}
 		?></div><?php
 
 		// Clues bar

@@ -159,6 +159,37 @@ table.crossword td.focus {
 	border-color: red;
 }
 
+table.crossword td.inc {
+	border-color: #AA0000;
+	background-color: #FFAAAA;
+}
+table.crossword td.inc.selected {
+	background-color: #FF8888;
+}
+table.crossword td.inc.focus {
+	background-color: #FF4444;
+}
+table.crossword td.chk {
+	border-color: #000088;
+	background-color: #AAAAFF;
+}
+table.crossword td.chk.selected {
+	background-color: #8888FF;
+}
+table.crossword td.chk.focus {
+	background-color: #4444FF;
+}
+table.crossword td.cor {
+	border-color: #008800;
+	background-color: #AAFFAA;
+}
+table.crossword td.cor.selected {
+	background-color: #88FF88;
+}
+table.crossword td.cor.focus {
+	background-color: #44FF44;
+}
+
 div.crosswordBox {
 	clear: both;
 	float: left;

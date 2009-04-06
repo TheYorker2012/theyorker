@@ -126,9 +126,11 @@ class Crosswords extends Controller
 		if (!$worked) {
 			show_404();
 		}
-		$puzzle->grid()->clearSolutions();
+
+		// WARNING: SOLUTION NOT NECESSARILY CLEARED
 
 		if (null === $operation || 'view' === $operation) {
+			$puzzle->grid()->clearSolutions();
 			$crosswordView = new CrosswordView($puzzle);
 			$crosswordView->setClueTypes($crossword['has_quick_clues'], $crossword['has_cryptic_clues']);
 			if (!$loggedIn) {
@@ -180,6 +182,34 @@ class Crosswords extends Controller
 					);
 				}
 			}
+			elseif ($op2 == 'solution') {
+				$root['solution'] = array(
+					'_attr' => array(
+						'available' => ($crossword['expired']?"yes":"no"),
+					),
+				);
+				if ($crossword['expired']) {
+					$root['solution']['grid'] = array();
+					$grid = &$puzzle->grid();
+					$height = $grid->height();
+					$width = $grid->width();
+					for ($y = 0; $y < $height; ++$y) {
+						for ($x = 0; $x < $width; ++$x) {
+							$state = $grid->cellState($x, $y);
+							if (is_string($state)) {
+								$root['solution']['grid'][] = array(
+									'_tag' => 'letter',
+									'_attr' => array(
+										'x' => $x,
+										'y' => $y,
+									),
+									$state,
+								);
+							}
+						}
+					}
+				}
+			}
 			elseif (!$loggedIn) {
 				$this->main_frame->Error(array(
 					'class' => 'error',
@@ -188,6 +218,7 @@ class Crosswords extends Controller
 				$root['status'] = 'fail';
 			}
 			else {
+				$puzzle->grid()->clearSolutions();
 				$worked = $puzzle->importGrid($_POST['xw']);
 				if ($worked) {
 					// Saving (and autosaving)
