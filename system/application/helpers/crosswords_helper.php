@@ -786,7 +786,6 @@ class CrosswordView
 						'check all lights' => 'crosswordCheck('.js_literalise($name).','.js_literalise('all_lights').');',
 						null,
 						// solve buttons
-						'clear grid' => 'crosswordClear('.js_literalise($name).');',
 						'solve current light' => 'crosswordSolve('.js_literalise($name).','.js_literalise('cur_light').');',
 						'solve grid' => 'crosswordSolve('.js_literalise($name).','.js_literalise('grid').');',
 					);
@@ -805,6 +804,16 @@ class CrosswordView
 					}
 				?></fieldset><?php
 			?></div><?php
+			// Clear grid button
+			?><fieldset><?php
+				?><input	type="button"<?php
+						?>	class="button"<?php
+						?>	value="clear grid"<?php
+						?>	onclick="<?php echo(xml_escape(
+								'crosswordClear('.js_literalise($name).');'
+							)); ?>"<?php
+						?>	/><?php
+			?></fieldset><?php
 		}
 		?></div><?php
 
