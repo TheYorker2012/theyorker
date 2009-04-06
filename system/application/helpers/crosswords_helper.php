@@ -782,12 +782,12 @@ class CrosswordView
 					$check_actions = array(
 						// check buttons
 						'stop' => 'crosswordStopCheck('.js_literalise($name).');',
-						'check current light' => 'crosswordCheck('.js_literalise($name).','.js_literalise('cur_light').');',
-						'check all lights' => 'crosswordCheck('.js_literalise($name).','.js_literalise('all_lights').');',
+						'check selected light' => 'crosswordCheck('.js_literalise($name).','.js_literalise('cur_light').', false);',
+						'check all lights' => 'crosswordCheck('.js_literalise($name).','.js_literalise('all_lights').', false);',
 						null,
 						// solve buttons
-						'solve current light' => 'crosswordSolve('.js_literalise($name).','.js_literalise('cur_light').');',
-						'solve grid' => 'crosswordSolve('.js_literalise($name).','.js_literalise('grid').');',
+						'reveal selected light' => 'crosswordCheck('.js_literalise($name).','.js_literalise('cur_light').', true);',
+						'reveal all lights' => 'crosswordCheck('.js_literalise($name).','.js_literalise('all_lights').', true);',
 					);
 					foreach ($check_actions as $action_name => $javascript) {
 						if ($javascript == null) {
