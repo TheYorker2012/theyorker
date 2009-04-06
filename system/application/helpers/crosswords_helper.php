@@ -778,14 +778,23 @@ class CrosswordView
 		if (!$this->m_edit && !$this->m_readonly) {
 			// Initially hidden, if expired this will get unhidden by javascript
 			?><div id="<?php echo("$name-checks"); ?>" style="display:none"><?php
-				// check buttons
 				?><fieldset><?php
 					$check_actions = array(
+						// check buttons
 						'stop' => 'crosswordStopCheck('.js_literalise($name).');',
 						'check current light' => 'crosswordCheck('.js_literalise($name).','.js_literalise('cur_light').');',
 						'check all lights' => 'crosswordCheck('.js_literalise($name).','.js_literalise('all_lights').');',
+						null,
+						// solve buttons
+						'clear grid' => 'crosswordClear('.js_literalise($name).');',
+						'solve current light' => 'crosswordSolve('.js_literalise($name).','.js_literalise('cur_light').');',
+						'solve grid' => 'crosswordSolve('.js_literalise($name).','.js_literalise('grid').');',
 					);
 					foreach ($check_actions as $action_name => $javascript) {
+						if ($javascript == null) {
+							?><br /><?php
+							continue;
+						}
 						?><input	type="button"<?php
 								?>	class="button"<?php
 								?>	value="<?php echo(xml_escape($action_name)); ?>"<?php

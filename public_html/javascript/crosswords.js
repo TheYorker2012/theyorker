@@ -180,6 +180,10 @@ function CrosswordCell(name, x, y)
 	{
 		return this.m_solution;
 	}
+	this.clear = function()
+	{
+		this.setLetter("");
+	}
 	this.solve = function()
 	{
 		if (this.m_solution != null) {
@@ -1418,6 +1422,45 @@ function Crossword(name, width, height)
 			}
 		});
 	}
+
+	this.clear = function()
+	{
+		for (var x = 0; x < this.m_width; ++x) {
+			for (var y = 0; y < this.m_height; ++y) {
+				this.m_grid[x][y].clear();
+			}
+		}
+		this.m_changed = true;
+	}
+	// type:{'grid','cur_light'}
+	this.solve = function(type)
+	{
+		var self = this;
+		// Ensure the solution is available
+		this.prefetchSolution(function(worked) {
+			if (worked) {
+				if (type == "cur_light") {
+					if (self.m_light != null) {
+						self.m_light.solve();
+					}
+				}
+				else if (type == "grid") {
+					for (var x = 0; x < self.m_width; ++x) {
+						for (var y = 0; y < self.m_height; ++y) {
+							self.m_grid[x][y].solve();
+						}
+					}
+				}
+				else {
+					self.updateNotification("error", "solve "+type+" not implemented", 10000);
+				}
+			}
+			else {
+				self.updateNotification("error", "crossword solutions not available", 5000);
+			}
+		});
+		this.m_changed = true;
+	}
 	this.lightCheckTimeout = function(x, y, o)
 	{
 		this.m_lights[x][y][o].cancelChecking();
@@ -1508,6 +1551,16 @@ function crosswordStopCheck(name)
 function crosswordCheck(name, type)
 {
 	return crossword(name).check(type);
+}
+
+function crosswordClear(name)
+{
+	return crossword(name).clear();
+}
+
+function crosswordSolve(name, type)
+{
+	return crossword(name).solve(type);
 }
 
 function crosswordInlineAnswersUpdated(name)
