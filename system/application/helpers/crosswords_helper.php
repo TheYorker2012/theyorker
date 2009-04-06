@@ -834,7 +834,7 @@ class CrosswordView
 							?></label><?php
 							?><input	id="<?php echo("$name-clues-inline"); ?>"<?php
 									?>	type="checkbox"<?php
-									?>	onchange="<?php echo(xml_escape("return crosswordInlineAnswersUpdated('$name');")); ?>"<?php
+									?>	onclick="<?php echo(xml_escape("return crosswordInlineAnswersUpdated('$name');")); ?>"<?php
 									?>	/><?php
 						?></fieldset><?php
 					}
@@ -851,7 +851,7 @@ class CrosswordView
 									?>	class="radio"<?php
 									?>	type="radio"<?php
 									?>	value="quick"<?php
-									?>	onchange="<?php echo(xml_escape("return crosswordClueTypeUpdated('$name');")); ?>"<?php
+									?>	onclick="<?php echo(xml_escape("return crosswordClueTypeUpdated('$name');")); ?>"<?php
 								if (!$this->m_defaultCryptic) {
 									?>	checked="checked"<?php
 								}
@@ -868,7 +868,7 @@ class CrosswordView
 									?>	class="radio"<?php
 									?>	type="radio"<?php
 									?>	value="cryptic"<?php
-									?>	onchange="<?php echo(xml_escape("return crosswordClueTypeUpdated('$name');")); ?>"<?php
+									?>	onclick="<?php echo(xml_escape("return crosswordClueTypeUpdated('$name');")); ?>"<?php
 								if ($this->m_defaultCryptic) {
 									?>	checked="checked"<?php
 								}
