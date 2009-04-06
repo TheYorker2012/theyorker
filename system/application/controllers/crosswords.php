@@ -134,7 +134,7 @@ class Crosswords extends Controller
 			$crosswordView = new CrosswordView($puzzle);
 			$crosswordView->setClueTypes($crossword['has_quick_clues'], $crossword['has_cryptic_clues']);
 			if (!$loggedIn) {
-				$crosswordView->setReadOnly(true);
+				$crosswordView->setReadOnly(!$crossword['expired']);
 			}
 			else {
 				$success = $this->crosswords_model->LoadCrosswordVersion($crossword['id'], $this->user_auth->entityId, $puzzle);

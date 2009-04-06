@@ -71,10 +71,18 @@ echo(xml_escape(
 		$login_url = site_url('login/main'.$this->uri->uri_string());
 		?>
 		<div>
-			<p><b>You must be logged in to do crosswords online.</b>
-			Please <a href="<?php echo(xml_escape($login_url)); ?>">log in now</a> to take advantage of the following features:</p>
+			<?php if (!$Crossword['expired']) { ?>
+			<p>
+				<b>You must be logged in to do this crossword online</b>,
+				otherwise you will have to wait until all the winner positions have been filled.
+			<p>
+			<?php } ?>
+			<p>
+				The Yorker provides an intuitive and interactive online interface for doing crosswords.
+				Please <a href="<?php echo(xml_escape($login_url)); ?>">log in</a> to take advantage of the following features:
+			</p>
 			<ul>
-				<li>Intuitive and interactive online interface.</li>
+				<li>Do crosswords online before winner positions have been filled.</li>
 				<li>List your name on the crossword's winners list if you are one of the first to complete it.</li>
 				<li>Save unfinished crosswords for later completion.</li>
 			</ul>
