@@ -36,6 +36,7 @@ div.crosswordAjaxNotify {
 	margin-left: 30%;
 	margin-right: 30%;
 	min-height: 32px;
+	border: 1px solid white;
 	padding-left: 34px;
 
 	text-align: center;

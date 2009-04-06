@@ -768,12 +768,15 @@ function Crossword(name, width, height)
 	/// Find whether the crossword is completely filled in
 	this.updateCompleteness = function()
 	{
-		var complete = this.getCompleteness();
-		if (this.m_complete != complete) {
-			this.m_complete = complete;
-			var completeBox = document.getElementById(this.m_name+'-complete');
-			if (null != completeBox) {
-				completeBox.className="crosswordAjaxNotify "+(complete?"complete":"hidden");
+		// Need a url to be able to submit marks
+		if (this.m_autosaveAction != null) {
+			var complete = this.getCompleteness();
+			if (this.m_complete != complete) {
+				this.m_complete = complete;
+				var completeBox = document.getElementById(this.m_name+'-complete');
+				if (null != completeBox) {
+					completeBox.className="crosswordAjaxNotify "+(complete?"complete":"hidden");
+				}
 			}
 		}
 	}
@@ -898,9 +901,15 @@ function Crossword(name, width, height)
 			this.m_autosaveAction = action;
 			this.m_autosaveInterval = interval;
 			this.resetAutosaveTimer();
+			// Show complete box if autosaving allowed (logged in)
+			this.updateCompleteness();
 		}
 	}
 
+	this.clearNotification = function()
+	{
+		this.updateNotification("","",null);
+	}
 	this.updateNotification = function(cls, message, timeout)
 	{
 		if (null !== this.m_notify) {
@@ -911,7 +920,7 @@ function Crossword(name, width, height)
 				this.m_notifyTimer = null;
 			}
 			if (null !== timeout) {
-				this.m_notifyTime = setTimeout("crossword('"+this.m_name+"').updateNotification('hidden','',null);", timeout);
+				this.m_notifyTime = setTimeout("crossword('"+this.m_name+"').clearNotification();", timeout);
 			}
 		}
 	}
@@ -1350,13 +1359,11 @@ function Crossword(name, width, height)
 						}
 					}
 					self.m_solutionsAvailable = available;
-					self.updateNotification("", "", null);
 					callback(self.m_solutionsAvailable);
 				},
 				function(status, text)
 				{
 					// Possibly try again later
-					self.updateNotification("", "", null);
 					callback(false);
 				}
 			);
@@ -1426,6 +1433,7 @@ function Crossword(name, width, height)
 					}
 					lights[i].showCheckResult(null);
 				}
+				self.clearNotification();
 			}
 			else {
 				for (var i = 0; i < lights.length; ++i) {
@@ -1481,7 +1489,6 @@ function Crossword(name, width, height)
 
 	this.inlineAnswersUpdated();
 	this.clueTypeUpdated();
-	this.updateCompleteness();
 }
 
 // crosswordDeselect

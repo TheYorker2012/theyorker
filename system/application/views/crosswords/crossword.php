@@ -83,7 +83,7 @@ echo(xml_escape(
 			</p>
 			<ul>
 				<li>Do crosswords online before winner positions have been filled.</li>
-				<li>List your name on the crossword's winners list if you are one of the first to complete it.</li>
+				<li>List your name on the crossword's winner list if you are one of the first to complete it.</li>
 				<li>Save unfinished crosswords for later completion.</li>
 			</ul>
 		</div>
