@@ -8,6 +8,7 @@
  *  - 'tip_cat_view'
  *  - 'tip_cat_edit'
  * @param $Categories array
+ * @param $SelfUri string URI of current page.
  */
 ?>
 
@@ -34,7 +35,7 @@ foreach ($Categories as $category) {
 		?><li><a href="<?php echo(site_url('office/crosswords/tips/'.(int)$category['id'])); ?>">View this tip category</a></li><?php
 	}
 	if ($Permissions['tip_cat_edit']) {
-		?><li><a href="<?php echo(site_url('office/crosswords/tips/'.(int)$category['id']).'/edit'); ?>">Edit this tip category</a></li><?php
+		?><li><a href="<?php echo(xml_escape(site_url('office/crosswords/tips/'.(int)$category['id']).'/edit?ret='.urlencode($SelfUri))); ?>">Edit this tip category</a></li><?php
 	}
 	?></ul><?php
 	?></div><?php

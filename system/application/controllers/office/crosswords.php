@@ -45,36 +45,88 @@ class Crosswords extends Controller
 			$data = array(
 				'Permissions' => &$permissions,
 				'Categories' => $this->crosswords_model->GetTipCategories(),
+				'SelfUri' => $this->uri->uri_string(),
 			);
 			$this->main_frame->setContentSimple('crosswords/office/tips', $data);
 		}
 		else {
-			if ('add' === $category) {
-				// Page to add a category
-				if (!CheckRolePermissions('CROSSWORD_TIP_CATEGORY_ADD')) return;
+			$category_info = null;
+			if (is_numeric($category)) {
+				$category_info = $this->crosswords_model->GetTipCategories((int)$category);
+				if (empty($category_info)) {
+					$category_info = null;
+				}
+				else {
+					$category_info = $category_info[0];
+				}
+			}
+			$edit = ('edit' === $argument);
+			if ('add' === $category || $edit) {
+				// Page to add or edit a category
+				if ($edit) {
+					if (!CheckRolePermissions('CROSSWORD_TIP_CATEGORY_MODIFY')) return;
+					if (null === $category_info) {
+						show_404();
+					}
+				}
+				else {
+					if (!CheckRolePermissions('CROSSWORD_TIP_CATEGORY_ADD')) return;
+				}
 
 				$this->load->helper('input');
 				$form = new InputInterfaces;
 
-				$name_interface = new InputTextInterface('name', '');
+				if (!$edit) {
+					$category_info = array(
+						'id' => null,
+						'name' => '',
+						'description' => '',
+					);
+				}
+
+				$name_interface = new InputTextInterface('name', $category_info['name']);
 				$name_interface->SetMaxLength(255);
 				$name_interface->AddValidator(new InputTextValidatorMinLength(3));
 				$form->Add('Name', $name_interface);
 
-				$description_interface = new InputTextInterface('description', '');
+				$description_interface = new InputTextInterface('description', $category_info['description']);
 				$description_interface->SetMultiline(true);
 				$form->Add('Description', $description_interface);
 
 				$num_errors = $form->Validate();
 				if (0 == $num_errors && $form->Updated()) {
 					$values = $form->ChangedValues();
-					$id = $this->crosswords_model->AddTipCategory($values);
-					if ($id === null) {
-						$this->messages->AddMessage('error', 'Tip category could not be added');
+					$error = false;
+					if (count($values) == 0) {
+						$this->messages->AddMessage('information', "You did not make any changes");
+						$error = true;
 					}
-					else {
-						$this->messages->AddMessage('success', 'Tip category added');
-						redirect('office/crosswords/tips/'.$id);
+					if (!$error) {
+						if (!$edit) {
+							$id = $this->crosswords_model->AddTipCategory($values);
+							if ($id === null) {
+								$this->messages->AddMessage('error', 'Tip category could not be added');
+							}
+							else {
+								$this->messages->AddMessage('success', 'Tip category added');
+								redirect('office/crosswords/tips/'.$id);
+							}
+						}
+						else {
+							$values['id'] = $category_info['id'];
+							if (!$this->crosswords_model->UpdateTipCategory($values)) {
+								$this->messages->AddMessage('error', 'Changes could not be saved');
+							}
+							else {
+								$this->messages->AddMessage('success', 'Changes have been saved successfully');
+								if (isset($_GET['ret'])) {
+									redirect($_GET['ret']);
+								}
+								foreach ($values as $id => $value) {
+									$category_info[$id] = $value;
+								}
+							}
+						}
 					}
 				}
 
@@ -82,17 +134,26 @@ class Crosswords extends Controller
 					'Permissions' => &$permissions,
 					'Form' => &$form,
 					'Actions' => array(
-						'add' => 'Add tip category',
+						'add' => ($edit ? 'Save tip category' : 'Add tip category'),
 					),
-					'PostAction' => $this->uri->uri_string(),
+					'PostAction' => $this->uri->uri_string().(isset($_GET['ret']) ? ('?ret='.urlencode($_GET['ret'])) : ''),
 				);
 				$this->main_frame->setContentSimple('crosswords/office/tip_edit', $data);
 			}
-			elseif ('edit' === $argument) {
-				if (!CheckRolePermissions('CROSSWORD_TIP_CATEGORY_MODIFY')) return;
-			}
 			else {
 				if (!CheckRolePermissions('CROSSWORD_TIP_CATEGORY_VIEW')) return;
+				if (null === $category_info) {
+					show_404();
+				}
+
+				$data = array(
+					'Permissions' => &$permissions,
+					'Category' => $category_info,
+					'Tips' => array(),
+					'PostAction' => $this->uri->uri_string(),
+				);
+
+				$this->main_frame->setContentSimple('crosswords/office/tip_view', $data);
 			}
 		}
 

@@ -36,6 +36,7 @@ class Crosswords_model extends model
 
 	/** Add a tip category
 	 * @param $values array('name'=>,'description'=>)
+	 * @return null,int new tip category id
 	 */
 	function AddTipCategory($values)
 	{
@@ -56,6 +57,37 @@ class Crosswords_model extends model
 		else {
 			return $this->db->insert_id();
 		}
+	}
+
+	/** Update existing tip category
+	 * @param $values array('id'=>)
+	 * @return bool true on success
+	 */
+	function UpdateTipCategory($values)
+	{
+		if (!isset($values['id'])) {
+			return false;
+		}
+		$sets = array();
+		$bind = array();
+		if (isset($values['name'])) {
+			$sets[] = '`crossword_tip_category_name`=?';
+			$bind[] = $values['name'];
+		}
+		if (isset($values['description'])) {
+			$sets[] = '`crossword_tip_category_description`=?';
+			$bind[] = $values['description'];
+		}
+		if (empty($sets)) {
+			// No point updating nothing
+			return false;
+		}
+		$sql =	'UPDATE `crossword_tip_categories` '.
+				'SET '.join(',',$sets).' '.
+				'WHERE `crossword_tip_category_id`=?';
+		$bind[] = $values['id'];
+		$this->db->query($sql, $bind);
+		return ($this->db->affected_rows() > 0);
 	}
 
 	/** Get tip categories.
