@@ -29,7 +29,7 @@ class InputDateInterface extends InputInterface
 		get_instance()->main_frame->includeCss('stylesheets/input_date-iefix.css',null,null,'IE');
 		get_instance()->main_frame->includeCss('stylesheets/calendar.css');
 
-		$this->div_classes = array('input_date');
+		$this->div_classes[] = 'input_date';
 	}
 
 	public function setTimeEnabled($time)

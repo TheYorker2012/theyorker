@@ -138,7 +138,7 @@ abstract class InputInterface
 	protected $changed = null;
 	protected $errors = array();
 	protected $warnings = array();
-	protected $div_classes = null;
+	protected $div_classes = array();
 
 	/// Construct and initialise.
 	public function __construct($name, $default = null, $enabled = null, $auto = true)
@@ -186,8 +186,10 @@ abstract class InputInterface
 					?>	/><?php
 		}
 		?><div	id="<?php echo($this->name); ?>"<?php
-		if (null != $this->div_classes) {
-			?>	class="<?php echo(xml_escape(join(' ',$this->div_classes))); ?>"<?php
+		$classes = $this->div_classes;
+		$classes[] = 'input_encase';
+		if (!empty($classes)) {
+			?>	class="<?php echo(xml_escape(join(' ',$classes))); ?>"<?php
 		}
 			?>	><?php
 			$this->_Load();

@@ -1,13 +1,18 @@
 /****************************************************************
- * Javascript for inputs                                        *
+ * Styles for inputs                                            *
  * Author: James Hogan (james_hogan at theyorker dot co dot uk) *
  * Copyright (C) 2009 The Yorker                                *
  ****************************************************************/
 
+div.input_encase {
+	float: left;
+}
+
+/* In the event of error */
+
 div.input_error label {
 	color: red;
 }
-
 div.input_error.mover label {
 	font-weight: bold;
 }

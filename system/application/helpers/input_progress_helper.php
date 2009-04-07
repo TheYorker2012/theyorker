@@ -13,7 +13,7 @@ class InputProgressInterface extends InputIntInterface
 		get_instance()->main_frame->includeJs('javascript/input_progress.js');
 		get_instance()->main_frame->includeCss('stylesheets/input_progress.css');
 
-		$this->div_classes = array("input_progress");
+		$this->div_classes[] = "input_progress";
 	}
 
 	protected function _Load()

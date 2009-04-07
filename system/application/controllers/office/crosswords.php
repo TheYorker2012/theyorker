@@ -138,7 +138,7 @@ class Crosswords extends Controller
 					),
 					'PostAction' => $this->uri->uri_string().(isset($_GET['ret']) ? ('?ret='.urlencode($_GET['ret'])) : ''),
 				);
-				$this->main_frame->setContentSimple('crosswords/office/tip_edit', $data);
+				$this->main_frame->setContentSimple('crosswords/office/tip_cat_edit', $data);
 			}
 			else {
 				if (!CheckRolePermissions('CROSSWORD_TIP_CATEGORY_VIEW')) return;
@@ -149,11 +149,11 @@ class Crosswords extends Controller
 				$data = array(
 					'Permissions' => &$permissions,
 					'Category' => $category_info,
-					'Tips' => array(),
+					'Tips' => new CrosswordTipsList($category_info['id'], null),
 					'PostAction' => $this->uri->uri_string(),
 				);
 
-				$this->main_frame->setContentSimple('crosswords/office/tip_view', $data);
+				$this->main_frame->setContentSimple('crosswords/office/tip_cat_view', $data);
 			}
 		}
 
@@ -685,6 +685,8 @@ class Crosswords extends Controller
 				$crosswordView = new CrosswordView($puzzle, true);
 
 				$data = array();
+
+				// MAIN CONFIGURATION
 				$config = new InputInterfaces;
 
 				$quick_clues_interface = new InputCheckboxInterface('has_quick_clues', $crossword_info['has_quick_clues']);
@@ -728,6 +730,7 @@ class Crosswords extends Controller
 				$completeness_interface = new InputProgressInterface('completeness', $crossword_info['completeness']);
 				$config->Add('Progress', $completeness_interface);
 
+				// VALIDATION
 				$num_errors = $config->Validate();
 				if (0 == $num_errors && $config->Updated()) {
 					$values = $config->ChangedValues();
@@ -772,6 +775,7 @@ class Crosswords extends Controller
 				$crosswordView->setClueTypes($crossword_info['has_quick_clues'], $crossword_info['has_cryptic_clues']);
 
 				$data['Configuration'] = &$config;
+				$data['Tips'] = new CrosswordTipsList(null, $crossword_info['id']);
 				$data['Grid'] = &$crosswordView;
 				$data['Paths'] = array(
 					'view' => site_url("office/crosswords/crossword/$crossword"),

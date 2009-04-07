@@ -2,6 +2,8 @@
 /**
  * @file views/crosswords/office/crossword_edit.php
  * @param $Permissions array[string => bool] including:
+ * @param $Configuration InputInterfaces config interface.
+ * @param $Tips CrosswordTipsView tip list view.
  * @param $Crossword array of crossword information:
  *	- 'id'
  * @param $Grid
@@ -24,7 +26,9 @@ echo(xml_escape(
 	<form class="form" method="post" action="<?php echo(site_url($this->uri->uri_string())); ?>">
 		<fieldset>
 			<?php $Configuration->Load(); ?>
+		</fieldset>
 
+		<fieldset>
 			<input	class="button" type="submit" value="Save Configuration" />
 			<input	class="button" type="button" value="Return"
 					onclick="<?php echo(xml_escape('parent.location="'.$Paths['view'].'"')); ?>" />
@@ -37,13 +41,7 @@ echo(xml_escape(
 
 	<h2>tips</h2>
 
-	<form class="form" action="#">
-		<ul>
-			<li>tip category</li>
-			<li>wikitext</li>
-			<li>preview</li>
-		</ul>
-	</form>
+	<?php $Tips->Load(); ?>
 
 </div>
 

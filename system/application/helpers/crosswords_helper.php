@@ -1003,4 +1003,49 @@ class CrosswordView
 	}
 }
 
+/// List of tips
+class CrosswordTipsList
+{
+	private $tips;
+	private $category_id;
+	private $crossword_id;
+	private $add_form = null;
+
+	function __construct($category_id = null, $crossword_id = null)
+	{
+		$this->category_id = $category_id;
+		$this->crossword_id = $crossword_id;
+
+		$ci = &get_instance();
+		$this->tips = $ci->crosswords_model->GetTips($category_id, $crossword_id);
+
+		// Allow adding of new tips to specific crosswords
+		if (null != $crossword_id) {
+			$ci->load->helper('input');
+			$ci->load->helper('input_wikitext');
+
+			$this->add_form = new InputInterfaces;
+
+			// Tip category
+			$category_interface = new InputSelectInterface('new_tip_category', '');
+			$this->add_form->Add('Tip category', $category_interface);
+
+			// Wikitext
+			$content_interface = new InputWikitextInterface('new_tip_content', '');
+			$this->add_form->Add('Content (wikitext)', $content_interface);
+		}
+	}
+
+	function Load()
+	{
+		$ci = &get_instance();
+		$data = array(
+			'Tips' => $this->tips,
+			'AddForm' => $this->add_form,
+			'SelfUri' => $ci->uri->uri_string(),
+		);
+		$ci->load->view('crosswords/office/tips_list', $data);
+	}
+}
+
 ?>

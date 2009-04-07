@@ -6,7 +6,7 @@
  *	- id
  *  - name
  *  - description
- * @param $Tips array of tip objects
+ * @param $Tips CrosswordTipsList
  * @param $PostAction
  */
 ?>
@@ -26,4 +26,6 @@
 
 <div class="BlueBox">
 	<h2>Tips</h2>
+
+	<?php $Tips->Load(); ?>
 </div>

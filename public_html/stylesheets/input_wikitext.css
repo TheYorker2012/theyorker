@@ -1,0 +1,14 @@
+/****************************************************************
+ * Styles for wikitext inputs                                   *
+ * Author: James Hogan (james_hogan at theyorker dot co dot uk) *
+ * Copyright (C) 2009 The Yorker                                *
+ ****************************************************************/
+
+div.input_wikitext {
+	min-width: 50%;
+}
+
+div.input_wikitext textarea {
+	width: 100%;
+	height: 10em;
+}
