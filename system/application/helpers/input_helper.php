@@ -67,8 +67,8 @@ class InputInterfaces
 			if ($interface[1]->Enabled()) {
 				$errors = $interface[1]->Errors();
 				if (count($errors) > 0) {
-					get_instance()->main_frame->includeJs('javascript/css_classes.js');
-					get_instance()->main_frame->includeJs('javascript/input.js');
+					$ci->main_frame->includeJs('javascript/css_classes.js');
+					$ci->main_frame->includeJs('javascript/input.js');
 					$enter_js = 'input_error_mouse('.js_literalise($name).', true);';
 					$exit_js = 'input_error_mouse('.js_literalise($name).', false);';
 					$ci->messages->AddMessage('error',
@@ -83,8 +83,8 @@ class InputInterfaces
 				}
 				$warnings = $interface[1]->Warnings();
 				if (count($warnings) > 0) {
-					get_instance()->main_frame->includeJs('javascript/css_classes.js');
-					get_instance()->main_frame->includeJs('javascript/input.js');
+					$ci->main_frame->includeJs('javascript/css_classes.js');
+					$ci->main_frame->includeJs('javascript/input.js');
 					$enter_js = 'input_error_mouse('.js_literalise($name).', true);';
 					$exit_js = 'input_error_mouse('.js_literalise($name).', false);';
 					$ci->messages->AddMessage('warning',
@@ -225,17 +225,17 @@ abstract class InputInterface
 	public function Validate()
 	{
 		$count = 0;
-		if (null === $this->enabled || $this->enabled) {
-			if ($this->_Validate($this->value, $this->errors, $this->warnings)) {
-				foreach ($this->validators as &$validator) {
-					if (!$validator->Validate($this->value, $this->errors, $this->warnings)) {
-						break;
+		if (null !== $this->changed) {
+			if (null === $this->enabled || $this->enabled) {
+				if ($this->_Validate($this->value, $this->errors, $this->warnings)) {
+					foreach ($this->validators as &$validator) {
+						if (!$validator->Validate($this->value, $this->errors, $this->warnings)) {
+							break;
+						}
 					}
 				}
+				$count = count($this->errors);
 			}
-			$count = count($this->errors);
-		}
-		if (null !== $this->changed) {
 			if (!$this->_Equal($this->Value(), $this->default)) {
 				$this->changed = true;
 			}
@@ -316,6 +316,7 @@ class InputTextInterface extends InputInterface
 {
 	protected $max_length = null;
 	protected $events = array();
+	protected $multiline = false;
 
 	public function __construct($name, $default = null, $enabled = null, $auto = true)
 	{
@@ -332,19 +333,39 @@ class InputTextInterface extends InputInterface
 		$this->events[$event] = $javascript;
 	}
 
+	public function SetMultiline($multiline)
+	{
+		$this->multiline = $multiline;
+	}
+
 	protected function _Load()
 	{
-		?><input	type="text"<?php
-				?>	name="<?php echo("$this->name[val]"); ?>"<?php
-				?>	id="<?php echo($this->name.'__val'); ?>"<?php
-				?>	value="<?php echo(xml_escape($this->value)); ?>"<?php
-			if ($this->max_length !== null) {
-				?>	maxlength="<?php echo($this->max_length); ?>"<?php
-			}
-			foreach ($this->events as $event => $javascript) {
-				?>	<?php echo($event); ?>="<?php echo(xml_escape($javascript)); ?>"<?php
-			}
-				?>	/><?php
+		if (!$this->multiline) {
+			?><input	type="text"<?php
+					?>	name="<?php echo("$this->name[val]"); ?>"<?php
+					?>	id="<?php echo($this->name.'__val'); ?>"<?php
+					?>	value="<?php echo(xml_escape($this->value)); ?>"<?php
+				if ($this->max_length !== null) {
+					?>	maxlength="<?php echo($this->max_length); ?>"<?php
+				}
+				foreach ($this->events as $event => $javascript) {
+					?>	<?php echo($event); ?>="<?php echo(xml_escape($javascript)); ?>"<?php
+				}
+					?>	/><?php
+		}
+		else {
+			?><textarea	name="<?php echo("$this->name[val]"); ?>"<?php
+					?>	id="<?php echo($this->name.'__val'); ?>"<?php
+				if ($this->max_length !== null) {
+					?>	maxlength="<?php echo($this->max_length); ?>"<?php
+				}
+				foreach ($this->events as $event => $javascript) {
+					?>	<?php echo($event); ?>="<?php echo(xml_escape($javascript)); ?>"<?php
+				}
+					?>><?php
+			echo(xml_escape($this->value));
+			?></textarea><?php
+		}
 	}
 
 	protected function _Import(&$arr)

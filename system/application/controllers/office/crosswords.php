@@ -57,16 +57,25 @@ class Crosswords extends Controller
 				$form = new InputInterfaces;
 
 				$name_interface = new InputTextInterface('name', '');
+				$name_interface->SetMaxLength(255);
 				$name_interface->AddValidator(new InputTextValidatorMinLength(3));
 				$form->Add('Name', $name_interface);
 
 				$description_interface = new InputTextInterface('description', '');
+				$description_interface->SetMultiline(true);
 				$form->Add('Description', $description_interface);
 
 				$num_errors = $form->Validate();
 				if (0 == $num_errors && $form->Updated()) {
 					$values = $form->ChangedValues();
-					var_dump($values);
+					$id = $this->crosswords_model->AddTipCategory($values);
+					if ($id === null) {
+						$this->messages->AddMessage('error', 'Tip category could not be added');
+					}
+					else {
+						$this->messages->AddMessage('success', 'Tip category added');
+						redirect('office/crosswords/tips/'.$id);
+					}
 				}
 
 				$data = array(

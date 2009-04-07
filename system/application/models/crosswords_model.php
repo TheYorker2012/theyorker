@@ -34,6 +34,30 @@ class Crosswords_model extends model
 	 * Tips
 	 */
 
+	/** Add a tip category
+	 * @param $values array('name'=>,'description'=>)
+	 */
+	function AddTipCategory($values)
+	{
+		if (!isset($values['name'])) {
+			return null;
+		}
+		$sql =	'INSERT INTO `crossword_tip_categories` '.
+				'SET `crossword_tip_category_name`=?';
+		$bind = array($values['name']);
+		if (isset($values['description'])) {
+			$sql .=	',`crossword_tip_category_description`=?';
+			$bind[] = $values['description'];
+		}
+		$this->db->query($sql, $bind);
+		if ($this->db->affected_rows() < 1) {
+			return null;
+		}
+		else {
+			return $this->db->insert_id();
+		}
+	}
+
 	/** Get tip categories.
 	 * @param $category_id int,null category id.
 	 * @param array[array('id'=>,'name'=>,'description'=>)]

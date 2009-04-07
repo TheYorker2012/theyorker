@@ -13,6 +13,7 @@ div.input_error.mover label {
 }
 
 div.input_error.mover input,
+div.input_error.mover textarea,
 div.input_error.mover select {
 	border: 3px solid red;
 }
