@@ -65,4 +65,14 @@ function js_literalise($value)
 	}
 }
 
+/// Echo a block of javascript code in proper CDATA tags.
+function js_block($code)
+{
+	return	"<script type=\"text/javascript\">\n".
+			"// <![CDATA[\n".
+			"$code\n".
+			"// ]]>\n".
+			"</script>";
+}
+
 ?>

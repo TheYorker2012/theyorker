@@ -113,6 +113,9 @@ class Crosswords_model extends model
 		}
 		// Execute query
 		$results = $this->db->query($sql, $bind)->result_array();
+		foreach ($results as &$result) {
+			$result['id'] = (int)$result['id'];
+		}
 		return $results;
 	}
 

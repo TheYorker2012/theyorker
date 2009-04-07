@@ -1021,18 +1021,42 @@ class CrosswordTipsList
 
 		// Allow adding of new tips to specific crosswords
 		if (null != $crossword_id) {
-			$ci->load->helper('input');
-			$ci->load->helper('input_wikitext');
+			$categories = $ci->crosswords_model->GetTipCategories();
+			$category_options = array();
+			foreach ($categories as &$category) {
+				$category_options[$category['id']] = $category['name'];
+			}
+			// Can't add if there aren't any categories!
+			if (!empty($category_options)) {
+				$ci->load->helper('input');
+				$ci->load->helper('input_wikitext');
 
-			$this->add_form = new InputInterfaces;
+				$this->add_form = new InputInterfaces;
 
-			// Tip category
-			$category_interface = new InputSelectInterface('new_tip_category', '');
-			$this->add_form->Add('Tip category', $category_interface);
+				$new_tip = array(
+					'category' => $categories[0]['id'],
+					'content' => '',
+				);
 
-			// Wikitext
-			$content_interface = new InputWikitextInterface('new_tip_content', '');
-			$this->add_form->Add('Content (wikitext)', $content_interface);
+				// Tip category
+				$category_interface = new InputSelectInterface('new_tip_category', $new_tip['category']);
+				$category_interface->SetOptions($category_options);
+				$this->add_form->Add('Tip category', $category_interface);
+
+				// Wikitext
+				$content_interface = new InputWikitextInterface('new_tip_content', $new_tip['content']);
+				$content_interface->SetRequired(true);
+				$content_interface->SetWikiparser();
+				$this->add_form->Add('Content (wikitext)', $content_interface);
+
+				$num_errors = $this->add_form->Validate();
+				if (0 == $num_errors && $this->add_form->Updated()) {
+					$values = $this->add_form->UpdatedValues();
+				}
+			}
+			else {
+				$ci->messages->AddMessage('information', 'There are no crossword tip categories. You will need to <a href="/office/crosswords/tips/add?ret='.urlencode($ci->uri->uri_string()).'">create one</a> before you can add any tips for this crossword.');
+			}
 		}
 	}
 

@@ -86,7 +86,7 @@ class Crosswords extends Controller
 
 				$name_interface = new InputTextInterface('name', $category_info['name']);
 				$name_interface->SetMaxLength(255);
-				$name_interface->AddValidator(new InputTextValidatorMinLength(3));
+				$name_interface->SetRequired(true);
 				$form->Add('Name', $name_interface);
 
 				$description_interface = new InputTextInterface('description', $category_info['description']);
@@ -109,6 +109,9 @@ class Crosswords extends Controller
 							}
 							else {
 								$this->messages->AddMessage('success', 'Tip category added');
+								if (isset($_GET['ret'])) {
+									redirect($_GET['ret']);
+								}
 								redirect('office/crosswords/tips/'.$id);
 							}
 						}

@@ -40,7 +40,7 @@ class InputInterfaces
 	{
 		$values = array();
 		foreach ($this->interfaces as $id => &$interface) {
-			if ($interfaces[1]->Changed() !== null) {
+			if ($interface[1]->Changed() !== null) {
 				$values[$id] = $interface[1]->Value();
 			}
 		}
@@ -134,6 +134,7 @@ abstract class InputInterface
 	protected $default;
 	protected $value;
 	protected $enabled;
+	protected $required = false;
 	protected $validators = array();
 	protected $changed = null;
 	protected $errors = array();
@@ -163,6 +164,12 @@ abstract class InputInterface
 	public function AddValidator(&$validator)
 	{
 		$this->validators[] = &$validator;
+	}
+
+	/// Set whether this input is required.
+	public function SetRequired($required)
+	{
+		$this->required = $required;
 	}
 
 	/// Echo HTML for this input element.
@@ -379,8 +386,12 @@ class InputTextInterface extends InputInterface
 	protected function _Validate(&$value, &$errors, &$warnings)
 	{
 		$ok = true;
-		if ($this->max_length !== null) {
-			$len = strlen($value);
+		$len = strlen($value);
+		if ($this->required && $len <= 0) {
+			$errors[] = "this field is required";
+			$ok = false;
+		}
+		elseif ($this->max_length !== null) {
 			if ($len > $this->max_length) {
 				$errors[] = "length of $len exceeds maximum of $this->max_length";
 				$ok = false;

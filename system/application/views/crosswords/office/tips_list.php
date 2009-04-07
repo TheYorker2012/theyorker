@@ -16,6 +16,8 @@
 		?><form class="form" method="post" action="<?php echo(xml_escape($SelfUri)); ?>"><?php
 			?><fieldset><?php
 				$AddForm->Load();
+
+				?><input class="button" type="submit" value="Add tip" /><?php
 			?></fieldset><?php
 		?></form><?php
 	}
