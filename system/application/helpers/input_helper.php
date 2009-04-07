@@ -67,6 +67,8 @@ class InputInterfaces
 			if ($interface[1]->Enabled()) {
 				$errors = $interface[1]->Errors();
 				if (count($errors) > 0) {
+					get_instance()->main_frame->includeJs('javascript/css_classes.js');
+					get_instance()->main_frame->includeJs('javascript/input.js');
 					$enter_js = 'input_error_mouse('.js_literalise($name).', true);';
 					$exit_js = 'input_error_mouse('.js_literalise($name).', false);';
 					$ci->messages->AddMessage('error',
@@ -77,6 +79,22 @@ class InputInterfaces
 							'Errors were found in "'.xml_escape($interface[0]).'"'.
 						'</a>'.
 						xml_escape(': '.join(', ', $errors).'.')
+					);
+				}
+				$warnings = $interface[1]->Warnings();
+				if (count($warnings) > 0) {
+					get_instance()->main_frame->includeJs('javascript/css_classes.js');
+					get_instance()->main_frame->includeJs('javascript/input.js');
+					$enter_js = 'input_error_mouse('.js_literalise($name).', true);';
+					$exit_js = 'input_error_mouse('.js_literalise($name).', false);';
+					$ci->messages->AddMessage('warning',
+						'<a href="#'.$name.'"'.
+							' onmouseover="'.xml_escape($enter_js).'"'.
+							' onmouseout="'.xml_escape($exit_js).'"'.
+							'>'.
+							'Warnings for "'.xml_escape($interface[0]).'"'.
+						'</a>'.
+						xml_escape(': '.join(', ', $warnings).'.')
 					);
 				}
 			}
@@ -103,6 +121,12 @@ class InputInterfaces
 	}
 }
 
+/// Text validator class
+abstract class InputValidator
+{
+	public abstract function Validate(&$value, &$errors, &$warnings);
+}
+
 /// Input interface object.
 abstract class InputInterface
 {
@@ -110,8 +134,10 @@ abstract class InputInterface
 	protected $default;
 	protected $value;
 	protected $enabled;
+	protected $validators = array();
 	protected $changed = null;
 	protected $errors = array();
+	protected $warnings = array();
 	protected $div_classes = null;
 
 	/// Construct and initialise.
@@ -125,11 +151,18 @@ abstract class InputInterface
 		}
 		$this->default = $this->Value();
 		if (null !== $enabled) {
+			get_instance()->main_frame->includeJs('javascript/css_classes.js');
 			get_instance()->main_frame->includeJs('javascript/input.js');
 		}
 		if ($auto) {
 			$this->Import($_POST);
 		}
+	}
+
+	/// Attach a validator object to this interface.
+	public function AddValidator(&$validator)
+	{
+		$this->validators[] = &$validator;
 	}
 
 	/// Echo HTML for this input element.
@@ -184,20 +217,23 @@ abstract class InputInterface
 		}
 	}
 
-	protected function _Validate()
+	protected function _Validate(&$value, &$errors, &$warnings)
 	{
-		return array();
+		return true;
 	}
 
 	public function Validate()
 	{
 		$count = 0;
 		if (null === $this->enabled || $this->enabled) {
-			$errors = $this->_Validate();
-			foreach ($errors as &$error) {
-				$this->errors[] = $error;
+			if ($this->_Validate($this->value, $this->errors, $this->warnings)) {
+				foreach ($this->validators as &$validator) {
+					if (!$validator->Validate($this->value, $this->errors, $this->warnings)) {
+						break;
+					}
+				}
 			}
-			$count = count($errors);
+			$count = count($this->errors);
 		}
 		if (null !== $this->changed) {
 			if (!$this->_Equal($this->Value(), $this->default)) {
@@ -237,6 +273,12 @@ abstract class InputInterface
 	public function Errors()
 	{
 		return $this->errors;
+	}
+
+	/// Get any warning messages.
+	public function Warnings()
+	{
+		return $this->warnings;
 	}
 }
 
@@ -311,15 +353,38 @@ class InputTextInterface extends InputInterface
 		return array();
 	}
 
-	protected function _Validate()
+	protected function _Validate(&$value, &$errors, &$warnings)
 	{
+		$ok = true;
 		if ($this->max_length !== null) {
-			$len = strlen($this->value);
+			$len = strlen($value);
 			if ($len > $this->max_length) {
-				return array("length of $len exceeds maximum of $this->max_length");
+				$errors[] = "length of $len exceeds maximum of $this->max_length";
+				$ok = false;
 			}
 		}
-		return array();
+		return $ok;
+	}
+}
+
+/// String validator, must be at least a certain number of chars long.
+class InputTextValidatorMinLength extends InputValidator
+{
+	private $min_length;
+
+	public function __construct($min_length)
+	{
+		$this->min_length = $min_length;
+	}
+
+	public function Validate(&$value, &$errors, &$warnings)
+	{
+		if (strlen($value) < $this->min_length) {
+			$len = strlen($value);
+			$errors[] = "length of $len does not reach minimum of $this->min_length";
+			return false;
+		}
+		return true;
 	}
 }
 
@@ -396,12 +461,14 @@ class InputSelectInterface extends InputInterface
 		return array();
 	}
 
-	protected function _Validate()
+	protected function _Validate(&$value, &$errors, &$warnings)
 	{
-		if (null !== $this->value && !isset($this->values[$this->value])) {
-			return array("\"$this->value\" is not a valid value");
+		$ok = true;
+		if (null !== $value && !isset($this->values[$value])) {
+			$errors[] = "\"$value\" is not a valid value";
+			$ok = false;
 		}
-		return array();
+		return $ok;
 	}
 }
 
@@ -425,22 +492,25 @@ class InputIntInterface extends InputTextInterface
 		$this->max = (int)$max;
 	}
 
-	protected function _Validate()
+	protected function _Validate(&$value, &$errors, &$warnings)
 	{
-		$errors = parent::_Validate();
-		if (!is_numeric($this->value)) {
+		$ok = parent::_Validate($value, $errors, $warnings);
+		if (!is_numeric($value)) {
 			$errors[] = "not a number";
+			$ok = false;
 		}
 		else {
-			$this->value = (int)$this->value;
-			if ($this->min !== null && $this->value < $this->min) {
+			$value = (int)$value;
+			if ($this->min !== null && $value < $this->min) {
 				$errors[] = "below the lower limit of $this->min";
+				$ok = false;
 			}
-			else if ($this->max !== null && $this->value > $this->max) {
+			else if ($this->max !== null && $value > $this->max) {
 				$errors[] = "above the upper limit of $this->max";
+				$ok = false;
 			}
 		}
-		return $errors;
+		return $ok;
 	}
 }
 

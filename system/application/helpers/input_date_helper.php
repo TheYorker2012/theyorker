@@ -21,6 +21,7 @@ class InputDateInterface extends InputInterface
 		parent::__construct($name, $default, $enabled, $auto);
 		get_instance()->main_frame->includeJs('javascript/simple_ajax.js');
 		get_instance()->main_frame->includeJs('javascript/calendar_termdates.js');
+		get_instance()->main_frame->includeJs('javascript/css_classes.js');
 		get_instance()->main_frame->includeJs('javascript/input_selector.js');
 		get_instance()->main_frame->includeJs('javascript/input_date.js');
 		get_instance()->main_frame->includeCss('stylesheets/input_selector.css');

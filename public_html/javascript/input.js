@@ -1,6 +1,7 @@
 // Javascript for date selector
 // Author: James Hogan (james_hogan at theyorker dot co dot uk)
 // Copyright (C) 2009 The Yorker
+// Depends on javascript/css_classes.js
 
 function input_enabled_changed(name)
 {

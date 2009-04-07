@@ -34,6 +34,77 @@ class Crosswords_model extends model
 	 * Tips
 	 */
 
+	/** Get tip categories.
+	 * @param $category_id int,null category id.
+	 * @param array[array('id'=>,'name'=>,'description'=>)]
+	 */
+	function GetTipCategories($category_id = null)
+	{
+		// Construct query
+		$sql =	'SELECT '.
+				'	`crossword_tip_category_id`				AS id,'.
+				'	`crossword_tip_category_name`			AS name,'.
+				'	`crossword_tip_category_description`	AS description '.
+				'FROM `crossword_tip_categories` ';
+		$conditions = array();
+		$bind = array();
+		if (null !== $category_id) {
+			$conditions[] = '`crossword_tip_category_id`=?';
+			$bind[] = $category_id;
+		}
+		if (!empty($conditions)) {
+			$sql .= 'WHERE '.join(' AND ', $conditions).' ';
+		}
+		// Execute query
+		$results = $this->db->query($sql, $bind)->result_array();
+		return $results;
+	}
+
+	/** Get tips.
+	 * @param $category_id int,null category id.
+	 * @param $crossword_id int,null crossword id.
+	 * @return array[array('id'=>,'category_id'=>,'crossword_id'=>,'content_wikitext'=>,'content_xml'=>,'published'=>,'publication'=>)]
+	 */
+	function GetTips($category_id = null, $crossword_id = null, $tip_id = null, $published = null)
+	{
+		// Construct query
+		$sql =	'SELECT '.
+				'	`crossword_tip_id`					AS id,'.
+				'	`crossword_tip_category_id`			AS category_id,'.
+				'	`crossword_tip_crossword_id`		AS crossword_id,'.
+				'	`crossword_tip_content_wikitext`	AS content_wikitext,'.
+				'	`crossword_tip_content_xml`			AS content_xml, '.
+				'	'.$this->published_sql.'			AS published, '.
+				'	UNIX_TIMESTAMP(`crossword_publication`)	AS publication '.
+				'FROM		`crossword_tips` '.
+				'INNER JOIN	`crosswords` '.
+				'	ON		`crossword_id`=`crossword_tip_crossword_id` ';
+		$conditions = array();
+		$bind = array();
+		if (null !== $category_id) {
+			$conditions[] = '`crossword_tip_category_id`=?';
+			$bind[] = $category_id;
+		}
+		if (null !== $crossword_id) {
+			$conditions[] = '`crossword_tip_crossword_id`=?';
+			$bind[] = $crossword_id;
+		}
+		if (null !== $tip_id) {
+			$conditions[] = '`crossword_tip_id`=?';
+			$bind[] = $tip_id;
+		}
+		if (null !== $published) {
+			$conditions[] = ($published?'':'NOT ').$this->published_sql;
+		}
+		if (!empty($conditions)) {
+			$sql .= 'WHERE '.join(' AND ', $conditions).' ';
+		}
+		$sql .= 'ORDER BY `crossword_publication` ASC';
+		// Execute query
+		$results = $this->db->query($sql, $bind)->result_array();
+		return $results;
+	}
+
 	/*
 	 * Layouts
 	 */

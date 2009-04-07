@@ -1,6 +1,7 @@
 // Javascript for office ajax IRC client
 // Author: James Hogan (james at albanarts dot com)
 // Copyright (C) 2007 The Yorker
+// Depends on javascript/css_classes.js
 
 // History:
 //  * 25th Nov 2007: initial commit 
@@ -26,32 +27,6 @@ var irc_current_screen = null;
 var irc_pinging = false;
 // Whether we should now be connected
 var irc_connected = false;
-
-/// Swap style c1 with c2 in o
-function CssSwap(o,c1,c2)
-{
-	o.className = !CssCheck(o,c1)
-		? o.className.replace(c2,c1)
-		: o.className.replace(c1,c2);
-}
-/// Add style c1 to o
-function CssAdd(o,c1)
-{
-	if(!CssCheck(o,c1)) {
-		o.className+=o.className?' '+c1:c1;
-	}
-}
-/// Remove style c1 from o
-function CssRemove(o,c1)
-{
-	var rep=o.className.match(' '+c1)?' '+c1:c1;
-	o.className=o.className.replace(rep,'');
-}
-/// Check if style c1 is in o
-function CssCheck(o,c1)
-{
-	return new RegExp('\\b'+c1+'\\b').test(o.className);
-}
 
 // Set the error message.
 function irc_error(msg)

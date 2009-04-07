@@ -1,30 +1,7 @@
 // Javascript for input selector
 // Author: James Hogan (james_hogan at theyorker dot co dot uk)
 // Copyright (C) 2009 The Yorker
-
-/// Add style c1 to o
-function CssAdd(o,c1)
-{
-	if(!CssCheck(o,c1)) {
-		o.className+=o.className?' '+c1:c1;
-	}
-}
-/// Remove style c1 from o
-function CssRemove(o,c1)
-{
-	var rep=o.className.match(' '+c1)?' '+c1:c1;
-	o.className=o.className.replace(rep,'');
-}
-/// Check if style c1 is in o
-function CssCheck(o,c1)
-{
-	return new RegExp('\\b'+c1+'\\b').test(o.className);
-}
-/// Toggle the style c1 in o
-function CssToggle(o,c1)
-{
-	(CssCheck(o,c1) ? CssRemove : CssAdd)(o,c1);
-}
+// Depends on javascript/css_classes.js
 
 var input_selector_visible = null;
 

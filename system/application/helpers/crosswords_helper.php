@@ -659,6 +659,7 @@ class CrosswordView
 		$ci->main_frame->IncludeCss('stylesheets/crosswords.css');
 		$ci->main_frame->IncludeCss('stylesheets/crosswords-iefix.css',null,null,'IE');
 		$ci->main_frame->IncludeJs('javascript/simple_ajax.js');
+		$ci->main_frame->IncludeJs('javascript/css_classes.js');
 		$ci->main_frame->IncludeJs('javascript/crosswords.js');
 		if ($edit) {
 			$ci->main_frame->IncludeJs('javascript/crosswords_edit.js');

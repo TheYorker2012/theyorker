@@ -44,6 +44,7 @@ class Permissions extends Controller
 		}
 		
 		$this->main_frame->IncludeJs('javascript/simple_ajax.js');
+		$this->main_frame->IncludeJs('javascript/css_classes.js');
 		$this->main_frame->IncludeJs('javascript/admin/permissions.js');
 		$this->main_frame->IncludeCss('stylesheets/permissions.css');
 		$this->main_frame->SetContentSimple('admin/permissions/index', $data);

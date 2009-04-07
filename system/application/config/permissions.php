@@ -72,6 +72,7 @@ $config['permissions'] = array(
 	'CROSSWORD_INDEX'                  => 'Main crossword management page',
 	'CROSSWORD_TIPS_INDEX'             => 'Main crossword tips management page',
 	'CROSSWORD_TIP_CATEGORY_ADD'       => 'Add a category of crossword tips',
+	'CROSSWORD_TIP_CATEGORY_VIEW'      => 'View a category of crossword tips',
 	'CROSSWORD_TIP_CATEGORY_MODIFY'    => 'Modify a category of crossword tips',
 	'CROSSWORD_LAYOUTS_INDEX'          => 'Main crossword layouts management page',
 	'CROSSWORD_LAYOUT_ADD'             => 'Add a new crossword layout',

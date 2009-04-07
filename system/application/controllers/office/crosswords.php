@@ -30,17 +30,63 @@ class Crosswords extends Controller
 	function tips($category = null, $argument = null)
 	{
 		if (!CheckPermissions('office')) return;
+
+		$permissions = array(
+			'index' => $this->permissions_model->hasUserPermission('CROSSWORD_INDEX'),
+			'tips_index' => $this->permissions_model->hasUserPermission('CROSSWORD_TIPS_INDEX'),
+			'tip_cat_add' => $this->permissions_model->hasUserPermission('CROSSWORD_TIP_CATEGORY_ADD'),
+			'tip_cat_view' => $this->permissions_model->hasUserPermission('CROSSWORD_TIP_CATEGORY_VIEW'),
+			'tip_cat_edit' => $this->permissions_model->hasUserPermission('CROSSWORD_TIP_CATEGORY_MODIFY'),
+		);
 		if (null === $category) {
+			// Main tip index page showing tip categories
 			if (!CheckRolePermissions('CROSSWORD_TIPS_INDEX')) return;
+
+			$data = array(
+				'Permissions' => &$permissions,
+				'Categories' => $this->crosswords_model->GetTipCategories(),
+			);
+			$this->main_frame->setContentSimple('crosswords/office/tips', $data);
 		}
 		else {
 			if ('add' === $category) {
+				// Page to add a category
 				if (!CheckRolePermissions('CROSSWORD_TIP_CATEGORY_ADD')) return;
+
+				$this->load->helper('input');
+				$form = new InputInterfaces;
+
+				$name_interface = new InputTextInterface('name', '');
+				$name_interface->AddValidator(new InputTextValidatorMinLength(3));
+				$form->Add('Name', $name_interface);
+
+				$description_interface = new InputTextInterface('description', '');
+				$form->Add('Description', $description_interface);
+
+				$num_errors = $form->Validate();
+				if (0 == $num_errors && $form->Updated()) {
+					$values = $form->ChangedValues();
+					var_dump($values);
+				}
+
+				$data = array(
+					'Permissions' => &$permissions,
+					'Form' => &$form,
+					'Actions' => array(
+						'add' => 'Add tip category',
+					),
+					'PostAction' => $this->uri->uri_string(),
+				);
+				$this->main_frame->setContentSimple('crosswords/office/tip_edit', $data);
 			}
-			else {
+			elseif ('edit' === $argument) {
 				if (!CheckRolePermissions('CROSSWORD_TIP_CATEGORY_MODIFY')) return;
 			}
+			else {
+				if (!CheckRolePermissions('CROSSWORD_TIP_CATEGORY_VIEW')) return;
+			}
 		}
+
 		$this->main_frame->Load();
 	}
 

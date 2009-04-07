@@ -29,10 +29,10 @@ foreach ($Categories as $id => $category) {
 	?><h2><?php echo(xml_escape($category['name'])); ?></h2><?php
 	?><ul><?php
 	if ($Permissions['category_view']) {
-		?><li><a href="<?php echo(site_url('office/crosswords/cats/'.(int)$id)); ?>">View This Category</a></li><?php
+		?><li><a href="<?php echo(site_url('office/crosswords/cats/'.(int)$id)); ?>">View this category</a></li><?php
 	}
 	if ($Permissions['category_edit']) {
-		?><li><a href="<?php echo(site_url('office/crosswords/cats/'.(int)$id).'/edit'); ?>">Edit This Category</a></li><?php
+		?><li><a href="<?php echo(site_url('office/crosswords/cats/'.(int)$id).'/edit'); ?>">Edit this category</a></li><?php
 	}
 	?></ul><?php
 	?></div><?php
