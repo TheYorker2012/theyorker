@@ -119,6 +119,42 @@ class Crosswords_model extends model
 		return $results;
 	}
 
+	/** Add a tip
+	 * @param $values array('category_id'=>,'crossword_id'=>,'content_wikitext')
+	 * @return null,int new tip id
+	 */
+	function AddTip($values)
+	{
+		if (!isset($values['category_id']) ||
+			!isset($values['crossword_id']) ||
+			!isset($values['content_wikitext'])) {
+			return null;
+		}
+		if (!isset($values['content_xhtml'])) {
+			$this->load->library('Wikiparser');
+			$parser = new Wikiparser();
+			$values['content_xhtml'] = $parser->parse($values['content_wikitext']);
+		}
+		$sql =	'INSERT INTO `crossword_tips` '.
+				'SET	`crossword_tip_category_id`=?,'.
+				'		`crossword_tip_crossword_id`=?,'.
+				'		`crossword_tip_content_wikitext`=?,'.
+				'		`crossword_tip_content_xml`=?';
+		$bind = array(
+			$values['category_id'],
+			$values['crossword_id'],
+			$values['content_wikitext'],
+			$values['content_xhtml'],
+		);
+		$this->db->query($sql, $bind);
+		if ($this->db->affected_rows() < 1) {
+			return null;
+		}
+		else {
+			return $this->db->insert_id();
+		}
+	}
+
 	/** Get tips.
 	 * @param $category_id int,null category id.
 	 * @param $crossword_id int,null crossword id.

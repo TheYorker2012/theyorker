@@ -1017,7 +1017,6 @@ class CrosswordTipsList
 		$this->crossword_id = $crossword_id;
 
 		$ci = &get_instance();
-		$this->tips = $ci->crosswords_model->GetTips($category_id, $crossword_id);
 
 		// Allow adding of new tips to specific crosswords
 		if (null != $crossword_id) {
@@ -1034,30 +1033,50 @@ class CrosswordTipsList
 				$this->add_form = new InputInterfaces;
 
 				$new_tip = array(
-					'category' => $categories[0]['id'],
-					'content' => '',
+					'category_id' => (($this->category_id === null) ? $categories[0]['id'] : (int)$this->category_id),
+					'crossword_id' => $this->crossword_id,
+					'content_wikitext' => '',
+					'content_xhtml' => '',
 				);
 
-				// Tip category
-				$category_interface = new InputSelectInterface('new_tip_category', $new_tip['category']);
-				$category_interface->SetOptions($category_options);
-				$this->add_form->Add('Tip category', $category_interface);
+				if (null === $this->category_id) {
+					// Tip category
+					$category_interface = new InputSelectInterface('new_tip_category', $new_tip['category_id']);
+					$category_interface->SetOptions($category_options);
+					$this->add_form->Add('Tip category', $category_interface);
+				}
+				else {
+					$category_interface = null;
+				}
 
 				// Wikitext
-				$content_interface = new InputWikitextInterface('new_tip_content', $new_tip['content']);
+				$content_interface = new InputWikitextInterface('new_tip_content', $new_tip['content_wikitext']);
 				$content_interface->SetRequired(true);
 				$content_interface->SetWikiparser();
 				$this->add_form->Add('Content (wikitext)', $content_interface);
 
 				$num_errors = $this->add_form->Validate();
 				if (0 == $num_errors && $this->add_form->Updated()) {
-					$values = $this->add_form->UpdatedValues();
+					if (null === $this->category_id) {
+						$new_tip['category_id'] = (int)$category_interface->Value();
+					}
+					$new_tip['content_wikitext'] = $content_interface->Value();
+					$new_tip['content_xhtml'] = $content_interface->ValueXhtml();
+					if (null !== $ci->crosswords_model->AddTip($new_tip)) {
+						$ci->messages->AddMessage('success', 'Tip added');
+						$content_interface->Reset();
+					}
+					else {
+						$ci->messages->AddMessage('error', 'Tip could not be added');
+					}
 				}
 			}
 			else {
 				$ci->messages->AddMessage('information', 'There are no crossword tip categories. You will need to <a href="/office/crosswords/tips/add?ret='.urlencode($ci->uri->uri_string()).'">create one</a> before you can add any tips for this crossword.');
 			}
 		}
+
+		$this->tips = $ci->crosswords_model->GetTips($category_id, $crossword_id);
 	}
 
 	function Load()

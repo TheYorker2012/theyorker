@@ -58,6 +58,13 @@ class InputInterfaces
 		return $values;
 	}
 
+	public function Reset()
+	{
+		foreach ($this->interfaces as $name => &$interface) {
+			$interface[1]->Reset();
+		}
+	}
+
 	public function Validate()
 	{
 		$ci = &get_instance();
@@ -224,6 +231,17 @@ abstract class InputInterface
 			}
 			$this->errors = $this->_Import($arr[$this->name]);
 		}
+	}
+
+	protected function _ValueChanged()
+	{
+	}
+
+	public function Reset()
+	{
+		$this->value = $this->default;
+		$this->changed = null;
+		$this->_ValueChanged();
 	}
 
 	protected function _Validate(&$value, &$errors, &$warnings)

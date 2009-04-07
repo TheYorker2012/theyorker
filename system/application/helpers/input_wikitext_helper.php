@@ -7,6 +7,7 @@ class InputWikitextInterface extends InputTextInterface
 {
 	private $wikiparser = null;
 	private $preview = false;
+	private $xml = null;
 
 	public function __construct($name, $default = null, $enabled = null, $auto = true)
 	{
@@ -20,6 +21,21 @@ class InputWikitextInterface extends InputTextInterface
 		}
 
 		$this->div_classes[] = "input_wikitext";
+	}
+
+	public function ValueXhtml()
+	{
+		if (null === $this->xml) {
+			if (null === $this->wikiparser) {
+				get_instance()->load->library('Wikiparser');
+				$parser = new Wikiparser();
+			}
+			else {
+				$parser = &$this->wikiparser;
+			}
+			$this->xml = $parser->parse($this->value);
+		}
+		return $this->xml;
 	}
 
 	/// Set the wikiparser to use.
@@ -52,16 +68,18 @@ class InputWikitextInterface extends InputTextInterface
 		}
 	}
 
+	protected function _ValueChanged()
+	{
+		$this->xml = null;
+	}
+
 	protected function _Load()
 	{
 		if (null === $this->wikiparser) {
-			get_instance()->load->library('Wikiparser');
-			$parser = new Wikiparser();
 			// Plain standard parsing can use the efficient ajax url
 			$parse_uri = '/ajax/wikiparse';
 		}
 		else {
-			$parser = &$this->wikiparser;
 			$parse_uri = get_instance()->uri->uri_string().'?input_wikitext_preview_field='.urlencode($this->name);
 		}
 
@@ -71,16 +89,13 @@ class InputWikitextInterface extends InputTextInterface
 		parent::_Load();
 		// Preview
 		if ($this->preview) {
-			if ('' !== $this->value) {
-				$content_xml = $parser->parse($this->value);
-				?><div id="<?php echo($this->name.'__preview'); ?>" class="input_wikitext_preview"><?php
-				echo($content_xml);
-				?></div><?php
-			}
-			else {
-				?><div id="<?php echo($this->name.'__preview'); ?>" class="input_wikitext_preview" style="display:none"><?php
-				?></div><?php
-			}
+			?><div id="<?php echo($this->name.'__preview'); ?>" class="input_wikitext_preview"<?php
+				if ($this->value===''){
+					?>	style="display:none"<?php
+				}
+				?>><?php
+			echo($this->ValueXhtml());
+			?></div><?php
 		}
 		// Toolbar initialisation
 		echo(js_block(
