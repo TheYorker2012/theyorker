@@ -5,8 +5,12 @@
  * @author James Hogan (jh559)
  *
  * @param $RootTag The root tag information.
+ * @param $HeaderContentType null/string
  */
-header('content-type: text/xml');
+if (!isset($HeaderContentType) || null == $HeaderContentType) {
+	$HeaderContentType = 'text/xml';
+}
+header("content-type: $HeaderContentType");
 $this->load->helper('xml');
 
 ?><<?php ?>?xml version="1.0" encoding="UTF-8"?><?php

@@ -39,31 +39,39 @@ class Crosswords extends Controller
 
 	function index()
 	{
+		OutputModes('xhtml',FeedOutputModes());
 		if (!CheckPermissions('public')) return;
 
-		$this->load->helper('input_date');
-		$search = new InputInterfaces;
-		$date_interface = new InputDateInterface('search_date', time());
-		$date_interface->setTimeEnabled(false);
-		$search->Add('Find by date', $date_interface);
-		$num_errors = $search->Validate();
-		if (0 == $num_errors && $search->Updated()) {
-			$values = $search->UpdatedValues();
+		$this->main_frame->SetFeedTitle('The Yorker - Crosswords');
+		if (FeedOutputMode()) {
+			$this->main_frame->Channel()->SetDescription('All crosswords.');
+			$this->_fillCrosswordFeed();
 		}
+		else {
+			$this->load->helper('input_date');
+			$search = new InputInterfaces;
+			$date_interface = new InputDateInterface('search_date', time());
+			$date_interface->setTimeEnabled(false);
+			$search->Add('Find by date', $date_interface);
+			$num_errors = $search->Validate();
+			if (0 == $num_errors && $search->Updated()) {
+				$values = $search->UpdatedValues();
+			}
 
-		// Load categories
-		$categories = $this->crosswords_model->GetAllCategories();
-		foreach ($categories as &$category) {
-			// And information about the latest few crosswords
-			$category['latest']	= $this->crosswords_model->GetCrosswords(null,$category['id'], null,null,true,null, 3,'DESC');
-			$category['next']	= $this->crosswords_model->GetCrosswords(null,$category['id'], null,true,null,null, 1,'ASC');
+			// Load categories
+			$categories = $this->crosswords_model->GetAllCategories();
+			foreach ($categories as &$category) {
+				// And information about the latest few crosswords
+				$category['latest']	= $this->crosswords_model->GetCrosswords(null,$category['id'], null,null,true,null, 3,'DESC');
+				$category['next']	= $this->crosswords_model->GetCrosswords(null,$category['id'], null,true,null,null, 1,'ASC');
+			}
+			$data = array(
+				'Categories' => &$categories,
+				'Search' => &$search,
+			);
+			$this->main_frame->IncludeCss('stylesheets/crosswords_index.css');
+			$this->main_frame->SetContentSimple('crosswords/index', $data);
 		}
-		$data = array(
-			'Categories' => &$categories,
-			'Search' => &$search,
-		);
-		$this->main_frame->IncludeCss('stylesheets/crosswords_index.css');
-		$this->main_frame->SetContentSimple('crosswords/index', $data);
 		$this->main_frame->Load();
 	}
 
@@ -74,9 +82,15 @@ class Crosswords extends Controller
 			show_404();
 		}
 
+		OutputModes('xhtml',FeedOutputModes());
 		if (!CheckPermissions('public')) return;
 
-		if (null === $arg2) {
+		$this->main_frame->SetFeedTitle('The Yorker - Crosswords - '.$category['name']);
+		if (FeedOutputMode()) {
+			$this->main_frame->Channel()->SetDescription('All crosswords in category"'.$category['name'].'".');
+			$this->_fillCrosswordFeed($category['id']);
+		}
+		elseif (null === $arg2) {
 			$category['latest']	= $this->crosswords_model->GetCrosswords(null,$category['id'], null,null,true,null, 5,'DESC');
 			$category['next']	= $this->crosswords_model->GetCrosswords(null,$category['id'], null,true,null,null, 1,'ASC');
 
@@ -283,6 +297,7 @@ class Crosswords extends Controller
 
 	function tips($category = null)
 	{
+		OutputModes('xhtml',FeedOutputModes());
 		if (!CheckPermissions('public')) return;
 
 		if (null === $category) {
@@ -290,7 +305,14 @@ class Crosswords extends Controller
 				'Categories' => $this->crosswords_model->GetTipCategories(),
 				'SelfUri' => $this->uri->uri_string(),
 			);
-			$this->main_frame->setContentSimple('crosswords/tips', $data);
+			$this->main_frame->SetFeedTitle('The Yorker - Crossword Tips');
+			if (FeedOutputMode()) {
+				$this->main_frame->Channel()->SetDescription('All crossword tips.');
+				$this->_fillTipsFeed();
+			}
+			else {
+				$this->main_frame->setContentSimple('crosswords/tips', $data);
+			}
 		}
 		else {
 			$category_info = null;
@@ -308,15 +330,56 @@ class Crosswords extends Controller
 				show_404();
 			}
 
-			$data = array(
-				'Category' => $category_info,
-				'Tips' => new CrosswordTipsList($category_info['id'], null),
-				'PostAction' => $this->uri->uri_string(),
-			);
+			$this->main_frame->SetFeedTitle('The Yorker - Crossword Tips - '.$category_info['name']);
+			if (FeedOutputMode()) {
+				$this->main_frame->Channel()->SetDescription('All crossword tips in category "'.$category_info['name'].'".');
+				$this->_fillTipsFeed($category_info['id']);
+			}
+			else {
+				$data = array(
+					'Category' => $category_info,
+					'Tips' => new CrosswordTipsList($category_info['id'], null),
+					'PostAction' => $this->uri->uri_string(),
+				);
 
-			$this->main_frame->setContentSimple('crosswords/tip_cat_view', $data);
+				$this->main_frame->setContentSimple('crosswords/tip_cat_view', $data);
+			}
 		}
 		$this->main_frame->Load();
+	}
+
+	private function _fillCrosswordFeed($category_id = null, $limit = 20)
+	{
+		$channel = &$this->main_frame->Channel();
+		$channel->SetEditor('crosswords@theyorker.co.uk (crosswords editor)');
+		$channel->SetWebmaster('webmaster@theyorker.co.uk (webmaster)');
+
+		$crosswords = $this->crosswords_model->GetCrosswords(null,$category_id, null,null,true,null, $limit,'DESC');
+		$url = 'http://'.$_SERVER['HTTP_HOST'];
+		foreach ($crosswords as &$crossword) {
+			$item = &$channel->NewItem();
+			$item->SetPublicationDate($crossword['publication']);
+			$item->SetTitle('date in '.$crossword['category_name']);
+			$item->SetLink($url.'/crosswords/'.(int)$crossword['id']);
+			$item->SetAuthor(null);
+		}
+	}
+
+	private function _fillTipsFeed($category_id = null, $limit = 20)
+	{
+		$channel = &$this->main_frame->Channel();
+		$channel->SetEditor('crosswords@theyorker.co.uk (crosswords editor)');
+		$channel->SetWebmaster('webmaster@theyorker.co.uk (webmaster)');
+
+		$tips = $this->crosswords_model->GetTips($category_id, null, null, true);
+		$url = 'http://'.$_SERVER['HTTP_HOST'];
+		foreach ($tips as &$tip) {
+			$item = &$channel->NewItem();
+			$item->SetPublicationDate($tip['publication']);
+			$item->SetTitle('date in '.$tip['category_name']);
+			$item->SetLink($url.'/crosswords/'.(int)$tip['crossword_id'].'#tip'.(int)$tip['id']);
+			$item->SetAuthor(null);
+		}
 	}
 }
 

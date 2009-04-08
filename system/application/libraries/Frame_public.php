@@ -164,6 +164,12 @@ class Frame_public extends FrameNavbar
 		$this->AddExtraHead($style_tag);
 	}
 
+	/// Add an RSS feed to the page.
+	function IncludeRss($RssPath, $Title)
+	{
+		$this->AddExtraHead('<link rel="alternate" type="application/rss+xml" title="'.xml_escape($Title).'" href="'.xml_escape($RssPath).'" />');
+	}
+
 	/**
 	 * @brief Add extra code to go in the page header.
 	 * @param $literal string Extra code to go in the page header.
@@ -229,6 +235,16 @@ class Frame_public extends FrameNavbar
 			$this->mTitleParameters = array_merge($this->mTitleParameters, $Parameters);
 		}
 	}
+
+	/// Set the feed title for this page.
+	function SetFeedTitle($Title)
+	{
+		// If this page supports RSS, link it.
+		if (in_array('rss',OutputModes())) {
+			$this->IncludeRss(OutputModeChangeUri('rss'), $Title);
+		}
+	}
+
 	
 	/// Load the frame.
 	function Load()
