@@ -6,51 +6,96 @@
  * @brief Helper library for serving RSS/Atom feeds.
  */
 
+/// Person in a feed.
+class FeedPerson
+{
+	private $name = null;
+	private $email = null;
+	private $url = null;
+
+	function __construct($name = null, $email = null, $url = null)
+	{
+		$this->name = $name;
+		$this->email = $email;
+		$this->url = $url;
+	}
+	function SetName($name)
+	{
+		$this->name = $name;
+	}
+	function SetEmail($email)
+	{
+		$this->email = $email;
+	}
+	function SetUrl($url)
+	{
+		$this->url = $url;
+	}
+
+	function Name()
+	{
+		return $this->name;
+	}
+	function Email()
+	{
+		return $this->email;
+	}
+	function Url()
+	{
+		return $this->url;
+	}
+}
+
 /// Generic feed item.
 class FeedItem
 {
 	private $title = null;
-	private $author = null;
+	private $authors = array();
 	private $link = null;
 	private $permaLink = null;
 	private $description = null;
 	private $publicationDate = null;
+	private $categories = array();
 
-	function setTitle($title)
+	function SetTitle($title)
 	{
 		$this->title = $title;
 	}
-	function setAuthor($author)
+	function AddAuthor($author, $email = null)
 	{
-		$this->author = $author;
+		$this->authors[] = new FeedPerson($author, $email);
 	}
-	function setLink($link, $perma = true)
+	function SetLink($link, $perma = true)
 	{
 		$this->link = $link;
 		if ($perma) {
 			$this->permaLink = $link;
 		}
 	}
-	function setPermaLink($permaLink)
+	function SetPermaLink($permaLink)
 	{
 		$this->permaLink = $permaLink;
 	}
-	function setDescription($description)
+	function SetDescription($description)
 	{
 		$this->description = $description;
 	}
-	function setPublicationDate($publicationDate)
+	function SetPublicationDate($publicationDate)
 	{
 		$this->publicationDate = $publicationDate;
+	}
+	function AddCategory($category)
+	{
+		$this->categories[] = $category;
 	}
 
 	function Title()
 	{
 		return $this->title;
 	}
-	function Author()
+	function Authors()
 	{
-		return $this->author;
+		return $this->authors;
 	}
 	function Link()
 	{
@@ -68,6 +113,10 @@ class FeedItem
 	{
 		return $this->publicationDate;
 	}
+	function Categories()
+	{
+		return $this->categories;
+	}
 }
 
 /// Generic feed channel.
@@ -84,7 +133,8 @@ class FeedChannel
 	private $imageUrl = null;
 	private $imageWidth = null;
 	private $imageHeight = null;
-	private $link = null;
+	private $feedUrl = null;
+	private $altUrl = null;
 	private $editor = null;
 	private $webmaster = null;
 
@@ -106,9 +156,19 @@ class FeedChannel
 	{
 		$this->description = $description;
 	}
-	function SetLink($link)
+	function SetImage($url = null, $width = null, $height = null)
 	{
-		$this->link = $link;
+		$this->imageUrl = $url;
+		$this->imageWidth = $width;
+		$this->imageHeight = $height;
+	}
+	function SetFeedUrl($feedUrl)
+	{
+		$this->feedUrl = $feedUrl;
+	}
+	function SetAltUrl($altUrl)
+	{
+		$this->altUrl = $altUrl;
 	}
 	function SetEditor($editor)
 	{
@@ -163,9 +223,17 @@ class FeedChannel
 	{
 		return $this->imageHeight;
 	}
-	function Link()
+	function ImageLink()
 	{
-		return $this->link;
+		return $this->imageLink;
+	}
+	function FeedUrl()
+	{
+		return $this->feedUrl;
+	}
+	function AltUrl()
+	{
+		return $this->altUrl;
 	}
 	function Editor()
 	{
@@ -184,15 +252,17 @@ class FeedView
 
 	function __construct($link = null)
 	{
+		$get_data = http_build_query($_GET);
+		if ('' !== $get_data) {
+			$get_data = '?'.$get_data;
+		}
+		$feed_link = 'http://'.$_SERVER['HTTP_HOST'].get_instance()->uri->uri_string().$get_data;
 		if (null === $link) {
-			$get_data = http_build_query($_GET);
-			if ('' !== $get_data) {
-				$get_data = '?'.$get_data;
-			}
-			$link = 'http://'.$_SERVER['HTTP_HOST'].get_instance()->uri->uri_string().$get_data;
+			$link = 'http://'.$_SERVER['HTTP_HOST'].OutputModeChangeUri(DefaultOutputMode());
 		}
 		$this->channel = new FeedChannel;
-		$this->channel->SetLink($link);
+		$this->channel->SetFeedUrl($feed_link);
+		$this->channel->SetAltUrl($link);
 	}
 
 	function SetChannel(&$channel)
@@ -218,10 +288,10 @@ class FeedView
 	{
 		$channel = array(
 			'title' => $this->channel->Title(),
-			'link' => $this->channel->Link(),
+			'link' => $this->channel->AltUrl(),
 			'atom:link' => array(
 				'_attr' => array(
-					'href' => $this->channel->Link(),
+					'href' => $this->channel->AltUrl(),
 					'rel' => 'self',
 					'type' => 'application/rss+xml',
 				),
@@ -237,7 +307,7 @@ class FeedView
 				'width' => $this->channel->ImageWidth(),
 				'height' => $this->channel->ImageHeight(),
 				'title' => $this->channel->Title(),
-				'link' => $this->channel->Link(),
+				'link' => $this->channel->AltUrl(),
 			),
 			'managingEditor' => $this->channel->Editor(),
 			'webMaster' => $this->channel->Webmaster(),
@@ -255,7 +325,6 @@ class FeedView
 			$feed = array(
 				'_tag' => 'item',
 				'title' => $item->Title(),
-				'author' => $item->Author(),
 				'link' => $item->Link(),
 				'description' => $item->Description(),
 				'pubDate' => $this->FormatDate($item->PublicationDate()),
@@ -266,6 +335,18 @@ class FeedView
 					$item->PermaLink(),
 				),
 			);
+			foreach ($item->Authors() as $author) {
+				$feed[] = array(
+					'_tag' => 'author',
+					$author->Email().' ('.$author->Name().')',
+				);
+			}
+			foreach ($item->Categories() as $category) {
+				$feed[] = array(
+					'_tag' => 'category',
+					$category,
+				);
+			}
 			$channel[] = $feed;
 		}
 

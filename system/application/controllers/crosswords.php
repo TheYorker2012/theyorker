@@ -87,7 +87,7 @@ class Crosswords extends Controller
 
 		$this->main_frame->SetFeedTitle('The Yorker - Crosswords - '.$category['name']);
 		if (FeedOutputMode()) {
-			$this->main_frame->Channel()->SetDescription('All crosswords in category"'.$category['name'].'".');
+			$this->main_frame->Channel()->SetDescription('All crosswords in category "'.$category['name'].'".');
 			$this->_fillCrosswordFeed($category['id']);
 		}
 		elseif (null === $arg2) {
@@ -350,7 +350,10 @@ class Crosswords extends Controller
 
 	private function _fillCrosswordFeed($category_id = null, $limit = 20)
 	{
+		$this->load->library('academic_calendar');
+
 		$channel = &$this->main_frame->Channel();
+		$channel->SetImage('http://'.$_SERVER['HTTP_HOST'].'/images/crosswords/xw.png', 64, 64);
 		$channel->SetEditor('crosswords@theyorker.co.uk (crosswords editor)');
 		$channel->SetWebmaster('webmaster@theyorker.co.uk (webmaster)');
 
@@ -358,16 +361,30 @@ class Crosswords extends Controller
 		$url = 'http://'.$_SERVER['HTTP_HOST'];
 		foreach ($crosswords as &$crossword) {
 			$item = &$channel->NewItem();
+
 			$item->SetPublicationDate($crossword['publication']);
-			$item->SetTitle('date in '.$crossword['category_name']);
+
+			$pub = new Academic_time($crossword['publication']);
+			$pub_str = $pub->Format('D ').$pub->AcademicTermNameUnique().' week '.$pub->AcademicWeek();
+			$title = '('.$crossword['category_name'].') '.$pub_str;
+			$item->SetTitle($title);
+
+			$item->AddCategory($crossword['category_name']);
+
 			$item->SetLink($url.'/crosswords/'.(int)$crossword['id']);
-			$item->SetAuthor(null);
+
+			foreach ($crossword['authors'] as $author) {
+				$item->AddAuthor($author, 'no-reply@theyorker.co.uk');
+			}
 		}
 	}
 
 	private function _fillTipsFeed($category_id = null, $limit = 20)
 	{
+		$this->load->library('academic_calendar');
+
 		$channel = &$this->main_frame->Channel();
+		$channel->SetImage('http://'.$_SERVER['HTTP_HOST'].'/images/crosswords/xw.png', 64, 64);
 		$channel->SetEditor('crosswords@theyorker.co.uk (crosswords editor)');
 		$channel->SetWebmaster('webmaster@theyorker.co.uk (webmaster)');
 
@@ -375,10 +392,19 @@ class Crosswords extends Controller
 		$url = 'http://'.$_SERVER['HTTP_HOST'];
 		foreach ($tips as &$tip) {
 			$item = &$channel->NewItem();
+
 			$item->SetPublicationDate($tip['publication']);
-			$item->SetTitle('date in '.$tip['category_name']);
+
+			$pub = new Academic_time($tip['publication']);
+			$pub_str = $pub->Format('D ').$pub->AcademicTermNameUnique().' week '.$pub->AcademicWeek();
+			$title = '('.$tip['category_name'].') '.$pub_str;
+			$item->SetTitle($title);
+
+			$item->AddCategory($tip['category_name']);
+
 			$item->SetLink($url.'/crosswords/'.(int)$tip['crossword_id'].'#tip'.(int)$tip['id']);
-			$item->SetAuthor(null);
+
+			$item->SetDescription($tip['content_xml']);
 		}
 	}
 }
