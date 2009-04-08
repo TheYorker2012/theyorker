@@ -282,6 +282,11 @@ class Crosswords extends Controller
 		if (!CheckPermissions('public')) return;
 
 		if (null === $category) {
+			$data = array(
+				'Categories' => $this->crosswords_model->GetTipCategories(),
+				'SelfUri' => $this->uri->uri_string(),
+			);
+			$this->main_frame->setContentSimple('crosswords/tips', $data);
 		}
 		else {
 			$category_info = null;
