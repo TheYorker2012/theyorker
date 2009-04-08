@@ -39,14 +39,6 @@ echo(xml_escape(
 
 <div class="BlueBox">
 
-	<h2>tips</h2>
-
-	<?php $Tips->Load(); ?>
-
-</div>
-
-<div class="BlueBox">
-
 	<h2>edit crossword</h2>
 
 	<form class="form" action="#">
@@ -77,5 +69,13 @@ echo(xml_escape(
 			</fieldset>
 		</div>
 	</form>
+
+</div>
+
+<div class="BlueBox">
+
+	<h2>tips</h2>
+
+	<?php $Tips->Load(); ?>
 
 </div>
