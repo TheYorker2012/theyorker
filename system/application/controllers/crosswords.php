@@ -157,6 +157,7 @@ class Crosswords extends Controller
 			$data['Paths'] = array(
 				'ajax' => site_url('/crosswords/'.$crossword['id'].'/ajax'),
 			);
+			$data['Tips'] = new CrosswordTipsList(null, $crossword['id']);
 			$data['Comments'] = $comments_thread;
 
 			$this->main_frame->SetContentSimple('crosswords/crossword', $data);

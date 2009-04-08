@@ -1011,7 +1011,7 @@ class CrosswordTipsList
 	private $crossword_id;
 	private $add_form = null;
 
-	function __construct($category_id = null, $crossword_id = null)
+	function __construct($category_id = null, $crossword_id = null, $readonly = true)
 	{
 		$this->category_id = $category_id;
 		$this->crossword_id = $crossword_id;
@@ -1019,7 +1019,7 @@ class CrosswordTipsList
 		$ci = &get_instance();
 
 		// Allow adding of new tips to specific crosswords
-		if (null != $crossword_id) {
+		if (null != $crossword_id && !$readonly) {
 			$categories = $ci->crosswords_model->GetTipCategories();
 			$category_options = array();
 			foreach ($categories as &$category) {
@@ -1077,6 +1077,11 @@ class CrosswordTipsList
 		}
 
 		$this->tips = $ci->crosswords_model->GetTips($category_id, $crossword_id);
+	}
+
+	function IsEmpty()
+	{
+		return empty($this->tips);
 	}
 
 	function Load()

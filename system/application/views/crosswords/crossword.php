@@ -7,6 +7,7 @@
  * @param $Grid
  * @param $LoggedIn
  * @param $Paths with 'ajax'
+ * @param $Tips
  * @param $Comments
  */
 
@@ -107,6 +108,17 @@ echo(xml_escape(
 
 </div>
 <?php
+
+// Tips
+if (null !== $Tips) {
+	if (!$Tips->IsEmpty()) {
+		?><div class="BlueBox"><?php
+		?><h2>tips</h2><?php
+		$Tips->Load();
+		?></div><?php
+	}
+}
+
 if (null !== $Comments) {
 	$Comments->Load();
 }

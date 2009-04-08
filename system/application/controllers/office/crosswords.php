@@ -152,7 +152,7 @@ class Crosswords extends Controller
 				$data = array(
 					'Permissions' => &$permissions,
 					'Category' => $category_info,
-					'Tips' => new CrosswordTipsList($category_info['id'], null),
+					'Tips' => new CrosswordTipsList($category_info['id'], null, false),
 					'PostAction' => $this->uri->uri_string(),
 				);
 
@@ -778,7 +778,7 @@ class Crosswords extends Controller
 				$crosswordView->setClueTypes($crossword_info['has_quick_clues'], $crossword_info['has_cryptic_clues']);
 
 				$data['Configuration'] = &$config;
-				$data['Tips'] = new CrosswordTipsList(null, $crossword_info['id']);
+				$data['Tips'] = new CrosswordTipsList(null, $crossword_info['id'], false);
 				$data['Grid'] = &$crosswordView;
 				$data['Paths'] = array(
 					'view' => site_url("office/crosswords/crossword/$crossword"),
