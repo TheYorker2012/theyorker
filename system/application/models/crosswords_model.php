@@ -165,19 +165,22 @@ class Crosswords_model extends model
 		// Construct query
 		$sql =	'SELECT '.
 				'	`crossword_tip_id`					AS id,'.
-				'	`crossword_tip_category_id`			AS category_id,'.
+				'	`crossword_tips`.`crossword_tip_category_id`	AS category_id,'.
+				'	`crossword_tip_category_name`		AS category_name,'.
 				'	`crossword_tip_crossword_id`		AS crossword_id,'.
 				'	`crossword_tip_content_wikitext`	AS content_wikitext,'.
 				'	`crossword_tip_content_xml`			AS content_xml, '.
 				'	'.$this->published_sql.'			AS published, '.
 				'	UNIX_TIMESTAMP(`crossword_publication`)	AS publication '.
 				'FROM		`crossword_tips` '.
+				'INNER JOIN	`crossword_tip_categories` '.
+				'	ON		`crossword_tips`.`crossword_tip_category_id`=`crossword_tip_categories`.`crossword_tip_category_id` '.
 				'INNER JOIN	`crosswords` '.
 				'	ON		`crossword_id`=`crossword_tip_crossword_id` ';
 		$conditions = array();
 		$bind = array();
 		if (null !== $category_id) {
-			$conditions[] = '`crossword_tip_category_id`=?';
+			$conditions[] = '`crossword_tips`.`crossword_tip_category_id`=?';
 			$bind[] = $category_id;
 		}
 		if (null !== $crossword_id) {

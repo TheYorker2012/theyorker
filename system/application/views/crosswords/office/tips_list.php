@@ -7,10 +7,15 @@
  */
 ?>
 <div>
-	tips list goes here
-	<?php var_dump($Tips); ?>
-
 <?php
+	foreach ($Tips as &$tip) {
+		?><div class="crosswordTip"><?php
+			?><h3><?php
+				echo(xml_escape($tip['category_name']));
+			?></h3><?php
+			echo($tip['content_xml']);
+		?></div><?php
+	}
 	if (null !== $AddForm) {
 		?><h2>add tip</h2><?php
 		?><form class="form" method="post" action="<?php echo(xml_escape($SelfUri)); ?>"><?php
