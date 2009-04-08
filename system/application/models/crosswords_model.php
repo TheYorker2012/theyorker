@@ -16,8 +16,12 @@ class Crosswords_model extends model
 		$this->load->helper('crosswords');
 
 		// Snippets of useful sql
-		$this->overdue_sql		= '(`crossword_deadline` IS NOT NULL '.
-									'AND `crossword_deadline`    <= NOW())';
+		$this->overdue_sql		= '((`crossword_deadline` IS NOT NULL '.
+									'	AND `crossword_deadline`    <= NOW()) '.
+									// Alternatively publication date in past
+									'OR (`crossword_publication` IS NOT NULL '.
+									'	AND `crossword_publication` <= NOW() '.
+									'	AND `crossword_completeness` != 100))';
 		$this->published_sql	= '(`crossword_publication` IS NOT NULL '.
 									'AND `crossword_publication` <= NOW() '.
 									'AND `crossword_completeness` = 100)';
