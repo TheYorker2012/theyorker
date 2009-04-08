@@ -9,6 +9,7 @@
  * @param $Paths with 'ajax'
  * @param $Tips
  * @param $Comments
+ * @param $Links array
  */
 
 $autosave_interval = 30; // seconds
@@ -25,9 +26,44 @@ echo(xml_escape(
 		(isset($Paths['ajax']) ? 'xw.setSolutionsAction('.js_literalise($Paths['ajax'].'/solution').','.js_literalise($Crossword['expired']?null:false).');' : '').
 	'})'
 	,false));
-?></script>
+?></script><?php
 
-<div class="BlueBox">
+?><div class="BlueBox"><?php
+	?><h2>crossword: <?php
+		if ($Crossword['publication'] !== null) {
+			$pub = new Academic_time($Crossword['publication']);
+			echo($pub->Format('D ').$pub->AcademicTermNameUnique().' week '.$pub->AcademicWeek());
+		}
+		else {
+			?>unscheduled<?php
+		}
+	?></h2><?php
+
+	if (!empty($Links)) {
+		?><h3>links</h3><?php
+		?><ul><?php
+			// Main links
+			foreach ($Links as $label => $url) {
+				?><li><a href="<?php echo(xml_escape($url)); ?>"><?php
+					echo(xml_escape($label));
+				?></a></li><?php
+			}
+		?></ul><?php
+	}
+	?><h3>contents</h3><?php
+	?><ul><?php
+		// Contents
+		?><li><a href="#crossword">crossword</a></li><?php
+		if (null !== $Tips && !$Tips->IsEmpty()) {
+			?><li><a href="#tips">tips</a></li><?php
+		}
+		if (null !== $Comments) {
+			?><li><a href="#comments">comments</a></li><?php
+		}
+	?></ul><?php
+?></div>
+
+<div id="crossword" class="BlueBox">
 
 <?php
 	// Only show list if winners are enabled
@@ -63,11 +99,9 @@ echo(xml_escape(
 			}
 		?></div><?php
 	}
-?>
 
-	<h2>crossword</h2>
+	?><h2>crossword</h2><?php
 
-<?php
 	if (false===$LoggedIn) {
 		$login_url = site_url('login/main'.$this->uri->uri_string());
 		?>
@@ -110,13 +144,11 @@ echo(xml_escape(
 <?php
 
 // Tips
-if (null !== $Tips) {
-	if (!$Tips->IsEmpty()) {
-		?><div class="BlueBox"><?php
-		?><h2>tips</h2><?php
-		$Tips->Load();
-		?></div><?php
-	}
+if (null !== $Tips && !$Tips->IsEmpty()) {
+	?><div id="tips" class="BlueBox"><?php
+	?><h2>tips</h2><?php
+	$Tips->Load();
+	?></div><?php
 }
 
 if (null !== $Comments) {

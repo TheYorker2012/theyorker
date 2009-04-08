@@ -160,6 +160,10 @@ class Crosswords extends Controller
 			);
 			$data['Tips'] = new CrosswordTipsList(null, $crossword['id']);
 			$data['Comments'] = $comments_thread;
+			$data['Links'] = array(
+				'more crosswords in the "'.$crossword['category_name'].'" category' => site_url('crosswords/'.$crossword['category_short_name']),
+				'crosswords home' => site_url('crosswords'),
+			);
 
 			$this->main_frame->SetContentSimple('crosswords/crossword', $data);
 		}

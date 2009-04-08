@@ -569,7 +569,7 @@ class Crosswords_model extends model
 				'`crossword_has_normal_clues`	AS has_quick_clues, '.
 				'`crossword_has_cryptic_clues`	AS has_cryptic_clues, '.
 				'`crossword_completeness`		AS completeness, '.
-				'`crossword_category_id`		AS category_id, '.
+				'`crosswords`.`crossword_category_id`		AS category_id, '.
 				'`crossword_layout_id`			AS layout_id, '.
 				'UNIX_TIMESTAMP(`crossword_deadline`)		AS deadline, '.
 				'UNIX_TIMESTAMP(`crossword_publication`)	AS publication, '.
@@ -580,8 +580,12 @@ class Crosswords_model extends model
 				$this->scheduled_sql.	' AS scheduled, '.
 				$this->published_sql.	' AS published, '.
 				$this->expired_sql.		' AS expired, '.
-				$this->winner_count_sql.' AS winners_so_far '.
-				'FROM crosswords ';
+				$this->winner_count_sql.' AS winners_so_far, '.
+				'`crossword_category_name`			AS category_name,'.
+				'`crossword_category_short_name`	AS category_short_name '.
+				'FROM `crosswords` '.
+				'INNER JOIN `crossword_categories` '.
+				'	ON	`crosswords`.`crossword_category_id`=`crossword_categories`.`crossword_category_id` ';
 
 		$bind = array();
 		$conditions = array();
@@ -590,7 +594,7 @@ class Crosswords_model extends model
 			$bind[] = $crossword_id;
 		}
 		if (null !== $category_id) {
-			$conditions[] = '`crossword_category_id`=?';
+			$conditions[] = '`crosswords`.`crossword_category_id`=?';
 			$bind[] = $category_id;
 		}
 		if (null !== $overdue) {

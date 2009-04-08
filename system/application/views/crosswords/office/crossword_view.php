@@ -9,28 +9,20 @@
  * @param $Grid
  * @param $Tips
  */
-?>
 
-<div class="BlueBox">
-	<ul>
-<?php
-	?><li><a href="<?php echo(xml_escape(site_url('office/crosswords/cats/'.(int)$Crossword['category_id']))); ?>">Back to category</a></li><?php
-	if ($Permissions['modify']) {
-		?><li><a href="<?php echo(xml_escape(site_url('office/crosswords/crossword/'.(int)$Crossword['id'].'/edit'))); ?>">Edit this crossword</a></li><?php
-	}
-	if ($Permissions['stats_basic']) {
-		?><li><a href="<?php echo(xml_escape(site_url('office/crosswords/crossword/'.(int)$Crossword['id'].'/stats'))); ?>">View statistics for this crossword</a></li><?php
-	}
-	if ($Crossword['published']) {
-		?><li><a href="<?php echo(xml_escape(site_url('crosswords/'.(int)$Crossword['id']))); ?>">View crossword on public site</a></li><?php
-	}
-?>
-	</ul>
-</div>
+$links = array();
+$links['back to category'] = site_url('office/crosswords/cats/'.(int)$Crossword['category_id']);
+if ($Permissions['modify']) {
+	$links['edit this crossword'] = site_url('office/crosswords/crossword/'.(int)$Crossword['id'].'/edit');
+}
+if ($Permissions['stats_basic']) {
+	$links['view statistics for this crossword'] = site_url('office/crosswords/crossword/'.(int)$Crossword['id'].'/stats');
+}
+if ($Crossword['published']) {
+	$links['view crossword on public site'] = site_url('crosswords/'.(int)$Crossword['id']);
+}
 
-<?php
-
-// So that clues aren't crossed out when complete:
+// class="crosswordEdit" so that clues aren't crossed out when complete:
 ?><div class="crosswordEdit"><?php
 	$this->load->view('crosswords/crossword', array(
 		'Crossword' => &$Crossword,
@@ -40,6 +32,7 @@
 		'Paths' => array(),
 		'Tips' => &$Tips,
 		'Comments' => null,
+		'Links' => $links,
 	));
 ?></div><?php
 
