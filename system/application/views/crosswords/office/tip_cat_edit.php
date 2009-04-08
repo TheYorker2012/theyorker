@@ -1,6 +1,6 @@
 <?php
 /**
- * @file views/crosswords/office/tip_edit.php
+ * @file views/crosswords/office/tip_cat_edit.php
  * @param $Permissions array[string => bool]
  * @param $Form InputInterfaces
  * @param $Actions array of actions

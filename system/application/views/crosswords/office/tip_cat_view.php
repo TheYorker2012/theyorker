@@ -1,6 +1,6 @@
 <?php
 /**
- * @file views/crosswords/office/tip_view.php
+ * @file views/crosswords/office/tip_cat_view.php
  * @param $Permissions array[string => bool]
  * @param $Category array of tip category data
  *	- id
@@ -25,7 +25,7 @@
 </div>
 
 <div class="BlueBox">
-	<h2>Tips</h2>
+	<h2><?php echo(xml_escape($Category['name'])); ?></h2>
 
 	<?php $Tips->Load(); ?>
 </div>

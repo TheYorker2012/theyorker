@@ -22,6 +22,7 @@ class Crosswords extends Controller
 		// First argument is one of:
 		// "tips"
 		if ('tips' === $arg) {
+			array_shift($args);
 			return call_user_func_array(array(&$this, 'tips'), $args);
 		}
 		// crossword id
@@ -276,9 +277,36 @@ class Crosswords extends Controller
 		$this->main_frame->Load();
 	}
 
-	function tips()
+	function tips($category = null)
 	{
 		if (!CheckPermissions('public')) return;
+
+		if (null === $category) {
+		}
+		else {
+			$category_info = null;
+			if (is_numeric($category)) {
+				$category_info = $this->crosswords_model->GetTipCategories((int)$category);
+				if (empty($category_info)) {
+					$category_info = null;
+				}
+				else {
+					$category_info = $category_info[0];
+				}
+			}
+
+			if (null === $category_info) {
+				show_404();
+			}
+
+			$data = array(
+				'Category' => $category_info,
+				'Tips' => new CrosswordTipsList($category_info['id'], null),
+				'PostAction' => $this->uri->uri_string(),
+			);
+
+			$this->main_frame->setContentSimple('crosswords/tip_cat_view', $data);
+		}
 		$this->main_frame->Load();
 	}
 }
