@@ -152,7 +152,7 @@ class Crosswords extends Controller
 				$data = array(
 					'Permissions' => &$permissions,
 					'Category' => $category_info,
-					'Tips' => new CrosswordTipsList($category_info['id'], null, false),
+					'Tips' => new CrosswordTipsList($category_info['id'], null, true),
 					'PostAction' => $this->uri->uri_string(),
 				);
 
@@ -635,6 +635,18 @@ class Crosswords extends Controller
 
 			if (null === $operation) {
 				if (!CheckRolePermissions('CROSSWORD_VIEW')) return;
+
+				$puzzle = 0;
+				$worked = $this->crosswords_model->LoadCrossword($crossword_info['id'], $puzzle);
+				if (!$worked) {
+					show_404();
+				}
+				$crosswordView = new CrosswordView($puzzle);
+				$crosswordView->setClueTypes($crossword_info['has_quick_clues'], $crossword_info['has_cryptic_clues']);
+				$crosswordView->setReadOnly(true, true);
+				$data['Grid'] = &$crosswordView;
+				$data['Tips'] = new CrosswordTipsList(null, $crossword_info['id'], true, false);
+
 				$this->pages_model->SetPageCode('crosswords_office_xword_view');
 				$this->main_frame->SetContentSimple('crosswords/office/crossword_view', $data);
 			}
@@ -778,7 +790,7 @@ class Crosswords extends Controller
 				$crosswordView->setClueTypes($crossword_info['has_quick_clues'], $crossword_info['has_cryptic_clues']);
 
 				$data['Configuration'] = &$config;
-				$data['Tips'] = new CrosswordTipsList(null, $crossword_info['id'], false);
+				$data['Tips'] = new CrosswordTipsList(null, $crossword_info['id'], true);
 				$data['Grid'] = &$crosswordView;
 				$data['Paths'] = array(
 					'view' => site_url("office/crosswords/crossword/$crossword"),

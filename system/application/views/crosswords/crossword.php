@@ -5,7 +5,7 @@
  *	- 'id'
  * @param $Winners array
  * @param $Grid
- * @param $LoggedIn
+ * @param $LoggedIn null,true,false
  * @param $Paths with 'ajax'
  * @param $Tips
  * @param $Comments
@@ -20,9 +20,9 @@ $height = $Grid->crossword()->grid()->height();
 echo(xml_escape(
 	'onLoadFunctions.push(function() {'.
 		'var xw =new Crossword("xw", '.js_literalise($width).', '.js_literalise($height).');'.
-		($LoggedIn ? 'xw.setAutosaveInterval('.js_literalise($Paths['ajax']).', '.js_literalise($autosave_interval).');' : '').
-		($Crossword['expired'] ? '' : 'xw.setWinnersUpdateInterval('.js_literalise($Paths['ajax'].'/winners').', '.js_literalise($winners_update_interval).');').
-		'xw.setSolutionsAction('.js_literalise($Paths['ajax'].'/solution').','.js_literalise($Crossword['expired']?null:false).');'.
+		((true===$LoggedIn && isset($Paths['ajax'])) ? 'xw.setAutosaveInterval('.js_literalise($Paths['ajax']).', '.js_literalise($autosave_interval).');' : '').
+		(($Crossword['expired'] || !isset($Paths['ajax'])) ? '' : 'xw.setWinnersUpdateInterval('.js_literalise($Paths['ajax'].'/winners').', '.js_literalise($winners_update_interval).');').
+		(isset($Paths['ajax']) ? 'xw.setSolutionsAction('.js_literalise($Paths['ajax'].'/solution').','.js_literalise($Crossword['expired']?null:false).');' : '').
 	'})'
 	,false));
 ?></script>
@@ -31,7 +31,7 @@ echo(xml_escape(
 
 <?php
 	// Only show list if winners are enabled
-	if ($Crossword['winners'] > 0) {
+	if ($Crossword['winners'] > 0 && null !== $Winners) {
 		?><div class="crosswordWinners"><?php
 			?><h2>winners</h2><?php
 			// If it's expired and there aren't any winners then nothing interesting
@@ -68,7 +68,7 @@ echo(xml_escape(
 	<h2>crossword</h2>
 
 <?php
-	if (!$LoggedIn) {
+	if (false===$LoggedIn) {
 		$login_url = site_url('login/main'.$this->uri->uri_string());
 		?>
 		<div>
@@ -95,7 +95,7 @@ echo(xml_escape(
 	<form class="form" action="#">
 		<?php
 		$Grid->Load();
-		if ($LoggedIn) {
+		if (true===$LoggedIn && isset($Paths['ajax'])) {
 		?>
 		<div style="clear:both" >
 			<fieldset>

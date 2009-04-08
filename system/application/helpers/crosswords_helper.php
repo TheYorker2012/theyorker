@@ -638,6 +638,7 @@ class CrosswordView
 	private $m_crossword;
 	private $m_edit;
 	private $m_readonly;
+	private $m_keepInline;
 	private $m_allowToggleClueType;
 	private $m_cluesQuick;
 	private $m_cluesCryptic;
@@ -648,6 +649,7 @@ class CrosswordView
 		$this->m_crossword = $crossword;
 		$this->m_edit = $edit;
 		$this->m_readonly = false;
+		$this->m_keepInline = false;
 		// so that the hidden clues aren't lost when saved
 		$this->m_allowToggleClueType = $edit;
 		$this->m_cluesQuick = true;
@@ -671,9 +673,10 @@ class CrosswordView
 		return $this->m_crossword;
 	}
 
-	function setReadOnly($readonly)
+	function setReadOnly($readonly, $keep_inline = false)
 	{
 		$this->m_readonly = $readonly;
+		$this->m_keepInline = $keep_inline;
 	}
 
 	function setClueTypes($quick, $cryptic)
@@ -753,17 +756,17 @@ class CrosswordView
 						?><sup id="<?php echo("$name-num-$x-$y"); ?>"></sup><?php
 					}
 					// Text input box
-					?><input type="text" <?php
-						   ?>id="<?php echo("$name-edit-$x-$y"); ?>" <?php
-					if (!$this->m_readonly) {
-						   ?>onkeydown="<?php echo("return xwkd('$name',$x,$y,event);"); ?>" <?php
-						   ?>onkeypress="<?php echo("return xwkp('$name',$x,$y,event);"); ?>" <?php
-					}
-						   ?>value="<?php echo(xml_escape($state)); ?>" <?php
-					if ($this->m_readonly) {
-						?>readonly="readonly" <?php
-					}
-						   ?>/><?php
+					?><input	type="text"<?php
+						   ?>	id="<?php echo("$name-edit-$x-$y"); ?>"<?php
+						if (!$this->m_readonly) {
+						   ?>	onkeydown="<?php echo("return xwkd('$name',$x,$y,event);"); ?>"<?php
+						   ?>	onkeypress="<?php echo("return xwkp('$name',$x,$y,event);"); ?>"<?php
+						}
+						   ?>	value="<?php echo(xml_escape($state)); ?>"<?php
+						if ($this->m_readonly) {
+							?>	readonly="readonly"<?php
+						}
+						   ?>	/><?php
 					?></div></td><?php
 				}
 				else {
@@ -819,11 +822,12 @@ class CrosswordView
 		?></div><?php
 
 		// Clues bar
-		if (!$this->m_readonly || $this->m_allowToggleClueType) {
+		$have_inline = !$this->m_readonly || $this->m_keepInline;
+		if ($have_inline || $this->m_allowToggleClueType) {
 			?><div class="crosswordCluesHeader"><?php
 				?><div class="header"><?php
 					// Toggles inline display of grid cells for each clue
-					if (!$this->m_readonly) {
+					if ($have_inline) {
 						?><fieldset><?php
 							?><label	for="<?php echo("$name-clues-inline"); ?>"><?php
 							if ($this->m_edit) {
@@ -950,7 +954,7 @@ class CrosswordView
 					?></fieldset><?php
 				}
 
-				if (!$this->m_readonly) {
+				if ($have_inline) {
 					$solution = $clue->solution();
 					$length = strlen($solution);
 					?><table class="crossword"><?php
@@ -979,11 +983,17 @@ class CrosswordView
 								}
 							?>id="<?php echo("$name-$orientation-$cx-$cy"); ?>" <?php
 								?>onclick="<?php echo("xwcc('$name',$cx,$cy,$orientation);") ?>"><?php
-							?><input type="text" <?php
-								   ?>id="<?php echo("$name-$orientation-edit-$cx-$cy"); ?>" <?php
-								   ?>onkeydown="<?php echo("return xwkd('$name',$cx,$cy,event);") ?>" <?php
-								   ?>onkeypress="<?php echo("return xwkp('$name',$cx,$cy,event);") ?>" <?php
-								   ?>value="<?php echo(xml_escape($state)); ?>" /><?php
+							?><input	type="text"<?php
+								   ?>	id="<?php echo("$name-$orientation-edit-$cx-$cy"); ?>"<?php
+								if (!$this->m_readonly) {
+								   ?>	onkeydown="<?php echo("return xwkd('$name',$cx,$cy,event);") ?>"<?php
+								   ?>	onkeypress="<?php echo("return xwkp('$name',$cx,$cy,event);") ?>"<?php
+								}
+								   ?>	value="<?php echo(xml_escape($state)); ?>"<?php
+								if ($this->m_readonly) {
+									?>	readonly="readonly"<?php
+								}
+									?>	/><?php
 							?></td><?php
 						}
 					}
@@ -1010,16 +1020,18 @@ class CrosswordTipsList
 	private $category_id;
 	private $crossword_id;
 	private $add_form = null;
+	private $office = false;
 
-	function __construct($category_id = null, $crossword_id = null, $readonly = true)
+	function __construct($category_id = null, $crossword_id = null, $office = false, $allow_add = true)
 	{
 		$this->category_id = $category_id;
 		$this->crossword_id = $crossword_id;
+		$this->office = $office;
 
 		$ci = &get_instance();
 
 		// Allow adding of new tips to specific crosswords
-		if (null != $crossword_id && !$readonly) {
+		if (null != $crossword_id && $office && $allow_add) {
 			$categories = $ci->crosswords_model->GetTipCategories();
 			$category_options = array();
 			foreach ($categories as &$category) {
@@ -1091,8 +1103,11 @@ class CrosswordTipsList
 			'Tips' => $this->tips,
 			'AddForm' => $this->add_form,
 			'SelfUri' => $ci->uri->uri_string(),
+			'ShowCrosswordInfo' => ($this->crossword_id === null),
+			'ShowCategoryInfo' => ($this->category_id === null),
+			'Office' => $this->office,
 		);
-		$ci->load->view('crosswords/office/tips_list', $data);
+		$ci->load->view('crosswords/tips_list', $data);
 	}
 }
 
