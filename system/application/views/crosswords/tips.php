@@ -6,6 +6,17 @@
  */
 ?>
 
+<div class="BlueBox">
+	<h2>crossword tips</h2>
+	<p>
+		Handy crossword tips are published with each crossword.
+		This section lists all these tips by category.
+	</p>
+	<ul>
+		<li><a href="<?php echo(site_url('crosswords')); ?>">Return to crosswords home</a></li>
+	</ul>
+</div>
+
 <?php
 foreach ($Categories as $category) {
 	?><div class="BlueBox"><?php

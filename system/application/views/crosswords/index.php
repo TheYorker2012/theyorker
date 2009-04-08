@@ -7,7 +7,12 @@
  */
 ?>
 <div class="BlueBox">
-	<h2>welcome to The Yorker crosswords</h2>
+	<h2>welcome to the yorker crosswords</h2>
+
+	<ul>
+		<li>Handy <a href="<?php echo(site_url('crosswords/tips')); ?>">crossword tips</a> are published with each crossword.</li>
+	</ul>
+
 	<?php
 	//$Search->Load();
 	?>
