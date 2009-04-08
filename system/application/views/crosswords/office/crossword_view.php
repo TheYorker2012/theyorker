@@ -12,7 +12,6 @@
 ?>
 
 <div class="BlueBox">
-	<h2>crossword</h2>
 	<ul>
 <?php
 	?><li><a href="<?php echo(xml_escape(site_url('office/crosswords/cats/'.(int)$Crossword['category_id']))); ?>">Back to category</a></li><?php

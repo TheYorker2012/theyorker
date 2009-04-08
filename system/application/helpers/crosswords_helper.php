@@ -1088,7 +1088,7 @@ class CrosswordTipsList
 			}
 		}
 
-		$this->tips = $ci->crosswords_model->GetTips($category_id, $crossword_id);
+		$this->tips = $ci->crosswords_model->GetTips($category_id, $crossword_id, null, ($office ? null : true));
 	}
 
 	function IsEmpty()

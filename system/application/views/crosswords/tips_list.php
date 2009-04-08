@@ -15,37 +15,55 @@ $return_here_get = '?ret='.urlencode($SelfUri);
 ?>
 <div>
 <?php
-	foreach ($Tips as &$tip) {
-		?><div id="<?php echo(xml_escape('tip'.(int)$tip['id'])); ?>" class="crosswordTip"><?php
-			?><h3><?php
-				if ($ShowCategoryInfo) {
-					?><a href="<?php echo(xml_escape(
-						$tip_category_prefix.(int)$tip['category_id'].$return_here_get.'#tip'.(int)$tip['id']
-						)); ?>"><?php
-					echo(xml_escape($tip['category_name']));
-					?></a><?php
-					if ($ShowCrosswordInfo) {
-						?> - <?php
-					}
-				}
-				if ($ShowCrosswordInfo) {
-					$pub = $tip['publication'];
-					if (null !== $pub) {
-						$pub = new Academic_time($pub);
-						$pub = $pub->Format('D ').$pub->AcademicTermNameUnique().' week '.$pub->AcademicWeek();
-					}
-					else {
-						$pub = "no publication scheduled";
-					}
-					?><a href="<?php echo(xml_escape(
-						$crossword_prefix.(int)$tip['crossword_id'].$return_here_get.'#tip'.(int)$tip['id']
-						)); ?>"><?php
-					echo(xml_escape($pub));
-					?></a><?php
-				}
-			?></h3><?php
-			echo($tip['content_xml']);
+	if (empty($Tips)) {
+		?><div><?php
+		if ($ShowCrosswordInfo) {
+			?>There are no tips in this category. <?php
+		}
+		else if ($ShowCategoryInfo) {
+			?>There are no tips attached to this crossword. <?php
+		}
+		else {
+			?>No tips were found. <?php
+		}
+		if ($Office && null === $AddForm) {
+			?>Tips can be created from crossword edit pages. <?php
+		}
 		?></div><?php
+	}
+	else {
+		foreach ($Tips as &$tip) {
+			?><div id="<?php echo(xml_escape('tip'.(int)$tip['id'])); ?>" class="crosswordTip"><?php
+				?><h3><?php
+					if ($ShowCategoryInfo) {
+						?><a href="<?php echo(xml_escape(
+							$tip_category_prefix.(int)$tip['category_id'].$return_here_get.'#tip'.(int)$tip['id']
+							)); ?>"><?php
+						echo(xml_escape($tip['category_name']));
+						?></a><?php
+						if ($ShowCrosswordInfo) {
+							?> - <?php
+						}
+					}
+					if ($ShowCrosswordInfo) {
+						$pub = $tip['publication'];
+						if (null !== $pub) {
+							$pub = new Academic_time($pub);
+							$pub = $pub->Format('D ').$pub->AcademicTermNameUnique().' week '.$pub->AcademicWeek();
+						}
+						else {
+							$pub = "no publication scheduled";
+						}
+						?><a href="<?php echo(xml_escape(
+							$crossword_prefix.(int)$tip['crossword_id'].$return_here_get.'#tip'.(int)$tip['id']
+							)); ?>"><?php
+						echo(xml_escape($pub));
+						?></a><?php
+					}
+				?></h3><?php
+				echo($tip['content_xml']);
+			?></div><?php
+		}
 	}
 	if (null !== $AddForm) {
 		?><h2>add tip</h2><?php
