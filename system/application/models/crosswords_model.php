@@ -162,6 +162,8 @@ class Crosswords_model extends model
 	/** Get tips.
 	 * @param $category_id int,null category id.
 	 * @param $crossword_id int,null crossword id.
+	 * @param $tip_id int,null tip id.
+	 * @param $published bool,null attached crossword published.
 	 * @return array[array('id'=>,'category_id'=>,'crossword_id'=>,'content_wikitext'=>,'content_xml'=>,'published'=>,'publication'=>)]
 	 */
 	function GetTips($category_id = null, $crossword_id = null, $tip_id = null, $published = null)
@@ -205,6 +207,90 @@ class Crosswords_model extends model
 		// Execute query
 		$results = $this->db->query($sql, $bind)->result_array();
 		return $results;
+	}
+
+	/** Update a tip
+	 * @param $values array('id'=>)
+	 * @return true if affected_rows != 0
+	 */
+	function UpdateTip(&$values)
+	{
+		if (!isset($values['id'])) {
+			return false;
+		}
+		$setters = array();
+		$bind = array();
+		if (isset($values['category_id'])) {
+			$setters[] = '`crossword_tip_category_id`=?';
+			$bind[] = $values['category_id'];
+		}
+		if (isset($values['crossword_id'])) {
+			$setters[] = '`crossword_tip_crossword_id`=?';
+			$bind[] = $values['crossword_id'];
+		}
+		if (isset($values['content_wikitext'])) {
+			if (!isset($values['content_xhtml'])) {
+				$this->load->library('Wikiparser');
+				$parser = new Wikiparser();
+				$values['content_xhtml'] = $parser->parse($values['content_wikitext']);
+			}
+			$setters[] = '`crossword_tip_content_wikitext`=?';
+			$bind[] = $values['content_wikitext'];
+			$setters[] = '`crossword_tip_content_xml`=?';
+			$bind[] = $values['content_xhtml'];
+		}
+		if (empty($setters)) {
+			return false;
+		}
+		$sql =	'UPDATE `crossword_tips` '.
+				'SET	'.join(',',$setters).' '.
+				'WHERE	`crossword_tip_id`=?';
+		$bind[] = $values['id'];
+		$this->db->query($sql, $bind);
+		return ($this->db->affected_rows() > 0);
+	}
+
+	/// Small wrapper around DeleteTips.
+	function DeleteTipById($tip_id)
+	{
+		if (null === $tip_id) {
+			return false;
+		}
+		return ($this->DeleteTips(null, null, $tip_id) > 0);
+	}
+
+	/// Delete tips matching certain criteria.
+	/**
+	 * @param $category_id int,null category id.
+	 * @param $crossword_id int,null crossword id.
+	 * @param $tip_id int,null tip id.
+	 * @return int Affected rows
+	 */
+	function DeleteTips($category_id = null, $crossword_id = null, $tip_id = null)
+	{
+		// Construct query
+		$sql =	'DELETE '.
+				'FROM		`crossword_tips` ';
+		$conditions = array();
+		$bind = array();
+		if (null !== $category_id) {
+			$conditions[] = '`crossword_tip_category_id`=?';
+			$bind[] = $category_id;
+		}
+		if (null !== $crossword_id) {
+			$conditions[] = '`crossword_tip_crossword_id`=?';
+			$bind[] = $crossword_id;
+		}
+		if (null !== $tip_id) {
+			$conditions[] = '`crossword_tip_id`=?';
+			$bind[] = $tip_id;
+		}
+		if (!empty($conditions)) {
+			$sql .= 'WHERE '.join(' AND ', $conditions).' ';
+		}
+		// Execute query
+		$this->db->query($sql, $bind);
+		return $this->db->affected_rows();
 	}
 
 	/*

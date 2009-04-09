@@ -1094,7 +1094,7 @@ class CrosswordTipsList
 		$this->tips = $ci->crosswords_model->GetTips($category_id, $crossword_id, null, ($office ? null : true));
 
 		if ($this->office) {
-			foreach ($this->tips as &$tip) {
+			foreach ($this->tips as $index => &$tip) {
 				$form = new InputInterfaces;
 				$tip['edit_form'] = &$form;
 				$name ='tip_'.$tip['id'].'_';
@@ -1116,7 +1116,43 @@ class CrosswordTipsList
 				$inputs['content']->SetWikiparser();
 				$form->Add('Content (wikitext)', $inputs['content']);
 
-				$errors = $form->Validate();
+				if ($inputs['delete']->Value()) {
+					$success = $ci->crosswords_model->DeleteTipById($tip['id']);
+					if ($success) {
+						unset($this->tips[$index]);
+						$ci->messages->AddMessage('success', 'Tip deleted');
+					}
+					else {
+						$ci->messages->AddMessage('error', 'Tip could not be deleted');
+					}
+				}
+				else {
+					$num_errors = $form->Validate();
+					if (0 == $num_errors && $form->Changed()) {
+						$changes = $form->ChangedValues();
+						$values = array();
+						if (isset($changes[$name.'category'])) {
+							$values['category_id'] = $changes[$name.'category'];
+						}
+						if (isset($changes[$name.'content'])) {
+							$values['content_wikitext'] = $changes[$name.'content'];
+							$values['content_xhtml'] = $inputs['content']->ValueXhtml();
+						}
+						$values['id'] = $tip['id'];
+						if (!$ci->crosswords_model->UpdateTip($values)) {
+							$ci->messages->AddMessage('error', 'Tip could not be saved');
+						}
+						else {
+							$ci->messages->AddMessage('success', 'Tip saved successfully');
+							foreach ($values as $id => $value) {
+								$tip[$id] = $value;
+							}
+							if (isset($values['category_id'])) {
+								$tip['category_name'] = $category_options[$values['category_id']];
+							}
+						}
+					}
+				}
 
 				unset($form);
 				unset($inputs);
