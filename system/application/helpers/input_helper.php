@@ -447,6 +447,7 @@ class InputSelectInterface extends InputInterface
 	protected $events = array();
 	protected $values = array();
 
+	// Default to array() for multiselect
 	public function __construct($name, $default = null, $enabled = null, $auto = true)
 	{
 		parent::__construct($name, $default, $enabled, $auto);
@@ -473,6 +474,16 @@ class InputSelectInterface extends InputInterface
 		$this->events[$event] = $javascript;
 	}
 
+	public function Multiple()
+	{
+		return is_array($this->default);
+	}
+
+	public function IsSelected($value)
+	{
+		return ($this->Multiple() ? in_array($value, $this->value) : ($value == $this->value));
+	}
+
 	public function LoadOptGroup($options, $nested = true)
 	{
 		foreach ($options as $value => $label) {
@@ -485,7 +496,7 @@ class InputSelectInterface extends InputInterface
 			}
 			else {
 				?><option	value="<?php echo(xml_escape($value)); ?>"<?php
-						if ($this->value == $value) {
+						if ($this->IsSelected($value)) {
 							?>	selected="selected"<?php
 						}
 						?>><?php
@@ -497,8 +508,11 @@ class InputSelectInterface extends InputInterface
 
 	protected function _Load()
 	{
-		?><select	name="<?php echo("$this->name[val]"); ?>"<?php
+		?><select	name="<?php echo($this->Multiple()?"$this->name[vals][]":"$this->name[val]"); ?>"<?php
 				?>	id="<?php echo($this->name.'__val'); ?>"<?php
+			if ($this->Multiple()) {
+				?>	multiple="multiple"<?php
+			}
 			foreach ($this->events as $event => $javascript) {
 				?>	<?php echo($event); ?>="<?php echo(xml_escape($javascript)); ?>"<?php
 			}
@@ -509,16 +523,33 @@ class InputSelectInterface extends InputInterface
 
 	protected function _Import(&$arr)
 	{
-		$this->value = $arr['val'];
+		if ($this->Multiple()) {
+			$this->value = $arr['vals'];
+		}
+		else {
+			$this->value = $arr['val'];
+		}
 		return array();
 	}
 
 	protected function _Validate(&$value, &$errors, &$warnings)
 	{
 		$ok = true;
-		if (null !== $value && !isset($this->values[$value])) {
-			$errors[] = "\"$value\" is not a valid value";
-			$ok = false;
+		if ($this->Multiple()) {
+			if (null !== $value) {
+				foreach ($value as $val) {
+					if (!isset($this->values[$val])) {
+						$errors[] = "\"$val\" is not a valid value";
+						$ok = false;
+					}
+				}
+			}
+		}
+		else {
+			if (null !== $value && !isset($this->values[$value])) {
+				$errors[] = "\"$value\" is not a valid value";
+				$ok = false;
+			}
 		}
 		return $ok;
 	}
