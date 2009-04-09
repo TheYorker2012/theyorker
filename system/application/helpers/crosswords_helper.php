@@ -1151,6 +1151,10 @@ class CrosswordTipsList
 							}
 							if (isset($values['category_id'])) {
 								$tip['category_name'] = $category_options[$values['category_id']];
+								// Remove if no longer matching criteria
+								if (null !== $this->category_id && ($this->category_id != $values['category_id'])) {
+									unset($this->tips[$index]);
+								}
 							}
 							$form->ResetDefaults();
 						}
