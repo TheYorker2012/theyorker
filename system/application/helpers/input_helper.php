@@ -479,6 +479,15 @@ class InputSelectInterface extends InputInterface
 		return is_array($this->default);
 	}
 
+	public function AddedValues()
+	{
+		return array_diff($this->value, $this->default);
+	}
+	public function RemovedValues()
+	{
+		return array_diff($this->default, $this->value);
+	}
+
 	public function IsSelected($value)
 	{
 		return ($this->Multiple() ? in_array($value, $this->value) : ($value == $this->value));
@@ -506,6 +515,18 @@ class InputSelectInterface extends InputInterface
 		}
 	}
 
+	protected function _Equal($v1, $v2)
+	{
+		if ($this->Multiple()) {
+			$d1 = array_diff($v1,$v2);
+			$d2 = array_diff($v2,$v1);
+			return empty($d1) && empty($d2);
+		}
+		else {
+			return parent::_Equal($v1, $v2);
+		}
+	}
+
 	protected function _Load()
 	{
 		?><select	name="<?php echo($this->Multiple()?"$this->name[vals][]":"$this->name[val]"); ?>"<?php
@@ -519,12 +540,22 @@ class InputSelectInterface extends InputInterface
 				?>	><?php
 			$this->LoadOptGroup($this->options);
 		?></select><?php
+		// So we can detect blank
+		if ($this->Multiple()) {
+			?><input	type="hidden" name="<?php echo("$this->name[a]"); ?>"<?php
+					?>	/><?php
+		}
 	}
 
 	protected function _Import(&$arr)
 	{
 		if ($this->Multiple()) {
-			$this->value = $arr['vals'];
+			if (!isset($arr['vals'])) {
+				$this->value = array();
+			}
+			else {
+				$this->value = $arr['vals'];
+			}
 		}
 		else {
 			$this->value = $arr['val'];

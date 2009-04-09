@@ -745,6 +745,20 @@ class Crosswords extends Controller
 				$completeness_interface = new InputProgressInterface('completeness', $crossword_info['completeness']);
 				$config->Add('Progress', $completeness_interface);
 
+				$authors_interface = new InputSelectInterface('authors', $crossword_info['author_ids']);
+				$authors = $this->crosswords_model->GetAllAuthors();
+				$author_options = array();
+				foreach ($authors as $author) {
+					$author_options[(int)$author['id']] = $author['fullname'];
+				}
+				foreach ($crossword_info['authors'] as $author) {
+					if (!isset($author_options[$author['id']])) {
+						$author_options[$author['id']] = $author['fullname'];
+					}
+				}
+				$authors_interface->SetOptions($author_options);
+				$config->Add('Authors', $authors_interface);
+
 				// VALIDATION
 				$num_errors = $config->Validate();
 				if (0 == $num_errors && $config->Updated()) {
@@ -773,6 +787,16 @@ class Crosswords extends Controller
 					}
 
 					if (!$error) {
+						if (isset($values['authors'])) {
+							$authors = $values['authors'];
+							$values['authors'] = array();
+							foreach ($authors as $author_id) {
+								$values['authors'][(int)$author_id] = array(
+									'id' => (int)$author_id,
+									'fullname' => $author_options[(int)$author_id],
+								);
+							}
+						}
 						$values['id'] = $crossword_info['id'];
 						if (!$this->crosswords_model->UpdateCrossword($values)) {
 							$this->messages->AddMessage('error', 'Changes could not be saved');

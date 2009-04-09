@@ -582,10 +582,17 @@ class Crosswords_model extends model
 				$this->expired_sql.		' AS expired, '.
 				$this->winner_count_sql.' AS winners_so_far, '.
 				'`crossword_category_name`			AS category_name,'.
-				'`crossword_category_short_name`	AS category_short_name '.
+				'`crossword_category_short_name`	AS category_short_name, '.
+				'`user_entity_id`								AS author_id, '.
+				'CONCAT(`user_firstname`, " ", `user_surname`)	AS author_fullname '.
 				'FROM `crosswords` '.
 				'INNER JOIN `crossword_categories` '.
-				'	ON	`crosswords`.`crossword_category_id`=`crossword_categories`.`crossword_category_id` ';
+				'	ON	`crosswords`.`crossword_category_id`=`crossword_categories`.`crossword_category_id` '.
+				// Authors
+				'LEFT JOIN `crossword_authors` '.
+				'	ON	`crossword_author_crossword_id`=`crossword_id` '.
+				'LEFT JOIN `users` '.
+				'	ON	`crossword_author_user_entity_id`=`user_entity_id` ';
 
 		$bind = array();
 		$conditions = array();
@@ -613,16 +620,37 @@ class Crosswords_model extends model
 			$sql .= 'WHERE ('.join(') AND (', $conditions).') ';
 		}
 
-		$sql .= 'ORDER BY `crossword_publication` '.$order.' ';
+		$sql .= 'ORDER BY `crossword_publication` '.$order.', `user_surname` ASC, `user_firstname` ASC ';
 		if (null !== $limit) {
 			$sql .= 'LIMIT 0,'.(int)$limit;
 		}
 
 		$results = $this->db->query($sql, $bind)->result_array();
-		foreach ($results as &$result) {
-			$result['authors'] = array();
+		$crosswords = array();
+		foreach ($results as $result) {
+			$result['id'] = (int)$result['id'];
+			if (!isset($crosswords[$result['id']])) {
+				$result['authors'] = array();
+				$result['author_ids'] = array();
+				$result['author_fullnames'] = array();
+				$crosswords[$result['id']] = $result;
+			}
+			if (null !== $result['author_id']) {
+				$crosswords[$result['id']]['authors'][(int)$result['author_id']] = array(
+					'id' => (int)$result['author_id'],
+					'fullname' => $result['author_fullname'],
+				);
+				$crosswords[$result['id']]['author_ids'][] = (int)$result['author_id'];
+				$crosswords[$result['id']]['author_fullnames'][] = $result['author_fullname'];
+			}
 		}
-		return $results;
+		return array_values($crosswords);
+	}
+
+	/// Get information about all potential authors.
+	function GetAllAuthors()
+	{
+		return $this->permissions_model->GetAllUsersWithPermission('CROSSWORD_AUTHOR');
 	}
 
 	/** Update a crossword as obtained by GetCrosswords.
@@ -669,11 +697,53 @@ class Crosswords_model extends model
 					'WHERE	`crossword_id`=?';
 			$bind[] = $crossword['id'];
 			$this->db->query($sql, $bind);
-			return ($this->db->affected_rows() > 0);
+			$ok = ($this->db->affected_rows() > 0);
+			$success = $ok;
 		}
 		else {
-			return false;
+			$ok = false;
+			$success = true;
 		}
+
+		if (isset($crossword['authors']) && is_array($crossword['authors'])) {
+			// Delete any not in the list
+			$qs = array();
+			$bind = array($crossword['id']);
+			foreach ($crossword['authors'] as $author) {
+				$qs[] = '?';
+				$bind[] = $author['id'];
+			}
+			$sql =	'DELETE FROM `crossword_authors` '.
+					'WHERE	`crossword_author_crossword_id`=? ';
+			if (!empty($qs)) {
+				$sql .=	'	AND	`crossword_author_user_entity_id` NOT IN ('.join(',',$qs).')';
+			}
+			$this->db->query($sql, $bind);
+			$affected = $this->db->affected_rows();
+
+			// Add all items on the list
+			if (!empty($qs)) {
+				$qs = array();
+				$bind = array();
+				foreach ($crossword['authors'] as $author) {
+					$qs[] = '(?,?)';
+					$bind[] = $crossword['id'];
+					$bind[] = $author['id'];
+				}
+				$sql =	'INSERT INTO `crossword_authors` ( '.
+						'	`crossword_author_crossword_id`, '.
+						'	`crossword_author_user_entity_id` '.
+						') VALUES '.join(',',$qs).' '.
+						'ON DUPLICATE KEY UPDATE `crossword_author_crossword_id`=`crossword_author_crossword_id`';
+				$this->db->query($sql, $bind);
+				$affected += $this->db->affected_rows();
+			}
+			$success = $success &&  ($affected > 0);
+		}
+		else {
+			$success = $ok;
+		}
+		return $success;
 	}
 
 	/** Get the list of winners for a crossword.

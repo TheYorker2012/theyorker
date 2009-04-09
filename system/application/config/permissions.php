@@ -81,6 +81,7 @@ $config['permissions'] = array(
 	'CROSSWORD_CATEGORY_ADD'           => 'Add a new category of crosswords',
 	'CROSSWORD_CATEGORY_VIEW'          => 'View crossword category management page',
 	'CROSSWORD_CATEGORY_MODIFY'        => 'Modify a category of crosswords',
+	'CROSSWORD_AUTHOR'                 => 'Capable of writing crosswords',
 	'CROSSWORD_ADD'                    => 'Add a crossword puzzle',
 	'CROSSWORD_VIEW'                   => 'View a crossword puzzle',
 	'CROSSWORD_MODIFY'                 => 'Modify a crossword puzzle',

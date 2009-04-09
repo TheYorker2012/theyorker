@@ -29,7 +29,7 @@ echo(xml_escape(
 ?></script><?php
 
 ?><div class="BlueBox"><?php
-	?><h2>crossword: <?php
+	?><h2><?php
 		if ($Crossword['publication'] !== null) {
 			$pub = new Academic_time($Crossword['publication']);
 			echo($pub->Format('D ').$pub->AcademicTermNameUnique().' week '.$pub->AcademicWeek());
@@ -100,7 +100,13 @@ echo(xml_escape(
 		?></div><?php
 	}
 
-	?><h2>crossword</h2><?php
+	?><h2><?php
+		?>crossword<?php
+		if (count($Crossword['author_fullnames']) > 0) {
+			?> by <?php
+			echo(xml_escape(join(', ', $Crossword['author_fullnames'])));
+		}
+	?></h2><?php
 
 	if (false===$LoggedIn) {
 		$login_url = site_url('login/main'.$this->uri->uri_string());

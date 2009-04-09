@@ -35,8 +35,8 @@
 		if (false) {
 			?><div class="crossword_note">not attempted</div><?php
 		}
-		if (count($crossword['authors']) > 0) {
-			?><em>by <?php echo(xml_escape(join(',', $crossword['authors']))); ?></em><?php
+		if (count($crossword['author_fullnames']) > 0) {
+			?><em>by <?php echo(xml_escape(join(', ', $crossword['author_fullnames']))); ?></em><?php
 		}
 		$max_winners = $crossword['winners'];
 		if ($max_winners > 0) {

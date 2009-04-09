@@ -160,6 +160,29 @@ class permissions_model extends Model
 		}
 		return array($userRoles, $userNames);
 	}
+
+	/// Get all users with a certain permission.
+	function getAllUsersWithPermission($permission, $role = false)
+	{
+		$sql =	'	SELECT	entity_id									AS id,'.
+				'			entity_username								AS username,'.
+				'			CONCAT(user_firstname, " ", user_surname)	AS fullname';
+		if ($role) {
+			$sql .=	',		user_role_role_name							AS role';
+		}
+		$sql .= '	FROM role_permissions'.
+				'	INNER JOIN	user_roles'.
+				'			ON	role_permission_role_name = user_role_role_name'.
+				'	INNER JOIN	entities'.
+				'			ON	user_role_user_entity_id = entity_id'.
+				'	INNER JOIN	users'.
+				'			ON	entity_id = user_entity_id'.
+				'	WHERE	role_permission_permission_name=?'.
+				'		AND	user_office_access = true'.
+				'	ORDER BY user_surname ASC, user_firstname ASC';
+		$query = $this->db->query($sql, array($permission));
+		return $query->result_array();
+	}
 	
 	/// Remove role permissions.
 	/**

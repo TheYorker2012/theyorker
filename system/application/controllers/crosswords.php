@@ -374,7 +374,7 @@ class Crosswords extends Controller
 			$item->SetLink($url.'/crosswords/'.(int)$crossword['id']);
 
 			foreach ($crossword['authors'] as $author) {
-				$item->AddAuthor($author, 'no-reply@theyorker.co.uk');
+				$item->AddAuthor($author['fullname'], 'no-reply@theyorker.co.uk');
 			}
 		}
 	}

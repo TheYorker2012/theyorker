@@ -79,7 +79,7 @@
 			?></div><?php
 			// Authors
 			?><div class="authors"><?php
-				echo(xml_escape(join(', ', $crossword['authors'])));
+				echo(xml_escape(join(', ', $crossword['author_fullnames'])));
 			?></div><?php
 			// Progress bar
 			?><div class="completeness"><?php
