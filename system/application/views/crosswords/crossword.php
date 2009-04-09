@@ -40,7 +40,6 @@ echo(xml_escape(
 	?></h2><?php
 
 	if (!empty($Links)) {
-		?><h3>links</h3><?php
 		?><ul><?php
 			// Main links
 			foreach ($Links as $label => $url) {

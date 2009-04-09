@@ -3,6 +3,7 @@
  * @file views/crosswords/category.php
  * @author James Hogan <james_hogan@theyorker.co.uk>
  * @param $Category category.
+ * @param $Links array
  */
 
 ?><div class="BlueBox"><?php
@@ -18,6 +19,17 @@
 		?></div><?php
 	}
 	?><h2><?php echo(xml_escape($Category['name'])); ?></h2><?php
+
+	if (!empty($Links)) {
+		?><ul><?php
+			// Main links
+			foreach ($Links as $label => $url) {
+				?><li><a href="<?php echo(xml_escape($url)); ?>"><?php
+					echo(xml_escape($label));
+				?></a></li><?php
+			}
+		?></ul><?php
+	}
 
 	foreach ($Category['latest'] as $crossword) {
 		$pub = new Academic_time($crossword['publication']);

@@ -96,6 +96,9 @@ class Crosswords extends Controller
 
 			$data = array(
 				'Category' => &$category,
+				'Links' => array(
+					'crosswords home' => site_url('crosswords'),
+				),
 			);
 			$this->main_frame->IncludeCss('stylesheets/crosswords_index.css');
 			$this->main_frame->SetContentSimple('crosswords/category', $data);
@@ -106,6 +109,9 @@ class Crosswords extends Controller
 
 			$data = array(
 				'Category' => &$category,
+				'Links' => array(
+					'crosswords home' => site_url('crosswords'),
+				),
 			);
 			$this->main_frame->IncludeCss('stylesheets/crosswords_index.css');
 			$this->main_frame->SetContentSimple('crosswords/category', $data);
