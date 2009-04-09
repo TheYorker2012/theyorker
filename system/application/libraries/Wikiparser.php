@@ -58,6 +58,7 @@ class Wikiparser {
 	protected $enable_ordered_lists;
 	protected $entities;
 
+	protected $spoiler;
 	protected $list_level_chars;
 	protected $list_level;
 	protected $deflist;
@@ -305,6 +306,24 @@ class Wikiparser {
 
 	function handle_horizontalrule($matches) {
 		return $this->end_paragraph().'<hr />';
+	}
+
+	function handle_spoiler($matches, $close = false) {
+		if ($close) {
+			if ($this->spoiler) {
+				$this->spoiler = false;
+				return '<div class="end">&nbsp;</div></div>';
+			}
+			return '';
+		}
+		if (!$this->spoiler) {
+			$this->spoiler = true;
+			$prefix = '<div class="spoiler"><div class="start">&nbsp;</div>';
+			return array($this->end_paragraph().$prefix, $matches[1]);
+		}
+		else {
+			return $matches[1];
+		}
 	}
 
 	function handle_image($href,$title,$options) {
@@ -622,6 +641,7 @@ class Wikiparser {
 		}
 		
 		$line_regexes = array();
+		$line_regexes['spoiler'] = '^\!(.*?)$';
 		if ($this->enable_quickquotes) {
 			$line_regexes['special_quote'] = '^'.$this->entities['"'].$this->entities['"'].$this->entities['"'].'(.*)'.$this->entities['"'].$this->entities['"'].$this->entities['"'].'\s*(.*)$';
 		}
@@ -674,11 +694,20 @@ class Wikiparser {
 		$line = xml_escape($line);
 		//$line = preg_replace_callback('/([&<>])/i',array(&$this,'handle_symbols'),$line);
 
+		$prefix = '';
+		$postfix = '';
 		foreach ($line_regexes as $func=>$regex) {
 			if (preg_match("/$regex/i",$line,$matches)) {
 				$called[$func] = true;
 				$func = 'handle_'.$func;
 				$line = $this->$func($matches);
+				if (is_array($line)) {
+					$prefix .= $line[0];
+					if (isset($line[2])) {
+						$postfix = $line[2].$postfix;
+					}
+					$line = $line[1];
+				}
 				if ($this->stop || $this->stop_all) break;
 			}
 		}
@@ -692,7 +721,10 @@ class Wikiparser {
 
 		$isline = strlen(trim($line))>0;
 
+		$line = $prefix.$line.$postfix;
+
 		// if this wasn't a list item, and we are in a list, close the list tag(s)
+		if ($this->spoiler && (!isset($called['spoiler']) || !$called['spoiler'])) $line = $this->handle_spoiler(false,true) . $line;
 		if (($this->list_level>0) && (!isset($called['list']) or !$called['list'])) $line = $this->handle_list(false,true) . $line;
 		if (isset($this->deflist) and $this->deflist && (!isset($called['definitionlist']) or !$called['definitionlist'])) $line = $this->handle_definitionlist(false,true) . $line;
 		if (isset($this->preformat) and $this->preformat && (!isset($called['preformat']) or !$called['preformat'])) $line = $this->handle_preformat(false,true) . $line;
@@ -788,6 +820,7 @@ Done.
 		$this->nowikis = array();
 		$this->list_level_chars = '';
 		$this->list_level = 0;
+		$this->spoiler = false;
 
 		$this->deflist = false;
 		$this->linknumber = 0;
