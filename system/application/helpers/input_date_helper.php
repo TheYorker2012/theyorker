@@ -52,28 +52,28 @@ class InputDateInterface extends InputInterface
 			?>	><?php
 
 		if ($this->date) {
-			?><span class="day" id="<?php echo($this->name.'__day'); ?>"><?php
+			?><span class="day" id="<?php echo($this->id.'__day'); ?>"><?php
 				echo($value->Format('l'));
 			?></span> <?php
-			?>week <span class="week" id="<?php echo($this->name.'__wk'); ?>"><?php
+			?>week <span class="week" id="<?php echo($this->id.'__wk'); ?>"><?php
 				echo($value->AcademicWeek());
 			?></span> <?php
-			?>of <span class="term" id="<?php echo($this->name.'__term'); ?>"><?php
+			?>of <span class="term" id="<?php echo($this->id.'__term'); ?>"><?php
 				echo(ucfirst($value->AcademicTermNameUnique()));
 				echo(' '.$value->StartOfTerm()->Year());
 			?></span> <?php
 		}
 
 		if ($this->time) {
-			?>at <span class="hour" id="<?php echo($this->name.'__hr'); ?>"><?php echo($value->Hour()); ?></span><?php
-			?>:<span class="minute" id="<?php echo($this->name.'__min'); ?>"><?php echo($value->Minute()); ?></span> <?php
+			?>at <span class="hour" id="<?php echo($this->id.'__hr'); ?>"><?php echo($value->Hour()); ?></span><?php
+			?>:<span class="minute" id="<?php echo($this->id.'__min'); ?>"><?php echo($value->Minute()); ?></span> <?php
 		}
 
 		?></div><?php
 
 		$days = array('Mon','Tue','Wed','Thu','Fri','Sat','Sun');
 		?><div	class="input_date_selector"<?php
-			?>	id="<?php echo($this->name.'__selector'); ?>"<?php
+			?>	id="<?php echo($this->id.'__selector'); ?>"<?php
 			?>	><?php
 			// Init script
 			?><script type="text/javascript"><?php
@@ -83,7 +83,7 @@ class InputDateInterface extends InputInterface
 			?></script><?php
 			?><div><?php
 				// Day of the week
-				?><select	id="<?php echo($this->name.'__day_select'); ?>"<?php
+				?><select	id="<?php echo($this->id.'__day_select'); ?>"<?php
 						?>	name="<?php echo($this->name.'[day]'); ?>"<?php
 						?>	onchange="<?php echo(xml_escape('return input_date_day_changed("'.$this->name.'");')); ?>"<?php
 						?>><?php
@@ -99,7 +99,7 @@ class InputDateInterface extends InputInterface
 				?></select><?php
 				// Week of the term
 				?><span>week</span><?php
-				?><select	id="<?php echo($this->name.'__wk_select'); ?>"<?php
+				?><select	id="<?php echo($this->id.'__wk_select'); ?>"<?php
 						?>	name="<?php echo($this->name.'[wk]'); ?>"<?php
 						?>	onchange="<?php echo(xml_escape('return input_date_day_changed("'.$this->name.'");'));?>"<?php
 						?>><?php
@@ -116,7 +116,7 @@ class InputDateInterface extends InputInterface
 				?></select><?php
 				// Term
 				?><span>of</span><?php
-				?><select	id="<?php echo($this->name.'__term_select'); ?>"<?php
+				?><select	id="<?php echo($this->id.'__term_select'); ?>"<?php
 						?>	name="<?php echo($this->name.'[term]'); ?>"<?php
 						?>	onchange="<?php echo(xml_escape('return input_date_term_changed("'.$this->name.'");'));?>"<?php
 						?>><?php
@@ -147,7 +147,7 @@ class InputDateInterface extends InputInterface
 				// Time of day
 				if ($this->time) {
 					?><span>at</span><?php
-					?><select	id="<?php echo($this->name.'__hr_select'); ?>"<?php
+					?><select	id="<?php echo($this->id.'__hr_select'); ?>"<?php
 							?>	name="<?php echo($this->name.'[hr]'); ?>"<?php
 							?>	onchange="<?php echo(xml_escape('return input_date_time_changed("'.$this->name.'");'));?>"<?php
 							?>><?php
@@ -162,7 +162,7 @@ class InputDateInterface extends InputInterface
 						}
 					?></select><?php
 					?><span>:</span><?php
-					?><select	id="<?php echo($this->name.'__min_select'); ?>"<?php
+					?><select	id="<?php echo($this->id.'__min_select'); ?>"<?php
 							?>	name="<?php echo($this->name.'[min]'); ?>"<?php
 							?>	onchange="<?php echo(xml_escape('return input_date_time_changed("'.$this->name.'");'));?>"<?php
 							?>><?php
@@ -202,7 +202,7 @@ class InputDateInterface extends InputInterface
 					$last_month = 0;
 					$term = $cur->AcademicTerm();
 					for ($wk = 1; $cur->AcademicTerm() == $term; ++$wk) {
-						?><tr id="<?php echo($this->name.'__wk_'.$wk); ?>"><?php
+						?><tr id="<?php echo($this->id.'__wk_'.$wk); ?>"><?php
 							?><th><?php
 								echo($wk);
 							?></th><?php
@@ -226,7 +226,7 @@ class InputDateInterface extends InputInterface
 									$classes[] = "we";
 								}
 								?><td	class="<?php echo(join(' ',$classes)); ?>"<?php
-									?>	id="<?php echo($this->name.'__'.$cur->AcademicWeek().'_'.$cur->Format('D')); ?>"<?php
+									?>	id="<?php echo($this->id.'__'.$cur->AcademicWeek().'_'.$cur->Format('D')); ?>"<?php
 									?>	onclick="<?php echo(xml_escape(
 											'return input_date_change('.js_literalise($this->name).','.
 																		js_literalise($wk).','.

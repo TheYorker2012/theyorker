@@ -29,7 +29,7 @@ class InputInterfaces
 	public function Changed()
 	{
 		foreach ($this->interfaces as $id => &$interface) {
-			if ($interface[1]->Changed === true) {
+			if ($interface[1]->Changed() === true) {
 				return true;
 			}
 		}
@@ -112,11 +112,12 @@ class InputInterfaces
 	public function Load()
 	{
 		foreach ($this->interfaces as $name => &$interface) {
+			$id = $interface[1]->Id();
 			$error = (count($interface[1]->Errors()) > 0);
 			if ($error) {
-				?><div id="<?php echo($name.'__error'); ?>" class="input_error"><?php
+				?><div id="<?php echo($id.'__error'); ?>" class="input_error"><?php
 			}
-			?><label for="<?php echo($name); ?>"><?php
+			?><label for="<?php echo($id); ?>"><?php
 				echo(xml_escape($interface[0]));
 			?></label><?php
 			$interface[1]->Load();
@@ -138,6 +139,7 @@ abstract class InputValidator
 abstract class InputInterface
 {
 	protected $name;
+	protected $id;
 	protected $default;
 	protected $value;
 	protected $enabled;
@@ -152,6 +154,9 @@ abstract class InputInterface
 	public function __construct($name, $default = null, $enabled = null, $auto = true)
 	{
 		$this->name = $name;
+		$this->id = str_replace(array(']','['),
+								array('_','_'),
+								$name);
 		$this->value = $default;
 		$this->enabled = $enabled;
 		if ($this->enabled !== null && $this->enabled && $default === null) {
@@ -199,7 +204,7 @@ abstract class InputInterface
 				}
 					?>	/><?php
 		}
-		?><div	id="<?php echo($this->name); ?>"<?php
+		?><div	id="<?php echo($this->id); ?>"<?php
 		$classes = $this->div_classes;
 		$classes[] = 'input_encase';
 		if (!empty($classes)) {
@@ -273,6 +278,10 @@ abstract class InputInterface
 	public function Name()
 	{
 		return $this->name;
+	}
+	public function Id()
+	{
+		return $this->id;
 	}
 
 	public function Enabled()
@@ -370,7 +379,7 @@ class InputTextInterface extends InputInterface
 		if (!$this->multiline) {
 			?><input	type="text"<?php
 					?>	name="<?php echo("$this->name[val]"); ?>"<?php
-					?>	id="<?php echo($this->name.'__val'); ?>"<?php
+					?>	id="<?php echo($this->id.'__val'); ?>"<?php
 					?>	value="<?php echo(xml_escape($this->value)); ?>"<?php
 				if ($this->max_length !== null) {
 					?>	maxlength="<?php echo($this->max_length); ?>"<?php
@@ -382,7 +391,7 @@ class InputTextInterface extends InputInterface
 		}
 		else {
 			?><textarea	name="<?php echo("$this->name[val]"); ?>"<?php
-					?>	id="<?php echo($this->name.'__val'); ?>"<?php
+					?>	id="<?php echo($this->id.'__val'); ?>"<?php
 				if ($this->max_length !== null) {
 					?>	maxlength="<?php echo($this->max_length); ?>"<?php
 				}
@@ -530,7 +539,7 @@ class InputSelectInterface extends InputInterface
 	protected function _Load()
 	{
 		?><select	name="<?php echo($this->Multiple()?"$this->name[vals][]":"$this->name[val]"); ?>"<?php
-				?>	id="<?php echo($this->name.'__val'); ?>"<?php
+				?>	id="<?php echo($this->id.'__val'); ?>"<?php
 			if ($this->Multiple()) {
 				?>	multiple="multiple"<?php
 			}

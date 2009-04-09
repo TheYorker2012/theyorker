@@ -37,7 +37,7 @@ class InputProgressInterface extends InputIntInterface
 						'});', false));
 		?></script><?php
 		parent::_Load(false);
-		?><div	id="<?php echo($this->name.'__progress'); ?>"<?php
+		?><div	id="<?php echo($this->id.'__progress'); ?>"<?php
 			?>	class="progress"<?php
 			?>	onmousedown="<?php echo(xml_escape(
 					'input_progress_mousedown('.js_literalise($this->name).', event);'
@@ -49,7 +49,7 @@ class InputProgressInterface extends InputIntInterface
 					'input_progress_mouseup('.js_literalise($this->name).', event);'
 					)); ?>"<?php
 			?>	><?php
-			?><div	id="<?php echo($this->name.'__bar'); ?>"<?php
+			?><div	id="<?php echo($this->id.'__bar'); ?>"<?php
 				?>	class="bar progress<?php echo($rounded); ?>"<?php
 				?>	style="width: <?php echo($progress); ?>%"<?php
 				?>	><?php

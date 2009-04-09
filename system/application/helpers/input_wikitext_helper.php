@@ -84,12 +84,12 @@ class InputWikitextInterface extends InputTextInterface
 		}
 
 		// Toolbar
-		?><div id="<?php echo($this->name.'__toolbar'); ?>"></div><?php
+		?><div id="<?php echo($this->id.'__toolbar'); ?>"></div><?php
 		// Textarea
 		parent::_Load();
 		// Preview
 		if ($this->preview) {
-			?><div id="<?php echo($this->name.'__preview'); ?>" class="input_wikitext_preview"<?php
+			?><div id="<?php echo($this->id.'__preview'); ?>" class="input_wikitext_preview"<?php
 				if ($this->value===''){
 					?>	style="display:none"<?php
 				}
@@ -99,10 +99,10 @@ class InputWikitextInterface extends InputTextInterface
 		}
 		// Toolbar initialisation
 		echo(js_block(
-			'mwSetupToolbar('.js_literalise($this->name.'__toolbar').','.
-							js_literalise($this->name.'__val').','.
+			'mwSetupToolbar('.js_literalise($this->id.'__toolbar').','.
+							js_literalise($this->id.'__val').','.
 							'false'.
-							($this->preview ? (',['.js_literalise($this->name.'__preview').','.js_literalise($parse_uri).']') : '').
+							($this->preview ? (',['.js_literalise($this->id.'__preview').','.js_literalise($parse_uri).']') : '').
 							');'
 		));
 	}

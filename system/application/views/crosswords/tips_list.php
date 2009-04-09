@@ -32,6 +32,8 @@ $return_here_get = '?ret='.urlencode($SelfUri);
 		?></div><?php
 	}
 	else {
+		?><form class="form" method="post" action="<?php echo(xml_escape($SelfUri)); ?>"><?php
+		?><fieldset><?php
 		foreach ($Tips as &$tip) {
 			?><div id="<?php echo(xml_escape('tip'.(int)$tip['id'])); ?>" class="crosswordTip"><?php
 				?><h3><?php
@@ -61,9 +63,40 @@ $return_here_get = '?ret='.urlencode($SelfUri);
 						?></a><?php
 					}
 				?></h3><?php
-				echo($tip['content_xml']);
+				$editable = isset($tip['edit_form']);
+				$viewable = !$editable || !$tip['edit_form']->Changed();
+				if ($viewable) {
+					if ($editable) {
+						?><div	id="<?php echo(xml_escape('tip_'.$tip['id'].'_view')); ?>"<?php
+							?>	style="display:none; cursor:pointer;"<?php
+							?>	onclick="<? echo(xml_escape(
+									'document.getElementById('.js_literalise('tip_'.$tip['id'].'_view').').style.display="none";'.
+									'document.getElementById('.js_literalise('tip_'.$tip['id'].'_edit').').style.display="";'
+								)); ?>"<?php
+							?>><?php
+					}
+					echo($tip['content_xml']);
+					if ($editable) {
+						?></div><?php
+					}
+				}
+				if ($editable) {
+					?><div id="<?php echo(xml_escape('tip_'.$tip['id'].'_edit')); ?>"><?php
+						$tip['edit_form']->Load();
+						?><input class="button" type="submit" value="Save all tips" /><?php
+						?><div style="clear:both"></div><?php
+					?></div><?php
+					if ($viewable) {
+						echo(js_block(
+							'document.getElementById('.js_literalise('tip_'.$tip['id'].'_view').').style.display="";'.
+							'document.getElementById('.js_literalise('tip_'.$tip['id'].'_edit').').style.display="none";'
+						));
+					}
+				}
 			?></div><?php
 		}
+		?></fieldset><?php
+		?></form><?php
 	}
 	if (null !== $AddForm) {
 		?><h2>add tip</h2><?php
