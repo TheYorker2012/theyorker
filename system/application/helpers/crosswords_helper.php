@@ -1116,6 +1116,7 @@ class CrosswordTipsList
 				$inputs['content']->SetWikiparser();
 				$form->Add('Content (wikitext)', $inputs['content']);
 
+				// Delete it?
 				if ($inputs['delete']->Value()) {
 					$success = $ci->crosswords_model->DeleteTipById($tip['id']);
 					if ($success) {
@@ -1126,6 +1127,7 @@ class CrosswordTipsList
 						$ci->messages->AddMessage('error', 'Tip could not be deleted');
 					}
 				}
+				// Update it?
 				else {
 					$num_errors = $form->Validate();
 					if (0 == $num_errors && $form->Changed()) {
@@ -1150,6 +1152,7 @@ class CrosswordTipsList
 							if (isset($values['category_id'])) {
 								$tip['category_name'] = $category_options[$values['category_id']];
 							}
+							$form->ResetDefaults();
 						}
 					}
 				}
