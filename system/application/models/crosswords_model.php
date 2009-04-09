@@ -14,6 +14,7 @@ class Crosswords_model extends model
 	{
 		parent::model();
 		$this->load->helper('crosswords');
+		$this->load->model('comments_model');
 
 		// Snippets of useful sql
 		$this->overdue_sql		= '((`crossword_deadline` IS NOT NULL '.
@@ -631,7 +632,13 @@ class Crosswords_model extends model
 			return null;
 		}
 		else {
-			return $this->db->insert_id();
+			$insert_id = $this->db->insert_id();
+			// Create new comment thread
+			$this->comments_model->CreateThread(
+				array(),
+				'crosswords', array('crossword_id' => $insert_id), 'crossword_public_comment_thread_id'
+			);
+			return $insert_id;
 		}
 	}
 
