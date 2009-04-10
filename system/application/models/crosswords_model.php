@@ -106,7 +106,11 @@ class Crosswords_model extends model
 		$sql =	'SELECT '.
 				'	`crossword_tip_category_id`				AS id,'.
 				'	`crossword_tip_category_name`			AS name,'.
-				'	`crossword_tip_category_description`	AS description '.
+				'	`crossword_tip_category_description`	AS description, '.
+				'	(SELECT	COUNT(*) '.
+				'	 FROM	`crossword_tips` '.
+				'	 WHERE	`crossword_tips`.`crossword_tip_category_id`=`crossword_tip_categories`.`crossword_tip_category_id` '.
+				'		)									AS tip_count '.
 				'FROM `crossword_tip_categories` ';
 		$conditions = array();
 		$bind = array();
@@ -132,6 +136,26 @@ class Crosswords_model extends model
 			$result['id'] = (int)$result['id'];
 		}
 		return $results;
+	}
+
+	/** Delete a tip category.
+	 * @param $category_id int Tip category id.
+	 * @param $delete_tips bool Whether to delete contained tips first.
+	 * @return bool true if successful in deleting category.
+	 */
+	function DeleteTipCategory($category_id, $delete_tips = false)
+	{
+		if ($delete_tips) {
+			$this->DeleteTipsInCategory($category_id);
+		}
+		$sql =	'DELETE FROM 	`crossword_tip_categories` '.
+				'WHERE	`crossword_tip_category_id`=?'.
+				// Should be an empty category at this point
+				'	AND	NOT EXISTS (SELECT	*	FROM	`crossword_tips` '.
+				'					WHERE	`crossword_tips`.`crossword_tip_category_id`=`crossword_tip_categories`.`crossword_tip_category_id`) ';
+		$bind = array($category_id);
+		$this->db->query($sql, $bind);
+		return ($this->db->affected_rows() > 0);
 	}
 
 	/** Add a tip
@@ -261,7 +285,14 @@ class Crosswords_model extends model
 		return ($this->db->affected_rows() > 0);
 	}
 
-	/// Small wrapper around DeleteTips.
+	/// Small wrappers around DeleteTips.
+	function DeleteTipsInCategory($category_id)
+	{
+		if (null === $category_id) {
+			return false;
+		}
+		return $this->DeleteTips($category_id);
+	}
 	function DeleteTipById($tip_id)
 	{
 		if (null === $tip_id) {
@@ -280,8 +311,7 @@ class Crosswords_model extends model
 	function DeleteTips($category_id = null, $crossword_id = null, $tip_id = null)
 	{
 		// Construct query
-		$sql =	'DELETE '.
-				'FROM		`crossword_tips` ';
+		$sql =	'DELETE FROM	`crossword_tips` ';
 		$conditions = array();
 		$bind = array();
 		if (null !== $category_id) {

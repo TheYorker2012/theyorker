@@ -19,7 +19,7 @@ class InputInterfaces
 	public function Updated()
 	{
 		foreach ($this->interfaces as $id => &$interface) {
-			if ($interface[1]->Changed() !== null) {
+			if ($interface[1]->Updated()) {
 				return true;
 			}
 		}
@@ -40,7 +40,7 @@ class InputInterfaces
 	{
 		$values = array();
 		foreach ($this->interfaces as $id => &$interface) {
-			if ($interface[1]->Changed() !== null) {
+			if ($interface[1]->Updated()) {
 				$values[$id] = $interface[1]->Value();
 			}
 		}
@@ -316,6 +316,10 @@ abstract class InputInterface
 	public function Changed()
 	{
 		return $this->changed;
+	}
+	public function Updated()
+	{
+		return (null !== $this->changed);
 	}
 
 	/// Get any error messages.
