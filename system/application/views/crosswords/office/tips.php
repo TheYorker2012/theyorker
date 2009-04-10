@@ -37,6 +37,12 @@ foreach ($Categories as $category) {
 			echo(nl2br(xml_escape($category['description'])));
 		?></p><?php
 		?><ul><?php
+			?><li><?php
+				echo((int)$category['published_tip_count']);
+				?> published tip<?php if ($category['published_tip_count'] != 1) echo('s'); ?> out of <?php
+				echo((int)$category['tip_count']);
+				?> tip<?php if ($category['tip_count'] != 1) echo('s'); ?> in this category<?php
+			?></li><?php
 			if ($Permissions['tip_cat_view']) {
 				?><li><?php
 					?><a href="<?php echo(site_url('office/crosswords/tips/'.(int)$category['id'])); ?>"><?php

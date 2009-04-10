@@ -110,7 +110,14 @@ class Crosswords_model extends model
 				'	(SELECT	COUNT(*) '.
 				'	 FROM	`crossword_tips` '.
 				'	 WHERE	`crossword_tips`.`crossword_tip_category_id`=`crossword_tip_categories`.`crossword_tip_category_id` '.
-				'		)									AS tip_count '.
+				'		)									AS tip_count, '.
+				'	(SELECT	COUNT(*) '.
+				'	 FROM	`crossword_tips` '.
+				'		INNER	JOIN `crosswords` '.
+				'			ON	`crossword_id`=`crossword_tip_crossword_id` '.
+				'	 WHERE	`crossword_tips`.`crossword_tip_category_id`=`crossword_tip_categories`.`crossword_tip_category_id` '.
+				'			AND	'.$this->published_sql.
+				'		)									AS published_tip_count '.
 				'FROM `crossword_tip_categories` ';
 		$conditions = array();
 		$bind = array();
