@@ -42,7 +42,7 @@ class Crosswords extends Controller
 		OutputModes('xhtml',FeedOutputModes());
 		if (!CheckPermissions('public')) return;
 
-		$this->main_frame->SetFeedTitle('The Yorker - Crosswords');
+		$this->main_frame->SetFeedTitle('The Yorker Crosswords');
 		if (FeedOutputMode()) {
 			$this->main_frame->Channel()->SetDescription('All crosswords.');
 			$this->_fillCrosswordFeed();
@@ -71,6 +71,8 @@ class Crosswords extends Controller
 			);
 			$this->main_frame->IncludeCss('stylesheets/crosswords_index.css');
 			$this->main_frame->SetContentSimple('crosswords/index', $data);
+			/// @todo Use pages interface
+			$this->main_frame->SetTitle('Crosswords');
 		}
 		$this->main_frame->Load();
 	}
@@ -85,7 +87,7 @@ class Crosswords extends Controller
 		OutputModes('xhtml',FeedOutputModes());
 		if (!CheckPermissions('public')) return;
 
-		$this->main_frame->SetFeedTitle('The Yorker - Crosswords - '.$category['name']);
+		$this->main_frame->SetFeedTitle('The Yorker '.$category['name']);
 		if (FeedOutputMode()) {
 			$this->main_frame->Channel()->SetDescription('All crosswords in category "'.$category['name'].'".');
 			$this->_fillCrosswordFeed($category['id']);
@@ -102,6 +104,8 @@ class Crosswords extends Controller
 			);
 			$this->main_frame->IncludeCss('stylesheets/crosswords_index.css');
 			$this->main_frame->SetContentSimple('crosswords/category', $data);
+			/// @todo Use pages interface
+			$this->main_frame->SetTitle($category['name']);
 		}
 		elseif ($arg2 == 'archive') {
 			$category['latest']	= $this->crosswords_model->GetCrosswords(null,$category['id'], null,null,true,null, null,'DESC');
@@ -115,6 +119,8 @@ class Crosswords extends Controller
 			);
 			$this->main_frame->IncludeCss('stylesheets/crosswords_index.css');
 			$this->main_frame->SetContentSimple('crosswords/category', $data);
+			/// @todo Use pages interface
+			$this->main_frame->SetTitle($category['name'].' Archive');
 		}
 		else {
 			show_404();
@@ -186,6 +192,9 @@ class Crosswords extends Controller
 			);
 
 			$this->main_frame->SetContentSimple('crosswords/crossword', $data);
+			/// @todo Use pages interface
+			$pub = new Academic_time($crossword['publication']);
+			$this->main_frame->SetTitle('Crossword '.$pub->Format('D ').$pub->AcademicTermNameUnique().' week '.$pub->AcademicWeek());
 		}
 		elseif ($operation == 'ajax') {
 			$op2 = $comment_include;
@@ -311,13 +320,15 @@ class Crosswords extends Controller
 				'Categories' => $this->crosswords_model->GetTipCategories(null, true),
 				'SelfUri' => $this->uri->uri_string(),
 			);
-			$this->main_frame->SetFeedTitle('The Yorker - Crossword Tips');
+			$this->main_frame->SetFeedTitle('The Yorker Crossword Tips');
 			if (FeedOutputMode()) {
 				$this->main_frame->Channel()->SetDescription('All crossword tips.');
 				$this->_fillTipsFeed();
 			}
 			else {
 				$this->main_frame->setContentSimple('crosswords/tips', $data);
+				/// @todo Use pages interface
+				$this->main_frame->SetTitle('Crossword Tips');
 			}
 		}
 		else {
@@ -336,7 +347,7 @@ class Crosswords extends Controller
 				show_404();
 			}
 
-			$this->main_frame->SetFeedTitle('The Yorker - Crossword Tips - '.$category_info['name']);
+			$this->main_frame->SetFeedTitle('The Yorker Crossword Tips - '.$category_info['name']);
 			if (FeedOutputMode()) {
 				$this->main_frame->Channel()->SetDescription('All crossword tips in category "'.$category_info['name'].'".');
 				$this->_fillTipsFeed($category_info['id']);
@@ -349,6 +360,8 @@ class Crosswords extends Controller
 				);
 
 				$this->main_frame->setContentSimple('crosswords/tip_cat_view', $data);
+				/// @todo Use pages interface
+				$this->main_frame->SetTitle('Crossword Tips - '.$category_info['name']);
 			}
 		}
 		$this->main_frame->Load();
