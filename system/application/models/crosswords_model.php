@@ -165,7 +165,7 @@ class Crosswords_model extends model
 	 * @param $crossword_id int,null crossword id.
 	 * @param $tip_id int,null tip id.
 	 * @param $published bool,null attached crossword published.
-	 * @return array[array('id'=>,'category_id'=>,'crossword_id'=>,'content_wikitext'=>,'content_xml'=>,'published'=>,'publication'=>)]
+	 * @return array[array('id'=>,'category_id'=>,'crossword_id'=>,'content_wikitext'=>,'content_xhtml'=>,'published'=>,'publication'=>)]
 	 */
 	function GetTips($category_id = null, $crossword_id = null, $tip_id = null, $published = null)
 	{
@@ -176,7 +176,7 @@ class Crosswords_model extends model
 				'	`crossword_tip_category_name`		AS category_name,'.
 				'	`crossword_tip_crossword_id`		AS crossword_id,'.
 				'	`crossword_tip_content_wikitext`	AS content_wikitext,'.
-				'	`crossword_tip_content_xml`			AS content_xml, '.
+				'	`crossword_tip_content_xml`			AS content_xhtml, '.
 				'	'.$this->published_sql.'			AS published, '.
 				'	UNIX_TIMESTAMP(`crossword_publication`)	AS publication '.
 				'FROM		`crossword_tips` '.

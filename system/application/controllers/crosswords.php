@@ -410,7 +410,7 @@ class Crosswords extends Controller
 
 			$item->SetLink($url.'/crosswords/'.(int)$tip['crossword_id'].'#tip'.(int)$tip['id']);
 
-			$item->SetDescription($tip['content_xml']);
+			$item->SetDescription($tip['content_xhtml']);
 		}
 	}
 }

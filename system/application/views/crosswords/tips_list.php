@@ -75,7 +75,7 @@ $return_here_get = '?ret='.urlencode($SelfUri);
 								)); ?>"<?php
 							?>><?php
 					}
-					echo($tip['content_xml']);
+					echo($tip['content_xhtml']);
 					if ($editable) {
 						?></div><?php
 					}
