@@ -308,7 +308,7 @@ class Crosswords extends Controller
 
 		if (null === $category) {
 			$data = array(
-				'Categories' => $this->crosswords_model->GetTipCategories(),
+				'Categories' => $this->crosswords_model->GetTipCategories(null, true),
 				'SelfUri' => $this->uri->uri_string(),
 			);
 			$this->main_frame->SetFeedTitle('The Yorker - Crossword Tips');
@@ -323,7 +323,7 @@ class Crosswords extends Controller
 		else {
 			$category_info = null;
 			if (is_numeric($category)) {
-				$category_info = $this->crosswords_model->GetTipCategories((int)$category);
+				$category_info = $this->crosswords_model->GetTipCategories((int)$category, true);
 				if (empty($category_info)) {
 					$category_info = null;
 				}

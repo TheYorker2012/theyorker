@@ -97,9 +97,10 @@ class Crosswords_model extends model
 
 	/** Get tip categories.
 	 * @param $category_id int,null category id.
+	 * @param $nonempty bool,null whether the categories should contain at least one published tip.
 	 * @param array[array('id'=>,'name'=>,'description'=>)]
 	 */
-	function GetTipCategories($category_id = null)
+	function GetTipCategories($category_id = null, $nonempty = null)
 	{
 		// Construct query
 		$sql =	'SELECT '.
@@ -112,6 +113,15 @@ class Crosswords_model extends model
 		if (null !== $category_id) {
 			$conditions[] = '`crossword_tip_category_id`=?';
 			$bind[] = $category_id;
+		}
+		if (null !== $nonempty) {
+			$conditions[] = ($nonempty?'':'NOT ').
+				'EXISTS (SELECT	* '.
+						'FROM	`crossword_tips` '.
+						'INNER	JOIN `crosswords` '.
+						'	ON	`crossword_id`=`crossword_tip_crossword_id` '.
+						'WHERE	`crossword_tips`.`crossword_tip_category_id`=`crossword_tip_categories`.`crossword_tip_category_id` '.
+						'	AND	'.$this->published_sql.')';
 		}
 		if (!empty($conditions)) {
 			$sql .= 'WHERE '.join(' AND ', $conditions).' ';
