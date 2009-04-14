@@ -135,6 +135,14 @@ table.crossword td.vsp {
 	border-top: 3px solid #FF6A00;
 }
 
+/* Cells with a hyphen before */
+table.crossword td.hhy {
+	border-left: 3px solid #FF6A00;
+}
+table.crossword td.vhy {
+	border-top: 3px solid #FF6A00;
+}
+
 /* Blank cells */
 
 table.crossword td.blank {
@@ -299,7 +307,16 @@ div.crosswordCluesBox div.vertical td.hsp {
 div.crosswordCluesBox td.vsp {
 	border-top: 1px solid #FF6A00;
 }
+div.crosswordCluesBox div.vertical td.hhy {
+	border-left: 1px solid #FF6A00;
+}
+div.crosswordCluesBox td.vhy {
+	border-top: 1px solid #FF6A00;
+}
 /* Add horizontal spaces in vertical clues */
 div.crosswordCluesBox div.vertical td.vsp {
+	border-left: 3px solid #FF6A00;
+}
+div.crosswordCluesBox div.vertical td.vhy {
 	border-left: 3px solid #FF6A00;
 }

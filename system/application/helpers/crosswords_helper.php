@@ -7,6 +7,9 @@ class CrosswordClue
 	function __construct($solution, $quickClue, $crypticClue)
 	{
 		$this->m_solution = split(' ', strtoupper($solution));
+		foreach ($this->m_solution as &$word) {
+			$word = split('-', $word);
+		}
 		$this->m_quickClue = $quickClue;
 		$this->m_crypticClue = $crypticClue;
 	}
@@ -28,9 +31,15 @@ class CrosswordClue
 	}
 
 	/// Get the solution.
-	function solution($sep = '')
+	function solution($sep = false)
 	{
-		return join($sep, $this->m_solution);
+		$sep1 = ($sep?' ':'');
+		$sep2 = ($sep?'-':'');
+		$words = array();
+		foreach ($this->m_solution as $word) {
+			$words[] = join($sep2, $word);
+		}
+		return join($sep1, $words);
 	}
 
 	/// Get the absolute length of the solution.
@@ -43,11 +52,28 @@ class CrosswordClue
 	function wordLengths()
 	{
 		$results = array();
-		foreach ($this->m_solution as $word)
-		{
-			$results[] = strlen($word);
+		foreach ($this->m_solution as $word) {
+			$word_lens = array();
+			foreach ($word as $part) {
+				$word_lens[] = strlen($part);
+			}
+			$results[] = $word_lens;
 		}
 		return $results;
+	}
+
+	/// Get a string describing the word lengths.
+	function wordLengthsString()
+	{
+		$result = array();
+		foreach ($this->m_solution as $word) {
+			$word_lens = array();
+			foreach ($word as $part) {
+				$word_lens[] = strlen($part);
+			}
+			$result[] = join('-',$word_lens);
+		}
+		return join(',',$result);
 	}
 
 	/*
@@ -125,6 +151,7 @@ class CrosswordGrid
 {
 	static $HORIZONTAL = 0;
 	static $VERTICAL   = 1;
+	static $validSpacers = array(' ', '-');
 
 
 	/// Construct a crossword grid.
@@ -229,12 +256,12 @@ class CrosswordGrid
 	 * @param $orientation int orientation.
 	 * @param $x int position x coordinate.
 	 * @param $y int position y coordinate.
-	 * @param $spaced bool whether spaced for this cell.
+	 * @param $spaced null," ","-" spacer type for this cell.
 	 */
-	function setCellSpacer($orientation, $x, $y, $spaced = true)
+	function setCellSpacer($orientation, $x, $y, $spacer = null)
 	{
-		if ($spaced) {
-			$this->m_spacers[$orientation][$x][$y] = true;
+		if (null !== $spacer) {
+			$this->m_spacers[$orientation][$x][$y] = $spacer;
 		}
 		else {
 			unset($this->m_spacers[$orientation][$x][$y]);
@@ -257,9 +284,9 @@ class CrosswordGrid
 			if ($char === '_') {
 				$char = '';
 			}
-			if ($char === ' ') {
+			if ($char === ' ' || $char === '-') {
 				$this->setCellSpacer($light->orientation(), $light->x()+(($i-$spaces)*$dx),
-				                                            $light->y()+(($i-$spaces)*$dy));
+				                                            $light->y()+(($i-$spaces)*$dy), $char);
 				++$spaces;
 			}
 			elseif (!$this->setCellState($light->x()+(($i-$spaces)*$dx),
@@ -335,8 +362,8 @@ class CrosswordGrid
 	function cellSpacers($x, $y)
 	{
 		return array(
-			isset($this->m_spacers[0][$x][$y]),
-			isset($this->m_spacers[1][$x][$y]),
+			isset($this->m_spacers[0][$x][$y]) ? $this->m_spacers[0][$x][$y] : null,
+			isset($this->m_spacers[1][$x][$y]) ? $this->m_spacers[1][$x][$y] : null,
 		);
 	}
 
@@ -524,7 +551,10 @@ class CrosswordPuzzle
 							$cx = $x + $dx*$i;
 							$cy = $y + $dy*$i;
 							if ($word !== '' && isset($data['sp'][$cx][$cy][$o])) {
-								$word .= ' ';
+								$spacer = $data['sp'][$cx][$cy][$o];
+								if (is_string($spacer) && in_array($spacer, CrosswordGrid::$validSpacers)) {
+									$word .= $spacer;
+								}
 							}
 							$letter = (isset($data['gr'][$cx][$cy]) ? $data['gr'][$cx][$cy] : '');
 							if ($letter === '') {
@@ -730,11 +760,17 @@ class CrosswordView
 					}
 					// Spacers on this cell?
 					$spacers = $grid->cellSpacers($x, $y);
-					if ($spacers[CrosswordGrid::$HORIZONTAL]) {
+					if ($spacers[CrosswordGrid::$HORIZONTAL] === ' ') {
 						$classes[] = 'hsp';
 					}
-					if ($spacers[CrosswordGrid::$VERTICAL]) {
+					elseif ($spacers[CrosswordGrid::$HORIZONTAL] === '-') {
+						$classes[] = 'hhy';
+					}
+					if ($spacers[CrosswordGrid::$VERTICAL] === ' ') {
 						$classes[] = 'vsp';
+					}
+					elseif ($spacers[CrosswordGrid::$VERTICAL] === '-') {
+						$classes[] = 'vhy';
 					}
 					?><td <?php
 						if (!empty($classes)) {
@@ -933,8 +969,8 @@ class CrosswordView
 						?></span><?php
 					}
 
-					$lengths = $clue->wordLengths();
-					?> (<span id="<?php echo("$name-$orientation-wordlen-$x-$y"); ?>"><?php echo(join(',', $lengths)); ?></span>)<?php
+					$lengths = $clue->wordLengthsString();
+					?> (<span id="<?php echo("$name-$orientation-wordlen-$x-$y"); ?>"><?php echo($lengths); ?></span>)<?php
 				?></div><?php
 
 				if ($this->m_edit) {
@@ -971,11 +1007,17 @@ class CrosswordView
 							}
 							// Spacers on this cell?
 							$spacers = $grid->cellSpacers($cx, $cy);
-							if ($spacers[CrosswordGrid::$HORIZONTAL]) {
+							if ($spacers[CrosswordGrid::$HORIZONTAL] === ' ') {
 								$classes[] = 'hsp';
 							}
-							if ($spacers[CrosswordGrid::$VERTICAL]) {
+							elseif ($spacers[CrosswordGrid::$HORIZONTAL] === '-') {
+								$classes[] = 'hhy';
+							}
+							if ($spacers[CrosswordGrid::$VERTICAL] === ' ') {
 								$classes[] = 'vsp';
+							}
+							elseif ($spacers[CrosswordGrid::$VERTICAL] === '-') {
+								$classes[] = 'vhy';
 							}
 							?><td <?php
 								if (!empty($classes)) {

@@ -71,7 +71,14 @@ function CrosswordCell(name, x, y)
 						? mainEd.value
 						: null);
 	this.m_solution = null;
-	this.m_spacers = ((null != mainEl) ? [CssCheck(mainEl, "hsp"), CssCheck(mainEl, "vsp")] : [false,false]);
+	this.m_spacers = ((null != mainEl)
+			? [	CssCheck(mainEl, "hsp")?" ":
+				CssCheck(mainEl, "hhy")?"-":
+				null,
+				CssCheck(mainEl, "vsp")?" ":
+				CssCheck(mainEl, "vhy")?"-":
+				null ]
+			: [null,null]);
 	this.m_lights = [null, null];
 	this.m_els = [ mainEl, null, null ];
 	this.m_eds = [ mainEd, null, null ];
@@ -212,11 +219,14 @@ function CrosswordCell(name, x, y)
 	{
 		if (this.m_spacers[orientation.val()] != enable) {
 			// Change spacer class
-			var op = (enable ? CssAdd : CssRemove);
-			var cl = (orientation.isHorizontal() ? "hsp" : "vsp");
+			var opSp = ((enable==" ") ? CssAdd : CssRemove);
+			var opHy = ((enable=="-") ? CssAdd : CssRemove);
+			var clSp = (orientation.isHorizontal() ? "hsp" : "vsp");
+			var clHy = (orientation.isHorizontal() ? "hhy" : "vhy");
 			for (var i = 0; i < this.m_els.length; ++i) {
 				if (null != this.m_els[i]) {
-					op(this.m_els[i], cl);
+					opSp(this.m_els[i], clSp);
+					opHy(this.m_els[i], clHy);
 				}
 			}
 			// Change internally
@@ -343,8 +353,9 @@ function CrosswordLight(name, x, y, orientation, cells, els, eds)
 		var val = "";
 		for (var i = 0; i < this.m_cells.length; ++i) {
 			var cell = this.m_cells[i];
-			if (cell.isSpaced(this.m_orientation)) {
-				val += " ";
+			var spacer = cell.isSpaced(this.m_orientation);
+			if (spacer != null) {
+				val += spacer;
 			}
 			if (!cell.isBlank()) {
 				val += cell.letter();
@@ -357,8 +368,9 @@ function CrosswordLight(name, x, y, orientation, cells, els, eds)
 		var val = "";
 		for (var i = 0; i < this.m_cells.length; ++i) {
 			var cell = this.m_cells[i];
-			if (cell.isSpaced(this.m_orientation)) {
-				val += " ";
+			var spacer = cell.isSpaced(this.m_orientation);
+			if (spacer != null) {
+				val += spacer;
 			}
 			if (!cell.isBlank()) {
 				val += cell.solution();
@@ -475,14 +487,20 @@ function CrosswordLight(name, x, y, orientation, cells, els, eds)
 	this.wordLengths = function()
 	{
 		var lens = new Array();
-		var count = 1;
+		var count = new Array();
+		count.push(1);
 		for (var i = 1; i < this.m_cells.length; ++i) {
-			if (this.m_cells[i].isSpaced(this.m_orientation)) {
+			var space = this.m_cells[i].isSpaced(this.m_orientation);
+			if (space == " ") {
 				lens.push(count);
-				count = 1;
+				count = new Array();
+				count.push(1);
+			}
+			else if (space == "-") {
+				count.push(1);
 			}
 			else {
-				++count;
+				++count[count.length-1];
 			}
 		}
 		lens.push(count);
@@ -491,7 +509,11 @@ function CrosswordLight(name, x, y, orientation, cells, els, eds)
 	this.updateWordLengths = function()
 	{
 		var lens = this.wordLengths();
-		var lensStr = lens.join(",");
+		var lenStrs = new Array();
+		for (var i = 0; i < lens.length; ++i) {
+			lenStrs.push(lens[i].join("-"));
+		}
+		var lensStr = lenStrs.join(",");
 		setInnerText(this.m_wordlenEl, lensStr);
 	}
 
@@ -630,7 +652,7 @@ function Crossword(name, width, height)
 	this.m_orientation = newHorizontal();
 	this.m_inGrid = true;
 	this.m_xyModified = false;
-	this.m_xySpaced = false;
+	this.m_xySpaced = null;
 	this.m_light = null;
 
 	this.m_grid = [];
@@ -1115,7 +1137,7 @@ function Crossword(name, width, height)
 
 	this.toggleOrientation = function()
 	{
-		this.m_xySpaced = false;
+		this.m_xySpaced = null;
 
 		// Deselect previous light
 		if (null != this.m_light) {
@@ -1141,7 +1163,7 @@ function Crossword(name, width, height)
 	{
 		if (x != this.m_x || y != this.m_y) {
 			this.m_xyModified = false;
-			this.m_xySpaced = false;
+			this.m_xySpaced = null;
 		}
 		// Deselect previous light
 		if (null != this.m_light) {
@@ -1277,7 +1299,11 @@ function Crossword(name, width, height)
 			var charStr = String.fromCharCode(charCode).toUpperCase();
 			if (charStr == " ") {
 				this.modifyValue(x, y, "");
-				this.m_xySpaced = true;
+				this.m_xySpaced = " ";
+			}
+			else if (charStr == "-") {
+				this.modifyValue(x, y, "");
+				this.m_xySpaced = "-";
 			}
 			else if (charStr == "?") {
 				if (this.m_light != null) {

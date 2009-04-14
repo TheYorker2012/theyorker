@@ -23,8 +23,9 @@ function CrosswordEdit(name, width, height)
 				var cell = this.m_grid[x][y];
 				if (!cell.isBlank()) {
 					for (var o = 0; o < 2; ++o) {
-						if (cell.isSpaced(o)) {
-							post[this.m_name+"[sp]["+x+"]["+y+"]["+o+"]"] = 1;
+						var space = cell.isSpaced(o);
+						if (null != space) {
+							post[this.m_name+"[sp]["+x+"]["+y+"]["+o+"]"] = space;
 						}
 						var light = this.m_lights[x][y][o];
 						if (null != light) {
@@ -88,7 +89,7 @@ function CrosswordEdit(name, width, height)
 		this.Crossword_modifyValue(x, y, v);
 		var precell = this.cell(x-this.m_orientation.dx(), y-this.m_orientation.dy());
 		if (null != precell) {
-			cell.space(this.m_orientation, this.m_xySpaced && !precell.isBlank() && precell.isKnown());
+			cell.space(this.m_orientation, (!precell.isBlank() && precell.isKnown()) ? this.m_xySpaced : null);
 		}
 		// Deleting a cell?
 		if (null != oldVal && null == v) {
@@ -221,8 +222,12 @@ function CrosswordEdit(name, width, height)
 			var td = document.createElement("td");
 			td.id = xwName+"-"+o+"-"+cx+"-"+cy;
 			for (var or = 0; or < 2; ++or) {
-				if (cell.isSpaced(or)) {
+				var space = cell.isSpaced(or);
+				if (space == " ") {
 					CssAdd(td, (or == 0 ? "hsp" : "vsp"));
+				}
+				else if (space == "-") {
+					CssAdd(td, (or == 0 ? "hhy" : "vhy"));
 				}
 			}
 			var tdDiv = document.createElement("div");
