@@ -426,6 +426,7 @@ function CrosswordEdit(name, width, height)
 	thisCrossword.clueChanged = function(x, y, o, c)
 	{
 		this.m_lights[x][y][o].extractClue(c);
+		this.m_lights[x][y][o].updateClue(c);
 		return true;
 	}
 

@@ -1,5 +1,20 @@
 <?php
 
+// Ensure that the wikiparser is loaded.
+$CI = & get_instance();
+$CI->load->library('wikiparser');
+
+/// A special wikitext parser for crossword clues.
+class CrosswordClueParser extends Wikiparser
+{
+	/// Default constructor
+	function __construct()
+	{
+		parent::__construct();
+		$this->multi_line = false;
+	}
+}
+
 /// A clue in a crossword puzzle.
 class CrosswordClue
 {
@@ -922,6 +937,7 @@ class CrosswordView
 		}
 
 		// List of clues
+		$clue_parser = new CrosswordClueParser();
 		$titles = array(CrosswordGrid::$HORIZONTAL => "across",
 		                CrosswordGrid::$VERTICAL   => "down");
 		$orClasses = array(CrosswordGrid::$HORIZONTAL => "horizontal",
@@ -960,12 +976,14 @@ class CrosswordView
 
 					if ($this->m_allowToggleClueType || !$this->m_defaultCryptic) {
 						?><span class="quickClue" id="<?php echo("$name-$orientation-cluetext0-$x-$y"); ?>"><?php
-						echo(xml_escape($clue->quickClue()));
+						$clue_wikitext = $clue->quickClue();
+						echo($clue_parser->parse($clue_wikitext));
 						?></span><?php
 					}
 					if ($this->m_allowToggleClueType || $this->m_defaultCryptic) {
 						?><span class="crypticClue" id="<?php echo("$name-$orientation-cluetext1-$x-$y"); ?>"><?php
-						echo(xml_escape($clue->crypticClue()));
+						$clue_wikitext = $clue->crypticClue();
+						echo($clue_parser->parse($clue_wikitext));
 						?></span><?php
 					}
 

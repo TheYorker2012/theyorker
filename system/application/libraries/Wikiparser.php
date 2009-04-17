@@ -51,6 +51,7 @@ class Wikiparser {
 	protected $quote_template;
 	protected $templates;
 	protected $newline_mode;
+	protected $multi_line;
 	protected $enable_headings;
 	protected $enable_youtube;
 	protected $enable_mediaplayer;
@@ -83,12 +84,7 @@ class Wikiparser {
 		$this->image_uri = '/';
 		$this->image_overrides = array();
 		$this->ignore_images = FALSE;
-		$this->emphasis[1] = FALSE;
-		$this->emphasis[2] = FALSE;
-		$this->emphasis[3] = FALSE;
-		$this->emphasis[4] = FALSE;
-		$this->emphasis[5] = FALSE;
-		$this->emphasis[6] = FALSE;
+		$this->emphasis = array();
 
 		$this->quote_template = 'pull_quote';
 		$this->templates = array(
@@ -103,6 +99,7 @@ class Wikiparser {
 				'br' => array('<br />', false),
 			);
 		$this->newline_mode = '';
+		$this->multi_line = true;
 		$this->enable_headings = true;
 		$this->enable_youtube = true;
 		$this->enable_mediaplayer = true;
@@ -505,25 +502,50 @@ class Wikiparser {
 	}
 
 	function emphasize($amount) {
+		if ($amount == 5) {
+			$active_2 = array_search(2, $this->emphasis);
+			$active_3 = array_search(3, $this->emphasis);
+			if (false === $active_2 || (false !== $active_3 && $active_3 > $active_2)) {
+				return $this->emphasize(3).$this->emphasize(2);
+			}
+			else {
+				return $this->emphasize(2).$this->emphasize(3);
+			}
+		}
+		elseif ($amount == 4) {
+			if (!in_array(3, $this->emphasis)) {
+				return $this->entities['\''].$this->emphasize(3);
+			}
+			else {
+				return $this->emphasize(3).$this->entities['\''];
+			}
+		}
 		$amounts = array(
 			2=>array('<em>','</em>'),
 			3=>array('<strong>','</strong>'),
-			4=>array('<strong>','</strong>'),
-			5=>array('<em><strong>','</strong></em>'),
 		);
 
 		$output = '';
 
-		// handle cases where emphasized phrases end in an apostrophe, eg: ''somethin'''
-		// should read <em>somethin'</em> rather than <em>somethin<strong>
-		if (isset($this->emphasis) and (!$this->emphasis[$amount]) && ($this->emphasis[$amount-1]) ) {
-			$amount--;
-			$output = $this->entities['\''];
+		$active = array_search($amount, $this->emphasis);
+		$to_add = array();
+		if (false !== $active) {
+			while (count($this->emphasis) > $active) {
+				$cur_amount = array_pop($this->emphasis);
+				$to_add[] = $cur_amount;
+				$output .= $amounts[$cur_amount][1];
+			}
+			// last element will be one we're removing
+			array_pop($to_add);
 		}
-
-		$output .= $amounts[$amount][(int) $this->emphasis[$amount]];
-
-		$this->emphasis[$amount] = !$this->emphasis[$amount];
+		else {
+			$to_add[] = $amount;
+		}
+		while (!empty($to_add)) {
+			$cur_amount = array_pop($to_add);
+			$this->emphasis[] = $cur_amount;
+			$output .= $amounts[$cur_amount][0];
+		}
 		
 		return $output;
 	}
@@ -551,16 +573,10 @@ class Wikiparser {
 
 	function emphasize_off() {
 		$output = '';
-		if (isset($this->emphasis)) {
-//			while (list($amount, $state) = each($this->emphasis)) {
-			foreach ($this->emphasis as $amount=>$state) {
-				if ($state) {
-					$output .= $this->emphasize($amount);
-					$this->emphasis[$amount] = FALSE;
-				}
-			}
+		while (!empty($this->emphasis)) {
+			$amount = $this->emphasis[count($this->emphasis)-1];
+			$output .= $this->emphasize($amount);
 		}
-
 		return $output;
 	}
 
@@ -629,13 +645,13 @@ class Wikiparser {
 	function parse_line($line) {
 		$first_characters = '\s\*;\:-';
 		$list_chars = '\*';
-		if ($this->enable_headings) {
+		if ($this->multi_line && $this->enable_headings) {
 			$first_characters .= '=';
 		}
 		if (empty($this->newline_mode)) {
 // 			$first_characters .= '\{';
 		}
-		if ($this->enable_ordered_lists) {
+		if ($this->multi_line && $this->enable_ordered_lists) {
 			$first_characters .= '\#';
 			$list_chars .= '\#';
 		}
@@ -655,17 +671,18 @@ class Wikiparser {
 		}
 		$line_regexes['horizontalrule'] = '^----$';
 		
-		$char_regexes = array(
-//			'link'=>'(\[\[((.*?)\:)?(.*?)(\|(.*?))?\]\]([a-z]+)?)',
-			'internallink'=>'('.
+		$char_regexes = array();
+		if ($this->multi_line) {
+//			$char_regexes['link'] = '(\[\[((.*?)\:)?(.*?)(\|(.*?))?\]\]([a-z]+)?)';
+			$char_regexes['internallink'] = '('.
 				'\[\['. // opening brackets
 					'(([^\]]*?)\:)?'. // namespace (if any)
 					'([^\]]*?)'. // target
 					'(\|([^\]]*?))?'. // title (if any)
 				'\]\]'. // closing brackets
 				'([a-z]+)?'. // any suffixes
-				')',
-			'externallink'=>'('.
+				')';
+			$char_regexes['externallink'] = '('.
 				'\['. // explicit with [ and ]
 					'([^\]]*?)'. // href
 					'(?:\s+([^\]]*?))?'. // with optional title
@@ -676,12 +693,16 @@ class Wikiparser {
 				'|'. // or
 				'([^\s,@\<\>\{\}:\[\]\#]+@([^\s,@\.\<\>\{\}:\[\]\#]+\.)*[^\s,@\.\<\>\{\}:\[\]\#]+)'. // implicit email address
 				*/
-				')',
-			'emphasize'=>'(('.$this->entities['\''].'){2,5})',
-			'eliminate'=>'(__TOC__|__NOTOC__|__NOEDITSECTION__)',
-			'addemphasis'=>'(the yorker)',
-			'variable'=>'(\{\{([^\}]*?)\}\})',
-		);
+				')';
+		}
+		$char_regexes['emphasize'] = '(('.$this->entities['\''].'){2,5})';
+		if ($this->multi_line) {
+			$char_regexes['eliminate'] = '(__TOC__|__NOTOC__|__NOEDITSECTION__)';
+		}
+		$char_regexes['addemphasis'] = '(the yorker)';
+		if ($this->multi_line) {
+			$char_regexes['variable'] = '(\{\{([^\}]*?)\}\})';
+		}
 
 		$this->stop = false;
 		$this->stop_all = false;
@@ -696,19 +717,21 @@ class Wikiparser {
 
 		$prefix = '';
 		$postfix = '';
-		foreach ($line_regexes as $func=>$regex) {
-			if (preg_match("/$regex/i",$line,$matches)) {
-				$called[$func] = true;
-				$func = 'handle_'.$func;
-				$line = $this->$func($matches);
-				if (is_array($line)) {
-					$prefix .= $line[0];
-					if (isset($line[2])) {
-						$postfix = $line[2].$postfix;
+		if ($this->multi_line) {
+			foreach ($line_regexes as $func=>$regex) {
+				if (preg_match("/$regex/i",$line,$matches)) {
+					$called[$func] = true;
+					$func = 'handle_'.$func;
+					$line = $this->$func($matches);
+					if (is_array($line)) {
+						$prefix .= $line[0];
+						if (isset($line[2])) {
+							$postfix = $line[2].$postfix;
+						}
+						$line = $line[1];
 					}
-					$line = $line[1];
+					if ($this->stop || $this->stop_all) break;
 				}
-				if ($this->stop || $this->stop_all) break;
 			}
 		}
 		if (!$this->stop_all) {
@@ -835,7 +858,7 @@ Done.
 
 		// add a newline at the end if there isn't already one there
 		$lines = explode("\n",$text);
-		if (!empty($lines[count($lines)-1])) {
+		if ($this->multi_line && !empty($lines[count($lines)-1])) {
 			$lines[] = '';
 		}
 
@@ -846,6 +869,9 @@ Done.
 		foreach ($lines as $k=>$line) {
 			$line = $this->parse_line($line);
 			$output .= $line;
+		}
+		if (!$this->multi_line) {
+			$output .= $this->emphasize_off();
 		}
 
 		$this->nextnowiki = 0;

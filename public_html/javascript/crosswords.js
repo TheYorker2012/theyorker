@@ -562,9 +562,9 @@ function CrosswordLight(name, x, y, orientation, cells, els, eds)
 		else {
 			this.m_clues[id] = null;
 		}
-		if (fromTextBox) {
-			this.updateClue(id);
-		}
+		//if (fromTextBox) {
+		//	this.updateClue(id);
+		//}
 	}
 	// Split clues and return the second half
 	this.splitClues = function()
