@@ -74,7 +74,7 @@ div#office_sidebar ul li.disabled {
 }
 
 /*div#office_container div#office_sidebar ul li#nav_announcements { list-style-image: url('/images/icons/page_white_stack.png'); }*/
-div#office_container div#office_sidebar ul li#nav_announcements { list-style-image: url('/images/icons/comments.png'); }
+div#office_container div#office_sidebar ul li#nav_brief { list-style-image: url('/images/icons/comments.png'); }
 div#office_container div#office_sidebar ul li#nav_article { list-style-image: url('/images/icons/report.png'); }
 div#office_container div#office_sidebar ul li#nav_photos { list-style-image: url('/images/icons/picture.png'); }
 div#office_container div#office_sidebar ul li#nav_bylines { list-style-image: url('/images/icons/vcard.png'); }
@@ -95,12 +95,36 @@ div#office_container textarea {
 	width: 70%;
 }
 
-
+div#office_container .heading {
+	font-size: 20px;
+	margin: 0.1em;
+}
 
 
 /**
  *	Specific Page Content
  */
+
+div#page_photos div.photo_slot {
+	float: left;
+	width: 33%;
+	text-align: center;
+}
+
+div#page_photos div.photo_slot div {
+	font-weight: bold;
+}
+
+div#page_photos div.photo_slot label {
+	width: 30%;
+}
+
+
+
+
+
+
+
 
 div.office_page div.actions {
 	float: right;

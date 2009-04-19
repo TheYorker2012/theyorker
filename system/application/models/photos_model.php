@@ -379,20 +379,31 @@ class Photos_model extends Model
 		return $result;
 	}
 
+	function GetThumbnailTypes ()
+	{
+		$sql = 'SELECT		image_type_id AS id,
+							image_type_name AS name
+				FROM		image_types
+				WHERE		image_type_photo_thumbnail = 1
+				ORDER BY	image_type_width ASC,
+							image_type_height ASC';
+		$query = $this->db->query($sql);
+		return $query->result_array();
+	}
+
 	function GetPhotoRequestsForArticle($article_id)
 	{
-		$result = array();
-		$sql = 'SELECT		photo_requests.photo_request_id
+		$sql = 'SELECT		photo_request_id AS request_id,
+							photo_request_relative_photo_number AS photo_number,
+							photo_request_chosen_photo_id AS photo_id,
+							photo_request_image_type_id AS photo_type,
+							photo_request_title AS photo_caption,
+							photo_request_description AS photo_alt
 				FROM		photo_requests
-				WHERE		photo_requests.photo_request_article_id = ?
-				ORDER BY	photo_requests.photo_request_relative_photo_number ASC';
-		$query = $this->db->query($sql,array($article_id));
-		if ($query->num_rows() > 0) {
-			foreach ($query->result() as $row) {
-				$result[] = $this->GetPhotoRequestDetails($row->photo_request_id);
-			}
-		}
-		return $result;
+				WHERE		photo_request_article_id = ?
+				ORDER BY	photo_request_relative_photo_number ASC';
+		$query = $this->db->query($sql, array($article_id));
+		return $query->result_array();
 	}
 
 	function GetPhotoRequestDetails($id)

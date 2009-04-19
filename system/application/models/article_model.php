@@ -1,21 +1,154 @@
 <?php
 /**
- * This model should add articles to the database. NOT yet complete.
- *
- * @author Alex Fargus (agf501)
- * @author Richard Ingle (ri504)
- *@author Owen Jones (oj502) -- The article_types stuff
- *
+ *	@brief	Office operations on articles
+ *	@author	Alex Fargus (agf501)
+ *	@author	Richard Ingle (ri504)
+ *	@author	Owen Jones (oj502) -- The article_types stuff
+ *	@author	Chris Travis (cdt502 - ctravis@gmail.com) -- Article Manager
  */
+
 class Article_model extends Model
 {
 
 	function __construct()
 	{
-		// Call the Model Constructor
 		parent::Model();
-		$this->load->library('wikiparser');
 	}
+
+	/**
+	 *	ARTICLE MANAGER (v2.0)
+	 */
+
+	function getById ($article_id = NULL)
+	{
+		$article = array();
+		if (empty($article_id)) return $article;
+
+		$sql = 'SELECT		a.article_id AS id,
+							a.article_content_type_id AS type_id,
+							content_types.content_type_codename AS type_codename,
+							content_types.content_type_name AS type_name,
+							content_types.content_type_section AS type_section,
+							a.article_organisation_entity_id AS org_id,
+							organisations.organisation_name AS org_name,
+							UNIX_TIMESTAMP(a.article_created) AS date_created,
+							UNIX_TIMESTAMP(a.article_deadline_date) AS date_deadline,
+							UNIX_TIMESTAMP(a.article_publish_date) AS date_published,
+							a.article_hits AS hits,
+							a.article_request_title AS request_title,
+							a.article_request_description AS request_description,
+							a.article_suggestion_accepted AS request_accepted,
+							a.article_request_entity_id AS creator_user_id,
+							CONCAT(creator.user_firstname, " ", creator.user_surname) AS creator_name,
+							a.article_editor_approved_user_entity_id AS editor_user_id,
+							CONCAT(editor.user_firstname, " ", editor.user_surname) AS editor_name,
+							a.article_pulled AS pulled,
+							a.article_ready AS ready,
+							a.article_deleted AS deleted,
+							a.article_thumbnail_photo_id AS thumbnail_photo_id,
+							a.article_main_photo_id AS main_photo_id,
+							a.article_private_comment_thread_id AS comment_thread_private_id,
+							a.article_public_comment_thread_id AS comment_thread_public_id,
+							a.article_liveblog AS liveblog,
+							a.article_live_content_id AS content_id
+				FROM		articles AS a
+				LEFT JOIN	content_types
+					ON		a.article_content_type_id = content_types.content_type_id
+				LEFT JOIN	organisations
+					ON		a.article_organisation_entity_id = organisations.organisation_entity_id
+				INNER JOIN	users AS creator
+					ON		a.article_request_entity_id = creator.user_entity_id
+				LEFT JOIN	users AS editor
+					ON		a.article_editor_approved_user_entity_id = editor.user_entity_id
+				WHERE		a.article_id = ?';
+		$query = $this->db->query($sql, array($article_id));
+		if ($query->num_rows() == 1) {
+			$article = $query->row_array();
+			$article['status'] = $this->getStatus($article);
+
+			// Article Contents
+			$sql = 'SELECT		article_content_id AS content_id,
+								article_content_last_author_user_entity_id AS content_user_id,
+								UNIX_TIMESTAMP(article_content_last_author_timestamp) AS content_updated,
+								article_content_heading AS content_heading,
+								article_content_subtext AS content_subtext,
+								article_content_wikitext AS content_wikitext,
+								article_content_blurb AS content_blurb
+					FROM		article_contents
+					WHERE		article_content_article_id = ?
+					ORDER BY	article_content_last_author_timestamp DESC
+					LIMIT		0, 1';
+			$query = $this->db->query($sql, array($article['id']));
+			if ($query->num_rows() == 1) {
+				$article = array_merge($article, $query->row_array());
+			}
+			
+			// Date formats
+			$this->load->library('academic_calendar');
+			$created = $this->academic_calendar->Timestamp($article['date_created']);
+			$article['date_created_academic'] = $created->Format('D') . ' / ' . $created->AcademicWeek() . ' / ' . ucfirst($created->AcademicTermNameUnique());
+			$article['date_created_full'] = $created->Format('D jS F Y @ H:i');
+			if ($article['date_deadline'] !== null) {
+				$deadline = $this->academic_calendar->Timestamp($article['date_deadline']);
+				$article['date_deadline_academic'] = $deadline->Format('D') . ' / ' . $deadline->AcademicWeek() . ' / ' . ucfirst($deadline->AcademicTermNameUnique());
+				$article['date_deadline_full'] = $deadline->Format('D jS F Y @ H:i');
+			} else {
+				$article['date_deadline_academic'] = '';
+				$article['date_deadline_full'] = '';
+			}
+			if ($article['date_published'] !== null) {
+				$publish = $this->academic_calendar->Timestamp($article['date_published']);
+				$article['date_published_academic'] = $publish->Format('D') . ' / ' . $publish->AcademicWeek() . ' / ' . ucfirst($publish->AcademicTermNameUnique());
+				$article['date_published_full'] = $publish->Format('D jS F Y @ H:i');
+			} else {
+				$article['date_published_academic'] = '';
+				$article['date_published_full'] = '';
+			}
+		}
+
+		// Comments
+
+		return $article;
+	}
+
+	function getStatus ($article)
+	{
+		if ($article['deleted']) {
+			return 'DELETED';
+		} elseif ($article['pulled']) {
+			return 'PULLED';
+		} elseif (($article['content_id'] !== NULL) && ($article['date_published'] <= mktime())) {
+			return 'LIVE';
+		} elseif ($article['content_id'] !== NULL) {
+			return 'SCHEDULED';
+		} elseif ($article['ready']) {
+			return 'READY';
+		} elseif ($article['request_accepted']) {
+			return 'REQUEST';
+		} else {
+			return 'SUGGESTION';
+		}
+	}
+
+	function getAllContentTypes ()
+	{
+		$sql = 'SELECT		content_type_id AS id,
+							content_type_codename AS codename,
+							content_type_name AS name,
+							content_type_section AS section
+				FROM		content_types
+				WHERE		content_type_section != "hardcoded"
+				ORDER BY	content_type_section ASC,
+							content_type_section_order ASC';
+		$query = $this->db->query($sql);
+		return $query->result_array();
+	}
+
+	/**
+	 *	END ARTICLE MANAGER (v2.0)
+	 */
+
+
 
 	/// Retrieves all the information for a reporter's byline
 	function GetReporterByline($user_id)
@@ -211,6 +344,7 @@ class Article_model extends Model
 							$heading, $subheading, $subtext, $wikitext, $blurb)
 	{
 	$this->db->trans_start();
+	$this->load->library('wikiparser');
 	$wiki_cache = $this->wikiparser->parse($wikitext);
 	$sql = 'INSERT INTO articles (
 			articles.article_content_type_id,
@@ -368,6 +502,7 @@ class Article_model extends Model
 	 */
 	function InsertFactBox($article_content_id, $title = "", $wikitext = "")
 	{
+		$this->load->library('wikiparser');
 		$wiki_cache = $this->wikiparser->parse($wikitext);
 		$sql = 'INSERT INTO fact_boxes (
 				fact_box_article_content_id,
@@ -385,6 +520,7 @@ class Article_model extends Model
 	 */
 	function UpdateRevisionFactBox ($revision, $title, $text)
 	{
+		$this->load->library('wikiparser');
 		$wiki_cache = $this->wikiparser->parse($text);
 		$sql = 'UPDATE fact_boxes
 				SET fact_box_title = ?,

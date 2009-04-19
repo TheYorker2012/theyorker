@@ -335,23 +335,41 @@ div#MainBodyPane {
 }
 
 div#ContentColumn {
-	margin-left: 130px;
+	margin-left: 125px;
 }
 
-div.FlexiBox {
+/* Formatting for content boxes in main page area */
+div.BlueBox, div.FlexiBox {
 	float: left;
-	margin: 0 5px 5px 0;
+	margin: 0 0 0.5em 0;
 	border: 1px solid #999;
 	background-color: #ffffff;
+	text-align: left;
+	width: 100%;
+}
+
+div.BlueBox h2 {
+	color: #999;
+}
+
+div.BlueBox h3 {
+	color: black;
+	margin-bottom: 0;
+}
+
+div.BlueBox > * {
+	margin: 10px;
 }
 
 div.Box13 {
 	width: 320px;
+	margin-right: 5px;
 	border: 0;
 }
 
 div.Box13b {
 	width: 318px;
+	margin-right: 5px;
 }
 
 div.Box12 {
@@ -367,11 +385,13 @@ div.Box12b {
 
 div.Box23 {
 	width: 645px;
+	margin-right: 5px;
 	border: 0;
 }
 
 div.Box23b {
 	width: 643px;
+	margin-right: 5px;
 }
 
 div.FlexiBoxLast {
@@ -489,31 +509,6 @@ div#MainColumn {
 	/*margin-right: 480px;*/
 	margin-right: 330px;
 }
-
-/* Formatting for content boxes in main page area */
-div.BlueBox {
-	border: 1px solid #999;
-	margin: 0em 0em 0.5em 0em;
-	text-align: left;
-	background-color: #ffffff;
-
-	float: left;
-	width: 100%;
-}
-
-div.BlueBox h2 {
-	color: #999;
-}
-
-div.BlueBox h3 {
-	color: black;
-	margin-bottom: 0;
-}
-
-div.BlueBox > * {
-	margin: 10px;
-}
-
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * CSS used in footer and feedback at bottom of page           *
