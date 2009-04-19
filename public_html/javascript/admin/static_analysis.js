@@ -24,7 +24,7 @@ function start_tests()
 	var post = {};
 	post['tests'] = tests_string;
 	var ajax = new AJAXInteraction('/admin/tools/test/static/ajax', post, ajax_test_callback);
-	ajax.doGet();
+	ajax.doPost();
 }
 
 // Callback after xml received.

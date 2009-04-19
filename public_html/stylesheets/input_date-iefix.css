@@ -1,0 +1,9 @@
+/****************************************************************
+ * Javascript for date selector for IE                          *
+ * Author: James Hogan (james_hogan at theyorker dot co dot uk) *
+ * Copyright (C) 2009 The Yorker                                *
+ ****************************************************************/
+
+div.input_date_selector table.recur-cal.cal-text {
+	margin: 0;
+}

@@ -1,6 +1,7 @@
 // Javascript for office ajax IRC client
 // Author: James Hogan (james at albanarts dot com)
 // Copyright (C) 2007 The Yorker
+// Depends on javascript/css_classes.js
 
 // History:
 //  * 25th Nov 2007: initial commit 
@@ -26,32 +27,6 @@ var irc_current_screen = null;
 var irc_pinging = false;
 // Whether we should now be connected
 var irc_connected = false;
-
-/// Swap style c1 with c2 in o
-function CssSwap(o,c1,c2)
-{
-	o.className = !CssCheck(o,c1)
-		? o.className.replace(c2,c1)
-		: o.className.replace(c1,c2);
-}
-/// Add style c1 to o
-function CssAdd(o,c1)
-{
-	if(!CssCheck(o,c1)) {
-		o.className+=o.className?' '+c1:c1;
-	}
-}
-/// Remove style c1 from o
-function CssRemove(o,c1)
-{
-	var rep=o.className.match(' '+c1)?' '+c1:c1;
-	o.className=o.className.replace(rep,'');
-}
-/// Check if style c1 is in o
-function CssCheck(o,c1)
-{
-	return new RegExp('\\b'+c1+'\\b').test(o.className);
-}
 
 // Set the error message.
 function irc_error(msg)
@@ -119,9 +94,11 @@ function irc_new_screen(name)
 		var channel_table = document.createElement('table');
 		channel_table.border = "0";
 		channel_table.style.width = "100%";
+		var channel_table_tbody = document.createElement('tbody');
+		channel_table.appendChild(channel_table_tbody);
 		{
 			var channel_table_row = document.createElement('tr');
-			channel_table.appendChild(channel_table_row);
+			channel_table_tbody.appendChild(channel_table_row);
 			
 			var channel_table_topic_td = document.createElement('td');
 			channel_table_topic_td.colSpan = 2;
@@ -136,7 +113,7 @@ function irc_new_screen(name)
 		}
 		{
 			var channel_table_row = document.createElement('tr');
-			channel_table.appendChild(channel_table_row);
+			channel_table_tbody.appendChild(channel_table_row);
 			
 			var channel_table_messages_td = document.createElement('td');
 			{
@@ -167,7 +144,7 @@ function irc_new_screen(name)
 		var channel_form = document.createElement('form');
 		channel_form.className = 'form';
 		channel_form.onsubmit = function() {
-// 			irc_Send_msg(id);
+ 			irc_send_msg(id);
 			return false;
 		}
 		{
@@ -186,10 +163,6 @@ function irc_new_screen(name)
 				send_input.className='button';
 				send_input.type='submit';
 				send_input.value='Send';
-				send_input.onclick = function () {
-					irc_send_msg(id);
-					return false;
-				};
 				channel_fieldset.appendChild(send_input);
 			}
 			
@@ -297,7 +270,7 @@ function irc_query(id,query)
 	post['msg'] = query;
 	post['channel'] = irc_screen_list[id];
 	var ajax = new AJAXInteraction(irc_ajax_url, post, irc_ajax_callback);
-	ajax.doGet();
+	ajax.doPost();
 }
 
 // Send a message via the web server
@@ -326,7 +299,7 @@ function irc_join_channel(channel)
 	post['cmd'] = 'join';
 	post['channel'] = channel;
 	var ajax = new AJAXInteraction(irc_ajax_url, post, irc_ajax_callback);
-	ajax.doGet();
+	ajax.doPost();
 }
 
 // Clear a channel's peers
@@ -418,7 +391,7 @@ function irc_ping()
 	}
 	post['cmd'] = 'ping';
 	var ajax = new AJAXInteraction(irc_ajax_url, post, irc_ping_ajax_callback);
-	ajax.doGet();
+	ajax.doPost();
 }
 
 // Handle a ping response from web server, start up another ping
@@ -674,7 +647,7 @@ function irc_connect()
 			}
 		} );
 	irc_clear_error();
-	ajax.doGet();
+	ajax.doPost();
 }
 
 // Send disconnection request and remove all screens
@@ -697,7 +670,7 @@ function irc_disconnect()
 			irc_open_screens = 0;
 			irc_current_screen = null;
 		} );
-	ajax.doGet();
+	ajax.doPost();
 	irc_connected = false;
 }
 

@@ -1,0 +1,54 @@
+/* Styles for crosswords for IE because it sucks */
+/* Author: James Hogan */
+
+table.crossword {
+	border: 2px solid #FF6A00;
+	border-collapse: collapse;
+}
+
+table.crossword td {
+	border: 2px solid #FF6A00;
+}
+
+/* Selected cells */
+
+table.crossword td.focus {
+	border-color: #FF6A00;
+}
+
+/* Cells with a space before */
+table.crossword td.hsp {
+	border-left: 4px solid #FF6A00;
+}
+table.crossword td.vsp {
+	border-top: 4px solid #FF6A00;
+}
+
+/* Cells with a hyphen before */
+table.crossword td.hhy {
+	border-left: 4px solid #FF6A00;
+}
+table.crossword td.vhy {
+	border-top: 4px solid #FF6A00;
+}
+
+/* Remove the wrong spaces */
+div.crosswordCluesBox div.vertical td.hsp {
+	border-left: 2px solid #FF6A00;
+}
+div.crosswordCluesBox td.vsp {
+	border-top: 2px solid #FF6A00;
+}
+div.crosswordCluesBox div.vertical td.hhy {
+	border-left: 2px solid #FF6A00;
+}
+div.crosswordCluesBox td.vhy {
+	border-top: 2px solid #FF6A00;
+}
+/* Add horizontal spaces in vertical clues */
+div.crosswordCluesBox div.vertical td.vsp {
+	border-left: 4px solid #FF6A00;
+}
+div.crosswordCluesBox div.vertical td.vhy {
+	border-left: 4px solid #FF6A00;
+}

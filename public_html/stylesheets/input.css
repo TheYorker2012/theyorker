@@ -1,0 +1,24 @@
+/****************************************************************
+ * Styles for inputs                                            *
+ * Author: James Hogan (james_hogan at theyorker dot co dot uk) *
+ * Copyright (C) 2009 The Yorker                                *
+ ****************************************************************/
+
+div.input_encase {
+	float: left;
+}
+
+/* In the event of error */
+
+div.input_error label {
+	color: red;
+}
+div.input_error.mover label {
+	font-weight: bold;
+}
+
+div.input_error.mover input,
+div.input_error.mover textarea,
+div.input_error.mover select {
+	border: 3px solid red;
+}

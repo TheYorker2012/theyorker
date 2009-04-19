@@ -2,6 +2,8 @@
   @file   javascript/admin/permissions.js
   @brief  Javascript for permissions interface.
   @uthor  James Hogan <james_hogan@theyorker.co.uk>
+
+  Depends on javascript/css_classes.js
  **/
 
 /// hash Original permissions in each role (variable).
@@ -30,34 +32,6 @@ var selectedPermission = null;
 var selectedRole = null;
 /// string Selected user.
 var selectedUser = null;
-
-// Class name handling:
-
-/// Swap style c1 with c2 in o
-function CssSwap(o,c1,c2)
-{
-	o.className = !CssCheck(o,c1)
-		? o.className.replace(c2,c1)
-		: o.className.replace(c1,c2);
-}
-/// Add style c1 to o
-function CssAdd(o,c1)
-{
-	if(!CssCheck(o,c1)) {
-		o.className+=o.className?' '+c1:c1;
-	}
-}
-/// Remove style c1 from o
-function CssRemove(o,c1)
-{
-	var rep=o.className.match(' '+c1)?' '+c1:c1;
-	o.className=o.className.replace(rep,'');
-}
-/// Check if style c1 is in o
-function CssCheck(o,c1)
-{
-	return new RegExp('\\b'+c1+'\\b').test(o.className);
-}
 
 /// Set the permission data.
 /**
@@ -234,7 +208,7 @@ function saveAllPermissions()
 				alert(statusText);
 			}
 		);
-		ajax.doGet();
+		ajax.doPost();
 	}
 	else {
 		alert('No changes have been made to the permissions.');

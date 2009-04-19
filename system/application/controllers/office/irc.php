@@ -23,9 +23,9 @@ class Irc extends Controller
 	
 	function free()
 	{
+		show_404();
 		if (!CheckPermissions('public')) return;
 		
-		$RequiredReferer = 'http://trunk.yorker.albanarts.com/office/irc';
 		$RequiredReferer = NULL;
 		
 		if ($RequiredReferer != NULL &&
@@ -40,6 +40,7 @@ class Irc extends Controller
 		}
 		
 		$data = array(
+			'Framed' => false,
 			'Username' => $_GET['username'],
 			'Fullname' => $_GET['fullname'],
 		);
@@ -61,8 +62,15 @@ class Irc extends Controller
 		$data = array(
 			'Help' => $this->pages_model->GetPropertyWikitext("help_main"),
 			'IrcHelp' => $this->pages_model->GetPropertyWikitext("irc_help"),
-			'Embed' => true,
+			'Embed' => null,//'/office/irc/free',
+			'EmbedData' => array(
+				'Framed' => true,
+			),
 		);
+		$this->main_frame->IncludeJs('javascript/simple_ajax.js');
+		$this->main_frame->IncludeJs('javascript/css_classes.js');
+		$this->main_frame->IncludeJs('javascript/irc.js');
+		$this->main_frame->IncludeCss('stylesheets/irc.css');
 		$this->main_frame->SetContentSimple('office/irc/irc', $data);
 		$this->main_frame->Load();
 	}
@@ -101,12 +109,13 @@ class Irc extends Controller
 	function ajax($variation = NULL)
 	{
 		if ('embeddedlive' === $variation) {
+			show_404();
 			if (!CheckPermissions('public', false)) return;
-			if (!isset($_GET['username']) || !isset($_GET['fullname'])) {
+			if (!isset($_POST['username']) || !isset($_POST['fullname'])) {
 				show_404();
 			}
-			$username = $_GET['username'];
-			$fullname = $_GET['fullname'];
+			$username = $_POST['username'];
+			$fullname = $_POST['fullname'];
 		} else {
 			if (!CheckPermissions('office', false)) return;
 			$username = $this->user_auth->username;
@@ -118,9 +127,9 @@ class Irc extends Controller
 			'Errors' => array(),
 			'Messages' => array(),
 		);
-		if (isset($_GET['cmd'])) {
+		if (isset($_POST['cmd'])) {
 			$this->load->library('irc_client');
-			if ($_GET['cmd'] == 'connect') {
+			if ($_POST['cmd'] == 'connect') {
 				// Start a new client server, don't terminate until client server is finished.
 				// The script will continue to run, timeout will be disabled.
 				// However the connection to the browser will be closed
@@ -147,7 +156,7 @@ class Irc extends Controller
 					header("Connection: close");
 					ignore_user_abort();
 					ob_start();
-					echo('<?xml version="1.0" encoding="UTF-8"?><irc></irc>'."\n");
+					echo('<?xml version="1.0" encoding="UTF-8"?'.'><irc></irc>'."\n");
 					$size = ob_get_length();
 					header('Content-Length: '.$size);
 					ob_end_flush();
@@ -181,7 +190,7 @@ class Irc extends Controller
 					
 					$new_message = NULL;
 					$get_messages = false;
-					switch ($_GET['cmd']) {
+					switch ($_POST['cmd']) {
 						// This command lets the server know that the interface is still alive
 						// it also waits a while for any new messages which it can return
 						case 'ping':
@@ -191,8 +200,8 @@ class Irc extends Controller
 							
 						// A query has been written in one of the channels
 						case 'msg':
-							if (isset($_GET['channel']) && isset($_GET['msg'])) {
-								$new_message = $this->irc_client->InterpretQuery($_GET['channel'], $_GET['msg']);
+							if (isset($_POST['channel']) && isset($_POST['msg'])) {
+								$new_message = $this->irc_client->InterpretQuery($_POST['channel'], $_POST['msg']);
 								if (false === $new_message) {
 									$data['Errors'][] = array(
 										'_attr' => array(

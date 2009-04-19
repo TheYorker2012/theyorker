@@ -56,6 +56,43 @@ onLoadFunctions.push(hideFeedback);
 // ** END feedback form code **
 
 
+// ** BEGIN innerText/textContent decision **
+
+var hasInnerText = false;
+
+onLoadFunctions.push(function() {
+	hasInnerText = (document.getElementsByTagName("body")[0].innerText != undefined);
+});
+
+function setInnerText(obj,val)
+{
+	// Assume not writing to DOM
+	if (hasInnerText) {
+		obj.innerText = val;
+	}
+	else {
+		obj.textContent = val;
+	}
+}
+
+function innerText(obj)
+{
+	// Even XML DOM is different in IE (uses text instead of innerText)
+	if (undefined != obj.innerText) {
+		return obj.innerText;
+	}
+	else if (undefined != obj.textContent) {
+		return obj.textContent;
+	}
+	else if (undefined != obj.text) {
+		return obj.text;
+	}
+	return undefined;
+}
+
+// ** END innerText/textContent decision **
+
+
 // ** BEGIN Time Update Code
 var weekDays = new Array(7);
 weekDays[0] = "Sunday";

@@ -1,0 +1,37 @@
+/****************************************************************
+ * Javascript for progressbar input                             *
+ * Author: James Hogan (james_hogan at theyorker dot co dot uk) *
+ * Copyright (C) 2009 The Yorker                                *
+ ****************************************************************/
+
+div.input_progress {
+	float: left;
+}
+
+div.input_progress input {
+	width: 3em;
+}
+
+div.input_progress div.progress
+{
+	float: left;
+	width: 10em;
+	height: 1.5em;
+	margin: 0.25em;
+	border: 1px solid black;
+}
+div.input_error.mover div.input_progress div.progress
+{
+	border: 3px solid red;
+}
+
+div.input_progress div.bar {
+	width: 50%;
+	height: 100%;
+	border-right: 1px solid black;
+	background: gray;
+}
+div.input_error.mover div.input_progress div.bar
+{
+	border-right: 3px solid red;
+}

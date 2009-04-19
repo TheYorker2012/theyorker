@@ -1,3 +1,0 @@
-<?php
-$crossword->Load();
-?>

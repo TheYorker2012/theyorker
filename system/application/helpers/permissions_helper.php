@@ -210,11 +210,24 @@ function VipSegments($Set = NULL)
 	return $vip_segments;
 }
 
+/// Get an array of feed output modes (RSS etc).
+function FeedOutputModes()
+{
+	return array('rss');
+}
+
+/// Find whether the current output node is a feed.
+function FeedOutputMode()
+{
+	return in_array(OutputMode(), FeedOutputModes());
+}
+
 /// Specify or get the output formats that can be produced by the controller.
 /**
  * @param $Modes array[string],string,NULL = NULL Each element is a output mode identifier:
  *	- 'xhtml' - Standard XHTML
  *	- 'fbml' - Facebook markup language for facebook apps
+ *  - 'ajax' - The Yorker AJAX
  *
  * @param * string Alternatively a set of string can be provided as arguments directly.
  */
@@ -222,13 +235,26 @@ function OutputModes($Modes = NULL)
 {
 	static $output_modes = array('xhtml');
 	if (NULL !== $Modes) {
-		if (is_array($Modes)) {
-			$output_modes = $Modes;
-		} else {
-			$output_modes = func_get_args();
+		$args = func_get_args();
+		$output_modes = array();
+		foreach ($args as $arg) {
+			if (is_array($arg)) {
+				foreach ($arg as $arg1) {
+					$output_modes[] = $arg1;
+				}
+			} else {
+				$output_modes[] = $arg;
+			}
 		}
 	}
 	return $output_modes;
+}
+
+/// Get the default output mode
+function DefaultOutputMode()
+{
+	$modes = OutputModes();
+	return (count($modes) > 0) ? $modes[0] : null;
 }
 
 /// Specify or get the current output mode.
@@ -242,6 +268,25 @@ function OutputMode($Set = NULL)
 		$output_mode = $Set;
 	}
 	return $output_mode;
+}
+
+/// Get a uri for a mode change.
+function OutputModeChangeUri($NewMode)
+{
+	$get = $_GET;
+	if ($NewMode == DefaultOutputMode()) {
+		if (isset($get['opmode'])) {
+			unset($get['opmode']);
+		}
+	}
+	else {
+		$get['opmode'] = $NewMode;
+	}
+	$get_query = http_build_query($get);
+	if ('' !== $get_query) {
+		$get_query = '?'.$get_query;
+	}
+	return get_instance()->uri->uri_string().$get_query;
 }
 
 /// Get a list of missing permissions
@@ -354,13 +399,15 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 	$CI->load->model('pages_model');
 	
 	// Decide on output format
-	if (array_key_exists('fb_sig', $_POST)) {
+	if (isset($_POST['fb_sig'])) {
 		/// @todo AUTHENTICATE FACEBOOK
 		OutputMode('fbml');
 		global $_SESSION;
 		$_SESSION = array();
+	} else if (isset($_GET['opmode'])) {
+		OutputMode($_GET['opmode']);
 	} else {
-		OutputMode('xhtml');
+		OutputMode(DefaultOutputMode());
 	}
 	// If the output mode is not supported, show a 404
 	if (!in_array(OutputMode(), OutputModes())) {
@@ -728,6 +775,12 @@ function CheckPermissions($Permission = 'public', $LoadMainFrame = TRUE, $NoPost
 	}
 	if ('fbml' === OutputMode()) {
 		$Permission = 'facebookapp';
+	}
+	elseif ('ajax' === OutputMode()) {
+		$Permission = 'ajax';
+	}
+	elseif (FeedOutputMode()) {
+		$Permission = 'feed';
 	}
 	SetupMainFrame($Permission, FALSE);
 

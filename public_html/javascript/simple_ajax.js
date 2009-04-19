@@ -41,10 +41,10 @@ function AJAXInteraction(url, post, callback, failcallback)
 			}
 		}
 	}
-	
-	this.doGet = function() {
-		// make a HTTP GET request to the URL asynchronously
-		var post_string = url+"?";
+
+	this.getPostString = function()
+	{
+		var post_string = "";
 		var first = 1;
 		for (var key in post) {
 			if (!first) {
@@ -54,7 +54,26 @@ function AJAXInteraction(url, post, callback, failcallback)
 			}
 			post_string += key+"="+encodeURIComponent(post[key]);
 		}
-		req.open("GET", post_string, true);
+		return post_string;
+	}
+	
+	this.doGet = function() {
+		// make a HTTP GET request to the URL asynchronously
+		var post_string = this.getPostString();
+		req.open("GET", url+'?'+post_string, true);
+		// send request
 		req.send(null);
+	}
+	
+	this.doPost = function() {
+		// make a HTTP POST request to the URL asynchronously
+		var post_string = this.getPostString();
+		req.open("POST", url, true);
+		// proper header information
+		req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+		req.setRequestHeader("Content-length", post_string.length);
+		req.setRequestHeader("Connection", "close");
+		// send request
+		req.send(post_string);
 	}
 }

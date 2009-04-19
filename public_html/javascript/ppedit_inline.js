@@ -42,7 +42,7 @@ function PPEditSubmitWikitext(id, page, property, type, action)
 			}
 		}
 	);
-	ajax.doGet();
+	ajax.doPost();
 	return false;
 }
 // toggle the edit mode of an inline edit page property

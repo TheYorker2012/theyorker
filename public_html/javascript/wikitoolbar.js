@@ -124,7 +124,23 @@ function insertMediaPlayerLink (textarea, file) {
 	document.getElementById('toolbar').removeChild(document.getElementById('mp_prompt'));
 }
 
-function mwSetupToolbar(toolbar, textarea, extrabuttons) {
+function previewWikitext(textarea, previewDiv, previewUrl) {
+	var textarea_el = document.getElementById(textarea);
+	var previewDiv_el = document.getElementById(previewDiv);
+	previewDiv_el.style.display = "";
+	setInnerText(previewDiv_el, "Loading preview");
+	var ajax = new AJAXInteraction(previewUrl, {input_wikitext_preview: textarea_el.value},
+		function(responseXML) {
+			var root = responseXML.documentElement;
+			previewDiv_el.innerHTML = innerText(root);
+		},
+		function(status,message) {
+			setInnerText(previewDiv_el, "Preview failed. "+status+": "+message);
+		});
+	ajax.doPost();
+}
+
+function mwSetupToolbar(toolbar, textarea, extrabuttons, previewDivUrl) {
 
 	var mwEditButtons = [];
 	
@@ -141,6 +157,12 @@ function mwSetupToolbar(toolbar, textarea, extrabuttons) {
 	if(extrabuttons) {
 		addButton(mwEditButtons,'/images/icons/button_factbox.png','Fact box','\n{{factbox:Title of Box|\n','\n}}\n','* Fact one.\n* Fact two.','mw-editbutton-factbox');
 		addButton(mwEditButtons,'/images/icons/button_enter.png','Force single line break','{{br}}\n','','','mw-editbutton-linebreak');
+	}
+
+	// Button to generate preview
+	if (previewDivUrl) {
+		addFunction(mwEditButtons,'/images/icons/button_preview.png','Preview wikitext',
+			function(textarea) {return previewWikitext(textarea,previewDivUrl[0],previewDivUrl[1]);},'mw-editbutton-preview');
 	}
 
 	var toolbar = document.getElementById(toolbar);

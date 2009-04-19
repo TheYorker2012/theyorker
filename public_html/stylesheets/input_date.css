@@ -1,0 +1,54 @@
+/****************************************************************
+ * Styles for date selector                                     *
+ * Author: James Hogan (james_hogan at theyorker dot co dot uk) *
+ * Copyright (C) 2009 The Yorker                                *
+ ****************************************************************/
+
+div.input_date {
+	float: left;
+	border: 1px solid black;
+	padding: 0.2em;
+}
+
+div.input_date_display {
+	cursor: pointer;
+}
+
+div.input_date span.day,
+div.input_date span.week,
+div.input_date span.term,
+div.input_date span.hr,
+div.input_date span.min {
+}
+
+div.input_date_selector {
+	border: 1px solid black;
+	background: #eee;
+}
+div.input_date_selector div {
+	clear: both;
+}
+div.input_date_selector input {
+	width: 2em;
+}
+div.input_date_selector span {
+	margin-top: 0.5em;
+	float: left;
+}
+div.input_date_selector table.recur-cal.cal-text {
+	width: 24em;
+	margin: auto;
+}
+div.input_date_selector th,
+div.input_date_selector td {
+	width: 3em;
+}
+div.input_date_selector td {
+	cursor: pointer;
+}
+div.input_date_selector div.loading {
+	background-image: url("/images/loaders/ajax_input_date.gif");
+	background-repeat: no-repeat;
+	width: 220px;
+	margin: auto;
+}

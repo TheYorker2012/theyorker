@@ -139,10 +139,18 @@ class Frame_public extends FrameNavbar
 	/// Include a CSS (cascading stylesheets) file.
 	/**
 	 * @param $CssFile string CSS source file, not site_url'd.
+	 * @param $Media string,null media attribute.
+	 * @param $Title string,null title attribute.
+	 * @param $CommentCondition string,null HTML comment conditional.
+	 *			This is used for IE specific stylesheets.
 	 */
-	function IncludeCss($CssFile, $Media = null, $Title = null)
+	function IncludeCss($CssFile, $Media = null, $Title = null, $CommentCondition = null)
 	{
-		$style_tag = '<link href="'.site_url($CssFile).'" rel="stylesheet" type="text/css" ';
+		$style_tag = '';
+		if (null !== $CommentCondition) {
+			$style_tag .= '<!--[if '.xml_escape($CommentCondition).']>';
+		}
+		$style_tag .= '<link href="'.site_url($CssFile).'" rel="stylesheet" type="text/css" ';
 		if (null !== $Title) {
 			$style_tag .= 'title="'.xml_escape($Title).'" ';
 		}
@@ -150,7 +158,16 @@ class Frame_public extends FrameNavbar
 			$style_tag .= 'media="'.xml_escape(implode(',',$Media)).'" ';
 		}
 		$style_tag .= '/>';
+		if (null !== $CommentCondition) {
+			$style_tag .= '<![endif]-->';
+		}
 		$this->AddExtraHead($style_tag);
+	}
+
+	/// Add an RSS feed to the page.
+	function IncludeRss($RssPath, $Title)
+	{
+		$this->AddExtraHead('<link rel="alternate" type="application/rss+xml" title="'.xml_escape($Title).'" href="'.xml_escape($RssPath).'" />');
 	}
 
 	/**
@@ -218,6 +235,16 @@ class Frame_public extends FrameNavbar
 			$this->mTitleParameters = array_merge($this->mTitleParameters, $Parameters);
 		}
 	}
+
+	/// Set the feed title for this page.
+	function SetFeedTitle($Title)
+	{
+		// If this page supports RSS, link it.
+		if (in_array('rss',OutputModes())) {
+			$this->IncludeRss(OutputModeChangeUri('rss'), $Title);
+		}
+	}
+
 	
 	/// Load the frame.
 	function Load()

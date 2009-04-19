@@ -1,0 +1,44 @@
+Use case
+	Along comes Tom, ready to write a crossword
+
+	He sees a grid of a certain size, all nulls
+		gaps between nulls so can see grid
+	He sees empty boxes for clues and solutions
+	He sees controls to adjust the size of the grid
+	He sees controls to lock the symmetry of the grid
+
+	He clicks on a cell
+	It gains focus but stays null
+	An arrow points right, or right cell highlights (next)
+
+	He presses down arrow to change orientation
+
+	He begins to type
+	Each letter turns a cell white and moves to the next
+	Clues are automatically updated to show lights
+
+	He types a space
+	The clue box shows the solution with a space
+	The grid doesn't show the space explicitly
+	But the preceding bar is turned bold or black
+
+	Backspace or typing over again erases space
+
+JavaScript data model
+	Stored as grid
+		Letter
+		Space above
+		Space left
+	Derivable lights
+	Also stored as lights
+		Numbers updated
+
+When a cell is deleted
+	1) if light before, reduce the solution
+	2) else, delete the light and adjust numbers
+		should it be remembered?
+	3) if light after, create new light and adjust numbers
+When a cell is inserted
+	
+AJAX XML Format
+	<crossword

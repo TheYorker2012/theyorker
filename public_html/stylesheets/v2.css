@@ -749,6 +749,29 @@ span.theyorker {
 	text-transform: capitalize;
 }
 
+div.spoiler {
+	margin-top: 2px;
+	margin-bottom: 2px;
+	border-left: 2px solid #FF8A00;
+	border-right: 2px solid #FF8A00;
+	background-color: white;
+	color: white;
+}
+div.spoiler * {
+	background-color: white;
+	color: white;
+}
+div.spoiler div.start,
+div.spoiler div.end {
+	height: 16px;
+}
+div.spoiler div.start {
+	background-image: url('/images/wikitext/spoilertop.png');
+}
+div.spoiler div.end {
+	background-image: url('/images/wikitext/spoilerbottom.png');
+}
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * CSS used for pagination links                               *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

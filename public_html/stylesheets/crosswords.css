@@ -1,14 +1,90 @@
 /* Styles for crosswords */
 /* Author: James Hogan */
 
+div.crosswordWinners {
+	float: right;
+	border: 1px solid gray;
+	padding: 0.3em;
+}
+div.crosswordWinners h2 {
+	margin: 0.1em;
+}
+div.crosswordWinners ol {
+	margin: 0px;
+}
+div.crosswordWinners ol li.new_winner {
+	border: 1px solid #999999;
+}
+/* gold */
+div.crosswordWinners ol li.winner0 {
+	font-weight: bold;
+	color: #DD9F38;
+}
+/* silver */
+div.crosswordWinners ol li.winner1 {
+	font-weight: bold;
+	color: #A6A19B;
+}
+/* bronze */
+div.crosswordWinners ol li.winner2 {
+	font-weight: bold;
+	color: #995511;
+}
+
+div.crosswordAjaxNotify {
+	margin: 0.5em;
+	margin-left: 30%;
+	margin-right: 30%;
+	min-height: 32px;
+	border: 1px solid white;
+	padding-left: 34px;
+
+	text-align: center;
+	font-size: 14pt;
+}
+div.crosswordAjaxNotify.hidden {
+	display: none;
+}
+div.crosswordAjaxNotify.complete {
+	border: 1px solid #0000AA;
+	background: #AAAAFF;
+	background-image: url("/images/prototype/homepage/information.png");
+	background-repeat: no-repeat;
+}
+div.crosswordAjaxNotify.success {
+	border: 1px solid #008800;
+	background: #88FF88;
+	background-image: url("/images/prototype/homepage/success.png");
+	background-repeat: no-repeat;
+}
+div.crosswordAjaxNotify.pending {
+	border: 1px solid #FF8800;
+	background: #FFFF88;
+	background-image: url("/images/loaders/ajax_pending.gif");
+	background-repeat: no-repeat;
+}
+div.crosswordAjaxNotify.error {
+	border: 1px solid #FF0000;
+	background: #FF8844;
+	background-image: url("/images/prototype/homepage/error.png");
+	background-repeat: no-repeat;
+}
+
 table.crossword {
 	border: 1px solid #FF6A00;
+	border-collapse: separate;
 	border-spacing: 0px;
-
 
 	text-align: center;
 	font-weight: bold;
 	font-size: 14pt;
+}
+table.crossword tr.small {
+	font-size: 10pt;
+}
+
+table.crossword td.blank sup {
+	display: none;
 }
 
 table.crossword td sup {
@@ -18,18 +94,22 @@ table.crossword td sup {
 	margin: 0;
 	position: absolute;
 	top: 0;
-	left: 0;
+	left: 1px;
 }
 
 table.crossword td input {
-	border: 0px solid white;
+	border: none;
 	margin: 0px;
 	width: 100%;
-	height: 1.2em;
+	height: 1.5em;
 
+	background-color: transparent;
 	text-align: center;
 	font-weight: bold;
 	font-size: 14pt;
+}
+table.crossword tr.small td input {
+	font-size: 10pt;
 }
 
 table.crossword td div {
@@ -47,55 +127,196 @@ table.crossword td {
 	height: 1.5em;
 }
 
+/* Cells with a space before */
+table.crossword td.hsp {
+	border-left: 3px solid #FF6A00;
+}
+table.crossword td.vsp {
+	border-top: 3px solid #FF6A00;
+}
+
+/* Cells with a hyphen before */
+table.crossword td.hhy {
+	border-left: 3px solid #FF6A00;
+}
+table.crossword td.vhy {
+	border-top: 3px solid #FF6A00;
+}
+
+/* Blank cells */
+
 table.crossword td.blank {
 	background-color: #FF6A00;
 }
 
-table.crossword td.selected,
-table.crossword td.selected input {
+table.crossword td.blank.selected {
+	background-color: #FFAA00;
+}
+
+table.crossword td.blank.focus {
+	background-color: #FFAA00;
+}
+
+/* Selected cells */
+
+table.crossword td.selected {
 	background-color: #FFFF88;
 }
 
-table.crossword td.focus,
-table.crossword td.focus input {
+table.crossword td.focus {
 	background-color: #FFAA88;
+	border-color: red;
+}
+
+table.crossword td.inc {
+	border-color: #AA0000;
+	background-color: #FFAAAA;
+}
+table.crossword td.inc.selected {
+	background-color: #FF8888;
+}
+table.crossword td.inc.focus {
+	background-color: #FF4444;
+}
+table.crossword td.chk {
+	border-color: #000088;
+	background-color: #AAAAFF;
+}
+table.crossword td.chk.selected {
+	background-color: #8888FF;
+}
+table.crossword td.chk.focus {
+	background-color: #4444FF;
+}
+table.crossword td.cor {
+	border-color: #008800;
+	background-color: #AAFFAA;
+}
+table.crossword td.cor.selected {
+	background-color: #88FF88;
+}
+table.crossword td.cor.focus {
+	background-color: #44FF44;
 }
 
 div.crosswordBox {
-	float: left;
-	width: 60%;
-	padding: 0px;
-	margin: 0px;
-}
-
-div.crosswordCluesBox {
+	clear: both;
 	float: left;
 	width: 40%;
 	padding: 0px;
 	margin: 0px;
 }
 
-div.crosswordClues {
-	border: 2px solid #FF6A00;
-	padding: 0.5em;
-	margin: 0px 0px 0.5em 0.5em;
+div.crosswordCluesHeader {
+	float: left;
+	width: 60%;
+	padding: 0px;
+	margin: 0px;
+}
+div.crosswordCluesHeader fieldset {
+	float: left;
+	width: 33%;
+}
+/* e.g. quick clues radio when quick clues disabled */
+div.crosswordCluesHeader fieldset.undesired {
+	color: #888888;
+}
+div.crosswordCluesHeader fieldset label {
+	float: right;
+	width: 75%;
+	text-align: left;
+}
+div.crosswordCluesHeader fieldset input {
+	float: right;
 }
 
-div.crosswordClues h2 {
+div.crosswordCluesBox {
+	float: left;
+	width: 30%;
+	padding: 0px;
+	margin: 0px;
+}
+
+div.crosswordCluesHeader div.header,
+div.crosswordCluesBox div.horizontal,
+div.crosswordCluesBox div.vertical {
+	margin: 0px 0px 0.5em 0.5em;
+	padding: 0.2em;
+	background-color: #FFFFFF;
+	border: 1px solid #FF8A00;
+}
+
+div.crosswordCluesBox h2 {
 	margin: 0.2em;
 }
 
-div.crosswordClues p {
+div.crosswordCluesBox div.clueBox {
 	margin: 0px;
+	padding: 0.2em;
+}
+div.crosswordCluesBox div.clueBox div.clueHeader {
 	cursor: pointer;
 }
 
-div.crosswordClues p.complete {
+div.crosswordCluesBox div.complete {
 	text-decoration: line-through;
 }
-
-div.crosswordClues p.selected {
-	background-color: #FFFF88;
-	border: 1px solid #FFAA88
+div.crosswordEdit div.crosswordCluesBox div.complete {
+	text-decoration: none;
 }
 
+div.crosswordCluesBox div.horizontal div.selected,
+div.crosswordCluesBox div.vertical   div.selected {
+	background-color: #FFFF88;
+	border: 1px solid #FFAA00;
+}
+
+div.crosswordCluesBox div.hideValues table.crossword {
+	display: none;
+}
+
+/* Quick or cryptic clues */
+div.crosswordCluesBox div.hideQuick .quickClue,
+div.crosswordCluesBox div.hideCryptic .crypticClue {
+	display: none;
+}
+div.crosswordCluesBox div.clueBox fieldset.clueInputs {
+	border: 0px solid #FFFFFF;
+	width: 99%;
+	margin: 0px;
+	margin-top: 0.2em;
+	margin-bottom: 0.2em;
+	padding: 0px;
+	display: none;
+}
+div.crosswordCluesBox div.selected fieldset.clueInputs {
+	border: 1px solid #FFAA88;
+	display: block;
+}
+div.crosswordCluesBox div.clueBox fieldset.clueInputs input {
+	margin: 0px;
+	border: 0px;
+	width: 100%;
+	height: 100%;
+}
+
+/* Remove the wrong spaces */
+div.crosswordCluesBox div.vertical td.hsp {
+	border-left: 1px solid #FF6A00;
+}
+div.crosswordCluesBox td.vsp {
+	border-top: 1px solid #FF6A00;
+}
+div.crosswordCluesBox div.vertical td.hhy {
+	border-left: 1px solid #FF6A00;
+}
+div.crosswordCluesBox td.vhy {
+	border-top: 1px solid #FF6A00;
+}
+/* Add horizontal spaces in vertical clues */
+div.crosswordCluesBox div.vertical td.vsp {
+	border-left: 3px solid #FF6A00;
+}
+div.crosswordCluesBox div.vertical td.vhy {
+	border-left: 3px solid #FF6A00;
+}

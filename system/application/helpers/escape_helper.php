@@ -10,21 +10,23 @@
 /// Htmlentities shortcut.
 /**
  * @param $text string The text to escape.
+ * @param $quotes string Whether to encode quotes (e.g. may be false for javascript block).
  * @return string @a $text with xml bits escaped using htmlentities.
  */
-function xml_escape($text)
+function xml_escape($text, $quotes = true)
 {
-	return htmlentities($text, ENT_QUOTES, 'utf-8');
+	return htmlentities($text, $quotes ? ENT_QUOTES : ENT_NOQUOTES, 'utf-8');
 }
 
 /// HtmlEntityDecode shortcut.
 /**
  * @param $xml string The xml to decode.
+ * @param $quotes string Whether to decode quotes (e.g. may be false for javascript block).
  * @return string @a $xml with xml entities decoded using html_entity_decode.
  */
-function xml_unescape($xml)
+function xml_unescape($xml, $quotes = true)
 {
-	return html_entity_decode($xml, ENT_QUOTES, 'utf-8');
+	return html_entity_decode($xml, $quotes ? ENT_QUOTES : ENT_NOQUOTES, 'utf-8');
 }
 
 /// Literalise a php value into javascript.
@@ -61,6 +63,16 @@ function js_literalise($value)
 			$value
 		).'\'';
 	}
+}
+
+/// Echo a block of javascript code in proper CDATA tags.
+function js_block($code)
+{
+	return	"<script type=\"text/javascript\">\n".
+			"// <![CDATA[\n".
+			"$code\n".
+			"// ]]>\n".
+			"</script>";
 }
 
 ?>

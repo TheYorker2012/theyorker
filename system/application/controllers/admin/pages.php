@@ -761,8 +761,8 @@ class Pages extends Controller
 		} else {
 			$input_data = array();
 			foreach (array('action','pageid','property','type','text') as $field) {
-				if (isset($_GET[$field])) {
-					$input_data[$field] = $_GET[$field];
+				if (isset($_POST[$field])) {
+					$input_data[$field] = $_POST[$field];
 				} else {
 					// Don't bother outputting anything, insufficient data.
 					return;

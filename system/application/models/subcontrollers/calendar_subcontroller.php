@@ -553,6 +553,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			'unsubscribe' => 'unsubscribe_stream',
 			'ajax' => array(
 				'recursimplevalidate' => 'ajax_recursimplevalidate',
+				'termdates' => 'ajax_termdates',
 			),
 		));
 	}
@@ -1313,6 +1314,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 
 		$this->main_frame->IncludeCss('stylesheets/calendar.css');
 		$this->main_frame->IncludeJs('javascript/simple_ajax.js');
+		$this->main_frame->IncludeJs('javascript/css_classes.js');
 		$this->main_frame->IncludeJs('javascript/calendar_edit.js');
 		
 		$this->main_frame->SetContent(
@@ -1753,6 +1755,7 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 			
 			$this->main_frame->IncludeCss('stylesheets/calendar.css');
 			$this->main_frame->IncludeJs('javascript/simple_ajax.js');
+			$this->main_frame->IncludeJs('javascript/css_classes.js');
 			$this->main_frame->IncludeJs('javascript/calendar_edit.js');
 			
 			$this->main_frame->SetContent(
@@ -1841,8 +1844,101 @@ class Calendar_subcontroller extends UriTreeSubcontroller
 	{
 		$this->load->library('calendar_view_edit_simple');
 		$validator = new CalendarViewEditSimpleValidate();
-		$validator->SetData($_GET);
+		$validator->SetData($_POST);
 		$validator->EchoXML();
+	}
+
+	/// AJAX: Find term dates.
+	function ajax_termdates()
+	{
+		OutputModes('ajax');
+		if (!CheckPermissions('public')) return;
+
+		$error = false;
+		$years = array();
+		if (isset($_GET['years'])) {
+			$year_ranges = split(',',$_GET['years']);
+			foreach ($year_ranges as $year_range) {
+				if ($year_range === '') {
+					continue;
+				}
+				$ends = split('-',$year_range);
+				if (count($ends) > 2) {
+					$this->main_frame->Error(array(
+						'class' => 'error',
+						'text' => 'Invalid year range: '.$year_range,
+					));
+					$error = true;
+				}
+				else {
+					if (count($ends) == 1) {
+						$ends = array($year_range, $year_range);
+					}
+					$range_error = false;
+					foreach ($ends as &$end) {
+						if (is_numeric($end) && $end >= 1970 && $end < 2037) {
+							$end = (int)$end;
+						}
+						else {
+							$this->main_frame->Error(array(
+								'class' => 'error',
+								'text' => 'Invalid year: '.$end,
+							));
+							$range_error = true;
+						}
+					}
+					if (!$range_error) {
+						for ($year = $ends[0]; $year <= $ends[1]; ++$year) {
+							$years[] = $year;
+						}
+					}
+					else {
+						$error = true;
+					}
+				}
+			}
+		}
+		if (!$error) {
+			$root = array(
+				'_tag' => 'calendar',
+				'termdates' => array(),
+			);
+			foreach ($years as $year) {
+				$acyear = array(
+					'_tag' => 'academicyear',
+					'_attr' => array(
+						'year' => $year,
+					),
+				);
+				for ($term = 0; $term < 6; ++$term) {
+					$start_ts = Academic_time::StartOfAcademicTerm($year, $term);
+					$monday_ts = Academic_time::MondayWeek1OfAcademicTerm($year, $term);
+					$start = new Academic_time($start_ts);
+					$days = Academic_time::LengthOfAcademicTerm($year, $term);
+					$end = $start->Adjust($days.'days');
+					$monday = new Academic_time($monday_ts);
+					$acterm = array(
+						'_tag' => 'term',
+						'_attr' => array(
+							'id' => "term_${year}_${term}",
+							'term' => $term,
+						),
+						'type' => $start->AcademicTermTypeName(),
+						'name' => $start->AcademicTermName(),
+						'unique' => $start->AcademicTermNameUnique(),
+						'start' => $start->Format('Y-m-d'),
+						'end' => $end->Format('Y-m-d'),
+						'days' => $days,
+						'mondayweek1' => $monday->Format('Y-m-d'),
+						'weeks' => $start->AcademicTermWeeks(),
+					);
+					$acyear[] = $acterm;
+				}
+				$root['termdates'][] = $acyear;
+			}
+			$this->main_frame->SetXml($root);
+		}
+		$this->main_frame->Load();
 	}
 	
 	/// [AJAX:] Set the attendence of an event.
