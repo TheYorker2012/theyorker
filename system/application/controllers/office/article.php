@@ -65,6 +65,10 @@ class Article extends Controller
 			'photos'		=>	$data['photos'],
 			'photo_types'	=>	$data['photo_types']
 		));
+		$this->pages_model->SetPageCode('office_news_article');
+		$this->main_frame->SetTitleParameters(
+			array('title' => (empty($data['article']['content_heading']) ? $data['article']['request_title'] : $data['article']['content_heading']))
+		);
 		$this->main_frame->SetContentSimple('office/article/main', $data);
 		$this->main_frame->IncludeJs('javascript/wikitoolbar.js');
 		$this->main_frame->IncludeJs('/javascript/office_interface.js');
