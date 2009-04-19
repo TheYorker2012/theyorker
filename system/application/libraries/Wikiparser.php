@@ -391,8 +391,9 @@ class Wikiparser {
 		} elseif ($this->enable_mediaplayer && 'media' === $namespace) {
 			static $mediaplayer_count = 0;
 			$mediaplayer_count++;
-			$control_width = ((strlen($href) > 4) && (substr($href, -4) == '.mp3')) ? 340 : 580;
-			$control_height = ((strlen($href) > 4) && (substr($href, -4) == '.mp3')) ? 20 : 346;
+			$mediaplayer_type = (!empty($matches[5])) ? str_replace('|', '', $matches[5]) : '';
+			$control_width = $mediaplayer_type == 'sound' || (strlen($href) > 4 && substr($href, -4) == '.mp3') ? 340 : 580;
+			$control_height = $mediaplayer_type == 'sound' || (strlen($href) > 4 && substr($href, -4) == '.mp3') ? 20 : 346;
 			$output = '
 				<div id="mp' . $mediaplayer_count . '_container" style="text-align:center">
 					<div style="border: 1px solid #999999;">
@@ -407,6 +408,7 @@ class Wikiparser {
 				so.addParam("allowfullscreen","true");
 				// File properties
 				so.addVariable("file","' . $href . '");
+' . (!empty($mediaplayer_type) ? 'so.addVariable("type","' . $mediaplayer_type . '");' : '') . '
 //				so.addVariable("image","##TODO##");
 				// Colours
 				so.addVariable("backcolor","FF6A00");
