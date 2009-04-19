@@ -103,10 +103,17 @@ if (!empty($ticker)) {
 	</div>
 
 	<div id="Navigation">
-		<ul id="Tabs">
+		<ul id="Tabs" class="next">
+<!--
 			<li class="first next"><a href="/">Public Site</a></li>
 			<li class="current"><a href="/office">Office</a></li>
 			<li class="last"><a href="http://mail.theyorker.co.uk">Webmail</a></li>
+-->
+			<li class="first current"><a href="/office">home</a></li>
+			<li><a href="/office/articles">articles</a></li>
+			<li><a href="/office/gallery">gallery</a></li>
+			<li><a href="/office/business">business</a></li>
+			<li class="last"><a href="/office/admin">admin</a></li>
 		</ul>
 	</div>
 
@@ -114,6 +121,11 @@ if (!empty($ticker)) {
 		<div id="MainBodyPane">
 
 
+
+
+
+
+<!--
 
 			<div id="NavigationColumn">
 				<div id="NavigationMenu">
@@ -221,6 +233,12 @@ printMenu($this, 'Homepage', array(
 
 			<div id="ContentColumn">
 
+-->
+
+
+
+
+
 <!-- BEGIN generated content -->
 <?php
 	// TODO: check this works properly
@@ -245,7 +263,15 @@ printMenu($this, 'Homepage', array(
 ?>
 <!-- END generated content -->
 
+
+
+<!--
 			</div>
+-->
+
+
+
+
 			<div class="clear"></div>
 		</div>
 	</div>
