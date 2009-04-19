@@ -22,6 +22,7 @@ div#office_pages {
 	float: left;
 	display: block;
 	width: 100%;
+	padding-bottom: 1.0em;
 }
 
 div.office_page {
