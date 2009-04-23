@@ -32,4 +32,14 @@ function SpecialInitAssert($Assertion, $FailMessage)
 	return $Assertion;
 }
 
+/// Destroy the current session if it contains no data
+function CloseSessionIfEmpty()
+{
+	if (0 == strlen(session_encode())) {
+		session_destroy();
+	}
+}
+// If session is empty, we may as well delete it, so that googlebot doesn't clutter session directory
+register_shutdown_function('CloseSessionIfEmpty');
+
 ?>
