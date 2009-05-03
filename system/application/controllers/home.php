@@ -191,6 +191,9 @@ class Home extends Controller {
 		
 		// Minifeeds
 		list($data['events'], $data['todo']) = $this->_GetMiniCalendars();
+
+		$this->load->helper('crosswords_miniview');
+		$data['crosswords'] = new CrosswordsMiniView(3);
 		
 		// Poll data
 		if ($poll_id)

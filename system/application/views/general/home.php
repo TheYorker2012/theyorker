@@ -75,6 +75,10 @@ function changePreview (option, article_id, article_type, photo_id, photo_title)
 	<div class="FlexiBox Box12b">
 		<br /><br /><br /><br /><br />
 	</div>
+	<div class="ArticleListBox FlexiBox Box12">
+		<div class="ArticleListTitle"><a href="/crosswords">latest crosswords</a></div>
+		<?php $crosswords->Load(); ?>
+	</div>
 	<div class="FlexiBox Box12">
 		<div class="ArticleListTitle">upcoming events</div>
 		<?php $events->Load(); ?>
