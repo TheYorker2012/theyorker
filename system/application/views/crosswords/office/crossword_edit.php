@@ -28,6 +28,12 @@ echo(xml_escape(
 			<?php $Configuration->Load(); ?>
 		</fieldset>
 
+		</fieldset>
+			<center>
+				Authors are selected from the approved bylines of office users with the CROSSWORD_AUTHOR permission.
+			</center>
+		</fieldset>
+
 		<fieldset>
 			<input	class="button" type="submit" value="Save Configuration" />
 			<input	class="button" type="button" value="Return"

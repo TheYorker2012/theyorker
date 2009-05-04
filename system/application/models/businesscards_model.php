@@ -490,15 +490,24 @@ class Businesscards_model extends Model
 							business_cards
 				LEFT JOIN	users
 					ON		users.user_entity_id = business_cards.business_card_user_entity_id ';
+		$bind = array();
 		if ($user_id === NULL) {
 			$sql .= 'WHERE		business_cards.business_card_user_entity_id IS NULL ';
+		} elseif (is_array($user_id)) {
+			$in_list = array();
+			foreach ($user_id as $entity_id) {
+				$in_list[] = '?';
+				$bind[] = $entity_id;
+			}
+			$sql .= 'WHERE		business_cards.business_card_user_entity_id IN ('.join(',',$in_list).') ';
 		} else {
 			$sql .= 'WHERE		business_cards.business_card_user_entity_id = ? ';
+			$bind[] = $user_id;
 		}
 		$sql .= 'AND		business_cards.business_card_business_card_group_id = business_card_groups.business_card_group_id
 				AND			business_card_groups.business_card_group_organisation_entity_id IS NULL
 				AND			business_cards.business_card_deleted = 0';
-		$query = $this->db->query($sql, array($user_id));
+		$query = $this->db->query($sql, $bind);
 		return $query->result_array();
 	}
 

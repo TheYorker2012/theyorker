@@ -60,10 +60,10 @@ CREATE TABLE `crosswords` (
 
 CREATE TABLE `crossword_authors` (
 	`crossword_author_crossword_id` INT NOT NULL ,
-	`crossword_author_user_entity_id` INT NOT NULL ,
+	`crossword_author_business_card_id` INT NOT NULL ,
 	PRIMARY KEY (
 		`crossword_author_crossword_id` ,
-		`crossword_author_user_entity_id`
+		`crossword_author_business_card_id`
 	),
 	FOREIGN KEY (
 		`crossword_author_crossword_id`

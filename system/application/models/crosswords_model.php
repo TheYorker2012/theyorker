@@ -15,6 +15,7 @@ class Crosswords_model extends model
 		parent::model();
 		$this->load->helper('crosswords');
 		$this->load->model('comments_model');
+		$this->load->model('businesscards_model');
 
 		// Snippets of useful sql
 		$this->overdue_sql		= '((`crossword_deadline` IS NOT NULL '.
@@ -723,16 +724,18 @@ class Crosswords_model extends model
 				$this->winner_count_sql.' AS winners_so_far, '.
 				'`crossword_category_name`			AS category_name,'.
 				'`crossword_category_short_name`	AS category_short_name, '.
-				'`user_entity_id`								AS author_id, '.
-				'CONCAT(`user_firstname`, " ", `user_surname`)	AS author_fullname '.
+				'`business_card_id`					AS author_id, '.
+				'`business_card_name`				AS author_fullname '.
 				'FROM `crosswords` '.
 				'INNER JOIN `crossword_categories` '.
 				'	ON	`crosswords`.`crossword_category_id`=`crossword_categories`.`crossword_category_id` '.
-				// Authors
+				// Author business cards
 				'LEFT JOIN `crossword_authors` '.
 				'	ON	`crossword_author_crossword_id`=`crossword_id` '.
-				'LEFT JOIN `users` '.
-				'	ON	`crossword_author_user_entity_id`=`user_entity_id` ';
+				'LEFT JOIN `business_cards` '.
+				'	ON	`crossword_author_business_card_id`=`business_card_id` '.
+				'	AND	`business_card_approved` = TRUE ';
+				'	AND	`business_card_deleted`  = FALSE ';
 
 		$bind = array();
 		$conditions = array();
@@ -760,7 +763,7 @@ class Crosswords_model extends model
 			$sql .= 'WHERE ('.join(') AND (', $conditions).') ';
 		}
 
-		$sql .= 'ORDER BY `crossword_publication` '.$order.', `user_surname` ASC, `user_firstname` ASC ';
+		$sql .= 'ORDER BY `crossword_publication` '.$order.', `business_card_name` ASC ';
 		if (null !== $limit) {
 			$sql .= 'LIMIT 0,'.(int)$limit;
 		}
@@ -790,7 +793,24 @@ class Crosswords_model extends model
 	/// Get information about all potential authors.
 	function GetAllAuthors()
 	{
-		return $this->permissions_model->GetAllUsersWithPermission('CROSSWORD_AUTHOR');
+		// Get users ids with crossword authorship permission
+		$users = $this->permissions_model->GetAllUsersWithPermission('CROSSWORD_AUTHOR');
+		$user_ids = array();
+		foreach ($users as &$user) {
+			$user_ids[] = $user['id'];
+		}
+		// Get corresponding bylines and construct results
+		$bylines = $this->businesscards_model->GetUserBylines($user_ids);
+		$results = array();
+		foreach ($bylines as &$byline) {
+			if ($byline['business_card_approved']) {
+				$results[] = array(
+					'id' => $byline['business_card_id'],
+					'fullname' => $byline['business_card_name'],
+				);
+			}
+		}
+		return $results;
 	}
 
 	/** Update a crossword as obtained by GetCrosswords.
@@ -856,7 +876,7 @@ class Crosswords_model extends model
 			$sql =	'DELETE FROM `crossword_authors` '.
 					'WHERE	`crossword_author_crossword_id`=? ';
 			if (!empty($qs)) {
-				$sql .=	'	AND	`crossword_author_user_entity_id` NOT IN ('.join(',',$qs).')';
+				$sql .=	'	AND	`crossword_author_business_card_id` NOT IN ('.join(',',$qs).')';
 			}
 			$this->db->query($sql, $bind);
 			$affected = $this->db->affected_rows();
@@ -872,7 +892,7 @@ class Crosswords_model extends model
 				}
 				$sql =	'INSERT INTO `crossword_authors` ( '.
 						'	`crossword_author_crossword_id`, '.
-						'	`crossword_author_user_entity_id` '.
+						'	`crossword_author_business_card_id` '.
 						') VALUES '.join(',',$qs).' '.
 						'ON DUPLICATE KEY UPDATE `crossword_author_crossword_id`=`crossword_author_crossword_id`';
 				$this->db->query($sql, $bind);
