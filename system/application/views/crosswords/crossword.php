@@ -100,7 +100,7 @@ echo(xml_escape(
 	}
 
 	?><h2><?php
-		?>crossword<?php
+		?>Crossword<?php
 		if (count($Crossword['author_fullnames']) > 0) {
 			?> by <?php
 			echo(xml_escape(join(', ', $Crossword['author_fullnames'])));
