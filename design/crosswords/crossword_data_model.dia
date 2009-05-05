@@ -2854,13 +2854,13 @@ REFERENCES crossword_saves.crossword_save_id#</dia:string>
         <dia:point val="-14.11,-8.845"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="-14.16,-8.895;-0.61,-1.395"/>
+        <dia:rectangle val="-14.16,-8.895;0.09,-1.395"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
         <dia:point val="-14.11,-8.845"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
-        <dia:real val="13.449999999999999"/>
+        <dia:real val="14.15"/>
       </dia:attribute>
       <dia:attribute name="elem_height">
         <dia:real val="7.3999999999999995"/>
@@ -2976,7 +2976,7 @@ REFERENCES crosswords.crossword_id#</dia:string>
         </dia:composite>
         <dia:composite type="umlattribute">
           <dia:attribute name="name">
-            <dia:string>#crossword_author_user_entity_id#</dia:string>
+            <dia:string>#crossword_author_business_card_id#</dia:string>
           </dia:attribute>
           <dia:attribute name="type">
             <dia:string>#INT#</dia:string>
@@ -2986,7 +2986,7 @@ REFERENCES crosswords.crossword_id#</dia:string>
           </dia:attribute>
           <dia:attribute name="comment">
             <dia:string>#PRIMARY KEY
-REFERENCES users.user_entity_id#</dia:string>
+REFERENCES business_cards.business_card_id#</dia:string>
           </dia:attribute>
           <dia:attribute name="visibility">
             <dia:enum val="0"/>
@@ -3010,13 +3010,13 @@ REFERENCES users.user_entity_id#</dia:string>
         <dia:point val="4.45,4.25"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="-0.659586,-5.8275;4.5,5.1675"/>
+        <dia:rectangle val="0.0404349,-5.8275;4.5,5.1675"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
         <dia:point val="4.45,4.25"/>
-        <dia:point val="1.92021,4.25"/>
-        <dia:point val="1.92021,-5.145"/>
-        <dia:point val="-0.609586,-5.145"/>
+        <dia:point val="2.27022,4.25"/>
+        <dia:point val="2.27022,-5.145"/>
+        <dia:point val="0.0904349,-5.145"/>
       </dia:attribute>
       <dia:attribute name="orth_orient">
         <dia:enum val="0"/>

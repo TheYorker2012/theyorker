@@ -51,6 +51,11 @@ else
 				echo(xml_escape($pub_text));
 			?></div><?php
 
+			// Author
+			if (count($crossword['author_fullnames']) > 0) {
+				?><em>by <?php echo(xml_escape(join(', ', $crossword['author_fullnames']))); ?></em><?php
+			}
+
 			// How many winners?
 			?><div><?php
 				$max_winners = $crossword['winners'];
