@@ -116,7 +116,7 @@ if (!empty($ticker)) {
 
 <?php
 $menu = array(
-	array('home', '/', array('first')),
+	array('home', '/home', array('first')),
 	array('news', '/uninews', array()),
 	array('sport', '/sport', array()),
 	array('arts', '/arts', array()),
