@@ -17,13 +17,14 @@ class Roses_model extends Model
 	function getAllResults()
 	{
 		$sql = 'SELECT		UNIX_TIMESTAMP(event_time) AS event_time,
+					event_id,
 					event_sport,
 					event_name,
 					event_venue,
 					event_points,
 					event_lancaster_score,
 					event_york_score,
-					event_score_time
+					UNIX_TIMESTAMP(event_score_time) AS event_score_time
 			FROM		roses_scores
 			ORDER BY	event_time ASC,
 					event_sport ASC';

@@ -356,6 +356,92 @@ class Liveblog extends Controller
 		}
 	}
 
+	function scores ()
+	{
+		if (!CheckPermissions('office')) return;
+
+		$this->load->library('wikiparser');
+		$this->load->model('roses_model');
+
+		// Format: d ykr score <event_id> <lancaster_score> <york_score>
+		// <*_score> is numerical if score known or w/d/l if not
+		$valid = array(
+			'w' => -1,
+			'd' => -2,
+			'l' => -3
+		);
+
+		$data = array();
+		$data['allevents'] = $this->roses_model->getAllResults();
+		$data['valid'] = array_flip($valid);
+
+		if (!empty($_POST['updatescore'])) {
+
+			// Roses 2009 article id's
+			$article_id = $this->_whichArticle();
+	
+			$event_id = $_POST['updatescore'];
+			$lscore = $_POST['lscore' . $_POST['updatescore']];
+			$yscore = $_POST['yscore' . $_POST['updatescore']];
+			$event = $this->roses_model->getResult($event_id);
+	
+			// Store result in database
+			$score_lancs = (isset($valid[$lscore])) ? $valid[$lscore] : $lscore;
+			$score_york = (isset($valid[$yscore])) ? $valid[$yscore] : $yscore;
+			$this->roses_model->setResult($event->event_id, $score_lancs, $score_york, mktime());
+	
+			// Set winning team indicators
+			$this->wikiparser->add_image_override(-1, '<img src="/images/version2/rose_lancashire.png" alt="Lancaster Win" />', 'Lancaster Win');
+			$this->wikiparser->add_image_override(-2, '<img src="/images/version2/rose_yorkshire.png" alt="York Win" />', 'York Win');
+			$this->wikiparser->add_image_override(-3, '<img src="/images/version2/rose_draw.png" alt="Draw" />', 'Draw');
+	
+			// Add posted time to blog entry
+			if ($event->event_score_time === NULL) {
+				$blog_entry = "'''" . date('H:i') . "''' ";
+			} else {
+				$blog_entry = "'''" . date('H:i', $event->event_score_time) . "''' ";
+			}
+			$twitter_update = '';
+			// Add winning team indicator
+			if ($score_lancs > $score_york) {
+				$blog_entry .= "[[image:-1|inline|Lancaster Win]] '''Lancaster Win!'''";
+				$twitter_update .= 'Lancaster Win!';
+			} elseif ($score_lancs < $score_york) {
+				$blog_entry .= "[[image:-2|inline|York Win]] '''York Win!'''";
+				$twitter_update .= 'York Win!';
+			} elseif ($score_lancs == $score_york) {
+				$blog_entry .= "[[image:-3|inline|Draw]] '''Draw!'''";
+				$twitter_update .= 'Draw!';
+			}
+			// Add sport and match name
+			$blog_entry .= ' ' . $event->event_sport . ' ' . $event->event_name;
+			$twitter_update .= ' ' . $event->event_sport . ' ' . $event->event_name;
+			// Add score if available
+			if (($score_lancs >= 0) || ($score_york >= 0)) {
+				$blog_entry .= " '''" . $score_lancs . '-' . $score_york . "'''";
+				$twitter_update .= ' ' . $score_lancs . '-' . $score_york;
+			}
+			$blog_entry_cache = $this->wikiparser->parse($blog_entry);
+			// Either add new blog entry or update existing
+			if ($event->event_blog_entry_id === NULL) {
+				$new_entry = $this->roses_model->addBlogEntry($article_id, $blog_entry, $blog_entry_cache, $this->user_auth->entityId);
+				$this->roses_model->noteScoreBlogEntry($event->event_id, $new_entry);
+			} else {
+				$this->roses_model->updateBlogEntry($event->event_blog_entry_id, $blog_entry, $blog_entry_cache, $this->user_auth->entityId);
+			}
+			// Update live blog article
+			$update = $this->_updateArticle($article_id, $this->user_auth->entityId);
+			if ($update !== TRUE) {
+				$error = $update;
+			}
+			//$this->_updateResults ($user->user_entity_id);
+			redirect('/office/liveblog/scores');
+		}
+
+		$this->main_frame->SetContentSimple('office/liveblog/scores', $data);
+		$this->main_frame->Load();
+	}
+
 	function update ()
 	{
 		$this->load->library('wikiparser');
@@ -496,9 +582,9 @@ class Liveblog extends Controller
 	function _whichArticle ()
 	{
 		$article_id = 1682;											// Test article id
-		if (mktime() >= mktime(8,0,0,5,2,2008)) $article_id = 1690;	// Friday
-		if (mktime() >= mktime(8,0,0,5,3,2008)) $article_id = 1691;	// Saturday
-		if (mktime() >= mktime(8,0,0,5,4,2008)) $article_id = 1692;	// Sunday
+		if (mktime() >= mktime(8,0,0,5,8,2009)) $article_id = 2965;	// Friday
+		if (mktime() >= mktime(8,0,0,5,9,2009)) $article_id = 2965;	// Saturday
+		if (mktime() >= mktime(8,0,0,5,10,2009)) $article_id = 2965;	// Sunday
 		return $article_id;
 	}
 

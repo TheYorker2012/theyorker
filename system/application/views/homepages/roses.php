@@ -8,7 +8,7 @@
 
 <?php function ArticleList ($section, $articles, $last = false) {
 	if (count($articles) == 0) return; ?>
-	<div class="ArticleListBox FlexiBox Box13<?php if ($last) echo(' FlexiBoxLast'); ?>">
+	<div style="float:right" class="ArticleListBox FlexiBox Box13<?php if ($last) echo(' FlexiBoxLast'); ?>">
 		<div class="ArticleListTitle">
 			<a href="/roses"><?php echo($section); ?></a>
 		</div>
