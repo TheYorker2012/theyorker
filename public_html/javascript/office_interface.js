@@ -236,6 +236,7 @@ function loadTagData (tagsSelected, tagGroups) {
 
 	var alltag_container = document.getElementById('all_tags');
 	for (var tag in tagsSelected) {
+		if (typeof tagsSelected[tag] == 'function') continue;
 		if (document.getElementById('tag' + tag) == undefined) {
 			var new_slot = document.createElement('div');
 			new_slot.className = 'tag_slot';
@@ -277,6 +278,7 @@ function detectTagChanges () {
 
 	// Custom tags && check for deleted tags
 	for (var tagID in oi_tagsSelected) {
+		if (typeof oi_tagsSelected[tagID] == 'function') continue;
 		var tag_input = $('tag' + tagID);
 		if (tag_input.checked == true) {
 			// Tag is still selected
