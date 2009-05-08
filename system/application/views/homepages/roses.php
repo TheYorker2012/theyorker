@@ -13,7 +13,7 @@
 
 <div style="float:right;" class="ArticleListBox FlexiBox Box13 FlexiBoxLast">
 	<div class="ArticleListTitle">
-		<a href="/news/<?php echo($liveblog[0]['headline']); ?>">latest updates</a>
+		<a href="/news/<?php echo($liveblog[0]['id']); ?>">latest updates</a>
 	</div>
 	<?php
 	foreach ($latest as $l) {
