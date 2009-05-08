@@ -1,3 +1,53 @@
+<style type="text/css">
+div.activity p {
+	display: inline;
+}
+</style>
+
+<div class="BlueBox Box23b">
+	<h2>recent activity</h2>
+	
+	<div class="activity">
+<?php
+foreach ($activity as $a) {
+	echo('<div>');
+	switch ($a->type) {
+		case 'byline':
+		case 'byline-teams':
+			echo($a->user_name . ' ' . $a->wikitext);
+			break;
+		case 'announcement':
+			echo($a->user_name . ' posted an announcement titled "<a href="/office/announcements">' . $a->subject . '</a>".');
+			break;
+		default:
+			echo('ERROR: Unknown activity type (' . $a->type . ')');
+	}
+	echo('</div>');
+}
+?>
+	</div>
+
+	<pre>
+	<?php print_r($activity); ?>
+	</pre>
+</div>
+
+<div class="BlueBox Box13b FlexiBoxLast">
+	<h2>links</h2>
+	<p><a href="/office/bylines">Bylines</a></p>
+	<h2>notifications</h2>
+	<?php
+	foreach ($notifications as $notification) {
+		if (!empty($notification['count'])) {
+			echo('<div><a href="' . $notification['link'] . '">' . $notification['count'] . ' ' . $notification['title'] . ($notification['count'] > 1 ? 's' : '') . '</a></div>');
+		}
+	}
+	?>
+</div>
+
+
+
+<?php /*
 <script type="text/javascript">
 onLoadFunctions.push(loadPage);
 
@@ -160,3 +210,6 @@ switch (count($my_requests)) {
 		<div class="clear"></div>
 	</div>
 </div>
+
+*/
+?>
