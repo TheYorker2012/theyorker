@@ -11,9 +11,24 @@
 	</div>
 </div>
 
+<div style="float:right;" class="ArticleListBox FlexiBox Box13 FlexiBoxLast">
+	<div class="ArticleListTitle">
+		<a href="/news/<?php echo($liveblog[0]['headline']); ?>">latest updates</a>
+	</div>
+	<?php
+	foreach ($latest as $l) {
+		echo('<div>');
+		$cache = str_replace('//medium//', '/small/', $l['cache']);
+		$cache = str_replace('//large//', '/small/', $cache);
+		echo($cache);
+		echo('</div>');
+	}
+	?>
+</div>
+
 <?php function ArticleList ($section, $articles, $last = false) {
 	if (count($articles) == 0) return; ?>
-	<div style="float:right" class="ArticleListBox FlexiBox Box13<?php if ($last) echo(' FlexiBoxLast'); ?>">
+	<div class="ArticleListBox FlexiBox Box13<?php if ($last) echo(' FlexiBoxLast'); ?>">
 		<div class="ArticleListTitle">
 			<a href="/roses"><?php echo($section); ?></a>
 		</div>
@@ -30,10 +45,6 @@
 	</div>
 	<?php /*if ($last) { ?><div class="clear"></div><?php }*/ ?>
 <?php } ?>
-
-<?php
-ArticleList('Roses 2009 Articles', $others, true);
-?>
 
 <div class="FlexiBox Box23">
 	<div class="ArticleListTitle">
@@ -81,3 +92,7 @@ ArticleList('Roses 2009 Articles', $others, true);
 		<?php } ?>
 	</table>
 </div>
+
+<?php
+ArticleList('Roses 2009 Articles', $others, true);
+?>
