@@ -18,8 +18,8 @@
 	<?php
 	foreach ($latest as $l) {
 		echo('<div>');
-		$cache = str_replace('//medium//', '/small/', $l['cache']);
-		$cache = str_replace('//large//', '/small/', $cache);
+		$cache = str_replace('/medium/', '/small/', $l['cache']);
+		$cache = str_replace('/large/', '/small/', $cache);
 		echo($cache);
 		echo('</div>');
 	}
@@ -73,7 +73,7 @@
 			<?php if ($event['event_score_time'] !== NULL) { ?>
 				<td>
 					<?php
-					if ($event['event_york_score'] > 0 && $event['event_lancaster_score'] > 0) {
+					if ($event['event_york_score'] > 0 || $event['event_lancaster_score'] > 0) {
 						echo(xml_escape($event['event_york_score'] . ' - ' . $event['event_lancaster_score']));
 					} ?>
 				</td>
