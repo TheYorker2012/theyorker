@@ -14,6 +14,76 @@ class Tags_model extends Model
 		// Call the Model Constructor
 		parent::Model();
 	}
+
+	function getArticleTags ($article_id)
+	{
+		$result = array();
+		$sql = 'SELECT		tags.tag_id AS id,
+							tags.tag_name AS name
+				FROM		article_tags,
+							tags
+				WHERE		article_tags.article_tag_article_id = ?
+				AND			article_tags.article_tag_tag_id = tags.tag_id
+				ORDER BY	tags.tag_order ASC';
+		$query = $this->db->query($sql, array($article_id));
+		if ($query->num_rows() > 0) {
+			foreach ($query->result_array() as $row) {
+				$result[$row['id']] = $row['name'];
+			}
+		}
+		return $result;
+	}
+
+	function getPossibleArticleTags ($content_type_id)
+	{
+		$result = array();
+		$sql = 'SELECT		tags.tag_id AS id,
+							tags.tag_name AS name,
+							tag_groups.tag_group_name AS group_name
+				FROM		tags,
+							tag_groups
+				WHERE		tags.tag_type = "grouped"
+				AND			tags.tag_tag_group_id = tag_groups.tag_group_id
+				AND		(	tag_groups.tag_group_content_type_id IS NULL
+						OR	tag_groups.tag_group_content_type_id = ?
+						)
+				ORDER BY	tag_groups.tag_group_order ASC,
+							tags.tag_order ASC';
+		$query = $this->db->query($sql, array($content_type_id));
+		if ($query->num_rows() > 0) {
+			foreach ($query->result_array() as $row) {
+				$result[$row['group_name']][] = $row;
+			}
+		}
+		return $result;
+	}
+
+	function resetArticleTags ($article_id)
+	{
+		$sql = 'DELETE FROM article_tags WHERE article_tag_article_id = ?';
+		$query = $this->db->query($sql, array($article_id));
+	}
+
+	function addArticleTags ($article_id, $tag_ids)
+	{
+		if (!is_array($tag_ids)) {
+			$tag_ids = array($tag_ids);
+		}
+
+		$sql = 'INSERT INTO article_tags
+				SET			article_tag_article_id = ?,
+							article_tag_tag_id = ?';
+
+		foreach ($tag_ids as $tag) {
+			$this->db->query($sql, array($article_id, $tag));
+		}
+	}
+
+
+
+
+
+
 	///////////Tags
 	//Checking tags
 	function GetAllTags($get_deleted=0){
@@ -93,7 +163,7 @@ class Tags_model extends Model
 			WHERE tag_id=? LIMIT 1";
 		$query = $this->db->query($sql,array($name, $type, $group_id, $id));
 	}
-	
+
 	function DoesOrderPositionExist($id, $order_number)
 	{
 		$sql = 'SELECT tag_id FROM tags  
@@ -253,7 +323,7 @@ class Tags_model extends Model
 		$sql = "SELECT tag_group_ordered FROM tag_groups WHERE tag_group_id=? LIMIT 1";
 		$query = $this->db->query($sql,array($id));
 		$old_ordered = $query->row()->tag_group_ordered;
-		
+
 		//if group used to be ordered, and wants to remove the ordering,
 		//overwrite the ordering with nulls.
 		if($ordered==0 && $old_ordered==1){

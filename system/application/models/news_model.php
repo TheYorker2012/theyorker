@@ -57,7 +57,7 @@ class News_model extends Model
 	$sql = 'SELECT
 			articles.article_id as article_id,
 			articles.article_publish_date as publish_date,
-			DATE(articles.article_publish_date) <= CURRENT_DATE() as is_live,
+			UNIX_TIMESTAMP(articles.article_publish_date) <= UNIX_TIMESTAMP() as is_live,
 			article_contents.article_content_heading as headline,
 			article_contents.article_content_last_author_timestamp as updated_date,
 

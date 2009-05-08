@@ -29,9 +29,9 @@ $config['permissions'] = array(
 	/// @todo Review and implement article permissions
 	'ARTICLE_VIEW'                     => 'View article contents',
 	'ARTICLE_ADD'                      => 'Create new articles',
-	'ARTICLE_MODIFY'                   => '(unimplemented) Modify articles',
+	'ARTICLE_MODIFY'                   => 'Modify articles',
 	'ARTICLE_DELETE'                   => '(unimplemented) Delete articles',
-	'ARTICLE_PUBLISH'                  => '(unimplemented) Publish articles',
+	'ARTICLE_PUBLISH'                  => 'Publish articles',
 	'ARTICLE_PULL'                     => '(unimplemented) Pull published articles',
 	
 	/// @todo Review and implement article type permissions

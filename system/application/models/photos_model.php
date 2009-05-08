@@ -393,15 +393,18 @@ class Photos_model extends Model
 
 	function GetPhotoRequestsForArticle($article_id)
 	{
-		$sql = 'SELECT		photo_request_id AS request_id,
-							photo_request_relative_photo_number AS photo_number,
-							photo_request_chosen_photo_id AS photo_id,
-							photo_request_image_type_id AS photo_type,
-							photo_request_title AS photo_caption,
-							photo_request_description AS photo_alt
-				FROM		photo_requests
-				WHERE		photo_request_article_id = ?
-				ORDER BY	photo_request_relative_photo_number ASC';
+		$sql = 'SELECT		pr.photo_request_id AS request_id,
+							pr.photo_request_relative_photo_number AS photo_number,
+							pr.photo_request_chosen_photo_id AS photo_id,
+							pr.photo_request_image_type_id AS photo_type,
+							it.image_type_codename AS photo_codename,
+							pr.photo_request_title AS photo_caption,
+							pr.photo_request_description AS photo_alt
+				FROM		photo_requests AS pr,
+							image_types AS it
+				WHERE		pr.photo_request_article_id = ?
+				AND			pr.photo_request_image_type_id = it.image_type_id
+				ORDER BY	pr.photo_request_relative_photo_number ASC';
 		$query = $this->db->query($sql, array($article_id));
 		return $query->result_array();
 	}
@@ -553,13 +556,14 @@ class Photos_model extends Model
 		$query = $this->db->query($sql,array($request_id,$photo_id,$comment,$user_id));
 	}
 
-	function ChangeDetails($request_id,$title,$description)
+	function ChangeDetails($request_id,$title,$description,$size = 2)
 	{
 		$sql = 'UPDATE photo_requests
 				SET photo_requests.photo_request_title = ?,
-					photo_requests.photo_request_description = ?
+					photo_requests.photo_request_description = ?,
+					photo_requests.photo_request_image_type_id = ?
 				WHERE photo_requests.photo_request_id = ?';
-		$query = $this->db->query($sql,array($title,$description,$request_id));
+		$query = $this->db->query($sql,array($title,$description,$size,$request_id));
 	}
 
 	/**

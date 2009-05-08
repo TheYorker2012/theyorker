@@ -130,6 +130,33 @@ class Article_model extends Model
 		}
 	}
 
+	function update ($id, $type_id, $request_title, $request_description, $thumbnail_photo_id, $main_photo_id, $deadline, $editor_user_id) {
+		$sql = 'UPDATE		articles
+				SET			article_content_type_id = ?,
+							article_request_title = ?,
+							article_request_description = ?,
+							article_thumbnail_photo_id = ?,
+							article_main_photo_id = ?,
+							article_deadline_date = ?,
+							article_editor_approved_user_entity_id = ?
+				WHERE		article_id = ?';
+		$query = $this->db->query($sql, array($type_id, $request_title, $request_description, $thumbnail_photo_id, $main_photo_id, $deadline, $editor_user_id, $id));
+	}
+
+	function publish ($article_id, $revision_id, $publish_date)
+	{
+		$sql = 'UPDATE		articles
+				SET			article_publish_date = ?,
+							article_live_content_id = ?
+				WHERE		article_id = ?';
+		$query = $this->db->query($sql, array($publish_date, $revision_id, $article_id));
+
+		/// Create new comment thread
+		$this->load->model('comments_model');
+		$CI = &get_instance();
+		$CI->comments_model->CreateThread(array('comment_thread_allow_anonymous_comments' => FALSE), 'articles', array('article_id' => $article_id), 'article_public_comment_thread_id');
+	}
+
 	function getAllContentTypes ()
 	{
 		$sql = 'SELECT		content_type_id AS id,
@@ -142,6 +169,129 @@ class Article_model extends Model
 							content_type_section_order ASC';
 		$query = $this->db->query($sql);
 		return $query->result_array();
+	}
+
+	function getBylinesForUser ($user_id)
+	{
+		$sql = 'SELECT		business_cards.business_card_id AS byline_id,
+							business_cards.business_card_user_entity_id AS user_id,
+							business_cards.business_card_image_id AS image_id,
+							business_cards.business_card_name AS name,
+							business_cards.business_card_title AS title,
+							business_cards.business_card_blurb AS blurb,
+							business_cards.business_card_course AS course,
+							business_cards.business_card_email AS email,
+							business_cards.business_card_mobile AS mobile,
+							business_cards.business_card_phone_internal AS phone_internal,
+							business_cards.business_card_phone_external AS phone_external,
+							business_cards.business_card_postal_address AS address,
+							business_cards.business_card_deleted AS deleted,
+							business_cards.business_card_about_us AS about_us,
+							business_card_groups.business_card_group_name AS group_name
+				FROM		business_cards,
+							business_card_groups
+				WHERE	(	business_cards.business_card_user_entity_id = ?
+						OR	business_cards.business_card_user_entity_id IS NULL
+						)
+				AND			business_cards.business_card_business_card_group_id = business_card_groups.business_card_group_id
+				AND			business_card_groups.business_card_group_organisation_entity_id IS NULL
+				ORDER BY	business_cards.business_card_user_entity_id DESC';
+		$query = $this->db->query($sql, array($user_id));
+		return $query->result_array();
+	}
+
+	function getReportersForArticle ($article_id)
+	{
+		$result = array();
+		$sql = 'SELECT		article_writers.article_writer_user_entity_id AS user_id,
+							CONCAT(users.user_firstname, " ", users.user_surname) AS user_name,
+							article_writers.article_writer_byline_business_card_id AS byline_id,
+							users.user_default_byline_business_card_id AS default_byline_id,
+							article_writers.article_writer_status AS status
+				FROM		article_writers,
+							users
+				WHERE		article_writers.article_writer_article_id = ?
+				AND			article_writers.article_writer_user_entity_id = users.user_entity_id';
+		$query = $this->db->query($sql, array($article_id));
+		if ($query->num_rows() > 0) {
+			foreach ($query->result_array() as $reporter) {
+				$reporter['bylines'] = $this->getBylinesForUser($reporter['user_id']);
+				$result[] = $reporter;
+			}
+		}
+		return $result;
+	}
+
+	function addReporter ($article_id, $user_id, $editor_id)
+	{
+		$sql = 'INSERT INTO	article_writers
+				SET			article_writer_user_entity_id = ?,
+							article_writer_byline_business_card_id = (
+							SELECT user_default_byline_business_card_id FROM users WHERE user_entity_id = ?
+							),
+							article_writer_status = ?,
+							article_writer_editor_accepted_user_entity_id = ?,
+							article_writer_article_id = ?';
+		$query = $this->db->query($sql, array($user_id, $user_id, 'accepted', $editor_id, $article_id));
+	}
+
+	function removeReporter ($article_id, $user_id)
+	{
+		$sql = 'DELETE FROM	article_writers
+				WHERE		article_writer_user_entity_id = ?
+				AND			article_writer_article_id = ?';
+		$query = $this->db->query($sql, array($user_id, $article_id));
+	}
+
+	function changeByline ($article_id, $user_id, $byline_id)
+	{
+		$sql = 'UPDATE		article_writers
+				SET			article_writer_byline_business_card_id = ?
+				WHERE		article_writer_user_entity_id = ?
+				AND			article_writer_article_id = ?';
+		$query = $this->db->query($sql, array($byline_id, $user_id, $article_id));
+	}
+
+	function getLastRevisionMeta ($article_id)
+	{
+		$sql = 'SELECT		article_contents.article_content_id AS id,
+							article_contents.article_content_article_id AS article_id,
+							article_contents.article_content_last_author_user_entity_id AS user_id,
+							CONCAT(users.user_firstname, " ", users.user_surname) AS user_name,
+							UNIX_TIMESTAMP(article_contents.article_content_last_author_timestamp) AS last_update
+				FROM		article_contents,
+							users
+				WHERE		article_contents.article_content_article_id = ?
+				AND			article_contents.article_content_last_author_user_entity_id = users.user_entity_id
+				ORDER BY	article_contents.article_content_last_author_timestamp DESC
+				LIMIT		0,1';
+		$query = $this->db->query($sql, array($article_id));
+		return $query->row();
+	}
+
+	function newRevision ($article_id, $user_id, $heading, $intro, $body, $cache, $blurb) {
+		$sql = 'INSERT INTO	article_contents
+				SET			article_content_article_id = ?,
+							article_content_last_author_user_entity_id = ?,
+							article_content_heading = ?,
+							article_content_subtext = ?,
+							article_content_wikitext = ?,
+							article_content_wikitext_cache = ?,
+							article_content_blurb = ?';
+		$query = $this->db->query($sql, array($article_id, $user_id, $heading, $intro, $body, $cache, $blurb));
+		return $this->db->insert_id();
+	}
+
+	function updateRevision ($id, $heading, $sub_heading, $intro, $blurb, $body, $cache)
+	{
+		$sql = 'UPDATE		article_contents
+				SET			article_content_heading = ?,
+							article_content_subtext = ?,
+							article_content_wikitext = ?,
+							article_content_wikitext_cache = ?,
+							article_content_blurb = ?
+				WHERE		article_content_id = ?';
+		$query = $this->db->query($sql, array($heading, $intro, $body, $cache, $blurb, $id));
 	}
 
 	/**
@@ -311,22 +461,6 @@ class Article_model extends Model
 			return $row['article_content_id'];
 		}
 	}
-
-	function UpdateRevision ($revision,$headline,$subheadline,$subtext,$blurb,$wiki,$wiki_cache)
-	{
-		$sql = 'UPDATE article_contents
-				SET article_content_heading = ?,
-				 article_content_subheading = ?,
-				 article_content_subtext = ?,
-				 article_content_blurb = ?,
-				 article_content_wikitext = ?,
-				 article_content_wikitext_cache = ?
-				WHERE article_content_id = ?';
-		$query = $this->db->query($sql, array($headline,$subheadline,$subtext,$blurb,$wiki,$wiki_cache,$revision));
-	}
-
-
-
 
 
 

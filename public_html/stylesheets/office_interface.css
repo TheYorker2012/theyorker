@@ -47,6 +47,14 @@ div#office_sidebar {
 	width: 140px;
 }
 
+div#office_sidebar div {
+	text-align: center;
+}
+
+div#office_sidebar input {
+	float: none;
+}
+
 div#office_sidebar ul {
 	margin: 10px 0;
 	display: block;
@@ -81,6 +89,7 @@ div#office_container div#office_sidebar ul li#nav_photos { list-style-image: url
 div#office_container div#office_sidebar ul li#nav_bylines { list-style-image: url('/images/icons/vcard.png'); }
 div#office_container div#office_sidebar ul li#nav_related { list-style-image: url('/images/icons/arrow_switch.png'); }
 div#office_container div#office_sidebar ul li#nav_comments { list-style-image: url('/images/icons/comment.png'); }
+div#office_container div#office_sidebar ul li#nav_revisions { list-style-image: url('/images/icons/book_next.png'); }
 div#office_container div#office_sidebar ul li#nav_publish { list-style-image: url('/images/icons/package.png'); }
 
 
@@ -120,7 +129,21 @@ div#page_photos div.photo_slot label {
 	width: 30%;
 }
 
+div#page_photos div.photo_slot input.photo_insert {
+	float: right;
+}
 
+div#page_related div.tag_slot {
+	float: left;
+	display: block;
+	width: 20%;
+}
+
+div#page_related div.tag_slot label {
+	clear: none;
+	margin: 0.2em;
+	text-align: left;
+}
 
 
 
