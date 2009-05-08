@@ -1,7 +1,12 @@
 <div class="FlexiBox Box23">
 	<div id="DisplayBox">
-		<div id="DisplayBoxBg"><?php echo(xml_escape($liveblog[0]['headline'])); ?></div>
-		<div id="DisplayBoxText"><a href="/news/<?php echo($liveblog[0]['id']); ?>"><?php echo(xml_escape($liveblog[0]['headline'])); ?></a></div>
+		<div style="background-color:#999;color:#999;font-weight:bold;font-size:30px;position:absolute;bottom:0;left:0;opacity:0.6;">York <?php echo(xml_escape($score_york)); ?></div>
+		<div style="color:#fff;font-weight:bold;font-size:30px;position:absolute;bottom:0;left:0;">York <?php echo(xml_escape($score_york)); ?></div>
+		<div style="background-color:#999;color:#999;font-weight:bold;font-size:30px;position:absolute;bottom:0;right:0;opacity:0.6;">Lancaster <?php echo(xml_escape($score_lancs)); ?></div>
+		<div style="color:#ba0000;font-weight:bold;font-size:30px;position:absolute;bottom:0;right:0;">Lancaster <?php echo(xml_escape($score_lancs)); ?></div>
+
+		<div id="DisplayBoxBg" style="top:0;bottom:auto;"><?php echo(xml_escape($liveblog[0]['headline'])); ?></div>
+		<div id="DisplayBoxText" style="top:0;bottom:auto;"><a href="/news/<?php echo($liveblog[0]['id']); ?>"><?php echo(xml_escape($liveblog[0]['headline'])); ?></a></div>
 		<a href="/news/<?php echo($liveblog[0]['id']); ?>"><img src="/photos/home/<?php echo($liveblog[0]['photo_id']); ?>" alt="<?php echo(xml_escape($liveblog[0]['photo_title'])); ?>" /></a>
 	</div>
 </div>
