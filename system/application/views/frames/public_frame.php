@@ -120,7 +120,8 @@ $menu = array(
 	array('news', '/uninews', array()),
 	array('sport', '/sport', array()),
 	array('arts', '/arts', array()),
-	array('lifestyle', '/lifestyle', array('last')),
+	array('lifestyle', '/lifestyle', array()),
+	array('roses', '/roses', array('last')),
 );
 // Has a tab been set as selected?
 $menu_style = '';
