@@ -12,6 +12,13 @@ class TwitterXML
 		$this->password = $password;
 	}
 
+	// Status Updates
+	function updateStatus ($status) {
+		$status = urlencode(stripslashes(urldecode($status)));
+		$api_path = 'http://twitter.com/statuses/update.xml?status=' . $status;
+		return $this->_APICall($api_path, TRUE, array(), TRUE);
+	}
+
 	// Direct Messages
 	function getDirectMessages ($since_date = NULL, $since_msg_id = 0, $page_number = 1) {
 		$api_path = 'http://twitter.com/direct_messages.xml';

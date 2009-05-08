@@ -1,8 +1,8 @@
 <div class="FlexiBox Box23">
 	<div id="DisplayBox">
-		<div id="DisplayBoxBg"><?php echo(xml_escape($main_articles[0]['heading'])); ?></div>
-		<div id="DisplayBoxText"><a href="/news/<?php echo(xml_escape($main_articles[0]['article_type'] . '/' . $main_articles[0]['id'])); ?>"><?php echo(xml_escape($main_articles[0]['heading'])); ?></a></div>
-		<a href="/news/<?php echo(xml_escape($main_articles[0]['article_type'] . '/' . $main_articles[0]['id'])); ?>"><img src="/photos/home/<?php echo(xml_escape($main_articles[0]['photo_id'])); ?>" alt="" /></a>
+		<div id="DisplayBoxBg"><?php echo(xml_escape($liveblog[0]['headline'])); ?></div>
+		<div id="DisplayBoxText"><a href="/news/<?php echo($liveblog[0]['id']); ?>"><?php echo(xml_escape($liveblog[0]['headline'])); ?></a></div>
+		<a href="/news/<?php echo($liveblog[0]['id']); ?>"><img src="/photos/home/<?php echo($liveblog[0]['photo_id']); ?>" alt="<?php echo(xml_escape($liveblog[0]['photo_title'])); ?>" /></a>
 	</div>
 </div>
 
@@ -10,27 +10,69 @@
 	if (count($articles) == 0) return; ?>
 	<div class="ArticleListBox FlexiBox Box13<?php if ($last) echo(' FlexiBoxLast'); ?>">
 		<div class="ArticleListTitle">
-			<a href="/news/<?php echo($articles[0]['article_type'] . '/' . $articles[0]['id']); ?>">latest <?php echo($section); ?></a>
+			<a href="/roses"><?php echo($section); ?></a>
 		</div>
 		<?php foreach ($articles as $article) { ?>
 		<div>
-			<a href="/news/<?php echo(xml_escape($article['article_type'] . '/' . $article['id'])); ?>">
+			<a href="/news/<?php echo(xml_escape($article['id'])); ?>">
 				<img src="/photos/small/<?php echo(xml_escape($article['photo_id'])); ?>" alt="<?php echo(xml_escape($article['photo_title'])); ?>" title="<?php echo(xml_escape($article['photo_title'])); ?>" />
-				<?php echo(xml_escape($article['heading'])); ?>
+				<?php echo(xml_escape($article['headline'])); ?>
 			</a>
-			<div class="Date"><?php echo(xml_escape($article['date'])); ?></div>
+			<div class="Date"><?php echo(xml_escape(date('l, jS F Y', $article['date']))); ?></div>
 			<div class="clear"></div>
 		</div>
 		<?php } ?>
 	</div>
-	<?php if ($last) { ?><div class="clear"></div><?php } ?>
+	<?php /*if ($last) { ?><div class="clear"></div><?php }*/ ?>
 <?php } ?>
 
 <?php
-$column = 2;
-foreach ($section_articles as $section => $articles) {
-	$column++;
-	ArticleList($section, $articles, ($column % 3) == 0 ? true : false);
-}
+ArticleList('Roses 2009 Articles', $others, true);
 ?>
-<div class="clear"></div>
+
+<div class="FlexiBox Box23">
+	<div class="ArticleListTitle">
+		Fixtures &amp; Results
+	</div>
+	<table style="width:100%">
+		<tr>
+			<th>Start</th>
+			<th>Sport</th>
+			<th>Event</th>
+			<th>Venue</th>
+			<th>Points</th>
+			<th>Score</th>
+			<th>Winner</th>
+		</tr>
+		<?php foreach ($events as $event) { ?>
+		<tr>
+			<td><?php echo(xml_escape(date('D H:i', strtotime($event['event_time'])))); ?></td>
+			<td><?php echo(xml_escape($event['event_sport'])); ?></td>
+			<td><?php echo(xml_escape($event['event_name'])); ?></td>
+			<td><?php echo(xml_escape($event['event_venue'])); ?></td>
+			<td><?php echo(xml_escape($event['event_points'])); ?></td>
+			<?php if ($event['event_score_time'] !== NULL) { ?>
+				<td>
+					<?php
+					if ($event['event_york_score'] > 0 && $event['event_lancaster_score'] > 0) {
+						echo(xml_escape($event['event_york_score'] . ' - ' . $event['event_lancaster_score']));
+					} ?>
+				</td>
+				<td>
+					<?php if ($event['event_york_score'] > $event['event_lancaster_score']) { ?>
+						<img src="/images/version2/rose_yorkshire.png" alt="York Wins!" title="York Wins!" />
+					<?php } elseif ($event['event_york_score'] < $event['event_lancaster_score']) { ?>
+						<img src="/images/version2/rose_lancashire.png" alt="Lancaster Wins!" title="Lancaster Wins!" />
+					<?php } else { ?>
+						<img src="/images/version2/rose_draw.png" alt="Draw!" title="Draw!" />
+					<?php } ?>
+					&nbsp;
+				</td>
+			<?php } else { ?>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+			<?php } ?>
+		</tr>
+		<?php } ?>
+	</table>
+</div>

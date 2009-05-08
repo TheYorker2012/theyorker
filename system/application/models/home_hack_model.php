@@ -14,6 +14,42 @@ class Home_Hack_Model extends Model {
 		parent::Model();
 	}
 
+	function getArticlesByTags ($tags, $number = 4, $ignore_articles = array())
+	{
+		$params = $tags;
+		$inputs = array_fill(0, count($tags), '?');
+		$params[] = count($tags);
+		$params[] = $number;
+		$sql = 'SELECT		a.article_id AS id,
+							UNIX_TIMESTAMP(a.article_publish_date) AS date,
+							ac.article_content_heading AS headline,
+							ac.article_content_blurb AS blurb,
+							pr.photo_request_chosen_photo_id AS photo_id,
+							pr.photo_request_title AS photo_title,
+							COUNT(tags.tag_id) AS tag_count
+				FROM		articles AS a,
+							article_contents AS ac,
+							article_tags,
+							tags,
+							photo_requests AS pr
+				WHERE		a.article_id = article_tags.article_tag_article_id
+				AND			article_tags.article_tag_tag_id = tags.tag_id
+				AND			tags.tag_name IN (' . implode(',', $inputs) . ')
+				AND			UNIX_TIMESTAMP(a.article_publish_date) < UNIX_TIMESTAMP()
+				AND			a.article_pulled = 0
+				AND			a.article_deleted = 0
+				AND			a.article_live_content_id IS NOT NULL
+				AND			ac.article_content_id = a.article_live_content_id
+				AND			pr.photo_request_article_id = a.article_id
+				AND			a.article_thumbnail_photo_id = pr.photo_request_relative_photo_number
+				GROUP BY	a.article_id
+				HAVING		tag_count = ?
+				ORDER BY	a.article_publish_date DESC
+				LIMIT		0, ?';
+		$query = $this->db->query($sql, $params);
+		return $query->result_array();
+	}
+
 	function getLatestArticleIds($types) {
 		$params = array();
 		$result = array();
@@ -24,7 +60,7 @@ class Home_Hack_Model extends Model {
 			FROM 
 				content_types
 			LEFT JOIN 
-				content_types AS child 
+				content_types AS child
 			ON
 				child.content_type_parent_content_type_id = content_types.content_type_id 
 			OR

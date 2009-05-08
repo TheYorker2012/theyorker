@@ -138,7 +138,7 @@ class Article extends Controller
 		$errors = array();
 		if (empty($article['content_heading'])) $errors[] = 'Headline not specified.';
 		if (empty($article['content_subtext'])) $errors[] = 'Blurb not specified.';
-		if (empty($article['thumbnail_photo_id'])) $errors[] = 'Photo to use for article thumbnails not selected.';
+		if ($article['thumbnail_photo_id'] === null) $errors[] = 'Photo to use for article thumbnails not selected.';
 
 		$reporters = $this->article_model->getReportersForArticle($article_id);
 		if (empty($reporters)) $errors[] = 'At least one reporter must be assigned and have accepted to write this article. All reporters must have a business card also.';
@@ -274,6 +274,10 @@ class Article extends Controller
 	{
 		if (!CheckPermissions('office')) return;
 		if (!CheckRolePermissions('ARTICLE_ADD')) return;
+
+		$article_id = $this->article_model->create($this->user_auth->entityId);
+
+		redirect('/office/article/' . $article_id);
 	}
 
 

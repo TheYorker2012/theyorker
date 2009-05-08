@@ -19,6 +19,18 @@ class Article_model extends Model
 	 *	ARTICLE MANAGER (v2.0)
 	 */
 
+	function create ($user_id)
+	{
+		$sql = 'INSERT INTO	articles
+			SET		article_request_entity_id = ?';
+		$query = $this->db->query($sql, array($user_id));
+		$article_id = $this->db->insert_id();
+
+		$this->newRevision($article_id, $user_id, '', '', '', '', '');
+
+		return $article_id;
+	}
+
 	function getById ($article_id = NULL)
 	{
 		$article = array();

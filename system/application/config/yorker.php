@@ -26,6 +26,8 @@ $config['rss_feed_stats'] = false;
 $config['enable_adsense'] = false;
 $config['enable_analytics'] = false;
 
+$config['twitter_feed_userid'] = 'theyorkeruk';
+$config['twitter_feed_passwd'] = 'y0rk3rw1nbu4';
 $config['twitter_admin_userid'] = 'ykr';
 $config['twitter_admin_passwd'] = 'naG88fEn@laTh46ButT';
 

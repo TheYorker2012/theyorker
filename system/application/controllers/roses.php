@@ -20,8 +20,12 @@ class Roses extends Controller
 	{
 		if (!CheckPermissions('public')) return;
 
-		// Obtain banner for homepage
-		$data['banner'] = $this->home_model->GetBannerImageForHomepage('sport');
+		$data = array();
+		$data['liveblog'] = $this->home_hack_model->getArticlesByTags(array('Roses 2009', 'liveblog'), 1);
+		$data['others'] = $this->home_hack_model->getArticlesByTags(array('Roses 2009'), 15);
+
+		$sql = 'SELECT * FROM roses_scores ORDER BY event_time ASC';
+		$data['events'] = $this->db->query($sql)->result_array();
 
 		$this->pages_model->SetPageCode('homepage_roses');
 		$this->main_frame->SetData('menu_tab', 'roses');
