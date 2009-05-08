@@ -24,6 +24,9 @@
 		echo('</div>');
 	}
 	?>
+	<div style="text-align:center">
+		<a href="/news/<?php echo($liveblog[0]['id']); ?>">Read more...</a>
+	</div>
 </div>
 
 <?php function ArticleList ($section, $articles, $last = false) {
