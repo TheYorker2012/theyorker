@@ -21,7 +21,7 @@ class Roses extends Controller
 		if (!CheckPermissions('public')) return;
 
 		// Obtain banner for homepage
-		$data['banner'] = $this->Home_Model->GetBannerImageForHomepage('sport');
+		$data['banner'] = $this->home_model->GetBannerImageForHomepage('sport');
 
 		$this->pages_model->SetPageCode('homepage_roses');
 		$this->main_frame->SetData('menu_tab', 'roses');
