@@ -708,8 +708,8 @@ class Liveblog extends Controller
 		$o .= '&chxt=x,r';
 
 		// Range
-		$o .= '&chxr=1,0,140,25';
-		$o .= '&chds=0,140,0,140';
+		$o .= '&chxr=1,0,180,25';
+		$o .= '&chds=0,180,0,180';
 
 		$sql = 'SELECT * FROM roses_scores WHERE event_score_time IS NOT NULL ORDER BY event_score_time ASC';
 		$query = $this->db->query($sql);
