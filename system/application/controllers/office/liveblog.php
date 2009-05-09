@@ -607,6 +607,10 @@ class Liveblog extends Controller
 			$rev_data = $this->article_model->GetRevisionData($revision);
 			//$revision = $this->article_model->CreateNewRevision($article_id, $user_id, $rev_data['headline'], $rev_data['subheadline'], $rev_data['subtext'], $rev_data['blurb'], $content['all']['wikitext'], $content['all']['cache']);
 			$content['all']['wikitext'] = '!!! DO NOT EDIT THIS ARTICLE, THIS IS A LIVE BLOG, SPEAK TO webmaster@theyorker.co.uk INSTEAD !!!';
+
+			$score = $this->_getScore();
+			$rev_data['subtext'] = "YORK " . $score['york'] . " - LANCASTER " . $score['lancs'];
+
 			$revision = $this->article_model->CreateNewRevision($article_id, $user_id, $rev_data['headline'], $rev_data['subheadline'], $rev_data['subtext'], $rev_data['blurb'], $content['all']['wikitext'], $content['all']['cache']);
 			$publish_date = $this->roses_model->getPublishDate($article_id);
 			$this->requests_model->PublishArticle($article_id,$revision,$publish_date);
