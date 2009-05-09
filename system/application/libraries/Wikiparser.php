@@ -439,7 +439,7 @@ class Wikiparser {
 			if (!empty($mediaplayer_type)) {
 				switch ($mediaplayer_type) {
 					case 'ury':
-						$output .= 'so.addVariable("image",/images/prototype/news/mediaplayer-ury.png"");';
+						$output .= 'so.addVariable("image","/images/prototype/news/mediaplayer-ury.png");';
 						$output .= 'so.addVariable("link","http://ury.york.ac.uk");';
 						$output .= 'so.addVariable("displayclick","link");';
 						$output .= 'so.addVariable("icons","false");';
