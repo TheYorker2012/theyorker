@@ -302,8 +302,8 @@ class Liveblog extends Controller
 			$this->load->library('wikiparser');
 			// Set winning team indicators
 			$this->wikiparser->add_image_override(-1, '<img src="/images/version2/rose_lancashire.png" alt="Lancaster" />', 'Lancaster Win');
-			$this->wikiparser->add_image_override(-2, '<img src="/images/version2/news/rose_yorkshire.png" alt="York Win" />', 'York Win');
-			$this->wikiparser->add_image_override(-3, '<img src="/images/version2/news/rose_draw.png" alt="Draw" />', 'Draw');
+			$this->wikiparser->add_image_override(-2, '<img src="/images/version2/rose_yorkshire.png" alt="York Win" />', 'York Win');
+			$this->wikiparser->add_image_override(-3, '<img src="/images/version2/rose_draw.png" alt="Draw" />', 'Draw');
 			$photo_requests = $this->photos_model->GetPhotoRequestsForArticle($article_id);
 			foreach ($photo_requests as $photo) {
 				$this->wikiparser->add_image_override($photo['photo_number'], $this->image->getThumb($photo['photo_id'], $photo['photo_codename'], true), $photo['photo_caption']);
@@ -488,9 +488,9 @@ class Liveblog extends Controller
 									$score_york = (isset($valid[$cmds[3]])) ? $valid[$cmds[3]] : $cmds[3];
 									$this->roses_model->setResult($event->event_id, $score_lancs, $score_york, date('Y-m-d H:i:s'));
 									// Set winning team indicators
-									$this->wikiparser->add_image_override(-1, '<img src="/images/prototype/news/rose_lancashire.png" alt="Lancaster" />', 'Lancaster Win');
-									$this->wikiparser->add_image_override(-2, '<img src="/images/prototype/news/rose_yorkshire.png" alt="York Win" />', 'York Win');
-									$this->wikiparser->add_image_override(-3, '<img src="/images/prototype/news/rose_draw.png" alt="Draw" />', 'Draw');
+									$this->wikiparser->add_image_override(-1, '<img src="/images/version2/rose_lancashire.png" alt="Lancaster" />', 'Lancaster Win');
+									$this->wikiparser->add_image_override(-2, '<img src="/images/version2/rose_yorkshire.png" alt="York Win" />', 'York Win');
+									$this->wikiparser->add_image_override(-3, '<img src="/images/version2/rose_draw.png" alt="Draw" />', 'Draw');
 									// Add posted time to blog entry
 									if ($event->event_score_time === NULL) {
 										$blog_entry = "'''" . date('H:i') . "''' ";
@@ -618,9 +618,9 @@ class Liveblog extends Controller
 		$this->load->model('roses_model');
 		$this->load->library('wikiparser');
 		// Set winning team indicators
-		$this->wikiparser->add_image_override(-1, '<img src="/images/prototype/news/rose_lancashire.png" alt="Lancaster" />', 'Lancaster Win');
-		$this->wikiparser->add_image_override(-2, '<img src="/images/prototype/news/rose_yorkshire.png" alt="York Win" />', 'York Win');
-		$this->wikiparser->add_image_override(-3, '<img src="/images/prototype/news/rose_draw.png" alt="Draw" />', 'Draw');
+		$this->wikiparser->add_image_override(-1, '<img src="/images/version2/rose_lancashire.png" alt="Lancaster" />', 'Lancaster Win');
+		$this->wikiparser->add_image_override(-2, '<img src="/images/version2/rose_yorkshire.png" alt="York Win" />', 'York Win');
+		$this->wikiparser->add_image_override(-3, '<img src="/images/version2/rose_draw.png" alt="Draw" />', 'Draw');
 		$result = $this->roses_model->getAllResults();
 		$content = '';
 		foreach ($result as $r) {
