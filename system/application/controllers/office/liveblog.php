@@ -438,7 +438,7 @@ class Liveblog extends Controller
 				$score = $this->_getScore();
 				// Post to public Twitter feed
 				$TwitterFeed = new TwitterXML($this->config->item('twitter_feed_userid'), $this->config->item('twitter_feed_passwd'));
-				$TwitterFeed->updateStatus('#Roses2009 YORK ' . $score['york'] . ' LANCASTER ' . $score['lancs'] . ' -' . $twitter_update);
+				$TwitterFeed->updateStatus('#Roses2009 YORK ' . $score['york'] . ' LANCASTER ' . $score['lancs'] . ' - ' . $twitter_update);
 			}
 			//$this->_updateResults ($user->user_entity_id);
 			redirect('/office/liveblog/scores');
