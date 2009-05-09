@@ -408,8 +408,19 @@ class Wikiparser {
 			static $mediaplayer_count = 0;
 			$mediaplayer_count++;
 			$mediaplayer_type = (!empty($matches[5])) ? str_replace('|', '', $matches[5]) : '';
-			$control_width = $mediaplayer_type == 'sound' || (strlen($href) > 4 && substr($href, -4) == '.mp3') ? 340 : 580;
-			$control_height = $mediaplayer_type == 'sound' || (strlen($href) > 4 && substr($href, -4) == '.mp3') ? 20 : 346;
+			if ($mediaplayer_type == 'ury') {
+				// URY Audio
+				$control_width = 340;
+				$control_height = 50;
+			} elseif ($mediaplayer_type == 'sound' || (strlen($href) > 4 && substr($href, -4) == '.mp3')) {
+				// Normal Audio
+				$control_width = 340;
+				$control_height = 20;
+			} else {
+				// Video
+				$control_width = 580;
+				$control_height = 346;
+			}
 			$output = '
 				<div id="mp' . $mediaplayer_count . '_container" style="text-align:center">
 					<div style="border: 1px solid #999999;">
@@ -424,18 +435,35 @@ class Wikiparser {
 				so.addParam("allowfullscreen","true");
 				// File properties
 				so.addVariable("file","' . $href . '");
-' . (!empty($mediaplayer_type) ? 'so.addVariable("type","' . $mediaplayer_type . '");' : '') . '
-//				so.addVariable("image","##TODO##");
+				';
+			if (!empty($mediaplayer_type)) {
+				switch ($mediaplayer_type) {
+					case 'ury':
+						$output .= 'so.addVariable("image",/images/prototype/news/mediaplayer-ury.png"");';
+						$output .= 'so.addVariable("link","http://ury.york.ac.uk");';
+						$output .= 'so.addVariable("displayclick","link");';
+						$output .= 'so.addVariable("icons","false");';
+						$output .= 'so.addVariable("type","sound");';
+						$output .= 'so.addVariable("screencolor","000000");';
+						break;
+					default:
+						$output .= 'so.addVariable("type","' . $mediaplayer_type .'");';
+						$output .= 'so.addVariable("screencolor","FFFFFF");';
+				}
+			} else {
+				$output .= 'so.addVariable("logo","/images/prototype/news/video_overlay_icon.png");';
+				$output .= 'so.addVariable("screencolor","FFFFFF");';
+			}
+			$output .= '
 				// Colours
 				so.addVariable("backcolor","FF6A00");
 				so.addVariable("frontcolor","FFFFFF");
 				so.addVariable("lightcolor","FFFFFF");
-				so.addVariable("screencolor","FFFFFF");
 				// Layout
 				so.addVariable("height","' . $control_height . '");
 				so.addVariable("width","' . $control_width . '");
 				// Behaviour
-				so.addVariable("logo","/images/prototype/news/video_overlay_icon.png");
+				so.addVariable("volume","100");
 				// External
 				so.addVariable("id","' . $href . '");
 				// Plugins
