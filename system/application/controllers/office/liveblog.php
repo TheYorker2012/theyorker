@@ -707,6 +707,10 @@ class Liveblog extends Controller
 		$o .= '&chco=000000,ba0000';
 		$o .= '&chxt=x,r';
 
+		// Range
+		$o .= '&chxr=1,0,140,25';
+		$o .= '&chds=0,140,0,140';
+
 		$sql = 'SELECT * FROM roses_scores WHERE event_score_time IS NOT NULL ORDER BY event_score_time ASC';
 		$query = $this->db->query($sql);
 		$all_count = $query->num_rows();
