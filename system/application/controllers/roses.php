@@ -23,9 +23,26 @@ class Roses extends Controller
 		$data = array();
 		$data['liveblog'] = $this->home_hack_model->getArticlesByTags(array('Roses 2009', 'liveblog'), 1);
 		$data['others'] = $this->home_hack_model->getArticlesByTags(array('Roses 2009'), 15);
-		$sql = 'SELECT article_liveblog_wikitext_cache AS cache FROM article_liveblog WHERE article_liveblog_article_id = ? AND article_liveblog_deleted = 0 ORDER BY article_liveblog_posted_time DESC LIMIT 0, 5';
+
+		$sql = 'SELECT article_liveblog_wikitext AS text FROM article_liveblog WHERE article_liveblog_article_id = ? AND article_liveblog_deleted = 0 ORDER BY article_liveblog_posted_time DESC LIMIT 0, 5';
 		$query = $this->db->query($sql, array($data['liveblog'][0]['id']));
-		$data['latest'] = $query->result_array();
+		$cache = '';
+		foreach ($query->result_array() as $row) {
+			$cache .= $row['text'] . "\n\n";
+		}
+		$this->load->library('image');
+		$this->load->model('photos_model');
+		$this->load->library('wikiparser');
+		$this->wikiparser->add_image_override(-1, '<img src="/images/version2/rose_lancashire.png" alt="Lancaster" />', 'Lancaster Win');
+		$this->wikiparser->add_image_override(-2, '<img src="/images/version2/rose_yorkshire.png" alt="York Win" />', 'York Win');
+		$this->wikiparser->add_image_override(-3, '<img src="/images/version2/rose_draw.png" alt="Draw" />', 'Draw');
+		$photo_requests = $this->photos_model->GetPhotoRequestsForArticle($data['liveblog'][0]['id']);
+		foreach ($photo_requests as $photo) {
+			$this->wikiparser->add_image_override($photo['photo_number'], $this->image->getThumb($photo['photo_id'], 'small', true), $photo['photo_caption']);
+		}
+		$cache = $this->wikiparser->parse($cache);
+		$data['latest'] = array(array('cache' => $cache));
+
 		$sql = 'SELECT * FROM roses_scores ORDER BY event_time ASC';
 		$data['events'] = $this->db->query($sql)->result_array();
 
