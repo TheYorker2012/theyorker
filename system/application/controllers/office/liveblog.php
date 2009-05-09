@@ -700,5 +700,102 @@ class Liveblog extends Controller
 		$this->requests_model->PublishArticle($article_id,$revision,$publish_date);
 	}
 
+	function roses2009 ()
+	{
+		$o = 'http://chart.apis.google.com/chart?chs=635x100';
+		$o .= '&cht=lxy';
+		$o .= '&chco=000000,ba0000';
+		$o .= '&chxt=x,r';
+
+		$sql = 'SELECT * FROM roses_scores WHERE event_score_time IS NOT NULL ORDER BY event_score_time ASC';
+		$query = $this->db->query($sql);
+		$all_count = $query->num_rows();
+		$results = $query->result_array();
+		$score_york = 0;
+		$score_lancs = 0;
+		$scores_york = array();
+		$scores_lancs = array();
+		foreach ($results as $r) {
+			if ($r['event_york_score'] > $r['event_lancaster_score']) {
+				$score_york += $r['event_points'];
+			} else if ($r['event_york_score'] < $r['event_lancaster_score']) {
+				$score_lancs += $r['event_points'];
+			} else {
+				$score_york += $r['event_points'] / 2;
+				$score_lancs += $r['event_points'] / 2;
+			}
+			$scores_york[] = $score_york;
+			$scores_lancs[] = $score_lancs;
+		}
+		$o .= '&chd=t:-1|' . implode(',', $scores_york) . '|-1|' . implode(',', $scores_lancs) . '';
+
+		$fri = mktime(8, 0, 0, 5, 8, 2009);
+		$sat = mktime(8, 0, 0, 5, 9, 2009);
+		$sun = mktime(8, 0, 0, 5, 10, 2009);
+		$sql = 'SELECT COUNT(*) AS count FROM roses_scores WHERE event_score_time > ? AND event_score_time < ?';
+		$fri_count = $this->db->query($sql, array($fri, $fri + (60*60*24)))->row_array();
+		$sat_count = $this->db->query($sql, array($sat, $sat + (60*60*24)))->row_array();
+		$sun_count = $this->db->query($sql, array($sun, $sun + (60*60*24)))->row_array();
+
+		$left_count = $all_count - $fri_count['count'] - $sat_count['count'] - $sun_count['count'];
+		$labels = array();
+		for ($i = 0; $i < $left_count; $i++) $labels[] = '';
+		if ($fri_count['count'] > 0) {
+			$labels[] = 'Fri';
+			for ($i = 1; $i < $fri_count['count']; $i++) $labels[] = '';
+		}
+		if ($sat_count['count'] > 0) {
+			$labels[] = 'Sat';
+			for ($i = 1; $i < $sat_count['count']; $i++) $labels[] = '';
+		}
+		if ($sun_count['count'] > 0) {
+			$labels[] = 'Sun';
+			for ($i = 1; $i < $sun_count['count']; $i++) $labels[] = '';
+		}
+		$o .= '&chxl=0:|' . implode('|', $labels) . '|';
+
+		header('Location: ' . $o);
+		die();
+
+		$o .= '&chxt=y,x';
+		$o .= '&chxs=0,000000,11,1,lt,000000|1,000000,11,0,t,000000';
+		$o .= '&chxtc=1,0';
+		$o .= '&chts=000000,14';
+		$o .= '&chxp=1,50';
+		$o .= '&chco=20c1f0';
+		$o .= '&chm=N+*,000000,0,-1,11,1';
+
+		$title = str_replace(' ', '+', $title);
+		$quota = round(array_sum($values) / ($position_count + 1), 1);
+		$candidates = implode('|', array_reverse($people));
+
+		$o .= '&chtt=' . $title;
+		$o .= '&chxl=0:|' . $candidates . '|1:|Vote+Quota+=+' . $quota . '|';
+		$o .= '&chd=t:' . implode(',', $values);
+
+		if ($quota > $max) $max = $quota;
+		$max += 50;
+		//$o .= '&chds=0,' . array_sum($values);
+		$o .= '&chds=0,' . $max;
+		$quota_line = round(100 * ($quota / $max), 1);
+		$o .= '&chg=200,200,4,4,' . $quota_line . ',-1';
+
+
+		$tmp = '';
+		$bar_height = round(1 / count($values), 3);
+		$new_values = array_reverse($values);
+		$win_quota = $quota;
+		$ordered_values = sort($values);
+		if (!empty($ordered_values[$position_count - 1]) && $ordered_values[$position_count - 1] > $win_quota) {
+			$win_quota = $ordered_values[$position_count - 1];
+		}
+		foreach ($new_values as $v) {
+			$tmp .= ',' . ($v >= $win_quota ? 'dddddd' : 'ffffff') . ',' . $bar_height;
+		}
+		$o .= '&chf=c,ls,90' . $tmp;
+
+		return $o;
+	}
+
 }
 ?>

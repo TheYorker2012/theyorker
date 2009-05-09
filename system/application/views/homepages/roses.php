@@ -49,6 +49,13 @@
 	<?php /*if ($last) { ?><div class="clear"></div><?php }*/ ?>
 <?php } ?>
 
+<div style="text-align:center;'" class="FlexiBox Box23">
+	<div class="ArticleListTitle">
+		Point History
+	</div>
+	<img src="/office/liveblog/roses2009" alt="Roses Score History" />
+</div>
+
 <div class="FlexiBox Box23">
 	<div class="ArticleListTitle">
 		Fixtures &amp; Results
