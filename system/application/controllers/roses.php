@@ -47,6 +47,47 @@ class Roses extends Controller
 		$data['score_york'] = $score_york;
 		$data['score_lancs'] = $score_lancs;
 
+		// Flickr
+
+		$sql = 'SELECT * FROM cron_updates WHERE service_name = "roses_flickr_photos" && last < ?';
+		$query = $this->db->query($sql, array(mktime() - (60*10)));
+		if ($query->num_rows() > 0) {
+			$params = array(
+				'api_key'		=>	'117e4fb7e8f54e5425b7dc4e28dec883',
+				'method'		=>	'flickr.photosets.getPhotos',
+				'format'		=>	'php_serial',
+				'photoset_id'	=>	'72157617796737439',
+				'extras'		=>	'license,owner,date_upload',
+				'per_page'		=>	'500',
+				'page'			=>	'1'
+			);
+			$encoded_params = array();
+			foreach ($params as $key => $value) {
+				$encoded_params[] = urlencode($key) . '=' . urlencode($value);
+			}
+			$url = 'http://api.flickr.com/services/rest/?' . implode('&', $encoded_params);
+			$response = file_get_contents($url);
+			$response = unserialize($response);
+			$sql = 'REPLACE INTO flickr_photos SET photo = ?, link = ?, title = ?, added = ?';
+			if (!empty($response['photoset']['photo'])) {
+				foreach ($response['photoset']['photo'] as $photo) {
+					$photo['owner'] = 'theyorker';
+					$query = $this->db->query($sql, array(
+						'http://farm' . $photo['farm'] . '.static.flickr.com/' . $photo['server'] . '/' . $photo['id'] . '_' . $photo['secret'] . '_s.jpg',
+						'http://www.flickr.com/photos/' . $photo['owner'] . '/' . $photo['id'],
+						$photo['title'],
+						$photo['dateupload']
+					));
+				}
+			}
+			$sql = 'UPDATE cron_updates SET last = ? WHERE service_name = "roses_flickr_photos"';
+			$query = $this->db->query($sql, array(mktime()));
+		}
+
+        $sql = 'SELECT * FROM flickr_photos ORDER BY added DESC LIMIT 0, 16';
+        $data['photos'] = $this->db->query($sql)->result_array();
+		// Flickr
+
 		$this->pages_model->SetPageCode('homepage_roses');
 		$this->main_frame->SetData('menu_tab', 'roses');
 		$this->main_frame->IncludeCss('stylesheets/home.css');

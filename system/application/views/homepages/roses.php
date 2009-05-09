@@ -96,6 +96,44 @@
 	</table>
 </div>
 
+<script type="text/javascript">
+function flickr_enlarge (e, photo) {
+	preview_img = document.getElementById('flickr_img');
+	if (preview_img.src != photo.src.replace('_s.jpg','_m.jpg')) {
+		preview_img.src = photo.src.replace('_s.jpg','_m.jpg');
+		preview_img.alt = photo.alt;
+		preview_img.title = photo.title;
+	}
+}
+</script>
+
+<div style="float:left;" class="FlexiBox Box13 FlexiBoxLast">
+	<div class="ArticleListTitle">
+		<a href="http://www.flickr.com/photos/theyorker/sets/72157617796737439/">latest photos</a>
+	</div>
+	<div style="text-align:center">
+	<?php
+	$first = true;
+	foreach ($photos as $photo) {
+		if ($first) {
+			echo('<div style="text-align:center">');
+			echo('<a id="flickr_link" target="_blank" href="http://www.flickr.com/photos/theyorker/sets/72157617796737439/">');
+			echo('<img id="flickr_img" src="' . str_replace('_s', '_m', $photo['photo']) . '" alt="' . $photo['title'] . '" />');
+			echo('</a>');
+			echo('</div>');
+			$first = false;
+		}
+		echo('<a href="' . $photo['link'] . '" target="_blank">');
+		echo('<img style="margin-right:2px" src="' . $photo['photo'] . '" alt="' . $photo['title'] . '" title="' . $photo['title'] . '" onmousemove="flickr_enlarge(event, this);" />');
+		echo('</a>');
+	}
+	?>
+	</div>
+	<div style="text-align:center">
+		<a href="http://www.flickr.com/photos/theyorker/sets/72157617796737439/" target="_blank">View more...</a>
+	</div>
+</div>
+
 <?php
 ArticleList('Roses 2009 Articles', $others, true);
 ?>
