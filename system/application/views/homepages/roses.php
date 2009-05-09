@@ -56,11 +56,30 @@
 	<img src="/office/liveblog/roses2009" alt="Roses Score History" />
 </div>
 
+<?php
+$fri = mktime(8, 0, 0, 5, 8, 2009);
+$sat = mktime(8, 0, 0, 5, 9, 2009);
+$sun = mktime(8, 0, 0, 5, 10, 2009);
+?>
+<script type="text/javascript">
+function switchResults (name) {
+	document.getElementById('resultFri').style.display = 'none';
+	document.getElementById('resultSat').style.display = 'none';
+	document.getElementById('resultSun').style.display = 'none';
+	document.getElementById('result' + name).style.display = 'block';
+	return false;
+}
+</script>
 <div class="FlexiBox Box23">
 	<div class="ArticleListTitle">
 		Fixtures &amp; Results
 	</div>
-	<table style="width:100%">
+	<div style="text-align:center">
+		<a href="#" onclick="return switchResults('Fri');">Friday</a>&nbsp;&nbsp;-&nbsp;&nbsp;
+		<a href="#" onclick="return switchResults('Sat');">Saturday</a>&nbsp;&nbsp;-&nbsp;&nbsp;
+		<a href="#" onclick="return switchResults('Sun');">Sunday</a>
+	</div>
+	<table style="width:100%;<?php if(mktime() > $sat) { ?>display:none;<?php } ?>" id="resultFri">
 		<tr>
 			<th>Start</th>
 			<th>Sport</th>
@@ -70,7 +89,98 @@
 			<th>Score</th>
 			<th>Winner</th>
 		</tr>
-		<?php foreach ($events as $event) { ?>
+		<?php
+		foreach ($events as $event) {
+			if (strtotime($event['event_time']) >= $sat) continue;
+		?>
+		<tr>
+			<td><?php echo(xml_escape(date('D H:i', strtotime($event['event_time'])))); ?></td>
+			<td><?php echo(xml_escape($event['event_sport'])); ?></td>
+			<td><?php echo(xml_escape($event['event_name'])); ?></td>
+			<td><?php echo(xml_escape($event['event_venue'])); ?></td>
+			<td><?php echo(xml_escape($event['event_points'])); ?></td>
+			<?php if ($event['event_score_time'] !== NULL) { ?>
+				<td>
+					<?php
+					if ($event['event_york_score'] > 0 || $event['event_lancaster_score'] > 0) {
+						echo(xml_escape($event['event_york_score'] . ' - ' . $event['event_lancaster_score']));
+					} ?>
+				</td>
+				<td>
+					<?php if ($event['event_york_score'] > $event['event_lancaster_score']) { ?>
+						<img src="/images/version2/rose_yorkshire.png" alt="York Wins!" title="York Wins!" />
+					<?php } elseif ($event['event_york_score'] < $event['event_lancaster_score']) { ?>
+						<img src="/images/version2/rose_lancashire.png" alt="Lancaster Wins!" title="Lancaster Wins!" />
+					<?php } else { ?>
+						<img src="/images/version2/rose_draw.png" alt="Draw!" title="Draw!" />
+					<?php } ?>
+					&nbsp;
+				</td>
+			<?php } else { ?>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+			<?php } ?>
+		</tr>
+		<?php } ?>
+	</table>
+	<table style="width:100%;<?php if(mktime() < $sat || mktime() > $sun) { ?>display:none;<?php } ?>" id="resultSat">
+		<tr>
+			<th>Start</th>
+			<th>Sport</th>
+			<th>Event</th>
+			<th>Venue</th>
+			<th>Points</th>
+			<th>Score</th>
+			<th>Winner</th>
+		</tr>
+		<?php
+		foreach ($events as $event) {
+			if (strtotime($event['event_time']) < $sat || strtotime($event['event_time']) >= $sun) continue;
+		?>
+		<tr>
+			<td><?php echo(xml_escape(date('D H:i', strtotime($event['event_time'])))); ?></td>
+			<td><?php echo(xml_escape($event['event_sport'])); ?></td>
+			<td><?php echo(xml_escape($event['event_name'])); ?></td>
+			<td><?php echo(xml_escape($event['event_venue'])); ?></td>
+			<td><?php echo(xml_escape($event['event_points'])); ?></td>
+			<?php if ($event['event_score_time'] !== NULL) { ?>
+				<td>
+					<?php
+					if ($event['event_york_score'] > 0 || $event['event_lancaster_score'] > 0) {
+						echo(xml_escape($event['event_york_score'] . ' - ' . $event['event_lancaster_score']));
+					} ?>
+				</td>
+				<td>
+					<?php if ($event['event_york_score'] > $event['event_lancaster_score']) { ?>
+						<img src="/images/version2/rose_yorkshire.png" alt="York Wins!" title="York Wins!" />
+					<?php } elseif ($event['event_york_score'] < $event['event_lancaster_score']) { ?>
+						<img src="/images/version2/rose_lancashire.png" alt="Lancaster Wins!" title="Lancaster Wins!" />
+					<?php } else { ?>
+						<img src="/images/version2/rose_draw.png" alt="Draw!" title="Draw!" />
+					<?php } ?>
+					&nbsp;
+				</td>
+			<?php } else { ?>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+			<?php } ?>
+		</tr>
+		<?php } ?>
+	</table>
+	<table style="width:100%;<?php if(mktime() < $sun) { ?>display:none;<?php } ?>" id="resultSun">
+		<tr>
+			<th>Start</th>
+			<th>Sport</th>
+			<th>Event</th>
+			<th>Venue</th>
+			<th>Points</th>
+			<th>Score</th>
+			<th>Winner</th>
+		</tr>
+		<?php
+		foreach ($events as $event) {
+			if (strtotime($event['event_time']) < $sun) continue;
+		?>
 		<tr>
 			<td><?php echo(xml_escape(date('D H:i', strtotime($event['event_time'])))); ?></td>
 			<td><?php echo(xml_escape($event['event_sport'])); ?></td>
