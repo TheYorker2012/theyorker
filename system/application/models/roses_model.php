@@ -24,7 +24,7 @@ class Roses_model extends Model
 					event_points,
 					event_lancaster_score,
 					event_york_score,
-					UNIX_TIMESTAMP(event_score_time) AS event_score_time
+					event_score_time AS event_score_time
 			FROM		roses_scores
 			ORDER BY	event_time ASC,
 					event_sport ASC';
