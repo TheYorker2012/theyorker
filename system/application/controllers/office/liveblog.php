@@ -418,8 +418,8 @@ class Liveblog extends Controller
 			$twitter_update .= ' ' . $event->event_sport . ' ' . $event->event_name;
 			// Add score if available
 			if (($score_lancs >= 0) || ($score_york >= 0)) {
-				$blog_entry .= " '''" . $score_lancs . '-' . $score_york . "'''";
-				$twitter_update .= ' ' . $score_lancs . '-' . $score_york;
+				$blog_entry .= " '''" . $score_york . '-' . $score_lancs . "'''";
+				$twitter_update .= ' ' . $score_york . '-' . $score_lancs;
 			}
 			$blog_entry_cache = $this->wikiparser->parse($blog_entry);
 			// Either add new blog entry or update existing
@@ -433,6 +433,12 @@ class Liveblog extends Controller
 			$update = $this->_updateArticle($article_id, $this->user_auth->entityId);
 			if ($update !== TRUE) {
 				$error = $update;
+			}
+			if (!empty($twitter_update)) {
+				$score = $this->_getScore();
+				// Post to public Twitter feed
+				$TwitterFeed = new TwitterXML($this->config->item('twitter_feed_userid'), $this->config->item('twitter_feed_passwd'));
+				$TwitterFeed->updateStatus('#Roses2009 YORK ' . $score['york'] . ' LANCASTER ' . $score['lancs'] . ' -' . $twitter_update);
 			}
 			//$this->_updateResults ($user->user_entity_id);
 			redirect('/office/liveblog/scores');
@@ -583,8 +589,8 @@ class Liveblog extends Controller
 	{
 		$article_id = 1682;											// Test article id
 		if (mktime() >= mktime(8,0,0,5,8,2009)) $article_id = 2965;	// Friday
-		if (mktime() >= mktime(8,0,0,5,9,2009)) $article_id = 2965;	// Saturday
-		if (mktime() >= mktime(8,0,0,5,10,2009)) $article_id = 2965;	// Sunday
+		if (mktime() >= mktime(8,0,0,5,9,2009)) $article_id = 2971;	// Saturday
+		if (mktime() >= mktime(8,0,0,5,10,2009)) $article_id = 2972;	// Sunday
 		return $article_id;
 	}
 
@@ -608,6 +614,31 @@ class Liveblog extends Controller
 			return 'ERROR: Article ' . $article_id . ' isn\'t a live blog!';
 		}
 		return TRUE;
+	}
+
+	function _getScore ()
+	{
+		$sql = 'SELECT * FROM roses_scores ORDER BY event_time ASC';
+		$data['events'] = $this->db->query($sql)->result_array();
+
+		$score_york = 0;
+		$score_lancs = 0;
+
+		foreach ($data['events'] as $events) {
+			if (empty($events['event_score_time'])) continue;
+			if ($events['event_york_score'] > $events['event_lancaster_score']) {
+				$score_york += $events['event_points'];
+			} else if ($events['event_york_score'] < $events['event_lancaster_score']) {
+				$score_lancs += $events['event_points'];
+			} else {
+				$score_york += $events['event_points'] / 2;
+				$score_lancs += $events['event_points'] / 2;
+			}
+		}
+
+		$data['york'] = $score_york;
+		$data['lancs'] = $score_lancs;
+		return $data;
 	}
 
 	function _updateResults ($user_id)
