@@ -10,8 +10,8 @@ function update_count(control) {
 	<?php
 	if ($article_id == 1682) echo('TEST');
 	elseif ($article_id == 2965) echo('FRIDAY');
-	elseif ($article_id == 1691) echo('SATURDAY');
-	elseif ($article_id == 1692) echo('SUNDAY');
+	elseif ($article_id == 2971) echo('SATURDAY');
+	elseif ($article_id == 2972) echo('SUNDAY');
 	elseif ($article_id == 2858) echo('Elections 2009');
 	else echo('UNKNOWN');
 	?>
@@ -19,9 +19,9 @@ function update_count(control) {
 	<p>
 		<a href="/office/liveblog/admin/1682">Test Article</a> |
 		<a href="/office/liveblog/admin/2965">FRIDAY</a> |
+		<a href="/office/liveblog/admin/2971">SATURDAY</a> |
+		<a href="/office/liveblog/admin/2972">SUNDAY</a>
 		<!--
-		<a href="/office/liveblog/admin/1691">SATURDAY</a> |
-		<a href="/office/liveblog/admin/1692">SUNDAY</a>
 		<a href="/office/liveblog/admin/2858">Elections 2009</a>
 		-->
 	</p>
