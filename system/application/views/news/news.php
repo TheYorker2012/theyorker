@@ -137,7 +137,7 @@ foreach ($main_article['related_articles'] as $related)
 	
 	<?php if (isset($main_article['article_poll'])) { ?>
 		<?php if ($main_article['article_poll']['info']['is_competition']) { ?>
-			<form id="competition" action="<?php echo($PHP_SELF); ?>" method="post">
+			<form id="competition" action="<?php echo($_SERVER['PHP_SELF']); ?>" method="post">
 				<div class="BlueBox">
 					<h2>Competition</h2>
 					<?php echo($main_article['article_poll']['info']['question']); ?>
@@ -147,6 +147,13 @@ foreach ($main_article['related_articles'] as $related)
 					<?php } else { ?>
 						<fieldset>
 							<div>
+								<label for="york_score">York Score:</label>
+								<input type="text" name="york_score" />
+								<br />
+								<label for="lancs_score">Lancaster Score:</label>
+								<input type="text" name="lancs_score" />
+								<br />
+<?php /*
 								<label for="comp_answer">Answer:</label>
 								<select name="comp_answer" id="comp_answer" size="1">
 									<option selected="selected">&nbsp;</option>
@@ -154,6 +161,7 @@ foreach ($main_article['related_articles'] as $related)
 										<option value="<?php echo($option['id']); ?>"><?php echo($option['name']); ?></option>
 									<?php } ?>
 								</select>
+*/ ?>
 							</div>
 						</fieldset>
 						<p>Competition closes on <?php echo(date('l, jS F Y', $main_article['article_poll']['info']['finish_time'])); ?> at <?php echo(date('H:i', $main_article['article_poll']['info']['finish_time'])); ?></p>

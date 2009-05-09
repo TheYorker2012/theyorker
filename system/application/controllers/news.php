@@ -184,7 +184,7 @@ class News extends Controller {
 		if ($main_article['poll_id'] !== NULL) {
 			$this->load->model('polls_model');
 			$poll_info = $this->polls_model->GetPollDetails($main_article['poll_id']);
-			$poll_options = $this->polls_model->GetPollChoices($main_article['poll_id']);
+			//$poll_options = $this->polls_model->GetPollChoices($main_article['poll_id']);
 			$user_info = $this->polls_model->GetCompetitionContactDetails($this->user_auth->entityId);
 			if ((!$poll_info['deleted']) && (mktime() > $poll_info['start_time'])) {
 				$poll_message = '';
@@ -198,18 +198,23 @@ class News extends Controller {
 					$poll_message = 'Thank you for entering this competition.';
 				} elseif (mktime() > $poll_info['finish_time']) {
 					$poll_message = 'Sorry, this competition is now closed.';
-				} elseif (isset($_POST['comp_answer'])) {
+				} elseif (!empty($_POST['york_score']) && !empty($_POST['lancs_score'])) {
+				/* Roses Special Competition */
+				//} elseif (isset($_POST['comp_answer'])) {
 					if (($user_info['user_firstname'] == '') || ($user_info['user_surname'] == '')) {
 						$this->messages->AddMessage('error', 'Please make sure you enter your name before entering this competition.');
-					} elseif ($this->polls_model->IsChoicePartOfPoll($main_article['poll_id'], $_POST['comp_answer'])) {
-						$this->polls_model->SetUserPollVote($main_article['poll_id'], $this->user_auth->entityId, $_POST['comp_answer']);
+					//} elseif ($this->polls_model->IsChoicePartOfPoll($main_article['poll_id'], $_POST['comp_answer'])) {
+					//	$this->polls_model->SetUserPollVote($main_article['poll_id'], $this->user_auth->entityId, $_POST['comp_answer']);
+					} else {
+						$this->load->model('roses_model');
+						$this->roses_model->enterComp($main_article['poll_id'], $this->user_auth->entityId, $_POST['york_score'], $_POST['lancs_score']);
 						$this->messages->AddMessage('success', 'You have successfully been entered into the competition.');
 					}
 					redirect('/news/' . $article_type . '/' . $article_id);
 				}
 				$main_article['article_poll'] = array(
 					'info'		=>	$poll_info,
-					'options'	=>	$poll_options,
+					//'options'	=>	$poll_options,
 					'message'	=>	$poll_message,
 					'user'		=>	$user_info
 				);

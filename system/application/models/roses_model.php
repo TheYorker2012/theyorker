@@ -14,6 +14,15 @@ class Roses_model extends Model
 		parent::Model();
 	}
 
+	function enterComp ($poll_id, $user_id, $york_score, $lancs_score)
+	{
+		$sql = 'INSERT INTO	poll_votes
+			SET		poll_vote_poll_id = ?,
+					poll_vote_user_id = ?,
+					poll_vote_choice_text = ?';
+		$query = $this->db->query($sql, array($poll_id, $user_id, $york_score . '-' . $lancs_score));
+	}
+
 	function getAllResults()
 	{
 		$sql = 'SELECT		UNIX_TIMESTAMP(event_time) AS event_time,
