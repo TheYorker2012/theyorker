@@ -35,7 +35,7 @@ function SpecialInitAssert($Assertion, $FailMessage)
 /// Destroy the current session if it contains no data
 function CloseSessionIfEmpty()
 {
-	if (0 == strlen(session_encode())) {
+	if (0 == strlen(@session_encode())) {
 		session_destroy();
 	}
 }
