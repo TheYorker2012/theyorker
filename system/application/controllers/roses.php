@@ -76,7 +76,7 @@ class Roses extends Controller
 				'photoset_id'	=>	'72157617796737439',
 				'extras'		=>	'license,owner,date_upload',
 				'per_page'		=>	'500',
-				'page'			=>	'1'
+				'page'			=>	'2'
 			);
 			$encoded_params = array();
 			foreach ($params as $key => $value) {
