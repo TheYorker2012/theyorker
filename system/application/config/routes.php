@@ -33,7 +33,7 @@
 |
 */
 
-$route['default_controller'] = "roses";
+$route['default_controller'] = "home";
 $route['scaffolding_trigger'] = "";
 
 $org_name_regex = '[a-z_\-\d]+';
