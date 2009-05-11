@@ -892,9 +892,9 @@ class Crosswords extends Controller
 				);
 				$data['Stats']['winners'] = $crossword_info['winners_so_far'];
 				$data['StatLabels'] = array(
-					//'saves' => 'Total number of saves (approx 30 sec between saves)',
+					//'saves' => 'Total number of saves',
 					'save_users' => 'Number of users who have attempted crossword (based on saves)',
-					'save_mean_per_user' => 'Mean number of saves per user',
+					'save_mean_per_user' => 'Mean number of saves per user (approx 30 secs between saves)',
 					'winners' => 'Number of winners',
 				);
 
