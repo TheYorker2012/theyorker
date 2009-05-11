@@ -881,6 +881,24 @@ class Crosswords extends Controller
 			}
 			else if ('stats' === $operation) {
 				if (!CheckRolePermissions('CROSSWORD_STATS_BASIC')) return;
+
+				// find information about this crossword
+				$data['Stats'] = $this->crosswords_model->CalculateStats(
+					$crossword_info['id'],
+					array(
+						'saves',		// Number of saves
+						'save_users',	// Number of users who have saves
+					)
+				);
+				$data['Stats']['winners'] = $crossword_info['winners_so_far'];
+				$data['StatLabels'] = array(
+					//'saves' => 'Total number of saves (approx 30 sec between saves)',
+					'save_users' => 'Number of users who have attempted crossword (based on saves)',
+					'save_mean_per_user' => 'Mean number of saves per user',
+					'winners' => 'Number of winners',
+				);
+
+				$this->main_frame->SetContentSimple('crosswords/office/crossword_stats', $data);
 			}
 			else {
 				show_404();

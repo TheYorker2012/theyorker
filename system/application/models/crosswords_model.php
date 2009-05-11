@@ -790,6 +790,37 @@ class Crosswords_model extends model
 		return array_values($crosswords);
 	}
 
+	/// Get stats about a crossword.
+	function CalculateStats($crossword_id, $fields)
+	{
+		$result = array();
+		if (in_array('save_users', $fields))
+		{
+			$sql =	'SELECT	COUNT(*) as save_users '.
+					'FROM	`crossword_saves` '.
+					'WHERE	`crossword_save_crossword_id`=? '.
+					'GROUP BY `crossword_save_user_entity_id`';
+			$results = $this->db->query($sql, array($crossword_id))->result_array();
+			$result['save_users'] = count($results);
+			$total = 0;
+			foreach ($results as $item)
+			{
+				$total += (int)$item['save_users'];
+			}
+			$result['save_mean_per_user'] = $total / $result['save_users'];
+			$result['saves'] = $total;
+		}
+		elseif (in_array('saves', $fields))
+		{
+			$sql =	'SELECT	COUNT(*) as saves '.
+					'FROM	`crossword_saves` '.
+					'WHERE	`crossword_save_crossword_id`=?';
+			$results = $this->db->query($sql, array($crossword_id))->result_array();
+			$result['saves'] = (int)$results[0]['saves'];
+		}
+		return $result;
+	}
+
 	/// Get information about all potential authors.
 	function GetAllAuthors()
 	{
