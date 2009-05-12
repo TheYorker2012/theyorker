@@ -45,7 +45,11 @@ function changePreview (option, article_id, article_type, photo_id, photo_title)
 		<?php } ?>
 	</div>
 </div>
-<div class="FlexiBox Box13b FlexiBoxLast"><br /><br /><br /><br /></div>
+<div class="FlexiBox Box13 FlexiBoxLast">
+	<a href="http://www.facebook.com/event.php?eid=111317892288">
+		<img src="/images/adverts/BrownsAdSm.jpg" alt="Vote Browns for British Sandwich Week" />
+	</a>
+</div>
 <div class="clear"></div>
 
 <?php function ArticleList ($section, $articles, $last = false) { ?>
