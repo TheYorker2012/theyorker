@@ -9,6 +9,10 @@ div.HalfColumns div.Column {
 	float: left;
 	width: 50%; 
 }
+div.BlueBox.crossword_box {
+	border: none;
+	margin: 0px;
+}
 div.crossword_preview {
 	clear: both;
 	float: left;
@@ -28,4 +32,10 @@ div.crossword_note {
 	margin-bottom: 0.1em;
 	clear: right;
 	float: right;
+}
+div.crossword_new {
+	float: left;
+	font-weight: bold;
+	font-size: large;
+	color: #FF6A00;
 }

@@ -96,6 +96,27 @@ echo(xml_escape(
 				}
 				?></ol><?php
 			}
+			if (!$Crossword['expired']) {
+				if (null !== $Crossword['expiry']) {
+					$now = new Academic_time(time());
+					$expiry = new Academic_time($Crossword['expiry']);
+					$units = array(
+						'week' => array('weeks', 'week'),
+						'day' => array('days', 'day'),
+						'hour' => array('hours', 'hour'),
+						'min' => array('minutes', 'minute'),
+						'sec' => array('seconds', 'second'),
+					);
+					$diff = Academic_time::DescribeDifference(
+						$units, Academic_time::Difference($now, $expiry, array_keys($units)), 2
+					);
+					?><div class="expiry_time"><?php
+					echo('solutions available in:');
+					?><br /><?php
+					echo(join(', ', $diff));
+					?></div><?php
+				}
+			}
 		?></div><?php
 	}
 

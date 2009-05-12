@@ -42,12 +42,20 @@
 
 			foreach ($category['latest'] as $crossword) {
 				$pub = new Academic_time($crossword['publication']);
-				?><div style="clear: both"></div><?php
+				?><div class="crossword_box BlueBox"><?php
 				?><div class="crossword_preview"><?php
 					?><a href="<?php echo(site_url('crosswords/'.$crossword['id'])); ?>"><?php
 						?><img alt="" src="<?php echo(site_url('images/crosswords/xw.png')); ?>" /><?php
 					?></a><?php
 				?></div><?php
+				// Find if crossword is "new"
+				$now = new Academic_time(time());
+				$since_publication = Academic_time::Difference($pub, $now, array('days'));
+				if (!$crossword['expired'] || $since_publication['days'] < 7)
+				{
+					?><div class="crossword_new">new!</div><?php
+				}
+				// Title and details
 				?><div class="crossword_title"><?php
 					?><a href="<?php echo(site_url('crosswords/'.$crossword['id'])); ?>"><?php
 					echo($pub->Format('D ').$pub->AcademicTermNameUnique().' week '.$pub->AcademicWeek());
@@ -76,6 +84,7 @@
 						?></em><?php
 					}
 				}
+				?></div><?php
 			}
 		?></div><?php
 		?></div><?php

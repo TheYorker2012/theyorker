@@ -584,6 +584,24 @@ class Academic_time
 		}
 		return $result;
 	}
+
+	/// Turn a difference into strings.
+	static function DescribeDifference($Units, $Diff, $MaxUnits = -1)
+	{
+		$result = array();
+		foreach ($Diff as $unit => $amount) {
+			if ($amount != 0) {
+				$result[] = $amount.' '.$Units[$unit][($amount==1)?1:0];
+				if (count($result) == $MaxUnits) {
+					break;
+				}
+			}
+		}
+		if (empty($result)) {
+			$result[] = '0 '.$Units[$unit][0];
+		}
+		return $result;
+	}
 	
 	/**
 	 * @brief Get the start timestamp of an academic term.

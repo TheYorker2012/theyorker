@@ -15,6 +15,9 @@ div.crosswordWinners ol {
 div.crosswordWinners ol li.new_winner {
 	border: 1px solid #999999;
 }
+div.crosswordWinners div.expiry_time {
+	font-size: 8pt;
+}
 /* gold */
 div.crosswordWinners ol li.winner0 {
 	font-weight: bold;
