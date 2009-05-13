@@ -639,6 +639,105 @@ class CrosswordPuzzle
 		return true;
 	}
 
+	/// Generate image.
+	function generateImage($cellsize = 4, $padding = 1, $border = 0, $spacing = 1)
+	{
+		// From GET array
+		if (is_array($cellsize)) {
+			$data = $cellsize;
+			$cellsize = ((isset($data['cellsize']) && is_numeric($data['cellsize']) && (int)$data['cellsize'] > 0)
+				? (int)$data['cellsize'] : 4);
+			if ($cellsize > 50) {
+				$cellsize = 50;
+			}
+			$padding = ((isset($data['padding']) && is_numeric($data['padding']) && (int)$data['padding'] >= 0)
+				? (int)$data['padding'] : 1+(int)($cellsize/15));
+			$border = ((isset($data['border']) && is_numeric($data['border']) && (int)$data['border'] >= 0)
+				? (int)$data['border'] : (int)($cellsize/10));
+			$spacing = ((isset($data['spacing']) && is_numeric($data['spacing']) && (int)$data['spacing'] >= 0)
+				? (int)$data['spacing'] : $padding);
+			if ($spacing >= $cellsize) {
+				$spacing = $cellsize-1;
+			}
+		}
+		$width = $this->m_grid->width();
+		$height = $this->m_grid->height();
+		$preview_img = imagecreate(	$border*2 + ($padding+$cellsize)*$width  + $padding,
+									$border*2 + ($padding+$cellsize)*$height + $padding );
+		$background = imagecolorallocate($preview_img, 0xFF, 0x6A, 0x00 );
+		$text_colour = imagecolorallocate($preview_img, 0x00, 0x00, 0x00 );
+		$space_colour = imagecolorallocate($preview_img, 0xFF, 0xFF, 0xFF);
+
+		$sup_offset = array(
+			(int)($cellsize/10),
+			(int)($cellsize/10)-1,
+		);
+		$space_chars = array(
+			' ' => true,
+			'-' => true,
+		);
+		$sup_fonts = array(
+			5 => 1,
+			15 => 2,
+			30 => 4,
+		);
+		$sup_font = 0;
+		foreach ($sup_fonts as $min_size => $font)
+		{
+			if ($cellsize > $min_size) {
+				$sup_font = $font;
+			}
+		}
+
+		$clueNumber = 0;
+		for ($j = 0; $j < $height; ++$j) {
+			for ($i = 0; $i < $width; ++$i) {
+				$state = $this->m_grid->cellState($i, $j);
+				$used = is_string($state);
+				if ($used) {
+					// Find position
+					$p1 = array(
+						$border + $padding + ($cellsize+$padding)*$i,
+						$border + $padding + ($cellsize+$padding)*$j,
+					);
+					$p2 = array(
+						$p1[0] + $cellsize-1,
+						$p1[1] + $cellsize-1,
+					);
+					// Adjust for spacers
+					$spacers = $this->m_grid->cellSpacers($i, $j);
+					if (isset($space_chars[$spacers[CrosswordGrid::$HORIZONTAL]])) {
+						$p1[0] += $spacing;
+					}
+					elseif (isset($space_chars[$spacers[CrosswordGrid::$VERTICAL]])) {
+						$p1[1] += $spacing;
+					}
+					// Fill in this cell
+					imagefilledrectangle($preview_img, $p1[0],$p1[1], $p2[0],$p2[1], $space_colour);
+
+					// Light numbering
+					$lights = $this->m_grid->lightsAt($i, $j, true);
+					if (!empty($lights)) {
+						++$clueNumber;
+						if ($sup_font > 0) {
+							imagestring($preview_img, $sup_font,
+								$p1[0]+$sup_offset[0],
+								$p1[1]+$sup_offset[1],
+								$clueNumber, $text_colour);
+						}
+					}
+				}
+			}
+		}
+
+		header("Content-type: image/png");
+		imagepng($preview_img);
+		imagecolordeallocate($preview_img, $space_colour);
+		imagecolordeallocate($preview_img, $text_colour);
+		imagecolordeallocate($preview_img, $background);
+		imagedestroy($preview_img);
+	}
+
 	/*
 	 * Private variables
 	 */

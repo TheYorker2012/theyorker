@@ -45,7 +45,7 @@
 				?><div class="crossword_box BlueBox"><?php
 				?><div class="crossword_preview"><?php
 					?><a href="<?php echo(site_url('crosswords/'.$crossword['id'])); ?>"><?php
-						?><img alt="" src="<?php echo(site_url('images/crosswords/xw.png')); ?>" /><?php
+						?><img alt="" src="<?php echo(site_url('crosswords/'.$crossword['id'].'/preview')); ?>" /><?php
 					?></a><?php
 				?></div><?php
 				// Find if crossword is "new"

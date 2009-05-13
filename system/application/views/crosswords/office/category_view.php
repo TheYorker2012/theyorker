@@ -44,7 +44,8 @@
 	}
 	?></ul><?php
 	?><div class="crossword_items"><?php
-		?><div class="crossword_item header"><?php
+		?><div class="crossword_header"><?php
+			?><div class="preview">Preview</div><?php
 			?><div class="publish_date">Publish date</div><?php
 			?><div class="authors">Authors</div><?php
 		?></div><?php
@@ -66,6 +67,12 @@
 		}
 
 		?><div class="<?php echo(join(' ',$classes)); ?>"><?php
+			// Preview
+			?><div class="preview"><?php
+				?><a href="<?php echo(site_url('office/crosswords/crossword/'.(int)$crossword['id'])); ?>"><?php
+					?><img alt="view" src="<?php echo(site_url('office/crosswords/crossword/'.$crossword['id'].'/preview?cellsize=3')); ?>" /><?php
+				?></a><?php
+			?></div><?php
 			// Publishing date
 			?><div class="publish_date"><?php
 				if (null === $crossword['publication']) {

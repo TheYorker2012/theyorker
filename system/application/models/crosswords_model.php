@@ -937,6 +937,80 @@ class Crosswords_model extends model
 		return $success;
 	}
 
+	/** Get the thumbnail for a crossword from the database.
+	 * Output as a PNG and exit
+	 */
+	function GetCrosswordThumbnail($crossword_id)
+	{
+		// Check in database if thumbnail exists
+		$sql =	'SELECT '.
+				'	`crossword_thumbnail` as thumbnail, '.
+				'	UNIX_TIMESTAMP(`crossword_thumbnail_modified`) as modified '.
+				'FROM	`crosswords` '.
+				'WHERE	`crossword_id`=?';
+		$results = $this->db->query($sql, array($crossword_id))->result_array();
+		// Regenerate if necessary
+		if (empty($results)) {
+			header('HTTP/1.0 404 Not Found');
+			exit;
+		}
+		elseif (null === $results[0]['thumbnail'] || null === $results[0]['modified']) {
+			// Load crossword
+			$puzzle = 0;
+			$worked = $this->crosswords_model->LoadCrossword($crossword_id, $puzzle);
+			if (!$worked) {
+				header('HTTP/1.0 404 Not Found');
+				exit;
+			}
+
+			// Draw thumbnail
+			$contents = ob_get_contents();
+			if ($contents !== false) {
+				ob_clean();
+			}
+			else {
+				ob_start();
+			}
+			$puzzle->generateImage();
+			$thumbnail_png = ob_get_contents();
+			if ($contents !== false) {
+				ob_clean();
+			}
+			else {
+				ob_end_clean();
+			}
+
+			// Turn PNG into hex
+			$thumbnail_hex = unpack('H*', $thumbnail_png);
+			$thumbnail_hex = '0x'.array_shift($thumbnail_hex);
+
+			// Save thumbnail back into database
+			$sql =	'UPDATE `crosswords` '.
+					'SET '.
+					'`crossword_thumbnail`='.$thumbnail_hex.', '.
+					'`crossword_thumbnail_modified`=NOW() '.
+					'WHERE	`crossword_id`=?';
+			$this->db->query($sql, array($crossword_id));
+			$last_modified = time();
+		}
+		else {
+			header("Content-type: image/png");
+			$thumbnail_png = $results[0]['thumbnail'];
+			$last_modified = $results[0]['modified'];
+		}
+		if (isset($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
+			$modified = strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']);
+			if ($modified >= $last_modified) {
+				header('HTTP/1.1 304 Not Modified');
+				exit;
+			}
+		}
+		header('Last-Modified: '.date('r', $last_modified));
+
+		echo($thumbnail_png);
+		exit;
+	}
+
 	/** Get the list of winners for a crossword.
 	 * @return array[id,time,firstname,surname] winners.
 	 */
@@ -1134,7 +1208,9 @@ class Crosswords_model extends model
 		$width = $grid->width();
 		$sql =	'UPDATE `crosswords` '.
 				'SET	`crossword_width`=?, '.
-				'		`crossword_height`=? '.
+				'		`crossword_height`=?, '.
+				'		`crossword_thumbnail`=NULL, '.
+				'		`crossword_thumbnail_modified`=NULL '.
 				'WHERE	`crossword_id`=?';
 		$bind = array($width, $height, $crossword_id);
 		$this->db->query($sql, $bind);

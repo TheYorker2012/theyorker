@@ -297,6 +297,11 @@ class Crosswords extends Controller
 
 			$this->main_frame->SetXml($root);
 		}
+		elseif ($operation == 'preview')
+		{
+			$this->crosswords_model->GetCrosswordThumbnail($crossword['id']);
+			return;
+		}
 		else {
 			show_404();
 		}

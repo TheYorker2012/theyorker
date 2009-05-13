@@ -42,7 +42,7 @@ else
 		?><div><?php
 			// Icon and category
 			?><a href="<?php echo(site_url('crosswords/'.$crossword['id'])); ?>"><?php
-				?><img alt="" src="<?php echo(site_url('images/crosswords/xw.png')); ?>" /><?php
+				?><img alt="" src="<?php echo(site_url('crosswords/'.$crossword['id'].'/preview')); ?>" /><?php
 				echo(xml_escape($crossword['category_name']));
 			?></a><?php
 

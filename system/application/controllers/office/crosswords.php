@@ -900,6 +900,13 @@ class Crosswords extends Controller
 
 				$this->main_frame->SetContentSimple('crosswords/office/crossword_stats', $data);
 			}
+			elseif ($operation == 'preview')
+			{
+				if (!CheckRolePermissions('CROSSWORD_VIEW')) return;
+
+				$this->crosswords_model->GetCrosswordThumbnail($crossword);
+				return;
+			}
 			else {
 				show_404();
 			}

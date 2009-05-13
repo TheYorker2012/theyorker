@@ -6,21 +6,25 @@ div.crossword_items {
 	margin: 0.5em;
 }
 
+div.crossword_header,
 div.crossword_item {
 	clear: both;
 	margin: 0px;
 	margin-bottom: -1px;
 	border: 1px solid black;
-	height: 1.5em;
+}
+div.crossword_item {
+	height: 4em;
 }
 
 /* Background colours */
 div.crossword_item {
 	background: #CCCCCC;
 }
-div.crossword_item.header {
+div.crossword_header {
 	background: white;
 	font-weight: bold;
+	height: 1.5em;
 }
 div.crossword_item.overdue {
 	background: red;
@@ -37,15 +41,42 @@ div.crossword_item.complete100.published.no_winners_left {
 }
 
 /* Columns */
+div.crossword_header div.preview,
+div.crossword_item div.preview,
+div.crossword_header div.publish_date,
 div.crossword_item div.publish_date,
+div.crossword_header div.authors,
 div.crossword_item div.authors {
 	float: left;
-	width: 30%;
 	border-right: 1px solid black;
+}
+div.crossword_header div.preview,
+div.crossword_header div.publish_date,
+div.crossword_header div.authors {
 	height: 1.5em;
+}
+div.crossword_header div.preview,
+div.crossword_item div.preview {
+	width: 15%;
+	text-align: center;
+}
+div.crossword_header div.publish_date,
+div.crossword_item div.publish_date {
+	width: 40%;
+}
+div.crossword_item div.publish_date {
+	height: 4em;
+}
+div.crossword_header div.authors,
+div.crossword_item div.authors {
+	width: 20%;
+}
+div.crossword_item div.authors {
+	height: 4em;
 }
 
 /* Progress bar */
+div.crossword_header div.completeness,
 div.crossword_item div.completeness {
 	float: right;
 	margin: 0.1em;
