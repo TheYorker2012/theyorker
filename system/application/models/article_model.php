@@ -19,11 +19,12 @@ class Article_model extends Model
 	 *	ARTICLE MANAGER (v2.0)
 	 */
 
-	function create ($user_id)
+	function create ($user_id, $deadline_date)
 	{
 		$sql = 'INSERT INTO	articles
-			SET		article_request_entity_id = ?';
-		$query = $this->db->query($sql, array($user_id));
+			SET		article_request_entity_id = ?,
+					article_deadline_date = ?';
+		$query = $this->db->query($sql, array($user_id, $deadline_date));
 		$article_id = $this->db->insert_id();
 
 		$this->newRevision($article_id, $user_id, '', '', '', '', '');
