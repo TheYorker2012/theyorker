@@ -139,6 +139,7 @@ class Article extends Controller
 		if (empty($article['content_heading'])) $errors[] = 'Headline not specified.';
 		if (empty($article['content_subtext'])) $errors[] = 'Blurb not specified.';
 		if ($article['thumbnail_photo_id'] === null) $errors[] = 'Photo to use for article thumbnails not selected.';
+		if ($publish_date < mktime(0, 0, 0, 1, 1, 2000)) $errors[] = 'Please set the publish date for this article.';
 
 		$reporters = $this->article_model->getReportersForArticle($article_id);
 		if (empty($reporters)) $errors[] = 'At least one reporter must be assigned and have accepted to write this article. All reporters must have a business card also.';
