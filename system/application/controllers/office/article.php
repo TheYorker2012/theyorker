@@ -201,10 +201,11 @@ class Article extends Controller
 			}
 			$cache = $this->wikiparser->parse($article['content_wikitext']);
 			if (empty($article['date_deadline'])) {
-				$deadline = date('Y-m-d H:i:s');
+				$deadline = mktime();
 			} else {
-				$deadline = date('Y-m-d H:i:s', $article['date_deadline']);
+				$deadline = $article['date_deadline'];
 			}
+			$deadline = date('Y-m-d H:i:s', $deadline);
 			$this->article_model->update($article['id'], $article['type_id'], $article['request_title'], $article['request_description'], $article['thumbnail_photo_id'], $article['main_photo_id'], $deadline, $article['editor_user_id']);
 			$revision = $this->article_model->getLastRevisionMeta($article['id']);
 			if (empty($revision)) {
@@ -275,7 +276,8 @@ class Article extends Controller
 		if (!CheckPermissions('office')) return;
 		if (!CheckRolePermissions('ARTICLE_ADD')) return;
 
-		$article_id = $this->article_model->create($this->user_auth->entityId);
+		$deadline = date('Y-m-d H:i:s', mktime() + (60*60*24));
+		$article_id = $this->article_model->create($this->user_auth->entityId, $deadline);
 
 		redirect('/office/article/' . $article_id);
 	}
