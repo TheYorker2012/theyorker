@@ -17,9 +17,6 @@ div.crossword_preview {
 	clear: both;
 	float: left;
 }
-div.crossword_preview img {
-	border: 1px solid #FF6A00;
-}
 div.crossword_title {
 	font-weight: bold;
 	font-size: large;
