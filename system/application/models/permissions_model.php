@@ -178,8 +178,11 @@ class permissions_model extends Model
 				'	INNER JOIN	users'.
 				'			ON	entity_id = user_entity_id'.
 				'	WHERE	role_permission_permission_name=?'.
-				'		AND	user_office_access = true'.
-				'	ORDER BY user_surname ASC, user_firstname ASC';
+				'		AND	user_office_access = true';
+		if (!$role) {
+			$sql .= '	GROUP BY user_entity_id';
+		}
+		$sql .= '	ORDER BY user_surname ASC, user_firstname ASC';
 		$query = $this->db->query($sql, array($permission));
 		return $query->result_array();
 	}
