@@ -404,9 +404,11 @@ class Comments extends Controller
 					SELECT
 						'.implode(', ', $selects).'
 					FROM '.$data['table'];
-				foreach ($data['joins'] as $join) {
-					$sql .= '
-					INNER JOIN '.$join['table'].' ON '.$join['on'];
+				if (isset($data['joins'])) {
+					foreach ($data['joins'] as $join) {
+						$sql .= '
+						INNER JOIN '.$join['table'].' ON '.$join['on'];
+					}
 				}
 				$sql .= '
 					WHERE
