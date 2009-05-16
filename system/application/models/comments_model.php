@@ -368,62 +368,70 @@ class Comments_model extends model
 		$ci->load->model('crosswords_model');
 		$ci->load->library('academic_calendar');
 
-		$sql = 'SELECT	comments.comment_id,
+		$article_sql =
+				'SELECT	comments.comment_id,
 						comments.comment_anonymous,
 						UNIX_TIMESTAMP(comments.comment_post_time) AS comment_post_time,
 						comments.comment_content_wikitext,
 						users.user_firstname,
 						users.user_surname,
-						articles.article_id,
-						content_types.content_type_codename,
-						article_contents.article_content_heading,
-						crosswords.crossword_id,
-						UNIX_TIMESTAMP(crosswords.crossword_publication) AS crossword_publication,
-						crossword_categories.crossword_category_name,
+						article_contents.article_content_heading AS heading,
+						UNIX_TIMESTAMP(articles.article_publish_date) AS publication,
 					(	SELECT		COUNT(*)
 						FROM		comments AS article_comments
 						WHERE		article_comments.comment_comment_thread_id = comments.comment_comment_thread_id
-							AND		article_comments.comment_post_time <= comments.comment_post_time
-					)	AS article_comment_count
-				FROM		comments
+						AND			article_comments.comment_post_time <= comments.comment_post_time
+					)	AS article_comment_count,
+						"article" AS source
+				FROM	articles,
+						comments,
+						users,
+						article_contents,
+						content_types
+				WHERE	comments.comment_deleted = 0
+				AND		comments.comment_comment_thread_id = articles.article_public_comment_thread_id
+				AND		articles.article_publish_date < CURRENT_TIMESTAMP
+				AND		articles.article_pulled = 0
+				AND		articles.article_deleted = 0
+				AND		articles.article_live_content_id IS NOT NULL
+				AND		articles.article_live_content_id = article_contents.article_content_id
+				AND		articles.article_content_type_id = content_types.content_type_id
+				AND		comments.comment_author_entity_id = users.user_entity_id';
+		$crossword_sql =
+				'SELECT	comments.comment_id,
+						comments.comment_anonymous,
+						UNIX_TIMESTAMP(comments.comment_post_time) AS comment_post_time,
+						comments.comment_content_wikitext,
+						users.user_firstname,
+						users.user_surname,
+						crossword_categories.crossword_category_name AS heading,
+						UNIX_TIMESTAMP(crosswords.crossword_publication) AS publication,
+					(	SELECT		COUNT(*)
+						FROM		comments AS article_comments
+						WHERE		article_comments.comment_comment_thread_id = comments.comment_comment_thread_id
+						AND			article_comments.comment_post_time <= comments.comment_post_time
+					)	AS article_comment_count,
+						"crossword" AS source
+				FROM	comments
 				INNER JOIN	users
-					ON		comments.comment_author_entity_id = users.user_entity_id
-
-				LEFT JOIN	articles
-					ON		comments.comment_comment_thread_id = articles.article_public_comment_thread_id
-					AND		articles.article_publish_date < CURRENT_TIMESTAMP
-					AND		articles.article_pulled = 0
-					AND		articles.article_deleted = 0
-				LEFT JOIN	article_contents
-					ON		articles.article_live_content_id = article_contents.article_content_id
-				LEFT JOIN	content_types
-					ON		articles.article_content_type_id = content_types.content_type_id
-
-				LEFT JOIN	crosswords
+					ON		users.user_entity_id = comments.comment_author_entity_id
+				INNER JOIN	crosswords
 					ON		comments.comment_comment_thread_id = crosswords.crossword_public_comment_thread_id
 					AND		'.$ci->crosswords_model->published_sql.'
 					AND		'.$ci->crosswords_model->expired_sql.'
-				LEFT JOIN	crossword_categories
+				INNER JOIN	crossword_categories
 					ON		crossword_categories.crossword_category_id = crosswords.crossword_category_id
-
-				WHERE	comments.comment_deleted = 0
-					AND	(	content_types.content_type_id	IS NOT NULL
-						OR	crosswords.crossword_id			IS NOT NULL)
-				ORDER BY comments.comment_post_time DESC
-				LIMIT	0, ?';
+				WHERE	comments.comment_deleted = 0';
+		$sql = "($article_sql) UNION ($crossword_sql)
+				ORDER BY comment_post_time DESC
+				LIMIT	0, ?";
 		$query = $this->db->query($sql, array($NumToGet));
 		$results = $query->result_array();
 		foreach ($results as &$result) {
-			if ($result['article_id'] !== null) {
-				$result['heading'] = $result['article_content_heading'];
-			}
-			elseif ($result['crossword_id'] !== null) {
-				$pub = new Academic_time($result['crossword_publication']);
+			if ($result['source'] == 'crossword') {
+				$pub = new Academic_time($result['publication']);
 				$pub_date = $pub->Format('D').' week '.$pub->AcademicWeek();
-				$result['heading'] = $result['crossword_category_name'].', '.$pub_date;
-			}
-			else {
-				$result['heading'] = 'Unknown page';
+				$result['heading'] = $result['heading'].', '.$pub_date;
 			}
 		}
 		return $results;

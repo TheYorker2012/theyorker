@@ -37,7 +37,7 @@ foreach ($rss_items as $item) {
 		<title>' . $author . ' on ' . $item['heading'] . '</title>
 		<author>' . $rss_email_no . ' (' . $author . ')</author>
 		<link>' . $url . '</link>
-		<description><![CDATA[' . $item['comment_content_wikitext'] . ']]></description>
+		<description><![CDATA[' . nl2br($item['comment_content_wikitext']) . ']]></description>
 		<pubDate>' . date('r',$item['comment_post_time']) . '</pubDate>
 		<guid isPermaLink="true">' . $url . '</guid>
 		</item>');
