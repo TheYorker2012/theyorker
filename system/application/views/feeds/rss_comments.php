@@ -32,9 +32,9 @@ foreach ($rss_items as $item) {
 		$author = $item['user_firstname'] . ' ' . $item['user_surname'];
 	}
 	$page = (floor(($item['article_comment_count'] - 1) / $comments_per_page) * $comments_per_page) + 1;
-	$url = 'http://' . $_SERVER['SERVER_NAME'] . '/news/' . $item['content_type_codename'] . '/' . $item['article_id']. '/' . $page . '/#CommentItem' . $item['comment_id'];
+	$url = 'http://' . $_SERVER['SERVER_NAME'] . '/comments/thread/' . $item['comment_id'];
 	echo('<item>
-		<title>' . $author . ' on ' . $item['article_content_heading'] . '</title>
+		<title>' . $author . ' on ' . $item['heading'] . '</title>
 		<author>' . $rss_email_no . ' (' . $author . ')</author>
 		<link>' . $url . '</link>
 		<description><![CDATA[' . $item['comment_content_wikitext'] . ']]></description>

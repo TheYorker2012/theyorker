@@ -4,11 +4,11 @@
 class Crosswords_model extends model
 {
 	// Snippets of useful sql
-	private $overdue_sql;
-	private $published_sql;
-	private $scheduled_sql;
-	private $expired_sql;
-	private $winner_count_sql;
+	public $overdue_sql;
+	public $published_sql;
+	public $scheduled_sql;
+	public $expired_sql;
+	public $winner_count_sql;
 
 	function __construct()
 	{
