@@ -382,7 +382,7 @@ class Comments_model extends model
 						WHERE		article_comments.comment_comment_thread_id = comments.comment_comment_thread_id
 						AND			article_comments.comment_post_time <= comments.comment_post_time
 					)	AS article_comment_count,
-						"article" AS source
+						1 AS source
 				FROM	articles,
 						comments,
 						users,
@@ -411,7 +411,7 @@ class Comments_model extends model
 						WHERE		article_comments.comment_comment_thread_id = comments.comment_comment_thread_id
 						AND			article_comments.comment_post_time <= comments.comment_post_time
 					)	AS article_comment_count,
-						"crossword" AS source
+						2 AS source
 				FROM	comments
 				INNER JOIN	users
 					ON		users.user_entity_id = comments.comment_author_entity_id
@@ -428,7 +428,7 @@ class Comments_model extends model
 		$query = $this->db->query($sql, array($NumToGet));
 		$results = $query->result_array();
 		foreach ($results as &$result) {
-			if ($result['source'] == 'crossword') {
+			if ($result['source'] == 2) {
 				$pub = new Academic_time($result['publication']);
 				$pub_date = $pub->Format('D').' week '.$pub->AcademicWeek();
 				$result['heading'] = $result['heading'].', '.$pub_date;
