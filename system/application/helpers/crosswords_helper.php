@@ -936,12 +936,12 @@ class CrosswordView
 					$check_actions = array(
 						// check buttons
 						'stop' => 'crosswordStopCheck('.js_literalise($name).');',
-						'check selected light' => 'crosswordCheck('.js_literalise($name).','.js_literalise('cur_light').', false);',
-						'check all lights' => 'crosswordCheck('.js_literalise($name).','.js_literalise('all_lights').', false);',
+						'check selected answer' => 'crosswordCheck('.js_literalise($name).','.js_literalise('cur_light').', false);',
+						'check all answers' => 'crosswordCheck('.js_literalise($name).','.js_literalise('all_lights').', false);',
 						null,
 						// solve buttons
-						'reveal selected light' => 'crosswordCheck('.js_literalise($name).','.js_literalise('cur_light').', true);',
-						'reveal all lights' => 'crosswordCheck('.js_literalise($name).','.js_literalise('all_lights').', true);',
+						'reveal selected answer' => 'crosswordCheck('.js_literalise($name).','.js_literalise('cur_light').', true);',
+						'reveal all answers' => 'crosswordCheck('.js_literalise($name).','.js_literalise('all_lights').', true);',
 					);
 					foreach ($check_actions as $action_name => $javascript) {
 						if ($javascript == null) {
