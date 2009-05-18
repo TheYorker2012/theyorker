@@ -935,17 +935,20 @@ class CrosswordView
 				?><fieldset><?php
 					$check_actions = array(
 						// check buttons
-						'stop' => 'crosswordStopCheck('.js_literalise($name).');',
 						'check selected answer' => 'crosswordCheck('.js_literalise($name).','.js_literalise('cur_light').', false);',
 						'check all answers' => 'crosswordCheck('.js_literalise($name).','.js_literalise('all_lights').', false);',
 						null,
 						// solve buttons
 						'reveal selected answer' => 'crosswordCheck('.js_literalise($name).','.js_literalise('cur_light').', true);',
 						'reveal all answers' => 'crosswordCheck('.js_literalise($name).','.js_literalise('all_lights').', true);',
+						null,
+						'clear grid' => 'crosswordClear('.js_literalise($name).');',
+						'stop checking' => 'crosswordStopCheck('.js_literalise($name).');',
 					);
 					foreach ($check_actions as $action_name => $javascript) {
 						if ($javascript == null) {
-							?><br /><?php
+							?></fieldset><?php
+							?><fieldset><?php
 							continue;
 						}
 						?><input	type="button"<?php
@@ -958,16 +961,6 @@ class CrosswordView
 					}
 				?></fieldset><?php
 			?></div><?php
-			// Clear grid button
-			?><fieldset><?php
-				?><input	type="button"<?php
-						?>	class="button"<?php
-						?>	value="clear grid"<?php
-						?>	onclick="<?php echo(xml_escape(
-								'crosswordClear('.js_literalise($name).');'
-							)); ?>"<?php
-						?>	/><?php
-			?></fieldset><?php
 		}
 		?></div><?php
 
