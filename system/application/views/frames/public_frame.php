@@ -121,7 +121,7 @@ $menu = array(
 	array('sport', '/sport', array()),
 	array('arts', '/arts', array()),
 	array('lifestyle', '/lifestyle', array()),
-	array('roses', '/roses', array('last')),
+	array('food', '/food', array('last')),
 );
 // Has a tab been set as selected?
 $menu_style = '';
