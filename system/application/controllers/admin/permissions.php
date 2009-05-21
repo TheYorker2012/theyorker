@@ -164,7 +164,7 @@ class Permissions extends Controller
 			}
 		}
 		if (isset($_POST['users'])) {
-			$userChanges = $_POST['users'];
+			$userChangesPost = $_POST['users'];
 			$userChanges = array();
 			foreach ($userChangesPost as $addrem => $changes) {
 				foreach ($changes as $change_info) {
