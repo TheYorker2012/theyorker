@@ -81,7 +81,7 @@
 				else {
 					$pub = new Academic_time($crossword['publication']);
 					echo($pub->Format('D').' '.$pub->AcademicTermNameUnique().' '.$pub->AcademicWeek().
-						$pub->Format(' (jS M Y)').' at '.$pub->Format('h:i'));
+						$pub->Format(' (jS M Y)').' at '.$pub->Format('H:i'));
 				}
 			?></div><?php
 			// Authors
