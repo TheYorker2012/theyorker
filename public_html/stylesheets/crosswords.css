@@ -1,6 +1,10 @@
 /* Styles for crosswords */
 /* Author: James Hogan */
 
+div.crosswordShare {
+	float: right;
+}
+
 div.crosswordWinners {
 	float: right;
 	border: 1px solid gray;

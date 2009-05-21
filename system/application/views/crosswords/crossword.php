@@ -29,6 +29,12 @@ echo(xml_escape(
 ?></script><?php
 
 ?><div class="BlueBox"><?php
+	// Share links
+	?><div class="crosswordShare"><?php
+		?><a href="http://www.facebook.com/share.php?u=http://<?php echo($_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']); ?>" target="_blank" class="fb_share_button" onclick="return fbs_click()">Share</a><?php
+	?></div><?php
+
+	// Rest of top box
 	?><h2><?php
 		if ($Crossword['publication'] !== null) {
 			$pub = new Academic_time($Crossword['publication']);
