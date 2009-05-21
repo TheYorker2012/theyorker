@@ -147,7 +147,15 @@ class Permissions extends Controller
 		
 		// Confirm changes
 		if (isset($_POST['roles'])) {
-			$roleChanges = $_POST['roles'];
+			$roleChangesPost = $_POST['roles'];
+			$roleChanges = array();
+			foreach ($roleChangesPost as $addrem => $changes) {
+				foreach ($changes as $change_info) {
+					if (isset($change_info['r']) && isset($change_info['p'])) {
+						$roleChanges[$addrem][$change_info['r']][] = $change_info['p'];
+					}
+				}
+			}
 			if (isset($roleChanges[1])) {
 				$this->permissions_model->removeRolePermissions($roleChanges[1]);
 			}
@@ -157,6 +165,14 @@ class Permissions extends Controller
 		}
 		if (isset($_POST['users'])) {
 			$userChanges = $_POST['users'];
+			$userChanges = array();
+			foreach ($userChangesPost as $addrem => $changes) {
+				foreach ($changes as $change_info) {
+					if (isset($change_info['u']) && isset($change_info['r'])) {
+						$userChanges[$addrem][$change_info['u']][] = $change_info['r'];
+					}
+				}
+			}
 			if (isset($userChanges[1])) {
 				$this->permissions_model->removeUserRoles($userChanges[1]);
 			}

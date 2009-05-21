@@ -178,23 +178,35 @@ function saveAllPermissions()
 	
 	var changes = false;
 	var post = {};
+	var adds = 0;
+	var removes = 0;
 	for (var role in roles) {
 		for (var i = 0; i < roles[role][0].length; ++i) {
-			post['roles[0]['+role+']['+i+']'] = roles[role][0][i];
+			post['roles[0]['+adds+'][r]'] = role;
+			post['roles[0]['+adds+'][p]'] = roles[role][0][i];
+			++adds;
 			changes = true;
 		}
 		for (var i = 0; i < roles[role][1].length; ++i) {
-			post['roles[1]['+role+']['+i+']'] = roles[role][1][i];
+			post['roles[1]['+removes+'][r]'] = role;
+			post['roles[1]['+removes+'][p]'] = roles[role][1][i];
+			++removes;
 			changes = true;
 		}
 	}
+	adds = 0;
+	removes = 0;
 	for (var user in users) {
 		for (var i = 0; i < users[user][0].length; ++i) {
-			post['users[0]['+user+']['+i+']'] = users[user][0][i];
+			post['users[0]['+adds+'][u]'] = user;
+			post['users[0]['+adds+'][r]'] = users[user][0][i];
+			++adds;
 			changes = true;
 		}
 		for (var i = 0; i < users[user][1].length; ++i) {
-			post['users[1]['+user+']['+i+']'] = users[user][1][i];
+			post['users[1]['+removes+'][u]'] = user;
+			post['users[1]['+removes+'][r]'] = users[user][1][i];
+			++removes;
 			changes = true;
 		}
 	}
