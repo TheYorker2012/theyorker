@@ -187,7 +187,9 @@ class Notifications_model extends Model
 				notification_id = ?,
 				notification_user_entity_id = ?';
 		foreach ($users as $user) {
-			$this->db->query($sql, array($new_id, $user));
+			if (!empty($user)) {
+				$this->db->query($sql, array($new_id, $user));
+			}
 		}
 	}
 
