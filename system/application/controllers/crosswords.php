@@ -169,7 +169,8 @@ class Crosswords extends Controller
 
 			// Comment thread
 			$comments_thread = null;
-			if ($crossword['expired'] && is_numeric($crossword['public_thread_id'])) {
+			$comments_require_expiration = false;
+			if ((!$comments_require_expiration || $crossword['expired']) && is_numeric($crossword['public_thread_id'])) {
 				$this->load->library('comment_views');
 				$this->comment_views->SetUri('/crosswords/'.$crossword['id'].'/view/');
 				$comments_thread = $this->comment_views->CreateStandard((int)$crossword['public_thread_id'], $comment_include);
