@@ -33,6 +33,7 @@ if ($Crossword['published']) {
 		'Tips' => &$Tips,
 		'Comments' => null,
 		'Links' => $links,
+		'ShareUrl' => null,
 	));
 ?></div><?php
 

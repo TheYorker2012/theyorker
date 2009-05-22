@@ -10,6 +10,7 @@
  * @param $Tips
  * @param $Comments
  * @param $Links array
+ * @param $ShareUrl string/null
  */
 
 $autosave_interval = 30; // seconds
@@ -30,9 +31,11 @@ echo(xml_escape(
 
 ?><div class="BlueBox"><?php
 	// Share links
-	?><div class="crosswordShare"><?php
-		?><a href="http://www.facebook.com/share.php?u=http://<?php echo($_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']); ?>" target="_blank" class="fb_share_button" onclick="return fbs_click()">Share</a><?php
-	?></div><?php
+	if (null !== $ShareUrl) {
+		?><div class="crosswordShare"><?php
+			?><a href="http://www.facebook.com/share.php?u=http://<?php echo($ShareUrl); ?>" target="_blank" class="fb_share_button" onclick="return fbs_click()">Share</a><?php
+		?></div><?php
+	}
 
 	// Rest of top box
 	?><h2><?php

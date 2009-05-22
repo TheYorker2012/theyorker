@@ -191,6 +191,7 @@ class Crosswords extends Controller
 				'more crosswords in the "'.$crossword['category_name'].'" category' => site_url('crosswords/'.$crossword['category_short_name']),
 				'crosswords home' => site_url('crosswords'),
 			);
+			$data['ShareUrl'] = $_SERVER['SERVER_NAME'].'/crosswords/'.$crossword['id'];
 
 			$this->main_frame->SetContentSimple('crosswords/crossword', $data);
 			/// @todo Use pages interface
