@@ -123,6 +123,15 @@ class Frame_public extends FrameNavbar
 		}
 		$this->mDataArray['description'] .= $Description;
 	}
+
+	/// Set path to main image.
+	/**
+	 * @param $Path string path to main image.
+	 */
+	function SetMainImage($Path)
+	{
+		$this->mDataArray['main_image'] = $Path;
+	}
 	
 	/// Include a JS (javascript) file.
 	/**

@@ -197,6 +197,8 @@ class Crosswords extends Controller
 			/// @todo Use pages interface
 			$pub = new Academic_time($crossword['publication']);
 			$this->main_frame->SetTitle('Crossword '.$pub->Format('D ').$pub->AcademicTermNameUnique().' week '.$pub->AcademicWeek());
+			$this->main_frame->AddDescription('Online crossword');
+			$this->main_frame->SetMainImage(site_url('crosswords/'.$crossword['id'].'/preview'));
 		}
 		elseif ($operation == 'ajax') {
 			$op2 = $comment_include;
