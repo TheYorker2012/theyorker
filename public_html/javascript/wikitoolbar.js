@@ -109,7 +109,7 @@ function insertMediaPlayerOptions (opt) {
 		file_image.src = '/images/icons/music.png';
 		var file_link = document.createElement('a');
 		file_link.style.cursor = 'pointer';
-		eval("file_link.onclick = function () { insertMediaPlayerLink('content', '" + opt[opt_index][1] + "'); return false; }");
+		eval("file_link.onclick = function () { insertMediaPlayerLink('article_content_wikitext', '" + opt[opt_index][1] + "'); return false; }");
 		file_link.appendChild(document.createTextNode(' ' + opt[opt_index][0]));
 		file_option.appendChild(file_image);
 		file_option.appendChild(file_link);
