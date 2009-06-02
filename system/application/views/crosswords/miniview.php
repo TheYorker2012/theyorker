@@ -39,7 +39,7 @@ else
 	{
 		$pub = new Academic_time($crossword['publication']);
 		$pub_text = $pub->Format('D').' week '.$pub->AcademicWeek().' '.$pub->Format('H:i');
-		?><div><?php
+		?><div style="width:50%;float:left;"><?php
 			// Icon and category
 			?><a href="<?php echo(site_url('crosswords/'.$crossword['id'])); ?>"><?php
 				?><img alt="" src="<?php echo(site_url('crosswords/'.$crossword['id'].'/preview')); ?>" /><?php
