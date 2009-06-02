@@ -16,6 +16,10 @@ class Home_Hack_Model extends Model {
 
 	function getArticlesByTags ($tags, $number = 4, $ignore_articles = array())
 	{
+		if (!empty($ignore_articles) && !is_array($ignore_articles)) {
+			$ignore_articles = array($ignore_articles);
+		}
+
 		$params = $tags;
 		$inputs = array_fill(0, count($tags), '?');
 		$params[] = count($tags);
@@ -41,7 +45,11 @@ class Home_Hack_Model extends Model {
 				AND			a.article_live_content_id IS NOT NULL
 				AND			ac.article_content_id = a.article_live_content_id
 				AND			pr.photo_request_article_id = a.article_id
-				AND			a.article_thumbnail_photo_id = pr.photo_request_relative_photo_number
+				AND			a.article_thumbnail_photo_id = pr.photo_request_relative_photo_number ';
+		if (!empty($ignore_articles)) {
+			$sql .= 'AND a.article_id NOT IN (' . implode(',', $ignore_articles) . ')';
+		}
+		$sql .= '
 				GROUP BY	a.article_id
 				HAVING		tag_count = ?
 				ORDER BY	a.article_publish_date DESC

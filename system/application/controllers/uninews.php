@@ -1,64 +1,63 @@
 <?php
-/**
- *	@brief		News home page
- *	@author		Chris Travis (cdt502 - ctravis@gmail.com)
- */
 
 class Uninews extends Controller
 {
+
+	private $displayedArticleIDs;
+
 	function __construct()
 	{
 		parent::Controller();
-		$this->load->model('News_model');
-		$this->load->model('Home_Model');
-		$this->load->model('Home_Hack_Model');
+		$this->load->model('home_hack_model');
 	}
-	
-	private function getNumberOfType($articles,$type_codename)
+
+	function _getIDs ($articles)
 	{
-		$count=0;
-		foreach ($articles as $article)
-		{
-			if($article['article_type']==$type_codename){$count++;}
+		if (!empty($articles)) {
+			foreach ($articles as $a) {
+				$this->displayedArticleIDs[] = $a['id'];
+			}
 		}
-		return $count;
 	}
-	
+
 	function index()
 	{
 		if (!CheckPermissions('public')) return;
 
-		$homepage_article_type = 'news';
-		// Get page properties information
-		$this->pages_model->SetPageCode('homepage_'.$homepage_article_type);
-		$main_articles_num = (int)$this->pages_model->GetPropertyText('max_num_main_articles');
-		$more_articles_num = (int)$this->pages_model->GetPropertyText('max_num_more_articles');
+		$page_codename = 'news';
 
-		// Obtain banner for homepage
-		//$data['banner'] = $this->Home_Model->GetBannerImageForHomepage($homepage_article_type);
+		$this->pages_model->SetPageCode('homepage_' . $page_codename);
 
-		// Get main article
-		$featured_article_id = $this->News_model->GetLatestFeaturedId($homepage_article_type);
-		if ($featured_article_id === NULL) {
-			// No featured article, use the most recent
-			$latest_article_id = $this->News_model->GetLatestId($homepage_article_type, 1);
-			$featured_article_id = $latest_article_id[0];
-		}
-		$data['main_articles'] = $this->Home_Hack_Model->getArticleTitles(array($featured_article_id), '%W, %D %M %Y');
+		$this->displayedArticleIDs = array();
+		$spotlight = $this->home_hack_model->getArticlesByTags(array('news', 'spotlight'), 1, $this->displayedArticleIDs);
+		$this->_getIDs($spotlight);
+		$features = $this->home_hack_model->getArticlesByTags(array('news', 'feature'), 5, $this->displayedArticleIDs);
+		$this->_getIDs($features);
+		$blogs = $this->home_hack_model->getArticlesByTags(array('news', 'blog'), 5, $this->displayedArticleIDs);
+		$this->_getIDs($blogs);
+		$section_news = $this->home_hack_model->getArticlesByTags(array('news'), 14, $this->displayedArticleIDs);
+		$this->_getIDs($section_news);
 
-		// Get sub-types for article section
-		$data['section_articles'] = array();
-		$sub_types = $this->News_model->getSubArticleTypes($homepage_article_type);
-		foreach ($sub_types as $type) {
-			// Make sure we don't get duplicate articles
-			$offset = $this->getNumberOfType($data['main_articles'], $type['codename']);
-			$article_ids = $this->News_model->GetLatestId($type['codename'], $more_articles_num, $offset);
-			$data['section_articles'][strtolower($type['name'])] = $this->Home_Hack_Model->getArticleTitles($article_ids, '%W, %D %M %Y');
-		}
+		$data = array();
+		$data['spotlight'] = $spotlight;
+		$data['features'] = array(
+			'title'		=>	'features',
+			'articles'	=>	$features
+		);
+		$data['blogs'] = array(
+			'title'		=>	'comment',
+			'articles'	=>	$blogs
+		);
+		$data['sections'] = array(
+			array(
+				'title'		=>	'news',
+				'articles'	=>	$section_news
+			)
+		);
 
-		$this->main_frame->SetData('menu_tab', 'news');
+		$this->main_frame->SetData('menu_tab', $page_codename);
 		$this->main_frame->IncludeCss('stylesheets/home.css');
-		$this->main_frame->SetContentSimple('homepages/'.$homepage_article_type, $data);
+		$this->main_frame->SetContentSimple('homepages/'.$page_codename, $data);
 		$this->main_frame->Load();
 	}
 }
