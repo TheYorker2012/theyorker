@@ -45,10 +45,21 @@ function changePreview (option, article_id, article_type, photo_id, photo_title)
 		<?php } ?>
 	</div>
 </div>
-<div class="FlexiBox Box13 FlexiBoxLast">
+<div class="FlexiBox Box13 FlexiBoxLast" style="background-color:#f2f2f2;text-align:center;">
+	<script type="text/javascript"><!--
+	google_ad_client = "pub-8676956632365960";
+	/* 234x60, created 02/06/09 */
+	google_ad_slot = "4255960768";
+	google_ad_width = 234;
+	google_ad_height = 60;
+	//-->
+	</script>
+	<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+	<!--
 	<a href="http://www.facebook.com/event.php?eid=111317892288">
 		<img src="/images/adverts/BrownsAdSm.jpg" alt="Vote Browns for British Sandwich Week" />
 	</a>
+	-->
 </div>
 <div class="clear"></div>
 
@@ -75,27 +86,30 @@ function changePreview (option, article_id, article_type, photo_id, photo_title)
 <?php ArticleList('lifestyle', $articles['lifestyle'], true); ?>
 <div class="clear"></div>
 
-<div class="FlexiBox Box12">
-	<div class="FlexiBox Box12">
-		<script type="text/javascript">
-		<!--
-		google_ad_client = "pub-8676956632365960";
-		/* 468x60, created 07/05/09 */
-		google_ad_slot = "5537704417";
-		google_ad_width = 468;
-		google_ad_height = 60;
-		//-->
-		</script>
-		<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
-	</div>
-	<div class="ArticleListBox FlexiBox Box12">
-		<div class="ArticleListTitle"><a href="/crosswords">latest crosswords</a></div>
-		<?php $crosswords->Load(); ?>
-	</div>
-	<div class="FlexiBox Box12">
-		<div class="ArticleListTitle">upcoming events</div>
-		<?php $events->Load(); ?>
-	</div>
+<div class="FlexiBox Box12" style="background-color:#f2f2f2;text-align:center;">
+	<script type="text/javascript">
+	<!--
+	google_ad_client = "pub-8676956632365960";
+	/* 468x60, created 07/05/09 */
+	google_ad_slot = "5537704417";
+	google_ad_width = 468;
+	google_ad_height = 60;
+	//-->
+	</script>
+	<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
 </div>
 
 <?php $latest_comments->Load(); ?>
+
+<div class="ArticleListBox FlexiBox Box12">
+	<div class="ArticleListTitle">
+		<a href="/crosswords">
+			latest crosswords
+		</a>
+	</div>
+	<?php $crosswords->Load(); ?>
+</div>
+<div class="FlexiBox Box12">
+	<div class="ArticleListTitle">upcoming events</div>
+	<?php $events->Load(); ?>
+</div>

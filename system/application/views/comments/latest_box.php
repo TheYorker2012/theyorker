@@ -21,7 +21,7 @@ function print_comment ($comment, $comments_per_page) {
 
 ?>
 
-<div class="FlexiBox Box12 FlexiBoxLast">
+<div class="FlexiBox Box12 FlexiBoxLast" style="float:right">
 	<div class="ArticleListTitle">latest comments</div>
 	<ul class="comments" style="margin:0 5px;">
 		<?php foreach ($comments as $comment) print_comment($comment, $comments_per_page); ?>
