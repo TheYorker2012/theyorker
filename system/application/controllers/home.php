@@ -210,6 +210,9 @@ class Home extends Controller {
 			$data['poll_vote_box'] = null;
 		}
 
+		$this->load->model('flickr_model');
+		$data['photos'] = $this->flickr_model->getLatestPhotos(9);
+
 		$this->main_frame->SetData('menu_tab', 'home');
 		$this->main_frame->SetContentSimple('general/home', $data);
 		$this->main_frame->IncludeCss('stylesheets/home.css');

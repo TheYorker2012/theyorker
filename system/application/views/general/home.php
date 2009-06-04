@@ -86,6 +86,15 @@ function changePreview (option, article_id, article_type, photo_id, photo_title)
 <?php ArticleList('lifestyle', $articles['lifestyle'], true); ?>
 <div class="clear"></div>
 
+<div class="FlexiBox FlexiBoxLast" style="background-color:#f2f2f2;text-align:center;border:none;">
+<?php foreach ($photos as $photo) { ?>
+	<a href="http://www.flickr.com/photos/<?php echo(xml_escape($photo['owner_id'])); ?>/<?php echo($photo['id']); ?>">
+		<img src="http://farm<?php echo($photo['farm']); ?>.static.flickr.com/<?php echo($photo['server']); ?>/<?php echo($photo['id']); ?>_<?php echo($photo['secret']); ?>_t.jpg" alt="<?php echo(xml_escape($photo['title'])); ?>" title="<?php echo(xml_escape($photo['title'])); ?>" />
+	</a>
+<?php } ?>
+</div>
+<div class="clear"></div>
+
 <div class="FlexiBox Box12" style="background-color:#f2f2f2;text-align:center;">
 	<script type="text/javascript">
 	<!--
