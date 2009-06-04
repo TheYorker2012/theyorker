@@ -37,7 +37,7 @@ function changePreview (option, article_id, article_type, photo_id, photo_title)
 	</div>
 	<div class="ArticleRolloverList">
 		<?php for ($x = 1; $x < count($articles['uninews']); $x++) { ?>
-			<div id="articleRollover_<?php echo($x); ?>" <?php if ($x == 1) echo('class="selected" '); ?>onmouseover="changePreview(<?php echo($x); ?>, <?php echo(xml_escape($articles['uninews'][$x]['id'])); ?>, 'uninews', <?php echo(xml_escape($articles['uninews'][$x]['photo_id'])); ?>, '<?php echo(xml_escape($articles['uninews'][$x]['photo_title'])); ?>');">
+			<div id="articleRollover_<?php echo($x); ?>" <?php if ($x == 1) echo('class="selected" '); ?>onmouseover="changePreview(<?php echo($x); ?>, <?php echo(xml_escape($articles['uninews'][$x]['id'])); ?>, 'uninews', <?php echo(xml_escape($articles['uninews'][$x]['photo_id'])); ?>, <?php echo(xml_escape(js_literalise($articles['uninews'][$x]['photo_title']))); ?>);">
 				<a href="/news/<?php echo(xml_escape($articles['uninews'][$x]['article_type'])); ?>/<?php echo(xml_escape($articles['uninews'][$x]['id'])); ?>">
 					<?php echo(xml_escape($articles['uninews'][$x]['heading'])); ?>
 				</a>
