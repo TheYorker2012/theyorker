@@ -396,7 +396,7 @@ class Wikiparser {
 			//$href = xml_escape($href);
 			$params = array('src', 'http://www.youtube.com/v/' . $href . '&hd=1',
 					'width', '620',
-					'height', '350');
+					'height', '375');
 			$output = $this->get_inline_flash_code($params);
 
 			if ($this->in_paragraph) {
