@@ -98,6 +98,11 @@ foreach ($main_article['related_articles'] as $related)
 
 <div id="MainColumn">
 	<div class="BlueBox">
+<?php if (!empty($editor_tools)) { ?>
+		<div style="float:right;margin-bottom:0;">
+			<input type="button" value="Edit Article" onclick="window.location='/office/article/<?php echo($main_article['id']); ?>';" />
+		</div>
+<?php } ?>
 		<h2 class="Headline"><?php echo(xml_escape($main_article['heading'])); ?></h2>
 		<?php if(isset($main_article['primary_photo_xhtml'])) { ?>
 			<div style="float:right;margin-top:0;line-height:95%;width:180px;">

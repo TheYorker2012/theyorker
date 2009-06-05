@@ -248,6 +248,11 @@ class News extends Controller {
 			$data['comments'] = $this->comment_views->CreateStandard((int)$main_article['public_thread_id'], $CommentInclude);
 		}
 
+		$access_level = GetUserLevel();
+		if ($access_level == 'editor' || $access_level == 'admin') {
+			$data['editor_tools'] = true;
+		}
+
 		/// Gather all the data into an array to be passed to the view
 		$data['main_article'] = $main_article;
 		$data['news_previews'] = $news_previews;
