@@ -394,9 +394,9 @@ class Wikiparser {
 			$namespace = '';
 		} elseif ($this->enable_youtube && 'youtube' === $namespace) {
 			//$href = xml_escape($href);
-			$params = array('src', 'http://www.youtube.com/v/' . $href,
-					'width', '340',
-					'height', '280');
+			$params = array('src', 'http://www.youtube.com/v/' . $href . '&hd=1',
+					'width', '620',
+					'height', '350');
 			$output = $this->get_inline_flash_code($params);
 
 			if ($this->in_paragraph) {
