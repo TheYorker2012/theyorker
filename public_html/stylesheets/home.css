@@ -10,6 +10,12 @@ div.ArticleListTitle {
 	padding: 0.3em;
 }
 
+div.ArticleListTitleImg {
+	background-color: #999;
+	margin-bottom: 5px;
+	text-align: center;
+}
+
 div.ArticleListTitle a {
 	color: #fff;
 }
@@ -49,6 +55,11 @@ div#DisplayBoxText a:hover {
 div.ArticleListBox img {
 	float: left;
 	margin: 0 5px 5px 5px;
+}
+
+div.ArticleListTitleImg img {
+	float: none;
+	margin: 0;
 }
 
 div.ArticleListBox div.Date {

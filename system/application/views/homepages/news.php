@@ -59,8 +59,41 @@ foreach ($sections as $section) {
 	$column++;
 	ArticleList($section['title'], $section['articles'], ($column % 3) == 0 ? true : false);
 }
-
-SpecialList($blogs['title'], $blogs['articles']);
-
 ?>
+
+<div class="FlexiBox Box13 FlexiBoxLast" style="background-color:#f2f2f2;text-align:center;">
+	<script type="text/javascript"><!--
+	google_ad_client = "pub-8676956632365960";
+	/* 234x60, created 02/06/09 */
+	google_ad_slot = "4255960768";
+	google_ad_width = 234;
+	google_ad_height = 60;
+	//-->
+	</script>
+	<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+</div>
+
+<?php
+SpecialList($blogs['title'], $blogs['articles']);
+?>
+
+
+<div class="ArticleListBox FlexiBox Box23">
+	<div class="ArticleListTitleImg">
+		<a href="/news/<?php echo(xml_escape($inmyview[0]['id'])); ?>">
+			<img src="/images/version2/banners/in_my_view2.png" alt="In My View" title="In My View" />
+		</a>
+	</div>
+	<?php foreach ($inmyview as $article) { ?>
+	<div style="width:50%;float:left;">
+		<a href="/news/<?php echo(xml_escape($article['id'])); ?>">
+			<img src="/photos/small/<?php echo(xml_escape($article['photo_id'])); ?>" alt="<?php echo(xml_escape($article['photo_title'])); ?>" title="<?php echo(xml_escape($article['photo_title'])); ?>" />
+			<?php echo(xml_escape($article['headline'])); ?>
+		</a>
+		<div class="Date"><?php echo(xml_escape(date('l, jS F Y', $article['date']))); ?></div>
+		<div class="clear"></div>
+	</div>
+	<?php } ?>
+</div>
+
 <div class="clear"></div>

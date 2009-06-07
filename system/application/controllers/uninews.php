@@ -31,11 +31,13 @@ class Uninews extends Controller
 		$this->displayedArticleIDs = array();
 		$spotlight = $this->home_hack_model->getArticlesByTags(array('news', 'spotlight'), 1, $this->displayedArticleIDs);
 		$this->_getIDs($spotlight);
+		$inmyview = $this->home_hack_model->getArticlesByTags(array('in-my-view'), 2, $this->displayedArticleIDs);
+		$this->_getIDs($inmyview);
 		$features = $this->home_hack_model->getArticlesByTags(array('news', 'feature'), 5, $this->displayedArticleIDs);
 		$this->_getIDs($features);
 		$blogs = $this->home_hack_model->getArticlesByTags(array('news', 'blog'), 5, $this->displayedArticleIDs);
 		$this->_getIDs($blogs);
-		$section_news = $this->home_hack_model->getArticlesByTags(array('news'), 14, $this->displayedArticleIDs);
+		$section_news = $this->home_hack_model->getArticlesByTags(array('news'), 16, $this->displayedArticleIDs);
 		$this->_getIDs($section_news);
 
 		$data = array();
@@ -48,6 +50,7 @@ class Uninews extends Controller
 			'title'		=>	'comment',
 			'articles'	=>	$blogs
 		);
+		$data['inmyview'] = $inmyview;
 		$data['sections'] = array(
 			array(
 				'title'		=>	'news',

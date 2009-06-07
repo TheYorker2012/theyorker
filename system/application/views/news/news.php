@@ -199,6 +199,16 @@ foreach ($main_article['related_articles'] as $related)
 		</ul>
 	</div>
 	<?php } ?>
+
+	<div style="float:left;margin-bottom:0.5em;width:100%;">
+		<a href="http://twitter.com/theyorkeruk">
+			<img src="/images/version2/banners/marketing_twitter.png" alt="Check out The Yorker's Twitter account for all the latest news" title="Check out The Yorker's Twitter account for all the latest news" />
+		</a>
+		<a href="http://www.facebook.com/pages/The-Yorker/7713161471">
+			<img src="/images/version2/banners/marketing_facebook.png" alt="Go to The Yorker's Fan Page on Facebook" title="Go to The Yorker's Fan Page on Facebook" />
+		</a>
+	</div>
+
 	<?php
 	// Comments if they're included
 	if (isset($comments) && NULL !== $comments) {
