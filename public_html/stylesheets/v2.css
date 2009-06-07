@@ -339,13 +339,19 @@ div#ContentColumn {
 }
 
 /* Formatting for content boxes in main page area */
-div.BlueBox, div.FlexiBox {
+div.BlueBox, div.FlexiBox, div.ClearFlexiBox {
 	float: left;
 	margin: 0 0 0.5em 0;
 	border: 1px solid #999;
 	background-color: #ffffff;
 	text-align: left;
 	width: 100%;
+}
+
+div.ClearFlexiBox {
+	border-color: transparent;
+	background-color: transparent;
+	text-align: center;
 }
 
 div.BlueBox h2 {

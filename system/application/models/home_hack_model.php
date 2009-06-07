@@ -10,14 +10,34 @@
  */
 
 class Home_Hack_Model extends Model {
-	function Home_Hack_Model() {
+
+	private $ignoreArticles = array();
+
+	function Home_Hack_Model()
+	{
 		parent::Model();
+		$this->ignoreArticles = array();
+	}
+
+	function ignore ($articles)
+	{
+		if (is_array($articles)) {
+			foreach ($articles as $a) {
+				$this->ignoreArticles[] = $a['id'];
+			}
+		} else {
+			$this->ignoreArticles[] = $articles;
+		}
 	}
 
 	function getArticlesByTags ($tags, $number = 4, $ignore_articles = array())
 	{
-		if (!empty($ignore_articles) && !is_array($ignore_articles)) {
-			$ignore_articles = array($ignore_articles);
+		if (!empty($ignore_articles)) {
+			if (!is_array($ignore_articles)) {
+				$ignore_articles = array($ignore_articles);
+			}
+		} else {
+			$ignore_articles = $this->ignoreArticles;
 		}
 
 		$params = $tags;

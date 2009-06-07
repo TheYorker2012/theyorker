@@ -90,8 +90,130 @@ class Home extends Controller {
 	{
 		OutputModes(array('xhtml','fbml'));
 		if (!CheckPermissions('public')) return;
-		
+
+		if ('fbml' === OutputMode()) {
+			return $this->_FacebookHome();
+		}
+
+		$this->load->model('home_hack_model');
+		$this->load->model('flickr_model');
+		$this->load->model('crosswords_model');
+		$this->load->model('comments_model');
+
+		$spotlight = $this->home_hack_model->getArticlesByTags(array('front-page'), 1);
+		$this->home_hack_model->ignore($spotlight);
+		$uninews = $this->home_hack_model->getArticlesByTags(array('news'), 3);
+		$sport = $this->home_hack_model->getArticlesByTags(array('sport'), 4);
+		$arts = $this->home_hack_model->getArticlesByTags(array('arts'), 4);
+		$lifestyle = $this->home_hack_model->getArticlesByTags(array('lifestyle'), 4);
+		$photos = $this->flickr_model->getLatestPhotos(9);
+
+		$boxes = array();
+
+		$boxes[] = array(
+			'type'			=>	'spotlight',
+			'articles'		=>	$spotlight
+		);
+		$boxes[] = array(
+			'type'			=>	'article_rollover',
+			'title'			=>	'latest news',
+			'title_link'	=>	'/news',
+			'articles'		=>	$uninews
+		);
+		$boxes[] = array(
+			'type'			=>	'adsense_third',
+			'last'			=>	true
+		);
+		$boxes[] = array(
+			'type'			=>	'article_list',
+			'title'			=>	'latest sport',
+			'title_link'	=>	'/sport',
+			'size'			=>	'1/3',
+			'last'			=>	false,
+			'articles'		=>	$sport
+		);
+		$boxes[] = array(
+			'type'			=>	'article_list',
+			'title'			=>	'latest arts',
+			'title_link'	=>	'/arts',
+			'size'			=>	'1/3',
+			'last'			=>	false,
+			'articles'		=>	$arts
+		);
+		$boxes[] = array(
+			'type'			=>	'article_list',
+			'title'			=>	'latest lifestyle',
+			'title_link'	=>	'/lifestyle',
+			'size'			=>	'1/3',
+			'last'			=>	true,
+			'articles'		=>	$lifestyle
+		);
+		$boxes[] = array(
+			'type'			=>	'photo_bar',
+			'size'			=>	'full',
+			'last'			=>	true,
+			'photos'		=>	$photos
+		);
+		$boxes[] = array(
+			'type'			=>	'adsense_half',
+			'last'			=>	false
+		);
+		$comments_config = $this->config->item('comments');
+		$boxes[] = array(
+			'type'			=>	'comments_latest',
+			'title'			=>	'latest comments',
+			'title_link'	=>	'',
+			'size'			=>	'1/2',
+			'last'			=>	true,
+			'comments'		=>	$this->comments_model->GetLatestComments(10),
+			'comments_per_page' => $comments_config['max_per_page']
+		);
+		$boxes[] = array(
+			'type'			=>	'crossword_latest',
+			'title'			=>	'latest crosswords',
+			'title_link'	=>	'/crosswords',
+			'size'			=>	'1/2',
+			'last'			=>	false,
+			'next'			=>	$this->crosswords_model->GetCrosswords(null,null,null,true,null,null,1,'ASC'),
+			'latest'		=>	$this->crosswords_model->GetCrosswords(null,null,null,null,true,null,2,'DESC')
+		);
+
+
+		$data = array(
+			'boxes'	=>	$boxes
+		);
+		$this->pages_model->SetPageCode('home_main');
+		$this->main_frame->SetData('menu_tab', 'home');
+		$this->main_frame->SetContentSimple('flexibox/layout', $data);
+		$this->main_frame->IncludeCss('stylesheets/home.css');
+		$this->main_frame->Load();
+
+
+		//Obtain weather
+		//$data['weather_forecast'] = $this->Home_Model->GetWeather();
+
+		// Minifeeds
+		//list($data['events'], $data['todo']) = $this->_GetMiniCalendars();
+
+		// Poll data
+		/*
+		if ($poll_id)
+		{
+			$data['poll_vote_box'] = new PollsVoteBox(
+				$this->polls_model->GetPollDetails($poll_id),
+				$this->polls_model->GetPollChoiceVotes($poll_id),
+				$user_voted,
+				$poll_show_results
+			);
+		}
+		else
+		{
+			$data['poll_vote_box'] = null;
+		}
+		*/
+
 		//poll handling
+		/*
 		$poll_id = $this->polls_model->GetDisplayedPoll();
 		$user_voted = $this->polls_model->HasUserVoted($poll_id, $this->user_auth->entityId);
 		$poll_show_results = false;
@@ -118,105 +240,7 @@ class Home extends Controller {
 		} else {
 			$poll_show_results = true;
 		}
-		
-		if ('fbml' === OutputMode()) {
-			return $this->_FacebookHome();
-		}
-
-		$this->pages_model->SetPageCode('home_main');
-		$this->load->library('image');
-
-		//Various arrays defined
-		$data = array();		//Stores all data to be passed to view
-		$res = array();
-
-		$data['welcome_title'] = $this->pages_model->GetPropertyText('welcome_title');
-		$data['welcome_text']  = $this->pages_model->GetPropertyWikitext('welcome_text');
-
-		$data['articles'] = array(
-			'uninews' => array(),
-			'sport' => array(),
-//			'features' => array(),
-			'arts' => array(),
-//			'videocasts' => array(),
-			'lifestyle' => array(),
-//			'blogs' => array()
-		);
-
-		// Get the article ids of all articles to be displayed
-		$article_all_ids = $this->Home_Hack_Model->getLatestArticleIds(
-			array(
-				'uninews' => 4,
-				'sport' => 4,
-//				'features' => 1,
-				'arts' => 4,
-//				'videocasts' => 1,
-				'lifestyle' => 4,
-//				'blogs' => 1,
-			)
-		);
-
-		// Create an array to map an article id to an article type
-		$article_base_types = array();
-		foreach($article_all_ids as $type => $ids) {
-			foreach($ids as $id)
-				$article_base_types[$id] = $type;
-		}
-
-		// Get the ids of articles which require titles
-		$article_title_ids = array();
-		foreach($article_all_ids as $type => $ids) {
-			foreach($ids as $id) {
-				$article_title_ids[] = $id;
-			}
-		}
-
-		// Get the article titles
-		$article_titles = $this->Home_Hack_Model->getArticleTitles($article_title_ids, '%W, %D %M %Y');
-		foreach($article_titles as $title) {
-			$type = $article_base_types[$title['id']];
-			$title['photo_xhtml'] = $this->image->getThumb($title['photo_id'], 'small', false, array('class' => 'left'));
-			$data['articles'][$type][] = $title;
-		}
-
-		// Get latest comments made on articles
-		$this->load->library('comment_views');
-		$data['latest_comments'] = $this->comment_views->GetLatestComments();
-
-		//Obtain weather
-		//$data['weather_forecast'] = $this->Home_Model->GetWeather();
-
-		//Obtain banner
-		//$data['banner'] = $this->Home_Model->GetBannerImageForHomepage();
-		
-		// Minifeeds
-		list($data['events'], $data['todo']) = $this->_GetMiniCalendars();
-
-		$this->load->helper('crosswords_miniview');
-		$data['crosswords'] = new CrosswordsMiniView(3);
-		
-		// Poll data
-		if ($poll_id)
-		{
-			$data['poll_vote_box'] = new PollsVoteBox(
-				$this->polls_model->GetPollDetails($poll_id),
-				$this->polls_model->GetPollChoiceVotes($poll_id),
-				$user_voted,
-				$poll_show_results
-			);
-		}
-		else
-		{
-			$data['poll_vote_box'] = null;
-		}
-
-		$this->load->model('flickr_model');
-		$data['photos'] = $this->flickr_model->getLatestPhotos(9);
-
-		$this->main_frame->SetData('menu_tab', 'home');
-		$this->main_frame->SetContentSimple('general/home', $data);
-		$this->main_frame->IncludeCss('stylesheets/home.css');
-		$this->main_frame->Load();
+		*/
 	}
 
 }
