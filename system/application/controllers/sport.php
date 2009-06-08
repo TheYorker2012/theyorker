@@ -1,63 +1,135 @@
 <?php
-/*
- * Sport homepage controller
- *@author Owen Jones (oj502@york.ac.uk)
+
+/**
+ *	Sport home page
+ *	@author	Chris Travis (cdt502 - ctravis@gmail.com)
  */
+
 class Sport extends Controller
 {
+
 	function __construct()
 	{
 		parent::Controller();
-		$this->load->model('News_model');
-		$this->load->model('Home_Model');
-		$this->load->model('Home_Hack_Model');
+		$this->load->model('home_hack_model');
 	}
-	
-	private function getNumberOfType($articles,$type_codename)
-	{
-		$count=0;
-		foreach ($articles as $article)
-		{
-			if($article['article_type']==$type_codename){$count++;}
-		}
-		return $count;
-	}
-	
+
 	function index()
 	{
 		if (!CheckPermissions('public')) return;
 
-		$homepage_article_type = 'sport';
-		// Get page properties information
-		$this->pages_model->SetPageCode('homepage_'.$homepage_article_type);
-		$main_articles_num = (int)$this->pages_model->GetPropertyText('max_num_main_articles');
-		$more_articles_num = (int)$this->pages_model->GetPropertyText('max_num_more_articles');
+		$spotlight = $this->home_hack_model->getArticlesByTags(array('sport', 'spotlight'), 1);
+		$this->home_hack_model->ignore($spotlight);
+		$features = $this->home_hack_model->getArticlesByTags(array('sport', 'feature'), 6);
+		$this->home_hack_model->ignore($features);
+		$blogs = $this->home_hack_model->getArticlesByTags(array('sport', 'blog'), 6);
+		$this->home_hack_model->ignore($blogs);
 
-		// Obtain banner for homepage
-		$data['banner'] = $this->Home_Model->GetBannerImageForHomepage($homepage_article_type);
+		$football = $this->home_hack_model->getArticlesByTags(array('football'), 3);
+		$this->home_hack_model->ignore($football);
+		$rugby = $this->home_hack_model->getArticlesByTags(array('rugby'), 3);
+		$this->home_hack_model->ignore($rugby);
+		$netball = $this->home_hack_model->getArticlesByTags(array('netball'), 3);
+		$this->home_hack_model->ignore($netball);
+		$lacrosse = $this->home_hack_model->getArticlesByTags(array('lacrosse'), 3);
+		$this->home_hack_model->ignore($lacrosse);
+		$hockey = $this->home_hack_model->getArticlesByTags(array('hockey'), 3);
+		$this->home_hack_model->ignore($hockey);
 
-		// Get main article
-		$featured_article_id = $this->News_model->GetLatestFeaturedId($homepage_article_type);
-		if ($featured_article_id === NULL) {
-			// No featured article, use the most recent
-			$latest_article_id = $this->News_model->GetLatestId($homepage_article_type, 1);
-			$featured_article_id = $latest_article_id[0];
-		}
-		$data['main_articles'] = $this->Home_Hack_Model->getArticleTitles(array($featured_article_id), '%W, %D %M %Y');
+		$sport = $this->home_hack_model->getArticlesByTags(array('sport'), 8);
 
-		// Get sub-types for article section
-		$data['section_articles'] = array();
-		$sub_types = $this->News_model->getSubArticleTypes($homepage_article_type);
-		foreach ($sub_types as $type) {
-			// Make sure we don't get duplicate articles
-			$offset = $this->getNumberOfType($data['main_articles'], $type['codename']);
-			$article_ids = $this->News_model->GetLatestId($type['codename'], $more_articles_num, $offset);
-			$data['section_articles'][strtolower($type['name'])] = $this->Home_Hack_Model->getArticleTitles($article_ids, '%W, %D %M %Y');
-		}
+		$boxes = array();
 
+		$boxes[] = array(
+			'type'			=>	'spotlight',
+			'articles'		=>	$spotlight
+		);
+		$boxes[] = array(
+			'type'			=>	'article_list',
+			'title'			=>	'latest features',
+			'title_link'	=>	'/news/' . $features[0]['id'],
+			'size'			=>	'1/3',
+			'position'		=>	'right',
+			'last'			=>	true,
+			'articles'		=>	$features
+		);
+		$boxes[] = array(
+			'type'			=>	'article_list',
+			'title'			=>	'latest sport',
+			'title_link'	=>	'/news/' . $sport[0]['id'],
+			'size'			=>	'2/3',
+			'position'		=>	'',
+			'last'			=>	false,
+			'articles'		=>	$sport
+		);
+		$boxes[] = array(
+			'type'			=>	'adsense_third',
+			'position'		=>	'',
+			'last'			=>	true
+		);
+		$boxes[] = array(
+			'type'			=>	'article_list',
+			'title'			=>	'latest comment',
+			'title_link'	=>	'',
+			'size'			=>	'1/3',
+			'position'		=>	'right',
+			'last'			=>	true,
+			'articles'		=>	$blogs
+		);
+		$boxes[] = array(
+			'type'			=>	'article_list',
+			'title'			=>	'latest football',
+			'title_link'	=>	'/news/' . $football[0]['id'],
+			'size'			=>	'1/3',
+			'position'		=>	'',
+			'last'			=>	false,
+			'articles'		=>	$football
+		);
+		$boxes[] = array(
+			'type'			=>	'article_list',
+			'title'			=>	'latest rugby',
+			'title_link'	=>	'/news/' . $rugby[0]['id'],
+			'size'			=>	'1/3',
+			'position'		=>	'',
+			'last'			=>	false,
+			'articles'		=>	$rugby
+		);
+		$boxes[] = array(
+			'type'			=>	'article_list',
+			'title'			=>	'latest netball',
+			'title_link'	=>	'/news/' . $netball[0]['id'],
+			'size'			=>	'1/3',
+			'position'		=>	'',
+			'last'			=>	false,
+			'articles'		=>	$netball
+		);
+		$boxes[] = array(
+			'type'			=>	'article_list',
+			'title'			=>	'latest lacrosse',
+			'title_link'	=>	'/news/' . $lacrosse[0]['id'],
+			'size'			=>	'1/3',
+			'position'		=>	'',
+			'last'			=>	false,
+			'articles'		=>	$lacrosse
+		);
+		$boxes[] = array(
+			'type'			=>	'article_list',
+			'title'			=>	'latest hockey',
+			'title_link'	=>	'/news/' . $hockey[0]['id'],
+			'size'			=>	'1/3',
+			'position'		=>	'',
+			'last'			=>	false,
+			'articles'		=>	$hockey
+		);
+
+
+		$data = array(
+			'boxes'	=>	$boxes
+		);
+		$this->pages_model->SetPageCode('homepage_sport');
 		$this->main_frame->SetData('menu_tab', 'sport');
+		$this->main_frame->SetContentSimple('flexibox/layout', $data);
 		$this->main_frame->IncludeCss('stylesheets/home.css');
-		$this->main_frame->SetContentSimple('homepages/'.$homepage_article_type, $data);
 		$this->main_frame->Load();
 	}
 }

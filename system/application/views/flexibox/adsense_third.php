@@ -1,4 +1,4 @@
-<div class="ClearFlexiBox Box13<?php if (!empty($last)) echo(' FlexiBoxLast'); ?>">
+<div class="ClearFlexiBox Box13<?php if (!empty($last)) echo(' FlexiBoxLast'); ?>"<?php if (!empty($position)) { echo(' style="float:' . $position . '"'); } ?>>
 	<script type="text/javascript">
 	<!--
 	google_ad_client = "pub-8676956632365960";

@@ -12,39 +12,70 @@ class Food extends Controller
 	{
 		if (!CheckPermissions('public')) return;
 
-		$page_codename = 'food';
+		$spotlight = $this->home_hack_model->getArticlesByTags(array('food', 'spotlight'), 1);
+		$this->home_hack_model->ignore($spotlight);
+		$features = $this->home_hack_model->getArticlesByTags(array('food', 'feature'), 9);
+		$this->home_hack_model->ignore($features);
+		$broke_student = $this->home_hack_model->getArticlesByTags(array('the-broke-student'));
+		$weird_wonderful = $this->home_hack_model->getArticlesByTags(array('weird-and-wonderful'));
+		$taste_test = $this->home_hack_model->getArticlesByTags(array('the-taste-test'));
 
-		$this->pages_model->SetPageCode('homepage_' . $page_codename);
+		$boxes = array();
 
-		// Obtain banner for homepage
-		//$data['banner'] = $this->Home_Model->GetBannerImageForHomepage($homepage_article_type);
-
-		$data = array();
-		$data['spotlight'] = $this->home_hack_model->getArticlesByTags(array('food', 'spotlight'), 1);
-		$data['features'] = array(
-			'title'		=>	'features',
-			'articles'	=>	$this->home_hack_model->getArticlesByTags(array('food', 'feature'), 9)
+		$boxes[] = array(
+			'type'			=>	'spotlight',
+			'articles'		=>	$spotlight
 		);
-		$data['sections'] = array(
-			array(
-				'title'		=>	'the broke student',
-				'articles'	=>	$this->home_hack_model->getArticlesByTags(array('the-broke-student'))
-			),
-                        array(
-                                'title'         =>      'weird and wonderful',
-                                'articles'      =>      $this->home_hack_model->
-getArticlesByTags(array('weird-and-wonderful'))
-                        ),
-			array(
-				'title'		=>	'the taste test',
-				'articles'	=>	$this->home_hack_model->getArticlesByTags(array('the-taste-test'))
-			)
+		$boxes[] = array(
+			'type'			=>	'article_list',
+			'title'			=>	'latest features',
+			'title_link'	=>	$features[0]['id'],
+			'size'			=>	'1/3',
+			'position'		=>	'right',
+			'last'			=>	true,
+			'articles'		=>	$features
 		);
-		
+		$boxes[] = array(
+			'type'			=>	'article_list',
+			'title'			=>	'the broke student',
+			'title_link'	=>	$broke_student[0]['id'],
+			'size'			=>	'1/3',
+			'position'		=>	'',
+			'last'			=>	false,
+			'articles'		=>	$broke_student
+		);
+		$boxes[] = array(
+			'type'			=>	'article_list',
+			'title'			=>	'weird and wonderful',
+			'title_link'	=>	$weird_wonderful[0]['id'],
+			'size'			=>	'1/3',
+			'position'		=>	'',
+			'last'			=>	false,
+			'articles'		=>	$weird_wonderful
+		);
+		$boxes[] = array(
+			'type'			=>	'article_list',
+			'title'			=>	'the taste test',
+			'title_link'	=>	$taste_test[0]['id'],
+			'size'			=>	'1/3',
+			'position'		=>	'',
+			'last'			=>	false,
+			'articles'		=>	$taste_test
+		);
+		$boxes[] = array(
+			'type'			=>	'adsense_third',
+			'position'		=>	'',
+			'last'			=>	false
+		);
 
-		$this->main_frame->SetData('menu_tab', $page_codename);
+
+		$data = array(
+			'boxes'	=>	$boxes
+		);
+		$this->pages_model->SetPageCode('homepage_food');
+		$this->main_frame->SetData('menu_tab', 'food');
+		$this->main_frame->SetContentSimple('flexibox/layout', $data);
 		$this->main_frame->IncludeCss('stylesheets/home.css');
-		$this->main_frame->SetContentSimple('homepages/'.$page_codename, $data);
 		$this->main_frame->Load();
 	}
 }

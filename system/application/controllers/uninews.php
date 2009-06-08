@@ -3,64 +3,83 @@
 class Uninews extends Controller
 {
 
-	private $displayedArticleIDs;
-
 	function __construct()
 	{
 		parent::Controller();
 		$this->load->model('home_hack_model');
 	}
 
-	function _getIDs ($articles)
-	{
-		if (!empty($articles)) {
-			foreach ($articles as $a) {
-				$this->displayedArticleIDs[] = $a['id'];
-			}
-		}
-	}
-
 	function index()
 	{
 		if (!CheckPermissions('public')) return;
 
-		$page_codename = 'news';
+		$spotlight = $this->home_hack_model->getArticlesByTags(array('news', 'spotlight'), 1);
+		$this->home_hack_model->ignore($spotlight);
+		$inmyview = $this->home_hack_model->getArticlesByTags(array('in-my-view'), 2);
+		$this->home_hack_model->ignore($inmyview);
+		$features = $this->home_hack_model->getArticlesByTags(array('news', 'feature'), 6);
+		$this->home_hack_model->ignore($features);
+		$blogs = $this->home_hack_model->getArticlesByTags(array('news', 'blog'), 6);
+		$this->home_hack_model->ignore($blogs);
+		$uninews = $this->home_hack_model->getArticlesByTags(array('news'), 16);
 
-		$this->pages_model->SetPageCode('homepage_' . $page_codename);
+		$boxes = array();
 
-		$this->displayedArticleIDs = array();
-		$spotlight = $this->home_hack_model->getArticlesByTags(array('news', 'spotlight'), 1, $this->displayedArticleIDs);
-		$this->_getIDs($spotlight);
-		$inmyview = $this->home_hack_model->getArticlesByTags(array('in-my-view'), 2, $this->displayedArticleIDs);
-		$this->_getIDs($inmyview);
-		$features = $this->home_hack_model->getArticlesByTags(array('news', 'feature'), 5, $this->displayedArticleIDs);
-		$this->_getIDs($features);
-		$blogs = $this->home_hack_model->getArticlesByTags(array('news', 'blog'), 5, $this->displayedArticleIDs);
-		$this->_getIDs($blogs);
-		$section_news = $this->home_hack_model->getArticlesByTags(array('news'), 16, $this->displayedArticleIDs);
-		$this->_getIDs($section_news);
-
-		$data = array();
-		$data['spotlight'] = $spotlight;
-		$data['features'] = array(
-			'title'		=>	'features',
-			'articles'	=>	$features
+		$boxes[] = array(
+			'type'			=>	'spotlight',
+			'articles'		=>	$spotlight
 		);
-		$data['blogs'] = array(
-			'title'		=>	'comment',
-			'articles'	=>	$blogs
+		$boxes[] = array(
+			'type'			=>	'article_list',
+			'title'			=>	'latest features',
+			'title_link'	=>	'',
+			'size'			=>	'1/3',
+			'position'		=>	'right',
+			'last'			=>	true,
+			'articles'		=>	$features
 		);
-		$data['inmyview'] = $inmyview;
-		$data['sections'] = array(
-			array(
-				'title'		=>	'news',
-				'articles'	=>	$section_news
-			)
+		$boxes[] = array(
+			'type'			=>	'article_list',
+			'title'			=>	'latest news',
+			'title_link'	=>	'',
+			'size'			=>	'2/3',
+			'position'		=>	'',
+			'last'			=>	false,
+			'articles'		=>	$uninews
+		);
+		$boxes[] = array(
+			'type'			=>	'adsense_third',
+			'position'		=>	'',
+			'last'			=>	true
+		);
+		$boxes[] = array(
+			'type'			=>	'article_list',
+			'title'			=>	'latest comment',
+			'title_link'	=>	'',
+			'size'			=>	'1/3',
+			'position'		=>	'right',
+			'last'			=>	true,
+			'articles'		=>	$blogs
+		);
+		$boxes[] = array(
+			'type'			=>	'article_list',
+			'title'			=>	'in my view',
+			'title_link'	=>	'/news/' . $inmyview[0]['id'],
+			'title_image'	=>	'/images/version2/banners/in_my_view2.png',
+			'size'			=>	'2/3',
+			'position'		=>	'',
+			'last'			=>	false,
+			'articles'		=>	$inmyview
 		);
 
-		$this->main_frame->SetData('menu_tab', $page_codename);
+
+		$data = array(
+			'boxes'	=>	$boxes
+		);
+		$this->pages_model->SetPageCode('homepage_news');
+		$this->main_frame->SetData('menu_tab', 'news');
+		$this->main_frame->SetContentSimple('flexibox/layout', $data);
 		$this->main_frame->IncludeCss('stylesheets/home.css');
-		$this->main_frame->SetContentSimple('homepages/'.$page_codename, $data);
 		$this->main_frame->Load();
 	}
 }
