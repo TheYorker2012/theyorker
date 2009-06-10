@@ -39,6 +39,7 @@
 				<label for="college">College: </label>
 				<!-- TODO: create fancy picture based college selection -->
 				<select name="college" id="college">
+					<option value="-1">-</option>
 <?php
 foreach ($colleges as $college) {
 	echo('					');
@@ -53,6 +54,7 @@ foreach ($colleges as $college) {
 				<br />
 				<label for="year">Year of Enrollment: </label>
 				<select name="year" id="year">
+					<option value="-1">-</option>
 <?php
 foreach ($years as $year) {
 	echo('				');

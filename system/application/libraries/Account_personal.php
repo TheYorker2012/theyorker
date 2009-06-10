@@ -40,8 +40,8 @@ class Account_personal extends FramesFrame
 		$rules['facebook'] = '';
 		$rules['nick'] = 'trim|required|alpha_numeric';
 		$rules['gender'] = 'trim';
-		$rules['college'] = 'trim|required|numeric';
-		$rules['year'] = 'trim|required|numeric';
+		$rules['college'] = 'trim|required|is)numeric';
+		$rules['year'] = 'trim|required|is_numeric';
 		$rules['time'] = 'trim|required|numeric';
 		$CI->validation->set_rules($rules);
 		// names of fields for error msgs

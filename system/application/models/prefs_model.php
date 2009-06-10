@@ -31,6 +31,7 @@ class Prefs_model extends Model {
 
 	function collegeExists($college)
 	{
+		if ($college == -1) return true;
 		$sql =
 			'SELECT'.
 			' college_name '.
@@ -54,6 +55,7 @@ class Prefs_model extends Model {
 	// Check that the enrolled year is within the last 10 years
 	function yearValid($year)
 	{
+		if ($year == -1) return true;
 		return ($year <= date('Y')) && ($year >= (date('Y') - 10));
 	}
 
@@ -102,6 +104,10 @@ class Prefs_model extends Model {
 		
 		// This line serves no purpose
 		//$row = $this->getUserInfo ($uid);
+
+
+		if ($info[0] == -1) $info[0] = NULL;
+		if ($info[6] == -1) $info[6] = NULL;
 
 		$sql =
 			'UPDATE users '.
