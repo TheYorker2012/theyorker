@@ -182,7 +182,7 @@ class permissions_model extends Model
 		if (!$role) {
 			$sql .= '	GROUP BY user_entity_id';
 		}
-		$sql .= '	ORDER BY user_surname ASC, user_firstname ASC';
+		$sql .= '	ORDER BY user_firstname ASC, user_surname ASC';
 		$query = $this->db->query($sql, array($permission));
 		return $query->result_array();
 	}
