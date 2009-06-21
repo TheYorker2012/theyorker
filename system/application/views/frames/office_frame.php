@@ -104,20 +104,50 @@ if (!empty($ticker)) {
 		</div>
 	</div>
 
-	<div id="Navigation">
-		<ul id="Tabs" class="next">
+<?php
+$menu = array(
+	array('home', '/office', array('first')),
+	array('articles', '/office/articles', array()),
+	array('gallery', '/office/gallery', array()),
+	array('business', '/office/business', array()),
+	array('admin', '/admin', array('last'))
+);
+// Has a tab been set as selected?
+$menu_style = '';
+if (!empty($menu_tab)) {
+        $menu_key = null;
+        for ($x = 0; $x < count($menu); $x++) {
+                if ($menu[$x][0] == $menu_tab) {
+                        $menu_key = $x;
+                        break;
+                }
+        }
+        if ($menu_key !== null) {
+                $menu[$menu_key][2][] = 'current';
+                if (($menu_key - 1) > -1) {
+                        $menu[$menu_key - 1][2][] = 'next';
+                } else {
+                        $menu_style = 'next';
+                }
+        }
+}
+?>
+        <div id="Navigation">
+                <ul id="Tabs"<?php if (!empty($menu_style)) echo(' class="' . $menu_style . '"'); ?>>
+<?php foreach ($menu as $tab) { ?>
+                        <li<?php if (!empty($tab[2])) echo(' class="' . implode(' ', $tab[2]) . '"'); ?>><a href="<?php echo($tab[1]); ?>"><?php echo($tab[0]); ?></a></li>
+<?php } ?>
+<?php foreach ($links as $link) { ?>
+                        <li class="link"><?php echo($link); ?></li>
+<?php } ?>
+                </ul>
+        </div>
+
 <!--
 			<li class="first next"><a href="/">Public Site</a></li>
 			<li class="current"><a href="/office">Office</a></li>
 			<li class="last"><a href="http://mail.theyorker.co.uk">Webmail</a></li>
 -->
-			<li class="first current"><a href="/office">home</a></li>
-			<li><a href="/office/articles">articles</a></li>
-			<li><a href="/office/gallery">gallery</a></li>
-			<li><a href="/office/business">business</a></li>
-			<li class="last"><a href="/office/admin">admin</a></li>
-		</ul>
-	</div>
 
 	<div id="Page">
 		<div id="MainBodyPane">

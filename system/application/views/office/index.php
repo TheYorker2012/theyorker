@@ -35,6 +35,7 @@ foreach ($activity as $a) {
 <div class="BlueBox Box13b FlexiBoxLast">
 	<h2>links</h2>
 	<p><a href="/office/bylines">Bylines</a></p>
+	<p><a href="/office/irc">IRC Chat</a></p>
 	<h2>notifications</h2>
 	<?php
 	foreach ($notifications as $notification) {

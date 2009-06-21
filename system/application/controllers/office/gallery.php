@@ -98,6 +98,7 @@ class Gallery extends Controller {
 		$gallery_frame->SetContent($gallery_div);
 
 		// Set up the master frame.
+		$this->main_frame->SetData('menu_tab', 'gallery');
 		$this->main_frame->IncludeCss('stylesheets/gallery.css');
 		$this->main_frame->SetTitle('Photo Gallery');
 		$this->main_frame->SetContent($gallery_frame);
@@ -164,6 +165,7 @@ class Gallery extends Controller {
 		$data['image_types'] = $this->photos_model->GetAllTypesInfo();
 		$data['photo_tags'] = $this->photos_model->GetPhotosTags($id);
 
+		$this->main_frame->SetData('menu_tab', 'gallery');
 		$this->main_frame->SetTitle('Photo Gallery');
 		$this->main_frame->IncludeJs('javascript/prototype.js');
 		$this->main_frame->SetExtraHead($this->xajax->getJavascript(null, '/javascript/xajax.js'));
@@ -223,6 +225,7 @@ class Gallery extends Controller {
 
 		$this->main_frame->SetContentSimple('office/gallery/massupload', $data);
 		$this->main_frame->IncludeCss('stylesheets/gallery.css');
+		$this->main_frame->SetData('menu_tab', 'gallery');
 		$this->main_frame->AddExtraHead('<style type="text/css">div#massupload_selection div { height: ' . $preview_height . 'px; width: ' . $preview_width . 'px; }</style>');
 
 		$this->main_frame->Load();
@@ -384,6 +387,7 @@ class Gallery extends Controller {
 
 		$this->main_frame->SetTitle('Photo Recropper');
 		$this->main_frame->SetExtraHead($this->xajax->getJavascript(null, '/javascript/xajax.js'));
+		$this->main_frame->SetData('menu_tab', 'gallery');
 		$this->main_frame->IncludeCss('stylesheets/cropper.css');
 		$this->main_frame->IncludeJs('javascript/prototype.js');
 		$this->main_frame->IncludeJs('javascript/scriptaculous.js?load=builder,effects,dragdrop');

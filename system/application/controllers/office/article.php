@@ -97,6 +97,7 @@ class Article extends Controller
 			array('title' => (empty($data['article']['content_heading']) ? $data['article']['request_title'] : $data['article']['content_heading']))
 		);
 		$this->main_frame->SetContentSimple('office/article/main', $data);
+		$this->main_frame->SetData('menu_tab', 'articles');
 		$this->main_frame->IncludeJs('javascript/wikitoolbar.js');
 		$this->main_frame->IncludeJs('/javascript/office_interface.js');
 		$this->main_frame->IncludeCss('/stylesheets/office_interface.css');

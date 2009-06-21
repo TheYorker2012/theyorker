@@ -27,6 +27,7 @@ class Articles extends Controller
 		$data['articlelist'] = $this->news_model->getScheduledAndLive();
 
 		/// Set up the main frame
+		$this->main_frame->SetData('menu_tab', 'articles');
 		$this->main_frame->SetContentSimple('office/news/scheduled_and_live', $data);
 		$this->main_frame->Load();
 	}
