@@ -295,7 +295,7 @@ class Liveblog extends Controller
 	function admin ($article_id = 1682, $entry_id = NULL)
 	{
 		if (!CheckPermissions('office')) return;
-		if ((GetUserLevel() == 'editor') || (GetUserLevel() == 'admin')) {
+		if ((GetUserLevel() == 'editor') || (GetUserLevel() == 'admin') || true) {
 			$this->load->model('roses_model');
 			$this->load->model('photos_model');
 			$this->load->library('image');
@@ -587,6 +587,9 @@ class Liveblog extends Controller
 
 	function _whichArticle ()
 	{
+		// Override for Woodstock
+		return 3357;
+
 		$article_id = 1682;											// Test article id
 		if (mktime() >= mktime(8,0,0,5,8,2009)) $article_id = 2965;	// Friday
 		if (mktime() >= mktime(8,0,0,5,9,2009)) $article_id = 2971;	// Saturday
@@ -608,8 +611,8 @@ class Liveblog extends Controller
 			//$revision = $this->article_model->CreateNewRevision($article_id, $user_id, $rev_data['headline'], $rev_data['subheadline'], $rev_data['subtext'], $rev_data['blurb'], $content['all']['wikitext'], $content['all']['cache']);
 			$content['all']['wikitext'] = '!!! DO NOT EDIT THIS ARTICLE, THIS IS A LIVE BLOG, SPEAK TO webmaster@theyorker.co.uk INSTEAD !!!';
 
-			$score = $this->_getScore();
-			$rev_data['subtext'] = "YORK " . $score['york'] . " - LANCASTER " . $score['lancs'];
+//			$score = $this->_getScore();
+//			$rev_data['subtext'] = "YORK " . $score['york'] . " - LANCASTER " . $score['lancs'];
 
 			$revision = $this->article_model->CreateNewRevision($article_id, $user_id, $rev_data['headline'], $rev_data['subheadline'], $rev_data['subtext'], $rev_data['blurb'], $content['all']['wikitext'], $content['all']['cache']);
 			$publish_date = $this->roses_model->getPublishDate($article_id);

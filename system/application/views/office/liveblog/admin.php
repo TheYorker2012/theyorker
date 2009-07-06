@@ -13,15 +13,17 @@ function update_count(control) {
 	elseif ($article_id == 2971) echo('SATURDAY');
 	elseif ($article_id == 2972) echo('SUNDAY');
 	elseif ($article_id == 2858) echo('Elections 2009');
+	elseif ($article_id == 3357) echo('Woodstock 2009');
 	else echo('UNKNOWN');
 	?>
 	</h2>
 	<p>
 		<a href="/office/liveblog/admin/1682">Test Article</a> |
+		<a href="/office/liveblog/admin/3357">Woodstock 2009</a>
+		<!--
 		<a href="/office/liveblog/admin/2965">FRIDAY</a> |
 		<a href="/office/liveblog/admin/2971">SATURDAY</a> |
 		<a href="/office/liveblog/admin/2972">SUNDAY</a>
-		<!--
 		<a href="/office/liveblog/admin/2858">Elections 2009</a>
 		-->
 	</p>
