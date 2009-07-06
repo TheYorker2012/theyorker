@@ -158,6 +158,13 @@ class Home extends Controller {
 			'type'			=>	'adsense_half',
 			'last'			=>	false
 		);
+//		$boxes[] = array(
+//			'type'			=>	'advert_half',
+//			'image'			=>	'/images/adverts/woodstock.jpg',
+//			'image_title'		=>	'RAG Woodstock Saturday Week 9',
+//			'link'			=>	'http://www.facebook.com/event.php?eid=100229538904',
+//			'last'			=>	false
+//		);
 		$comments_config = $this->config->item('comments');
 		$boxes[] = array(
 			'type'			=>	'comments_latest',

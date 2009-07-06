@@ -28,7 +28,7 @@ foreach ($activity as $a) {
 	</div>
 
 	<pre>
-	<?php print_r($activity); ?>
+	<?php /* print_r($activity); */ ?>
 	</pre>
 </div>
 
