@@ -438,6 +438,11 @@ class Wikiparser {
 				';
 			if (!empty($mediaplayer_type)) {
 				switch ($mediaplayer_type) {
+					case 'ystv':
+						$output .= 'so.addVariable("logo","/images/prototype/news/mediaplayer-ystv.png");';
+						$output .= 'so.addVariable("screencolor","000000");';
+						$output .= 'so.addVariable("type", "video");';
+						break;
 					case 'ury':
 						$output .= 'so.addVariable("image","/images/prototype/news/mediaplayer-ury.png");';
 						$output .= 'so.addVariable("link","http://ury.york.ac.uk");';
