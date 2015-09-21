@@ -113,10 +113,12 @@ class Members extends Controller
 	/// Index page.
 	function index()
 	{
-		if (!CheckPermissions('vip')) return;
-
-		/// @note Redirects to members/list
-		redirect(vip_url('members/list'));
+		if (!CheckPermissions('office')) return;
+		// Allow admins to do this, in case somebody screws with permissions.
+		if (GetUserLevel() != 'admin') {
+			if (!CheckRolePermissions('MEMBERS_MODIFY')) return;
+		}
+		redirect('/office/manage/members/list');
 	}
 
 	protected function _handle_member_list_member_operation()
@@ -329,10 +331,14 @@ class Members extends Controller
 
 		$this->mIsFilterOn = FALSE;
 
+		//$memberships = $this->members_model->GetAllUsers();
+
 		if (!isset($memberships)) {
 			$team_list = $this->organisation_model->GetSubteamIds($this->mOrganisation);
 			$memberships = $this->members_model->GetMemberDetails($team_list, null, 'TRUE', array(), ('manage' === VipMode()), $sortdir, $sorton);
 		}
+
+		
 
 		$team_list = array_flip($team_list);
 
@@ -345,9 +351,9 @@ class Members extends Controller
 			$members[(int)$membership['user_id']][(int)$membership['team_id']] = $membership;
 			
 			//If the organisation is the yorker find out how many articles they have written, if its not the yorker dont look up to save time.
-			if($membership['team_id']==$this->config->item('company_entity_id')){
-				$members[(int)$membership['user_id']][(int)$membership['team_id']]['article_count'] = $this->members_model->GetNumberOfArticlesByUser((int)$membership['user_id']);
-			}
+			//if($membership['team_id']==$this->config->item('company_entity_id')){
+			//	$members[(int)$membership['user_id']][(int)$membership['team_id']]['article_count'] = $this->members_model->GetNumberOfArticlesByUser((int)$membership['user_id']);
+			//}
 		}
 
 		foreach ($members as $user_id => $member_teams) {
@@ -379,6 +385,7 @@ class Members extends Controller
 			}
 			
 		}
+
 		$this->mMembers = &$members;
 	}
 
@@ -898,6 +905,9 @@ class Members extends Controller
 	function compose($members = NULL)
 	{
 		if (!CheckPermissions('vip')) return;
+
+		$data['title'] = 'Title';
+		$data['row'] = $this->_getXML('articles');
 		
 		//add any members in the session to the list of recipients
 		if (isset($_SESSION['members_email_to']) && is_array($_SESSION['members_email_to'])) {
@@ -1064,6 +1074,28 @@ class Members extends Controller
 		}
 		return ($invite_deleted + $invite_invalids);
 	}
+
+	function _getXML($fname)
+    	{
+
+                $filename = $fname.'.xml';
+                $xmlfile= $filename;
+                $xmlRaw = file_get_contents($xmlfile);
+
+                $this->load->library('simplexml');
+                $xmlData = $this->simplexml->xml_parse($xmlRaw);
+
+                foreach($xmlData['item'] as $row)
+                {
+
+			$result .= '<tr>';
+			$result .= '<td>'.$row['article_id'].'</td>';
+			$result .= '</tr>';
+
+                }
+                 return $result;
+        }
+
 }
 
 ?>

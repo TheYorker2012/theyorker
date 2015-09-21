@@ -222,7 +222,7 @@ function EchoTeamFilterOptions($team, $prefix = '', $path = '', $indentation = 0
 		
 		//This would put the number of articles after the surname in brackets, not enough room so left out, maybe use when we go wide.
 		//if(!empty($membership['article_count']) && $membership['article_count']>0){
-		//echo(' ('.$membership['article_count'].')');
+		//	echo(' ('.$membership['article_count'].')');
 		//}
 		echo $span_colour_end;
 		echo('</a>'."\n");
@@ -242,7 +242,7 @@ function EchoTeamFilterOptions($team, $prefix = '', $path = '', $indentation = 0
 <?php 
 		if ($membership['user_confirmed'] && $membership['org_confirmed']) {
 			echo('						<div style="display: none;">confirmed</div>'."\n");
-			echo('						<img src="/images/prototype/members/confirmed.png" alt="Confirmed Member" title="Confirmed Member" />'."\n");
+			echo('						<img src="/images/prototype/members/confirmed.jpg" alt="CM" title="Confirmed Member" />'."\n");
 		}
 		elseif ($membership['user_confirmed']) {
 			echo('						<div style="display: none;">approval</div>'."\n");
@@ -261,7 +261,7 @@ function EchoTeamFilterOptions($team, $prefix = '', $path = '', $indentation = 0
 <?php 
 		if (isset($membership['paid']) && $membership['paid']) {
 			echo('						<div style="display: none;">paid</div>'."\n");
-			echo('						<img src="/images/prototype/members/paid.png" alt="Yes" />'."\n");
+			echo('						<img src="/images/prototype/members/paid.jpg" alt="Yes" />'."\n");
 		}
 		else {
 			echo('						<div style="display: none;">notpaid</div>'."\n");
@@ -281,7 +281,7 @@ function EchoTeamFilterOptions($team, $prefix = '', $path = '', $indentation = 0
 			}
 			else {
 				echo('						<div style="display: none;">ok</div>'."\n");
-				echo('						<img src="/images/prototype/members/card_active.png" alt="Has Business Card" title="Has Business Card" />'."\n");
+				echo('						<img src="/images/prototype/members/card_active.jpg" alt="Has Business Card" title="Has Business Card" />'."\n");
 			}
 		}
 		else {

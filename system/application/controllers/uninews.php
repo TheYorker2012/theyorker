@@ -6,7 +6,7 @@ class Uninews extends Controller
 	function __construct()
 	{
 		parent::Controller();
-		$this->load->model('home_hack_model');
+		$this->load->model('home_hack_model2', 'home_hack_model');
 	}
 
 	function index()
@@ -15,8 +15,8 @@ class Uninews extends Controller
 
 		$spotlight = $this->home_hack_model->getArticlesByTags(array('news', 'spotlight'), 1);
 		$this->home_hack_model->ignore($spotlight);
-		$inmyview = $this->home_hack_model->getArticlesByTags(array('in-my-view'), 2);
-		$this->home_hack_model->ignore($inmyview);
+		//$inmyview = $this->home_hack_model->getArticlesByTags(array('in-my-view'), 2);
+		//$this->home_hack_model->ignore($inmyview);
 		$features = $this->home_hack_model->getArticlesByTags(array('news', 'feature'), 6);
 		$this->home_hack_model->ignore($features);
 		$blogs = $this->home_hack_model->getArticlesByTags(array('news', 'blog'), 6);
@@ -61,6 +61,7 @@ class Uninews extends Controller
 			'last'			=>	true,
 			'articles'		=>	$blogs
 		);
+		/*
 		$boxes[] = array(
 			'type'			=>	'article_list',
 			'title'			=>	'in my view',
@@ -71,8 +72,9 @@ class Uninews extends Controller
 			'last'			=>	false,
 			'articles'		=>	$inmyview
 		);
+		*/
 
-
+		
 		$data = array(
 			'boxes'	=>	$boxes
 		);

@@ -34,12 +34,14 @@ class Advert_model extends Model {
 							advert_views_max=0) AND
 						advert_live = 1 AND
 						(advert_end_date = 0 OR
-							advert_end_date <= current_timestamp)
+							advert_end_date >= current_timestamp)
 					ORDER BY
 						advert_last_display ASC
 					LIMIT
-						1';
+						1;';
+			//echo $sql;
 			$query = $this->db->query($sql);
+			
 			//if there is an advert
 			if ($query->num_rows() == 1)
 			{
@@ -70,8 +72,70 @@ class Advert_model extends Model {
 				$result = FALSE;
 		$this->db->trans_complete();
 		return $result;
+		print_r($result);
 	}
 	
+	function SelectLatestAdvert2()
+	{
+		$this->db->trans_start();
+			//select the latest advert with page views left
+			$sql = 'SELECT
+						advert_id as id,
+						advert_image_id as image_id,
+						advert_image_alt as alt,
+						advert_image_url as url,
+						advert_views_current as current_views,
+						advert_live as live
+					FROM
+						adverts_simple
+					WHERE
+						advert_deleted = 0 AND
+						(advert_views_current < advert_views_max OR
+							advert_views_max=0) AND
+						advert_live = 1 AND
+						(advert_end_date = 0 OR
+							advert_end_date >= current_timestamp)
+					ORDER BY
+						advert_last_display ASC
+					LIMIT
+						5;';
+			//echo $sql;
+			$query = $this->db->query($sql);
+			
+			//if there is an advert
+			if ($query->num_rows() > 0)
+			{
+				$row = $query->row();
+				if ($row->live = true) {
+					$result = array(
+						'image_id' => $row->image_id,
+						'alt' => $row->alt,
+						'url' => $row->url
+						);
+					$id = $row->id;
+					$views = $row->current_views;
+					//update the views count
+					$sql = 'UPDATE
+								adverts_simple
+							SET
+								advert_last_display = CURRENT_TIMESTAMP,
+								advert_views_current  = ?
+							WHERE
+								advert_id = ?
+							AND	advert_deleted = 0';
+					$this->db->query($sql,array($views+1, $id));
+				}
+				else
+					$result = FALSE;
+			}
+			else
+				$result = FALSE;
+		$this->db->trans_complete();
+		return $result;
+		print_r($result);
+	}
+
+
 	/**
 	 * @brief Returns all the adverts in the database 
 	 */

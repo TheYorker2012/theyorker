@@ -1,0 +1,257 @@
+/* New Home Page */
+
+div.ArticleListTitle {
+	background-color: #999;
+	color: #fff;
+	font-weight: bold;
+	text-align: left;
+	font-size: 12pt;
+	margin-bottom: 5px;
+	padding: 0.3em;
+}
+
+div.ArticleListTitleImg {
+	background-color: #999;
+	margin-bottom: 5px;
+	text-align: center;
+}
+
+div.ArticleListTitle a {
+	color: #fff;
+}
+
+/** Display Box **/
+
+div#DisplayBox {
+	position: relative;
+	height: 200px;
+}
+
+div#DisplayBoxText, div#DisplayBoxBg {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	color: #999;
+	font-weight: bold;
+	font-size: 30px;
+	display: inline;
+}
+
+div#DisplayBoxBg {
+	background-color: #999;
+	opacity: 0.6;
+}
+
+div#DisplayBoxText a {
+	color: #fff;
+}
+
+div#DisplayBoxText a:hover {
+	text-decoration: none;
+}
+
+/** ArticleListBox **/
+
+div.ArticleListBox img {
+	float: left;
+	margin: 0 5px 5px 5px;
+}
+
+div.ArticleListTitleImg img {
+	float: none;
+	margin: 0;
+}
+
+div.ArticleListBox div.Date {
+	padding: 0;
+	margin:0;
+}
+
+/** ArticleRolloverBox **/
+
+div.ArticleRolloverBox div.ArticleListTitle {
+	margin-bottom: 0;
+}
+
+div.ArticleRolloverImage {
+	float: left;
+}
+
+div.ArticleRolloverList {
+	height: 100px;
+	overflow: hidden;
+}
+
+div.ArticleRolloverList div {
+	border-bottom: 1px #888 solid;
+/*	margin-left: 120px;*/
+	padding: 0 5px;
+	height: 33px;
+	overflow: hidden;
+/*	background-color: #efefef;*/
+}
+
+div.ArticleRolloverList div a {
+	color: #000;
+}
+div.ArticleRolloverList div a:hover {
+	text-decoration: none;
+}
+div.ArticleRolloverList div.selected {
+	background-color: #ddd;
+}
+
+/* Old Homepage */
+
+div#HomeBanner {
+	margin: 0em 0em 0.5em 0em;
+	text-align: left;
+
+	float: left;
+}
+
+div.NewsBox {
+	width: 100%;
+	float: left;
+	padding: 0;
+	margin: 0;
+}
+
+div.LeftNewsBox {
+	width: 50%;
+	float: left;
+	margin: 0;
+}
+
+div.RightNewsBox {
+	width: 50%;
+	float: right;
+	margin: 0;
+}
+
+div.LeftNewsBox h4, div.RightNewsBox h4 {
+	font-size: small;
+	color: #20c1f0;
+}
+
+div.NewsBox > * {
+	margin: 0px 10px 10px 10px;
+}
+
+a.NewsImg {
+	float: left;
+}
+
+a.RightColumnAction {
+	font-size: smaller;
+	margin-top: 0;
+	text-align: right;
+	display: block;
+}
+
+div.Entry ul {
+	margin-bottom: 0;
+}
+
+ul.TitleList {
+	list-style-position: outside;
+	padding-left: 17px;
+}
+
+a.TitleHeading {
+	font-weight: bold;
+	color: #000000;
+}
+
+/* pingu removed for redesigned homepage */
+/*div.BlueBox h2 {
+	border-color: #999; 
+	border-bottom-style: solid;
+	border-bottom-width: thin; 
+}*/
+
+a.MailLogo {
+	float: left; 
+	margin: 0px 0px 0px 10px;
+	padding: 0;
+}
+
+p.MailText {
+	text-align: center; 
+	margin: 50px 10px 10px 50px;
+	padding: 7px 0px 0px 0px;
+}
+
+/* This may not be needed but */
+h3.SmallNewsHeading {
+	font-size: small;
+}
+
+p.Discreet {
+	font-size: smaller;
+	text-align: right;
+	padding: 0;
+	margin: 0;
+}
+
+h3 {
+	margin-bottom: 0;
+}
+
+/* pingu added for redesigned homepage */
+div.VideoCastBox h4 {
+	font-size: small;
+	color: #20c1f0;
+}
+
+a.NewsImgSmall {
+	float: left;
+	clear: both;
+}
+
+div.LineContainer {
+	clear: both;
+	border-top-color: #999; 
+	border-top-style: solid;
+	border-top-width: thin;
+
+	/* explicitly state top and bottom margins for IE6 */
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+a.PufferImg {
+	float: right;
+	clear: both;
+}
+
+div.PufferBox {
+	border: none;
+	background-color: #999;
+	color: white;
+}
+
+div.PufferBox * {
+	color: white;
+}
+
+div.PufferBox h2 {
+	color: white;
+}
+
+/* Weather */
+table#weather {
+	/* Don't make this 100%, IE breaks */
+	width: 90%;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+/* Latest Comments */
+ul.comments li {
+	list-style-image: url('/images/prototype/homepage/blue_user_small.gif');
+}
+
+ul.comments li.anonymous {
+	list-style-image: url('/images/prototype/homepage/grey_user_small.gif');
+}

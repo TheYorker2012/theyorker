@@ -6,10 +6,10 @@ $config['username_email_postfix'] = '@york.ac.uk';
 $config['company_organisation_id'] = 'theyorker';
 $config['company_entity_id'] = 378;
 
-$config['temp_local_path'] = '/home/yorker/www.theyorker/www/tmp/uploads/';
+$config['temp_local_path'] = '/srv/www/public_html/tmp/uploads/';
 $config['temp_web_address'] = '/tmp/uploads/';
 
-$config['static_local_path'] = '/home/yorker/static.theyorker';
+$config['static_local_path'] = '/srv/static';
 $config['static_web_address'] = 'http://static.theyorker.co.uk';
 $config['static_ftp_address'] = 'theyorker.co.uk';
 $config['static_ftp_username'] = 'staticftp';
@@ -23,11 +23,11 @@ $config['pr_officer_email_address'] = 'publicrelations@theyorker.co.uk';
 $config['pr_officer_name'] = 'Anna Greenleaves and James Koziaryn';
 
 $config['rss_feed_stats'] = false;
-$config['enable_adsense'] = false;
-$config['enable_analytics'] = false;
+$config['enable_adsense'] = true;
+$config['enable_analytics'] = true;
 
 $config['twitter_feed_userid'] = 'theyorkeruk';
-$config['twitter_feed_passwd'] = 'y0rk3rw1nbu4';
+$config['twitter_feed_passwd'] = 'y0rk3rtw1tt3r';
 $config['twitter_admin_userid'] = 'ykr';
 $config['twitter_admin_passwd'] = 'naG88fEn@laTh46ButT';
 

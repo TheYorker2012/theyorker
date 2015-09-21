@@ -9,6 +9,7 @@ echo('<?xml version="1.0" encoding="UTF-8"?>');
 	<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
 	<meta name="description" content="<?php echo(xml_escape($description)); ?>" />
 	<meta name="keywords" content="<?php echo(xml_escape($keywords)); ?>" />
+	<meta name="google-site-verification" content="pccUHcKqCTw4xZzgZp26gq6kcMEu37O_9q5CeOejVGY" />
 	<meta name="verify-v1" content="slrlMuizkqTRTqt5W2zF1EZ6nMrwx+/qRmNDJ7xt2m8=" />
 <?php if (isset($head_title)) { ?>
 	<meta name="title" content="<?php echo(xml_escape($head_title)); ?> - The Yorker" />
@@ -116,12 +117,14 @@ if (!empty($ticker)) {
 
 <?php
 $menu = array(
+	//array('freshers', '/freshers', array('first')),
 	array('home', '/home', array('first')),
 	array('news', '/uninews', array()),
 	array('sport', '/sport', array()),
 	array('arts', '/arts', array()),
 	array('lifestyle', '/lifestyle', array()),
-	array('food', '/food', array('last')),
+	array('comment', '/comment',array()),
+	array('roses', '/roses2011', array('last'))
 );
 // Has a tab been set as selected?
 $menu_style = '';

@@ -100,7 +100,7 @@ class Liveblog extends Controller
 		}
 
 		// Elections Live Blog Article
-		$article_id = 2858;
+		$article_id = 6636;
 
 		// Get Data
 		$data = array();
@@ -125,7 +125,7 @@ class Liveblog extends Controller
 
 		$data['chart1'] = array();
 		$data['chart2'] = array();
-		if (empty($_POST['chart1-height'])) $_POST['chart1-height'] = 130;
+		if (empty($_POST['chart1-height'])) $_POST['chart1-height'] = 200;
 		if (empty($_POST['chart2-height'])) $_POST['chart2-height'] = 200;
 
 		// Draw a chart for each round
@@ -292,10 +292,10 @@ class Liveblog extends Controller
 		return $o;
 	}
 
-	function admin ($article_id = 1682, $entry_id = NULL)
+	function admin ($article_id = 6065, $entry_id = NULL)
 	{
 		if (!CheckPermissions('office')) return;
-		if ((GetUserLevel() == 'editor') || (GetUserLevel() == 'admin') || true) {
+		if ((GetUserLevel() == 'editor') || (GetUserLevel() == 'admin')) {
 			$this->load->model('roses_model');
 			$this->load->model('photos_model');
 			$this->load->library('image');
@@ -418,6 +418,11 @@ class Liveblog extends Controller
 			$twitter_update .= ' ' . $event->event_sport . ' ' . $event->event_name;
 			// Add score if available
 			if (($score_lancs >= 0) || ($score_york >= 0)) {
+				//
+				///
+				//				Commented out 13 / 3 / 2010
+				///
+				///
 				$blog_entry .= " '''" . $score_york . '-' . $score_lancs . "'''";
 				$twitter_update .= ' ' . $score_york . '-' . $score_lancs;
 			}
@@ -438,7 +443,9 @@ class Liveblog extends Controller
 				$score = $this->_getScore();
 				// Post to public Twitter feed
 				$TwitterFeed = new TwitterXML($this->config->item('twitter_feed_userid'), $this->config->item('twitter_feed_passwd'));
-				$TwitterFeed->updateStatus('#Roses2009 YORK ' . $score['york'] . ' LANCASTER ' . $score['lancs'] . ' - ' . $twitter_update);
+				
+				//// COMMENTED OUT 13/3/10
+				$TwitterFeed->updateStatus('#Roses2010 YORK ' . $score['york'] . ' LANCASTER ' . $score['lancs'] . ' - ' . $twitter_update);
 			}
 			//$this->_updateResults ($user->user_entity_id);
 			redirect('/office/liveblog/scores');
@@ -520,6 +527,7 @@ class Liveblog extends Controller
 									$twitter_update .= ' ' . $event->event_sport . ' ' . $event->event_name;
 									// Add score if available
 									if (($score_lancs >= 0) || ($score_york >= 0)) {
+										//// COMMENTED OUT 13/3/2010
 										$blog_entry .= " '''" . $score_lancs . '-' . $score_york . "'''";
 										$twitter_update .= ' ' . $score_lancs . '-' . $score_york;
 									}
@@ -587,13 +595,10 @@ class Liveblog extends Controller
 
 	function _whichArticle ()
 	{
-		// Override for Woodstock
-		return 3357;
-
-		$article_id = 1682;											// Test article id
-		if (mktime() >= mktime(8,0,0,5,8,2009)) $article_id = 2965;	// Friday
-		if (mktime() >= mktime(8,0,0,5,9,2009)) $article_id = 2971;	// Saturday
-		if (mktime() >= mktime(8,0,0,5,10,2009)) $article_id = 2972;	// Sunday
+		$article_id = 7066;											// Test article id
+		if (mktime() >= mktime(8,0,0,5,13,2011)) $article_id = 7063;	// Friday
+		if (mktime() >= mktime(8,0,0,5,14,2011)) $article_id = 7064;	// Saturday
+		if (mktime() >= mktime(8,0,0,5,15,2011)) $article_id = 7065;	// Sunday
 		return $article_id;
 	}
 
@@ -611,9 +616,10 @@ class Liveblog extends Controller
 			//$revision = $this->article_model->CreateNewRevision($article_id, $user_id, $rev_data['headline'], $rev_data['subheadline'], $rev_data['subtext'], $rev_data['blurb'], $content['all']['wikitext'], $content['all']['cache']);
 			$content['all']['wikitext'] = '!!! DO NOT EDIT THIS ARTICLE, THIS IS A LIVE BLOG, SPEAK TO webmaster@theyorker.co.uk INSTEAD !!!';
 
-//			$score = $this->_getScore();
-//			$rev_data['subtext'] = "YORK " . $score['york'] . " - LANCASTER " . $score['lancs'];
-
+			$score = $this->_getScore();
+			//$rev_data['subtext'] = "YORK " . $score['york'] . " - LANCASTER " . $score['lancs'];
+			$rev_data['subtext'] = "Stay tuned to The Yorker throughout the X Factor final as Jacob Martin and friends bring you the latest excitement, gossip and news.";
+	
 			$revision = $this->article_model->CreateNewRevision($article_id, $user_id, $rev_data['headline'], $rev_data['subheadline'], $rev_data['subtext'], $rev_data['blurb'], $content['all']['wikitext'], $content['all']['cache']);
 			$publish_date = $this->roses_model->getPublishDate($article_id);
 			$this->requests_model->PublishArticle($article_id,$revision,$publish_date);
@@ -652,7 +658,7 @@ class Liveblog extends Controller
 	{
 		$total_york = 0;
 		$total_lancs = 0;
-		$article_id = 1693;
+		$article_id = 4663;
 		$this->load->model('roses_model');
 		$this->load->library('wikiparser');
 		// Set winning team indicators
@@ -703,7 +709,7 @@ class Liveblog extends Controller
 		$this->requests_model->PublishArticle($article_id,$revision,$publish_date);
 	}
 
-	function roses2009 ()
+	function roses2010()
 	{
 		$o = 'http://chart.apis.google.com/chart?chs=635x100';
 		$o .= '&cht=lxy';
@@ -711,8 +717,8 @@ class Liveblog extends Controller
 		$o .= '&chxt=x,r';
 
 		// Range
-		$o .= '&chxr=1,0,200,50';
-		$o .= '&chds=0,200,0,200';
+		$o .= '&chxr=1,0,160,50';
+		$o .= '&chds=0,160,0,160';
 
 		$sql = 'SELECT * FROM roses_scores WHERE event_score_time IS NOT NULL ORDER BY event_score_time ASC';
 		$query = $this->db->query($sql);
@@ -734,11 +740,13 @@ class Liveblog extends Controller
 			$scores_york[] = $score_york;
 			$scores_lancs[] = $score_lancs;
 		}
+		
+		// Commented out 13 / 3 / 2010
 		$o .= '&chd=t:-1|' . implode(',', $scores_york) . '|-1|' . implode(',', $scores_lancs) . '';
 
-		$fri = mktime(8, 0, 0, 5, 8, 2009);
-		$sat = mktime(8, 0, 0, 5, 9, 2009);
-		$sun = mktime(8, 0, 0, 5, 10, 2009);
+		$fri = mktime(8, 0, 0, 4, 30, 2010);
+		$sat = mktime(8, 0, 0, 5, 1, 2010);
+		$sun = mktime(8, 0, 0, 5, 2, 2010);
 		$sql = 'SELECT COUNT(*) AS count FROM roses_scores WHERE event_score_time > ? AND event_score_time < ?';
 		$fri_count = $this->db->query($sql, array($fri, $fri + (60*60*24)))->row_array();
 		$sat_count = $this->db->query($sql, array($sat, $sat + (60*60*24)))->row_array();
@@ -785,7 +793,7 @@ class Liveblog extends Controller
 		//$o .= '&chds=0,' . array_sum($values);
 		$o .= '&chds=0,' . $max;
 		$quota_line = round(100 * ($quota / $max), 1);
-		$o .= '&chg=200,200,4,4,' . $quota_line . ',-1';
+		$o .= '&chg=160,160,4,4,' . $quota_line . ',-1';
 
 
 		$tmp = '';

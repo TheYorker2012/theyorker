@@ -77,7 +77,10 @@ foreach ($sections as $section) {
 SpecialList($blogs['title'], $blogs['articles']);
 ?>
 
-
+<?php
+/*
+<!--
+GO AWAY IN MY VIEW!
 <div class="ArticleListBox FlexiBox Box23">
 	<div class="ArticleListTitleImg">
 		<a href="/news/<?php echo(xml_escape($inmyview[0]['id'])); ?>">
@@ -95,5 +98,9 @@ SpecialList($blogs['title'], $blogs['articles']);
 	</div>
 	<?php } ?>
 </div>
+-->
+*/
+?> 
+
 
 <div class="clear"></div>

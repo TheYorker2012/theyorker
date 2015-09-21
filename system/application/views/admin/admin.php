@@ -2,7 +2,7 @@
 	<h2>admin tools</h2>
 	<ul>
 		<li><a href="/office/announcements">Announcements</a></li>
-		<li><a href="/office/manage/members">Manage Yorker Members</a></li>
+		<li><a href="/office/members">Manage Yorker Members</a></li>
 		<li><a href="/admin/permissions">Permissions</a></li>
 		<li><a href="/office/moderator">Comment Moderation</a></li>
 		<li><a href="/admin/pages">Page Properties</a></li>

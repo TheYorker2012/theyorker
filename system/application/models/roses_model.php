@@ -34,7 +34,7 @@ class Roses_model extends Model
 					event_lancaster_score,
 					event_york_score,
 					event_score_time AS event_score_time
-			FROM		roses_scores
+			FROM		roses_scores2011
 			ORDER BY	event_time ASC,
 					event_sport ASC';
 		$query = $this->db->query($sql);
@@ -51,7 +51,7 @@ class Roses_model extends Model
 						event_points,
 						event_score_time,
 						event_blog_entry_id
-				FROM	roses_scores
+				FROM	roses_scores2011
 				WHERE	event_id = ?';
 		$query = $this->db->query($sql, array($event_id));
 		if ($query->num_rows() == 1)
@@ -61,7 +61,7 @@ class Roses_model extends Model
 
 	function setResult ($event_id, $score_lancs, $score_york, $score_time)
 	{
-		$sql = 'UPDATE	roses_scores
+		$sql = 'UPDATE	roses_scores2011
 				SET		event_lancaster_score = ?,
 						event_york_score = ?,
 						event_score_time = ?

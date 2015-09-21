@@ -1,0 +1,940 @@
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * CSS that applies to all elements                            *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+html {
+	font-family: Helvetica, Arial, sans-serif;
+	font-size: 10pt;
+	background-color: #f2f2f2;
+	color: #000;
+}
+
+body {
+	/* Make sure page is in center for IE6 */
+	text-align: center;
+}
+
+img {
+	border: 0;
+}
+
+a {
+	text-decoration: none;
+	color: #4d4d4d;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+ul, ol {
+	list-style-position: inside;
+	padding-left: 0;
+}
+
+ul ul, ul ol, ol ul, ol ol {
+	padding-left: 3em;
+}
+
+ul {
+	list-style-image: url('/images/prototype/homepage/arrow.png');
+}
+
+ol {
+	list-style-image: none;
+}
+
+/* Form formatting */
+form {
+	margin: 0;
+	padding: 0;
+}
+
+fieldset {
+	border: 0;
+	padding: 0;
+	margin: 0;
+}
+
+label, span.label {
+	display: block;
+	clear: both;
+	float: left;
+	width: 30%;
+	text-align: right;
+	margin: 0.4em;
+}
+
+label.radio {
+	clear: none;
+	width: auto;
+	margin-right: 0.2em;
+}
+
+input, select, textarea {
+	float: left;
+	margin: 0.2em;
+}
+
+div.input {
+	float: left;
+	margin: 0.4em;
+}
+
+input.radio {
+	clear: none;
+	margin: 0.4em;
+	margin-left: 0.2em;
+}
+
+input.button {
+	float: right;
+	margin: 0.5em;
+}
+
+blockquote {
+	float: right;
+	width: 14em;
+	background-color: #eeeeee;
+	padding: 0.5em;
+	margin: 0;
+	border: 1px solid #999999;
+	font-style: italic;
+}
+
+.clear {
+	clear: both;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * CSS used in the page frame and overall layout               *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+/* Create Header, Body and Footer sections */
+div#Header, div#Bar, div#Navigation, div#Page, div#Footer {
+	/* Remove next line for variable width */
+	width: 984px;
+	margin: 0 auto;
+	clear: both;
+	text-align: left;
+	padding: 0;
+}
+
+/* Create Navigation and Main areas in Body */
+div#NavigationColumn {
+	width: 120px;
+	float: left;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * CSS used in the banner at the top of the page               *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+div#Header {
+	background-image: url('/images/version2/frame/april_header_bg.png');
+	background-repeat: no-repeat;
+	height: 100px;
+}
+
+h1#HeaderLogo {
+	float: left;
+	margin: 0;
+	/* Required only when other stylesheets are included */
+	padding: 0;
+	background-color: transparent;
+}
+
+div#HeaderItems {
+	float: right;
+	text-align: right;
+	padding-right: 15px;
+}
+
+div#HeaderMenu {
+	margin-top: 5px;
+}
+
+div#HeaderMenu a {
+	color: #000;
+}
+
+div#HeaderTime {
+	float: right;
+	color: #fff;
+	margin: 5px 0 0 0;
+	font-size: 50px;
+	line-height: 1.0;
+}
+
+div#HeaderDate {
+	float: right;
+	margin: 5px 10px 0 0;
+	font-size: 20px;
+	line-height: 1.2;
+	color: #fff;
+}
+
+div#HeaderWeek {
+	font-weight: bold;
+}
+
+div#Bar {
+	background-color: #9600ff;
+	margin-bottom: 5px;
+}
+
+div#BarDate {
+	float: right;
+	text-align: center;
+	padding: 3px 20px;
+	color: #fff;
+}
+
+div#BarSearch {
+	float: right;
+	display: block;
+	padding: 0px 10px;
+	overflow: hidden;
+	background: #F2F2F2;
+}
+
+
+div#BarSearch input {
+	display: block;
+	margin: 0;
+	padding: 2px 0 ;
+	color: #999;
+	border: 1px #9600ff solid;
+	font-size: small;
+}
+
+div#BarTicker {
+	color: #fff;
+	padding: 3px 15px;
+	height: 16px;
+}
+
+span#BarLatest {
+	font-weight: bold;
+}
+
+div#BarTicker a {
+	color: #fff;
+}
+
+div#Navigation ul#Tabs {
+	width: 982px;
+	height: 22px;
+	display: block;
+	text-align: left;
+	float: left;
+	margin: 0.25em 0 0 0;
+	list-style: none outside none;
+	border-bottom: 2px #9600ff solid;
+	border-left: 2px #f69221 solid;
+}
+
+div#Navigation ul#Tabs.next {
+	border-left: 2px #9600ff solid;
+}
+
+div#Navigation ul#Tabs li {
+	float: left;
+}
+
+div#Navigation ul#Tabs li a {
+	display: block;
+	height: 24px;
+	padding: 0.2em 30px 0.2em 10px;
+	text-align: center;
+	vertical-align: middle;
+	background-image: url('/images/version2/frame/april_tab_inactive.jpg');
+	background-position: top right;
+	background-repeat: no-repeat;
+	color: #4d4d4d;
+	text-decoration: none;
+	font-size: 12pt;
+	min-width: 3.8em;
+}
+
+div#Navigation ul#Tabs li.first a {
+	padding-left: 15px;
+}
+
+div#Navigation ul#Tabs li.current a {
+	background-image: url('/images/version2/frame/april_tab_active.jpg');
+	font-weight: bold;
+	color: #000;
+}
+
+div#Navigation ul#Tabs li.next a {
+	background-image: url('/images/version2/frame/april_tab_active_next.jpg');
+}
+
+div#Navigation ul#Tabs li.last a {
+	background-image: url('/images/version2/frame/april_tab_inactive_last.jpg');
+}
+
+div#Navigation ul#Tabs li.last.current a {
+	background-image: url('/images/version2/frame/april_tab_active_last.jpg');
+}
+
+div#Navigation ul#Tabs li a:hover {
+	/*font-weight: bold;*/
+	color: #222;
+}
+
+div#Navigation ul#Tabs li.link {
+	float: right;
+	border: 0;
+	padding: 0.2em 0.4em 0.2em 0;
+}
+
+div#Navigation ul#Tabs li.link a {
+	padding: 0;
+	background-image: none;
+	min-width: 0;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * CSS used in the search box and navigation menu              *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+/* Formatting for the navigation on the left */
+div#NavigationMenu ul {
+	display: block;
+	list-style: none outside none;
+	margin: 0 0 0 0;
+	padding: 0;
+	border-top: 1px solid #999;
+}
+
+div#NavigationMenu ul.first {
+	border-top: 0;
+}
+
+div#NavigationMenu ul li {
+	border-top: 1px solid #ccc;
+	padding: 3px 0px 3px 4px;
+}
+
+div#NavigationMenu ul li.first {
+	border-top: 0;
+}
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * CSS used in layout of main area (including right bar)       *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+div#MainBodyPane {
+	border: 2px #9600ff solid;
+	border-top: 0;
+	margin-bottom: 0.5em;
+	padding: 5px;
+}
+
+div#ContentColumn {
+	margin-left: 125px;
+}
+
+/* Formatting for content boxes in main page area */
+div.BlueBox, div.FlexiBox, div.ClearFlexiBox {
+	float: left;
+	margin: 0 0 0.5em 0;
+	border: 1px solid #999;
+	background-color: #ffffff;
+	text-align: left;
+	width: 100%;
+}
+
+div.ClearFlexiBox {
+	border-color: transparent;
+	background-color: transparent;
+	text-align: center;
+}
+
+div.BlueBox h2 {
+	color: #999;
+}
+
+div.BlueBox h3 {
+	color: black;
+	margin-bottom: 0;
+}
+
+div.BlueBox > * {
+	margin: 10px;
+}
+
+div.Box13 {
+	width: 320px;
+	margin-right: 5px;
+	border: 0;
+}
+
+div.Box13b {
+	width: 318px;
+	margin-right: 5px;
+}
+
+div.Box12 {
+	width: 482px;
+	margin-right: 6px;
+	border: 0;
+}
+
+div.Box12b {
+	width: 480px;
+	margin-right: 6px;
+}
+
+div.Box23 {
+	width: 645px;
+	margin-right: 5px;
+	border: 0;
+}
+
+div.Box23b {
+	width: 643px;
+	margin-right: 5px;
+}
+
+div.FlexiBoxLast {
+	margin-right: 0;
+}
+
+/* Formatting for the page title */
+h1#PageTitle {
+	display: block;
+	color: white;
+	background-color: #20c1f0;
+	margin: 0 0 0.5em 0;
+	padding: 3px 0px 2px 5px;
+	font-size: 13pt;
+	text-transform: capitalize;
+
+	/* Required only when other stylesheets are included */
+	height: auto;
+}
+
+/* For page title edit link in editor mode */
+h1#PageTitle a {
+	color: white;
+	text-transform: none;
+	font-size: 10pt;
+}
+
+/* Formatting for the (optional) bar on the right */
+div#RightColumn {
+	float: right;
+	/*width: 230px;*/
+	width: 320px;
+}
+
+div#RightColumn h2 {
+	background-color: #999;
+	font-size: 12pt;
+	color: #fff;
+	padding: 0.3em;
+	margin: 1.0em 0em 0.5em 0em;
+}
+
+div#RightColumn h2.first {
+	margin-top: 0em;
+}
+
+div#RightColumn h3 {
+	font-size: 11pt;
+	margin: 0em;
+}
+
+span.RightColumnAction {
+	text-align: right;
+	display: block;
+}
+
+div#RightColumn label {
+	float: none;
+	width: auto;
+	text-align: left;
+	margin: 0.3em;
+}
+
+div#RightColumn input {
+	float: none;
+	margin: 0;
+	width: 100%;
+}
+
+div#RightColumn fieldset.inline input {
+	width: 65%;
+}
+
+div#RightColumn input.button {
+	width: 35%;
+	float: right;
+	margin-left: 0.5em;
+}
+
+div#RightColumn input.checkbox {
+	width: auto;
+}
+
+div#RightColumn fieldset.inline input.button {
+	float: none;
+	width: 30%;
+	margin: 0;
+}
+
+div#RightColumn div.Entry {
+	padding: 0em 0.5em;
+	margin: 0.5em 0em;
+}
+
+div#RightColumn p {
+	margin-top: 0.4em;
+}
+
+div#RightColumn div.Puffer {
+	text-align: center;
+	margin-bottom: 0.5em;
+}
+
+div.ArticleEntry {
+	margin-left: 66px;	/* Using pixels as need to shift text to right of image */
+	padding-left: 0.5em;
+}
+
+div.ArticleEntry h3 {
+	margin: 0em;
+}
+
+div#MainColumn {
+	/*margin-right: 240px;*/
+	/*margin-right: 480px;*/
+	margin-right: 330px;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * CSS used in footer and feedback at bottom of page           *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+div#FooterLinks {
+	text-align: right;
+}
+
+div#FooterCopyright {
+	float: left;
+	color: #af04ff;
+	font-weight: bold;
+}
+
+div#FeedbackForm {
+	display: none;
+	margin: 1em 0;
+}
+
+div#FeedbackForm h2 {
+	background-color: #999;
+	font-size: small;
+	color: #fff;
+	padding: 0.4em;
+	margin: 0em 0em 0.5em 0em;
+}
+
+div#FeedbackForm form {
+	width: 60%;
+	background-color: #fff;
+}
+
+div#FeedbackForm form input, div#FeedbackForm form select, div#FeedbackForm form textarea {
+	font-size: x-small;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * CSS used in tab strip at top of the page                    *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+ul#Navbar {
+	width: 100%;
+	display: block;
+	text-align: right;
+	float: right;
+	border-bottom: 1px solid #999;
+	margin: 0.0em 0em 0.5em 0em;
+	list-style: none outside none;
+}
+
+ul#Navbar li {
+	float: right;
+	text-align: center;
+	margin-right: 0.4em;
+	border: 1px solid #999;
+	padding: 0.2em;
+	min-width: 7em;
+	height: 1.2em;
+	margin-bottom: -1px;
+}
+
+ul#Navbar li.current {
+	border-bottom: 1px solid #f2f2f2;
+}
+
+ul#Navbar li a {
+	vertical-align: middle;
+	color: #4d4d4d;
+}
+
+ul#Navbar li.current a {
+	font-weight: bold;
+}
+
+ul#Navbar li a:hover {
+	font-weight: bold;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * CSS used in tab strip on the sidebar of the homepage        *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+ul.SideTabBar {
+	width: 100%;
+	display: block;
+	text-align: right;
+	float: right;
+	border-bottom: 1px solid #999999;
+	margin: 0.0em 0em 0.25em 0em;
+	list-style: none outside none;
+	font-size: 0.8em;
+}
+
+ul.SideTabBar li {
+	float: right;
+	text-align: center;
+	margin-right: 0.2em;
+	border: 1px solid #999999;
+	padding: 0.1em;
+	width: 7.5em;
+	height: 1.3em;
+	margin-bottom: -1px;
+	cursor: pointer;
+	vertical-align: middle;
+	color: #999999;
+}
+
+ul.SideTabBar li.current {
+	border-bottom: 1px solid white;
+	font-weight: bold;
+}
+
+ul.SideTabBar li:hover {
+	font-weight: bold;
+	text-decoration: underline;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * CSS used in tab strip at top of the page                    *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+div.message_error, div.message_warning, div.message_information, div.message_success {
+	width: 100%;
+	float: left;
+	border: 1px solid black;
+	margin-bottom: 0.5em;
+	background-color: #ffffff;
+}
+
+div.message_error img, div.message_warning img, div.message_information img, div.message_success img {
+	float: left;
+}
+
+div.message_error > *, div.message_warning > *, div.message_information > *, div.message_success > * {
+	margin: 0.3em;
+}
+
+div.message_information {
+	background-color: #ffffe1;
+}
+
+div#RightColumn div.message_error,
+div#RightColumn div.message_warning,
+div#RightColumn div.message_information,
+div#RightColumn div.message_success { float: none; width: auto;}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * CSS used in bylines                                         *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+div.Byline {
+	border-top: 1px solid #999;
+	border-bottom: 1px solid #999;
+	height: 64px;
+	padding: 0.5em 0.5em 0.0em 0.5em;
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+div.Byline img {
+	float: right;
+}
+
+div.Byline span.Name {
+	font-weight: bold;
+	font-size: larger;
+}
+
+span.author {
+	display: block;
+	font-style: normal;
+	text-align: right;
+}
+
+div.Date {
+	color: #af04ff;
+	font-size: smaller;
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+div.Location {
+	color: #666;
+	font-size: smaller;
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+div.Description {
+	color: #888;
+	font-size: smaller;
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+div.Section {
+	color: #20C1F0;
+	font-size: smaller;
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+div.Author {
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+div.SubText {
+	font-weight: bold;
+}
+
+img.Right {
+	float: right;
+	margin-left: 0.5em;
+	margin-bottom: 0.2em;
+	margin-top: 0;
+	clear: both;
+}
+
+img.Left {
+	float: left;
+	margin-right: 0.5em;
+	margin-bottom: 0.2em;
+	margin-top: 0;
+	clear: both;
+}
+
+div.BlueBox h2.Headline {
+	color: black;
+}
+
+.Headline a {
+	color: black;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * CSS used in slideshow                                       *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+div#SlideShow {
+	height: 165px;
+	width: 220px;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * CSS used in wikitext                                        *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+span.theyorker {
+	color: #af04ff;
+	font-style: italic;
+	font-weight: bold;
+	text-transform: capitalize;
+}
+
+div.spoiler {
+	margin-top: 2px;
+	margin-bottom: 2px;
+	border-left: 2px solid #FF8A00;
+	border-right: 2px solid #FF8A00;
+	background-color: white;
+	color: white;
+}
+div.spoiler * {
+	background-color: white;
+	color: white;
+}
+div.spoiler div.start,
+div.spoiler div.end {
+	height: 16px;
+}
+div.spoiler div.start {
+	background-image: url('/images/wikitext/spoilertop.png');
+}
+div.spoiler div.end {
+	background-image: url('/images/wikitext/spoilerbottom.png');
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * CSS used for pagination links                               *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+div.Pagination {
+	margin: 0 0.5em;
+	padding: 0.2em 0;
+	float: right;
+}
+
+div.Pagination span {
+	border: 1px #999 solid;
+	padding: 0.1em 0.3em;
+	margin-right: 0.2em;
+}
+
+div.Pagination span.direction {
+	border-style: dotted;
+}
+
+div.Pagination span.selected {
+	color: #fff;
+	font-weight: bold;
+	background-color: #999;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * CSS for Facebook Share Link                                 *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+div.share_article {
+	clear: right;
+	text-align: right;
+}
+
+a.fb_share_button {
+	display: inline-block;
+	padding: 1px 20px 0px 5px;
+	height: 15px;
+	border: 1px solid #d8dfea;
+	background: url('http://static.ak.facebook.com/images/share/facebook_share_icon.gif?12:26981') no-repeat top right;
+	text-decoration: none;
+}
+
+a.fb_share_button:hover {
+	color: #fff;
+	border-color: #295582;
+	background: #3b5998 url('http://static.ak.facebook.com/images/share/facebook_share_icon.gif?12:26981') no-repeat top right;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * CSS for Comments and Ratings                                *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+div.CommentsTitle {
+	background-color: #999;
+	font-size: 12pt;
+	color: #fff;
+	font-weight: bold;
+	margin: 0em 0em 0.5em 0em;
+	text-align: left;
+	float: left;
+	width: 100%;
+}
+
+div.CommentsTitle div {
+	padding: 0.3em;
+}
+
+div.CommentsTitle a {
+	color: #fff;
+}
+
+div.CommentBox {
+	border-top: 3px solid #9600ff;
+	padding: 0;
+	margin: 0 0 0.5em 0;
+	text-align: left;
+	background-color: #fff;
+	float: left;
+	width: 100%;
+}
+
+div.CommentAnonymous {
+	border-top-color: #999;
+}
+
+div.CommentDeleted {
+	border-top-width: 0;
+	text-align: center;
+	background-color: transparent;
+}
+
+div.CommentBox p {
+	margin-top: 0;
+	padding: 0.2em 0.2em 0 0;
+}
+
+div.CommentInfo {
+	color: #333;
+	padding: 0.2em;
+	margin: 0;
+	float: left;
+	width: 120px;
+}
+
+div.CommentInfoSmall {
+	font-size: x-small;
+}
+
+div.CommentBody {
+	margin-left: 125px;
+}
+
+div.CommentRating {
+	float: right;
+	margin: 0.2em 0.5em;
+	text-align: right;
+}
+
+ul.comment_edit {
+	margin-top: 0;
+	padding: 0.2em 0.2em 0 0;
+}
+
+ul.comment_edit li {
+	color: #444;
+	font-style: italic;
+	font-size: x-small;
+}
+ul.comment_edit a {
+	cursor: pointer;
+}
+
+div.comment_policy {
+	text-align:center;
+	float:left;
+	width:25%;
+}
+
+div.comment_policy p {
+	margin:0px;
+}
+
+div.comment_add_buttons {
+	float:left;
+	width: 50%;
+}

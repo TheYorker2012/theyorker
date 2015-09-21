@@ -53,13 +53,13 @@
 	<div class="ArticleListTitle">
 		Point History
 	</div>
-	<img src="/office/liveblog/roses2009" alt="Roses Score History" />
+	<img src="/office/liveblog/roses2010" alt="Roses Score History" />
 </div>
 
 <?php
-$fri = mktime(8, 0, 0, 5, 8, 2009);
-$sat = mktime(8, 0, 0, 5, 9, 2009);
-$sun = mktime(8, 0, 0, 5, 10, 2009);
+$fri = mktime(8, 0, 0, 4, 30, 2010);
+$sat = mktime(8, 0, 0, 5, 1, 2010);
+$sun = mktime(8, 0, 0, 5, 2, 2010);
 ?>
 <script type="text/javascript">
 function switchResults (name) {
@@ -226,7 +226,7 @@ function flickr_enlarge (e, photo) {
 
 <div style="float:left;" class="FlexiBox Box13 FlexiBoxLast">
 	<div class="ArticleListTitle">
-		<a href="http://www.flickr.com/photos/theyorker/sets/72157617796737439/">latest photos</a>
+		<a href="http://www.flickr.com/photos/theyorker/sets/72157623961104110/">latest photos</a>
 	</div>
 	<div style="text-align:center">
 	<?php
@@ -234,7 +234,7 @@ function flickr_enlarge (e, photo) {
 	foreach ($photos as $photo) {
 		if ($first) {
 			echo('<div style="text-align:center">');
-			echo('<a id="flickr_link" target="_blank" href="http://www.flickr.com/photos/theyorker/sets/72157617796737439/">');
+			echo('<a id="flickr_link" target="_blank" href="http://www.flickr.com/photos/theyorker/sets/72157623961104110/">');
 			echo('<img id="flickr_img" src="' . str_replace('_s', '_m', $photo['photo']) . '" alt="' . $photo['title'] . '" />');
 			echo('</a>');
 			echo('</div>');
@@ -247,10 +247,10 @@ function flickr_enlarge (e, photo) {
 	?>
 	</div>
 	<div style="text-align:center">
-		<a href="http://www.flickr.com/photos/theyorker/sets/72157617796737439/" target="_blank">View more...</a>
+		<a href="http://www.flickr.com/photos/theyorker/sets/72157623961104110/" target="_blank">View more...</a>
 	</div>
 </div>
 
 <?php
-ArticleList('Roses 2009 Articles', $others, true);
+ArticleList('Roses 2010 Articles', $others, true);
 ?>

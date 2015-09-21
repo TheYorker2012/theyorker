@@ -148,6 +148,12 @@ class Article extends Controller
 		if (empty($errors)) {
 			$publish_date = date('Y-m-d H:i:s', $publish_date);
 			$this->article_model->publish($article_id, $article['content_id'], $publish_date);
+
+			// Clear article cache
+			$mc = new Memcache;
+			$mc->connect('localhost', 11211);
+			if (!empty($mc)) $mc->flush();
+
 //			$this->load->library('facebook_ticker');
 //			if ($this->facebook_ticker->TickerUpdate()) {
 //				$this->main_frame->AddMessage('success','The Yorker Facebook News Ticker Application was successfully updated.');

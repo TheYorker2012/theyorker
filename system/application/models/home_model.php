@@ -1,92 +1,22 @@
 <?php
-/*
- * Model for use of dynamic data on homepage
+/*************************************************
+ * Yorker Homepage Model
+ * Original Authors - Andrew Oakley and Alex Fargus
+ * Modified by Richard Crosby
  *
+ * A few functions for controlling dynamic content on the homepage
  *
- * \author Alex Fargus (agf501)
- *
- *
- *
- */
+ ************************************************/
 class Home_Model extends Model {
-	/*
-	 * Constructor, calls default model constructor
-	 */
-	function Home_Model() {
-		parent::Model();
-	}
-	/*
-	 * Function to obtain weather forecast from Yahoo RSS feed.
-	 * If forecast is over 4 housr old, it is updated. Latest forecast is always returned.
-	 */
-	function GetWeather() {
-		//Return all forecasts that are less than 4 hours old. (Should be either 1 or 0).
-		$sql = 'SELECT weather_cache_timestamp, weather_cache_html
-			FROM weather_cache
-			WHERE weather_cache_timestamp > DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 4 HOUR) ';
-		$query = $this->db->query($sql);
-		//If 0 rows returned then get up to date weather
-		if ($query->num_rows() == 0) {
-			//Get the rss feed
-			try {
-				$weather_data = 'http://xml.weather.yahoo.com/forecastrss?p=UKXX0162&u=c';
-				$response = @file_get_contents($weather_data);
-				if (false === $response) {
-					$html = null;
-				}
-				else {
-					$weather = new simplexmlelement($response);
-					$weather->registerXPathNamespace('data','http://xml.weather.yahoo.com/ns/rss/1.0');
-					$weather_forecast = $weather->xpath('//channel/item/data:forecast');
-					//Generate the html to be displayed
-					$html = '<table id="weather">';
-					$html .= '	<tr><td align="center">';
-					$html .= '		<div class="Date">'.date('l jS',strtotime($weather_forecast[0]->attributes()->date)).'</div>';
-					$html .= '	</td>';
-					$html .= '	<td align="center">';
-					$html .= '		<div class="Date">'.date('l jS',strtotime($weather_forecast[1]->attributes()->date)).'</div>';
-					$html .= '	</td></tr>';
-					$html .= '	<tr><td align="center">';
-					$html .= '		<img src="http://us.i1.yimg.com/us.yimg.com/i/us/we/52/'.xml_escape($weather_forecast[0]->attributes()->code).'.gif" title="'.xml_escape($weather_forecast[0]->attributes()->text).'" alt="'.xml_escape($weather_forecast[0]->attributes()->text).'" />';
-					$html .= '	</td>';
-					$html .= '	<td align="center">';
-					$html .= '		<img src="http://us.i1.yimg.com/us.yimg.com/i/us/we/52/'.xml_escape($weather_forecast[1]->attributes()->code).'.gif" title="'.xml_escape($weather_forecast[1]->attributes()->text).'" alt="'.xml_escape($weather_forecast[1]->attributes()->text).'" />';
-					$html .= '	</td></tr>';
-					$html .= '	<tr><td align="center">';
-					$html .= '		'.xml_escape($weather_forecast[0]->attributes()->low).'&#176;C - '.xml_escape($weather_forecast[0]->attributes()->high).'&#176;C';
-					$html .= '	</td>';
-					$html .= '	<td align="center">';
-					$html .= '		'.xml_escape($weather_forecast[1]->attributes()->low).'&#176;C - '.xml_escape($weather_forecast[1]->attributes()->high).'&#176;C';
-					$html .= '	</td></tr>';
-					$html .= '</table>';
-					//$html .= '<p class="Discreet">Data provided by Yahoo</p>';
-					/// @todo Can't we use REPLACE INTO here?
-					//Delete the old weather forecast
-					$sql = 'DELETE FROM weather_cache';
-					$query = $this->db->query($sql);
-					//Add the new weather forecast
-					$sql = 'INSERT INTO weather_cache(weather_cache_html) VALUES (?)';
-					$query = $this->db->query($sql,array($html));
-				}
-			} catch (Exception $e) {
-				$html = null;
-			}
-			//Return the new html
-			return $html;
-		} else {
-		//Otherwise return cached forecast from table
-			$row = $query->row();
-			//Return cached html
-			return $row->weather_cache_html;
-		}
-	}
+
 	
 	/*
 	 * Function to obtain a random banner image for today.
 	 *@param string name of the homepage section you want a banner for this is the homepage's content_type codename
 	 * Returns the image, if there is one.
 	 */
-	function GetBannerImageForHomepage($homepage_codename='home') {
+	function GetBannerImageForHomepage($homepage_codename='home') 
+	{
 		$this->load->library('image');
 		//Get id of content_type from codename
 		//Get image id(s) from homepage_banners table with content_type id
@@ -135,31 +65,216 @@ class Home_Model extends Model {
 		}
 	}
 
-	/*
-	 * Function to obtain a random quote for today.
-	 * Returns the quote_text and quote_author in an array.
-	 */
-	function GetQuote() {
-		$this->load->library('image');
-		$sql = 'SELECT quote_text, quote_author
-			FROM quotes
-			WHERE DATE(quote_last_displayed_timestamp) = CURRENT_DATE()';
-		$query = $this->db->query($sql);
-		if($query->num_rows() == 0){
-			$sql = 'SELECT quote_id, quote_text, quote_author
-				FROM quotes
-				WHERE 1
-				ORDER BY quote_last_displayed_timestamp
-				LIMIT 0,1';
-			$query = $this->db->query($sql);
-			$sql = 'UPDATE quotes
-				SET quote_last_displayed_timestamp = CURRENT_TIMESTAMP()
-				WHERE quote_id = ?';
-			$update = $this->db->query($sql,array($query->row()->quote_id));
+	function ignore ($articles)
+	{
+		if (is_array($articles)) {
+			foreach ($articles as $a) {
+				$this->ignoreArticles[] = $a['id'];
+			}
+		} else {
+			$this->ignoreArticles[] = $articles;
 		}
-		return $query->row();
 	}
 
+	function getArticlesByTags ($tags, $number = 4, $ignore_articles = array())
+	{
+		if (!empty($ignore_articles)) {
+			if (!is_array($ignore_articles)) {
+				$ignore_articles = array($ignore_articles);
+			}
+		} else {
+			$ignore_articles = $this->ignoreArticles;
+		}
 
+		$params = $tags;
+		$inputs = array_fill(0, count($tags), '?');
+		$params[] = count($tags);
+		$params[] = $number;
+		$sql = 'SELECT		a.article_id AS id,
+							UNIX_TIMESTAMP(a.article_publish_date) AS date,
+							ac.article_content_heading AS headline,
+							ac.article_content_blurb AS blurb,
+							pr.photo_request_chosen_photo_id AS photo_id,
+							pr.photo_request_title AS photo_title,
+							COUNT(tags.tag_id) AS tag_count
+				FROM		articles AS a,
+							article_contents AS ac,
+							article_tags,
+							tags,
+							photo_requests AS pr
+				WHERE		a.article_id = article_tags.article_tag_article_id
+				AND			article_tags.article_tag_tag_id = tags.tag_id
+				AND			tags.tag_name IN (' . implode(',', $inputs) . ')
+				AND			UNIX_TIMESTAMP(a.article_publish_date) < UNIX_TIMESTAMP()
+				AND			a.article_pulled = 0
+				AND			a.article_deleted = 0
+				AND			a.article_live_content_id IS NOT NULL
+				AND			ac.article_content_id = a.article_live_content_id
+				AND			pr.photo_request_article_id = a.article_id
+				AND			a.article_thumbnail_photo_id = pr.photo_request_relative_photo_number ';
+		if (!empty($ignore_articles)) {
+			$sql .= 'AND a.article_id NOT IN (' . implode(',', $ignore_articles) . ')';
+		}
+		$sql .= '
+				GROUP BY	a.article_id
+				HAVING		tag_count = ?
+				ORDER BY	a.article_publish_date DESC
+				LIMIT		0, ?';
+		$query = $this->db->query($sql, $params);
+		return $query->result_array();
+	}
+
+	function getLatestArticleIds($types) {
+		$params = array();
+		$result = array();
+
+		$sql_contentTypeIds = '
+			SELECT
+				child.content_type_id
+			FROM 
+				content_types
+			LEFT JOIN 
+				content_types AS child
+			ON
+				child.content_type_parent_content_type_id = content_types.content_type_id 
+			OR
+				child.content_type_id = content_types.content_type_id
+			WHERE 
+				content_types.content_type_codename = ?';
+
+		$sql_latestArtcileIds = '
+			(SELECT
+				articles.article_id, 
+				? AS content_type
+			FROM 
+				articles
+			WHERE
+				articles.article_publish_date < CURRENT_TIMESTAMP 
+			AND
+				articles.article_live_content_id IS NOT NULL
+			AND
+				articles.article_editor_approved_user_entity_id	IS NOT NULL
+			AND
+				articles.article_content_type_id IN ('.$sql_contentTypeIds.')
+			AND
+				articles.article_deleted = 0
+			ORDER BY
+				articles.article_publish_date DESC
+			LIMIT 0, ?)';
+
+		$sql_requestedArticles = array();
+		foreach($types as $type => $number) {
+			$result[$type] = array();
+			$sql_requestedArticles[] = $sql_latestArtcileIds;
+			$params[] = $type;
+			$params[] = $type;
+			$params[] = $number;
+		}
+		$sql_requestedArticles = implode(
+			' UNION ', 
+			$sql_requestedArticles
+		);
+
+		$query = $this->db->query($sql_requestedArticles, $params);
+
+		if ($query->num_rows() > 0) {
+			foreach ($query->result() as $row)
+				$result[$row->content_type][] = $row->article_id;
+		}
+
+		return $result;
+	}
+
+	function getArticleTitles($articles, $dateFormat) {
+		if (count($articles) == 0)
+			return array();
+
+		$sql_requestedArticles = implode(', ', $articles);
+		$sql = '
+			SELECT 
+				content_types.content_type_codename
+					AS article_type,
+				articles.article_id
+					AS id,
+				article_contents.article_content_heading
+					AS heading,
+				DATE_FORMAT(
+					articles.article_publish_date,
+					?)
+					AS date,
+				photo_requests.photo_request_chosen_photo_id
+					AS photo_id,
+				photo_requests.photo_request_title
+					AS photo_title
+			FROM articles
+			INNER JOIN content_types ON
+				articles.article_content_type_id = 
+					content_types.content_type_id
+			INNER JOIN article_contents ON
+				article_contents.article_content_id = 
+					articles.article_live_content_id
+			LEFT JOIN photo_requests ON
+				(articles.article_thumbnail_photo_id =
+					photo_requests.photo_request_relative_photo_number
+				AND photo_requests.photo_request_article_id =
+					articles.article_id)
+			WHERE
+				articles.article_id 
+					IN ('.$sql_requestedArticles.')
+			ORDER BY
+				article_publish_date DESC';
+
+		$query = $this->db->query($sql, array($dateFormat));
+		return $query->result_array();
+	}
+
+	function getArticleSummaries($articles, $dateFormat) {
+		if (count($articles) == 0)
+			return array();
+
+		$params = array($dateFormat);
+
+		$sql_requestedArticles = implode(', ', $articles);
+		$sql = '
+			SELECT
+				content_types.content_type_codename
+					AS article_type,
+				articles.article_id
+					AS id,
+				article_contents.article_content_heading
+					AS heading,
+				DATE_FORMAT(
+					articles.article_publish_date,
+					?)
+					AS date,
+				article_contents.article_content_blurb
+					AS blurb,
+				photo_requests.photo_request_chosen_photo_id
+					AS photo_id,
+				photo_requests.photo_request_title
+					AS photo_title
+			FROM articles
+			INNER JOIN content_types ON
+				articles.article_content_type_id =
+					content_types.content_type_id
+			LEFT JOIN photo_requests ON
+				(articles.article_thumbnail_photo_id =
+					photo_requests.photo_request_relative_photo_number
+				AND photo_requests.photo_request_article_id =
+					articles.article_id)
+			INNER JOIN article_contents ON
+				article_contents.article_content_id =
+					articles.article_live_content_id
+			WHERE
+				articles.article_id
+					IN ('.$sql_requestedArticles.')
+			AND
+				articles.article_deleted = 0
+			ORDER BY
+				article_publish_date DESC';
+
+		$query = $this->db->query($sql, $params);
+		return $query->result_array();
+	}
 }
 ?>

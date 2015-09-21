@@ -1,5 +1,5 @@
 <?php
-error_reporting(E_ALL);
+error_reporting(0);
 
 $start_time = microtime(TRUE);
 
@@ -15,7 +15,7 @@ require_once BASEPATH.'codeigniter/CodeIgniter'.EXT;
 $headers = headers_list();
 foreach ($headers as $header) {
 	if (strpos($header, 'Content-type: text/html') !== FALSE) {
-		echo('<!-- Rendered in '.(microtime(TRUE) - $start_time).' seconds -->');
+		echo('<!-- Rendered in '.(microtime(TRUE) - $start_time).' seconds  -->');
 		break;
 	}
 }

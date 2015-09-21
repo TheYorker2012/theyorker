@@ -8,22 +8,20 @@ function update_count(control) {
 <div class="BlueBox">
 	<h2>LIVE BLOGGING ADMIN -
 	<?php
-	if ($article_id == 1682) echo('TEST');
-	elseif ($article_id == 2965) echo('FRIDAY');
-	elseif ($article_id == 2971) echo('SATURDAY');
-	elseif ($article_id == 2972) echo('SUNDAY');
+	if ($article_id == 4663) echo('ROSES-LIVEBLOG');
+	elseif ($article_id == 4640) echo('FRIDAY');
+	elseif ($article_id == 4661) echo('SATURDAY');
+	elseif ($article_id == 4662) echo('SUNDAY');
 	elseif ($article_id == 2858) echo('Elections 2009');
-	elseif ($article_id == 3357) echo('Woodstock 2009');
 	else echo('UNKNOWN');
 	?>
 	</h2>
 	<p>
-		<a href="/office/liveblog/admin/1682">Test Article</a> |
-		<a href="/office/liveblog/admin/3357">Woodstock 2009</a>
+		<a href="/office/liveblog/admin/4663">Roses Liveblog</a> |
+		<a href="/office/liveblog/admin/4640">FRIDAY</a> |
+		<a href="/office/liveblog/admin/4661">SATURDAY</a> |
+		<a href="/office/liveblog/admin/4662">SUNDAY</a>
 		<!--
-		<a href="/office/liveblog/admin/2965">FRIDAY</a> |
-		<a href="/office/liveblog/admin/2971">SATURDAY</a> |
-		<a href="/office/liveblog/admin/2972">SUNDAY</a>
 		<a href="/office/liveblog/admin/2858">Elections 2009</a>
 		-->
 	</p>

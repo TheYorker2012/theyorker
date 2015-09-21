@@ -364,6 +364,13 @@ class Comments_model extends model
 	 */
 	function GetLatestComments($NumToGet = 10)
 	{
+		$mc = new Memcache;
+		$mc->connect('localhost', 11211);
+		if (!empty($mc)) {
+			$result = $mc->get('latest-comments');
+			if (!empty($result)) return $result;
+		}
+
 		$ci = &get_instance();
 		$ci->load->model('crosswords_model');
 		$ci->load->library('academic_calendar');
@@ -434,6 +441,11 @@ class Comments_model extends model
 				$result['heading'] = $result['heading'].', '.$pub_date;
 			}
 		}
+
+		if (!empty($mc)) {
+			$mc->set('latest-comments', $results, null, 300);
+		}
+
 		return $results;
 	}
 

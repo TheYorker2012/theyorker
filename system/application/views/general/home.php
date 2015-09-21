@@ -1,9 +1,8 @@
 <div class="FlexiBox Box23">
 	<div id="DisplayBox">
-		<div id="DisplayBoxBg"><?php echo(xml_escape($articles['uninews'][0]['heading'])); ?></div>
+		<div id="DisplayBoxBg2"><?php echo(xml_escape($articles['uninews'][0]['heading'])); ?></div>
 		<div id="DisplayBoxText"><a href="/news/<?php echo(xml_escape($articles['uninews'][0]['article_type'] . '/' . $articles['uninews'][0]['id'])); ?>"><?php echo(xml_escape($articles['uninews'][0]['heading'])); ?></a></div>
 		<a href="/news/<?php echo(xml_escape($articles['uninews'][0]['article_type'] . '/' . $articles['uninews'][0]['id'])); ?>"><img src="/photos/home/<?php echo(xml_escape($articles['uninews'][0]['photo_id'])); ?>" alt="<?php echo(xml_escape($articles['uninews'][0]['photo_title'])); ?>" /></a>
-	</div>
 </div>
 
 <script type="text/javascript">
@@ -83,8 +82,12 @@ function changePreview (option, article_id, article_type, photo_id, photo_title)
 
 <?php ArticleList('sport', $articles['sport']); ?>
 <?php ArticleList('arts', $articles['arts']); ?>
+<?php ArticleList('comment', $articles['comment']); ?>
 <?php ArticleList('lifestyle', $articles['lifestyle'], true); ?>
 <div class="clear"></div>
+
+<?php $latest_comments->Load(); ?>
+
 
 <div class="FlexiBox FlexiBoxLast" style="background-color:#f2f2f2;text-align:center;border:none;">
 <?php foreach ($photos as $photo) { ?>
@@ -108,7 +111,7 @@ function changePreview (option, article_id, article_type, photo_id, photo_title)
 	<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
 </div>
 
-<?php $latest_comments->Load(); ?>
+
 
 <div class="ArticleListBox FlexiBox Box12">
 	<div class="ArticleListTitle">

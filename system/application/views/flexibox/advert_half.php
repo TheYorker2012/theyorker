@@ -1,5 +1,11 @@
-<div class="ClearFlexiBox Box12<?php if (!empty($last)) echo(' FlexiBoxLast'); ?>"<?php if (!empty($position)) { echo(' style="float:' . $position . '"'); } ?>>
-	<a href="<?php echo($link); ?>">
-		<img src="<?php echo($image); ?>" alt="<?php echo($image_title); ?>" title="<?php echo($image_title); ?>" />
-	</a>
+
+<div class="ClearFlexiBox Box120<?php if (!empty($last)) echo(' FlexiBoxLast'); ?>"<?php if (!empty($position)) { echo(' style="float:' . $position . '"'); } ?>>
+
+<?php
+
+	echo '<a href="http://www.monkscrossshopping.co.uk" title="Monks Cross Shopping1" />';
+	echo '<img src="http://www.theyorker.co.uk/photos/full/5821" style="width:430px; height: 50px;" />';
+	echo '</a>';
+?>
 </div>
+

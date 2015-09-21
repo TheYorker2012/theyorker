@@ -14,12 +14,13 @@
  * - use ADD instead of CREATE
  */
 $config['permissions'] = array(
-	/// @todo Review and implement advertising permissions
+
+	/*/// @todo Review and implement advertising permissions
 	'ADVERTISING_VIEW'                 => '(unimplemented) View adverts',
 	'ADVERTISING_ADD'                  => '(unimplemented) Create new adverts',
 	'ADVERTISING_MODIFY'               => '(unimplemented) Modify adverts',
 	'ADVERTISING_LIVE'                 => '(unimplemented) Make an advert live',
-	'ADVERTISING_PULL'                 => '(unimplemented) Pull a live advert',
+	'ADVERTISING_PULL'                 => '(unimplemented) Pull a live advert',*/
 
 	'ANNOUNCEMENT_VIEW'                => 'View all announcements',
 	'ANNOUNCEMENT_SEND'                => 'Send an announcement to a group of users',
@@ -68,24 +69,6 @@ $config['permissions'] = array(
 	'COMMENT_DELETE'                   => '(unimplemented) Delete and undelete comments written by others',
 	'COMMENT_MODIFY'                   => '(unimplemented) Modify comments written by others',
 	'COMMENT_DELETED_VIEW'             => '(unimplemented) View deleted comments',
-
-	'CROSSWORD_INDEX'                  => 'Main crossword management page',
-	'CROSSWORD_TIPS_INDEX'             => 'Main crossword tips management page',
-	'CROSSWORD_TIP_CATEGORY_ADD'       => 'Add a category of crossword tips',
-	'CROSSWORD_TIP_CATEGORY_VIEW'      => 'View a category of crossword tips',
-	'CROSSWORD_TIP_CATEGORY_MODIFY'    => 'Modify a category of crossword tips',
-	'CROSSWORD_LAYOUTS_INDEX'          => 'Main crossword layouts management page',
-	'CROSSWORD_LAYOUT_ADD'             => 'Add a new crossword layout',
-	'CROSSWORD_LAYOUT_MODIFY'          => 'Modify a crossword layout',
-	'CROSSWORD_CATEGORIES_INDEX'       => 'Main crossword categories management page',
-	'CROSSWORD_CATEGORY_ADD'           => 'Add a new category of crosswords',
-	'CROSSWORD_CATEGORY_VIEW'          => 'View crossword category management page',
-	'CROSSWORD_CATEGORY_MODIFY'        => 'Modify a category of crosswords',
-	'CROSSWORD_AUTHOR'                 => 'Capable of writing crosswords',
-	'CROSSWORD_ADD'                    => 'Add a crossword puzzle',
-	'CROSSWORD_VIEW'                   => 'View a crossword puzzle',
-	'CROSSWORD_MODIFY'                 => 'Modify a crossword puzzle',
-	'CROSSWORD_STATS_BASIC'            => 'View basic stats about a crossword puzzle',
 	
 	'FEEDBACK_VIEW'                    => '(unimplemented) View site feedback messages',
 	'FEEDBACK_VIEW_DELETED'            => '(unimplemented) View deleted site feedback messages',

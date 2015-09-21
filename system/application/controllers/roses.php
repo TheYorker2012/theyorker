@@ -13,7 +13,7 @@ class Roses extends Controller
 		parent::Controller();
 		$this->load->model('news_model');
 		$this->load->model('home_model');
-		$this->load->model('home_hack_model');
+		$this->load->model('home_hack_model2', 'home_hack_model');
 	}
 	
 	function index()
@@ -21,8 +21,8 @@ class Roses extends Controller
 		if (!CheckPermissions('public')) return;
 
 		$data = array();
-		$data['liveblog'] = $this->home_hack_model->getArticlesByTags(array('Roses 2009', 'liveblog'), 1);
-		$data['others'] = $this->home_hack_model->getArticlesByTags(array('Roses 2009'), 15);
+		$data['liveblog'] = $this->home_hack_model->getArticlesByTags(array('Roses 2010', 'liveblog'), 1);
+		$data['others'] = $this->home_hack_model->getArticlesByTags(array('Roses 2010'), 15);
 
 		$sql = 'SELECT article_liveblog_wikitext AS text FROM article_liveblog WHERE article_liveblog_article_id = ? AND article_liveblog_deleted = 0 ORDER BY article_liveblog_posted_time DESC LIMIT 0, 5';
 		$query = $this->db->query($sql, array($data['liveblog'][0]['id']));
@@ -73,10 +73,10 @@ class Roses extends Controller
 				'api_key'		=>	'117e4fb7e8f54e5425b7dc4e28dec883',
 				'method'		=>	'flickr.photosets.getPhotos',
 				'format'		=>	'php_serial',
-				'photoset_id'	=>	'72157617796737439',
+				'photoset_id'	=>	'72157623961104110',
 				'extras'		=>	'license,owner,date_upload',
 				'per_page'		=>	'500',
-				'page'			=>	'2'
+				'page'			=>	'1'
 			);
 			$encoded_params = array();
 			foreach ($params as $key => $value) {

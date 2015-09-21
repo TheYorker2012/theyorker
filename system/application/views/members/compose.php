@@ -28,7 +28,7 @@
 </script>
 
 <div id="RightColumn">
-	<h2 class="first">What's this?</h2>
+	<h2 class="first">What's  this?</h2>
 	<div class="Entry">
 		<?php echo($main_text); ?>
 	</div>
